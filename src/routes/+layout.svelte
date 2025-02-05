@@ -19,10 +19,10 @@
 </script>
 
 <svelte:head>
-  <title>Build a custom area profile - Census 2021, ONS</title>
+  <title>Build a custom area profile - ONS</title>
   <meta
     property="og:title"
-    content="Build a custom area profile - Census 2021, ONS"
+    content="Build a custom area profile - ONS"
   />
   <meta property="og:type" content="website" />
   <meta
@@ -37,24 +37,24 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta
     property="og:description"
-    content="Create your own profile for local areas in England and Wales using Census 2021 data."
+    content="Create your own profile for local areas with data for England and Wales."
   />
   <meta
     name="description"
-    content="Create your own profile for local areas in England and Wales using Census 2021 data. Data topics include population, age, sex, ethnicity, religion, the work people do, and the homes they live in."
+    content="Create your own profile for local areas with data for England and Wales. Data topics include population, age, sex, ethnicity, religion, the work people do, and the homes they live in."
   />
 </svelte:head>
 
 <AnalyticsBanner {analyticsId} {analyticsProps} />
+<header>
+  <ONSHeader />
+  <!-- <Title /> -->
+</header>
 <main>
-  <header>
-    <ONSHeader />
-    <!-- <Title /> -->
-  </header>
+  
 
 
     <slot />
 </main>
 
-<Footer />
 
