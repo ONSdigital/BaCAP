@@ -35,10 +35,10 @@ export let radius=0.5;
 
       <ToolbarDivider />
 
-      <ToolbarButton id="clear" icon="bin" label="Clear all drawn areas" on:click={newselect}>
+      <ToolbarButton id="clear" icon="bin" label="Clear all drawn areas" on:click={newselect} transient>
         <p>Clear all drawn areas from the map.</p>
       </ToolbarButton>
-      <ToolbarButton id="undo" icon="undo" label="Undo last step" on:click={undo} disabled={$selected.length < 2}>
+      <ToolbarButton id="undo" icon="undo" label="Undo last step" on:click={undo} disabled={$selected.length < 2} transient>
         <p>If you make a mistake, you can undo actions by selecting the Undo button from the toolbar.</p>
       </ToolbarButton>
 
