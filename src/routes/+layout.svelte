@@ -44,17 +44,18 @@
     content="Create your own profile for local areas with data for England and Wales. Data topics include population, age, sex, ethnicity, religion, the work people do, and the homes they live in."
   />
 </svelte:head>
+<div class="ons-grid--flex ons-grid--column">
+  <div>
+    <AnalyticsBanner {analyticsId} {analyticsProps} />
+  <header>
+    <ONSHeader />
+  </header>
+  </div>
 
-<AnalyticsBanner {analyticsId} {analyticsProps} />
-<header>
-  <ONSHeader />
-  <!-- <Title /> -->
-</header>
-<main>
-  
-
-
-    <slot />
-</main>
-
+  <div class="ons-u-flex-grow">
+    <main>
+        <slot />
+    </main>
+  </div>
+</div>
 

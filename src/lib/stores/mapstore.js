@@ -62,3 +62,7 @@ export const user_geometry = writable({
       coordinates: [],
     },
   });//store the polygon created by the user
+export const currentMapZoom = writable(5);
+export const isLoading = writable(false);
+export const state = writable({});
+export const pselect = writable(0);

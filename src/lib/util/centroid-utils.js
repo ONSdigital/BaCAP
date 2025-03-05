@@ -81,14 +81,26 @@ class Centroids {
     this.data[sourceName].parents.forEach(p => this.data[sourceName][`${p.key}_count`] = parentCt[p.key]);
   }
 
-  expand(codes,geo) {
-    return Array.isArray(codes) ?
-      codes.map(c => this.data[geo].childLookup[c] ? this.data[geo].childLookup[c] : c).flat() :
-      this.data[geo].childLookup[codes] ? this.data[geo].childLookup[codes] : [];
+  // takes an array of codes and expands it to the lowest level geography specified (oa or lsoa)
+  // expand(codes,geo) {
+  //   return Array.isArray(codes) ?
+  //     codes.map(c => this.data[geo].childLookup[c] ? this.data[geo].childLookup[c] : c).flat() :
+  //     this.data[geo].childLookup[codes] ? this.data[geo].childLookup[codes] : [];
+  // }
+  expand(codes, geo) {
+    if (Array.isArray(codes)) {
+        return codes.map(c => this.data[geo].childLookup[c] ? this.data[geo].childLookup[c] : (geo === 'lsoa' ? [] : c)).flat();
+    } else {
+        if (!this.data[geo].childLookup[codes]) {
+            return geo === 'lsoa' ? [] : [codes];
+        }
+        return this.data[geo].childLookup[codes];
+    }
   }
 
+
+  // get a boundingbox for a list of OA codes
   bounds(oas,geo) {
-    // get a boundary for a list of OA codes
     let points = {
       type: 'GeometryCollection',
       geometries: oas.map(oa => {
@@ -101,10 +113,10 @@ class Centroids {
     };
     let bounds = bbox(points);
     bounds = [bounds[0] - 0.01, bounds[1] - 0.01, bounds[2] + 0.01, bounds[3] + 0.01];
-    // console.log("bounds", bounds);
     return bounds;
   }
 
+  // get a boundingbox from a geometry
   boundsFromGeometry(geometry){
     let bounds = bbox(geometry)
     bounds = [bounds[0] - 0.01, bounds[1] - 0.01, bounds[2] + 0.01, bounds[3] + 0.01];
@@ -115,8 +127,8 @@ class Centroids {
   //   return this.lookup[oa] ? true : false;
   // }
 
+  // Returns OA codes within the coordinates of a Polygon/MultiPolygon
   contains(geo) {
-    // Returns OA codes within the coordinates of a Polygon/MultiPolygon
     let bounds = bbox(geo);
     bounds = bboxPoly(bounds);
 
@@ -128,6 +140,7 @@ class Centroids {
     return { bbox: bounds, oa: new Set(oas), lsoa: new Set(lsoas) };
   }
 
+  // compresses an array codes to the highest geography level specified (oa or lsoa)
   compress(codes,geo) {
     let all = {};
     let compressed = [];

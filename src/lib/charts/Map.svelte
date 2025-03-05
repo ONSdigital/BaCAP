@@ -7,7 +7,7 @@
 
   import { onMount } from "svelte";
   import { initDraw } from "$lib/util/drawing-utils";
-  import { mapsource, maplayer, mapObject } from "$lib/stores/mapstore";
+  import { mapsource, maplayer, mapObject, currentMapZoom, } from "$lib/stores/mapstore";
   import { minzoom, maxzoom, maxbounds, mapstyle } from "$lib/config/geography";
 
   const mapboxgl = maplibregl;
@@ -32,14 +32,14 @@
     document.querySelector("#mapcontainer div canvas").style.cursor = "wait";
 
     // scale bar
-    $mapObject.addControl(
-      new mapboxgl.ScaleControl({
-        position: "bottom-left",
-      }),
-    );
+    // $mapObject.addControl(
+    //   new mapboxgl.ScaleControl({
+    //     position: "bottom-left",
+    //   }),
+    // );
 
     // navigation
-    $mapObject.addControl(new mapboxgl.NavigationControl(), "bottom-right");
+    // $mapObject.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
     //disable double click and rotation
     $mapObject.doubleClickZoom.disable();
@@ -58,6 +58,8 @@
     });
 
     $mapObject.on("load", SetLayers);
+
+
   }
 
   // onDestroy(() => {
@@ -66,8 +68,9 @@
 
   /// Set all Mapbox Parameters ///
   export async function SetLayers() {
+    $mapObject.resize();
+    
     // set mapbox layers
-
     mapsource.subscribe(async () => {
       // set the sources
       for (const [key, value] of Object.entries($mapsource)) {
@@ -97,9 +100,10 @@
 <style>
   #mapcontainer {
     position: absolute;
-    top: 142px;
+    top: 0;
     bottom: 0;
     width: 100%;
+    height:100%;
   }
   :global(.maplibregl-ctrl button) {
     margin: 0;

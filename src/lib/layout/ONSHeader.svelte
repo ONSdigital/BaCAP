@@ -1,7 +1,4 @@
 <script>
-	import { getContext } from "svelte";
-	import ONSLogo from "./ONSLogo.svelte";
-	import CensusLogo from "./CensusLogo.svelte";
 	import { PhaseBanner, Header } from "@onsvisual/svelte-components";
 
 	export let theme = "light";
@@ -15,46 +12,5 @@
 
 <PhaseBanner phase="alpha" />
 <Header compact />
-<!-- <div class="col-wide middle">
-	<div class="logo-block">
-		<a href="https://www.ons.gov.uk/" class="logo" style:width="270px">
-			<ONSLogo {primary} {secondary} />
-		</a>
-		{#if census}
-			<a
-				href="https://www.ons.gov.uk/census"
-				class="logo"
-				style:width="160px"
-			>
-				<CensusLogo color={censusColor} />
-			</a>
-		{/if}
-	</div>
-</div> -->
 
-<style>
-	.col-wide {
-		width: 100%;
-		margin: 0 12px;
-		width: calc(100% - 24px) !important;
-		min-width: 280px;
-	}
-	.middle {
-		height: 46px;
-		display: flex;
-	}
-	.logo-block {
-		position: relative;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		max-width: 100%;
-	}
-	.logo {
-		box-sizing: border-box;
-		cursor: pointer;
-		padding: 4px;
-		margin: 0;
-		line-height: 1;
-	}
-</style>
+
