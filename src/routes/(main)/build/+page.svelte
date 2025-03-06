@@ -1,4 +1,6 @@
 <script>
+  import {Titleblock, Breadcrumb,Theme, Container, Button} from "@onsvisual/svelte-components"
+  import { centroids, isLoading, state, selected } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
@@ -16,9 +18,10 @@
   import { cdnbase } from "$lib/config/geography";
   import { download, clip } from "$lib/util/functions";
   import { onMount } from "svelte";
-  import { centroids } from "$lib/stores/mapstore";
   import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
-  let isLoading = false;
+  import AreaMap from "$lib/charts/AreaMap.svelte";
+
+  // let isLoading = false;
   let pymParent; // Variabl for pym
   let embedHash; // Variable for embed hash string
   let tables = []; // Array to hold table data
@@ -33,18 +36,18 @@
   let topicsLookup = Object.fromEntries(topics.map((d) => [d.code, d]));
   // would this not be better off as a MAP and not a dict?
 
-  let state = {
-    mode: "move",
-    radius: 5,
-    select: "add",
-    name: "",
-    showSave: false,
-    showEmbed: false,
-    topics: [topics[0]],
-    topicsExpand: false,
-    topicsFilter: "",
-    comparison: null,
-  };
+  // let state = {
+  //   mode: "move",
+  //   radius: 5,
+  //   select: "add",
+  //   name: "",
+  //   showSave: false,
+  //   showEmbed: false,
+  //   topics: [topics[0]],
+  //   topicsExpand: false,
+  //   topicsFilter: "",
+  //   comparison: null,
+  // };
 
   // Define geography levels from lowest to highest
   const GEOGRAPHY_LEVELS = ['oa', 'lsoa', 'msoa', 'ltla'];
@@ -114,7 +117,7 @@
   }
 
   async function init() {
-    isLoading = true;
+    isLoading.set(true)
 
     // in case we call for a pre loaded area as a hash string
     let hash = window.location.hash;
@@ -227,7 +230,7 @@
           id: "iframe",
           title: "Embedded area profile",
         });
-        isLoading = false;
+        isLoading.set(false)
       } else {
         document.getElementById("iframe").contentWindow.location.hash =
           embedHash;
@@ -347,10 +350,47 @@
       reader.readAsText(file);
     }
   }
+  console.log($state)
 </script>
 
-<ONSloader {isLoading} />
-<nav>
+<!-- <ONSloader isLoading={$isLoading} /> -->
+ <Theme theme='light'background="#F5F5F6">
+  <Breadcrumb links={[
+    { label: 'Home', href: 'https://www.ons.gov.uk/', refresh: true },
+    { label: 'Build a custom area profile', href: `${base}/`, refresh: true },
+    { label: 'Edit map', href: `${base}/draw/` }
+  ]}/>
+  <Container>
+    <h2>Area profile</h2>
+  </Container>
+  <Titleblock title="{$state.name}" >
+  </Titleblock>
+  <Container>
+    <Button variant="secondary">Change area name</Button>
+  </Container>
+  <div style="height:16px;"/>
+
+  <!-- <AreaMap/> -->
+</Theme>
+<Container width="wide" cls="" marginTop>
+    <div class="ons-grid ons-grid-flex">
+      <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
+        <div class="ons-pl-grid-col">
+
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus fermentum felis in velit accumsan, eget pulvinar risus sollicitudin. Pellentesque eget ullamcorper ante. Vivamus id eros tristique, gravida odio at, dapibus nunc. Proin quis ullamcorper sapien, vel mollis massa. Proin quis eros sem. Integer elit quam, eleifend vel est ac, consectetur dignissim quam. Nullam commodo odio non suscipit ullamcorper. Mauris a iaculis purus. Morbi scelerisque pretium auctor. Maecenas iaculis vehicula dolor, ac aliquet felis mattis ut. Sed lacinia suscipit augue vitae facilisis. Quisque dolor neque, dignissim a lobortis non, tincidunt tincidunt eros. Nunc vitae dolor massa.
+          
+          </div>
+      </div>
+      <div class="ons-grid__col ons-col-9@m">
+        <div class="ons-pl-grid-col">
+
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus fermentum felis in velit accumsan, eget pulvinar risus sollicitudin. Pellentesque eget ullamcorper ante. Vivamus id eros tristique, gravida odio at, dapibus nunc. Proin quis ullamcorper sapien, vel mollis massa. Proin quis eros sem. Integer elit quam, eleifend vel est ac, consectetur dignissim quam. Nullam commodo odio non suscipit ullamcorper. Mauris a iaculis purus. Morbi scelerisque pretium auctor. Maecenas iaculis vehicula dolor, ac aliquet felis mattis ut. Sed lacinia suscipit augue vitae facilisis. Quisque dolor neque, dignissim a lobortis non, tincidunt tincidunt eros. Nunc vitae dolor massa.
+          
+          </div>
+      </div>
+    </div>  
+</Container>
+<!-- <nav>
   <div class="nav-left">
     <button class="text" on:click={() => goto(`${base}/draw/`)}>
       <Icon type="chevron" rotation={180} /><span>Edit area</span>
@@ -599,7 +639,7 @@
       {/if}
     </div>
   </article>
-</div>
+</div> -->
 
 <style>
   :global(#lmap) {
@@ -616,5 +656,10 @@
   }
   input[type="checkbox"] {
     margin-left: 1px;
+  }
+
+  h2{
+    color:#206095;
+    margin-bottom: -20px;
   }
 </style>
