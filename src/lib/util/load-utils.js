@@ -1,7 +1,7 @@
 import { cdnbase } from "$lib/config/geography";
 import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
 import { mapObject, centroids, selected, state, user_geometry } from "$lib/stores/mapstore";
-import { newselect } from "$lib/config/toolbar";
+import { newselect, setDrawData } from "$lib/config/toolbar";
 import { get } from "svelte/store";
 import { changeData } from "$lib/util/drawing-utils";
 
@@ -12,13 +12,14 @@ export async function handleHashSelection(hash) {
     try {
       const res = await fetch(`${cdnbase}/${code.slice(0, 3)}/${code}.json`);
       const data = await res.json();
-  
+      console.log(data)
       newselect();
       updateSelectionWithData(data);
       updateMapWithBounds(data.properties.bounds);
       updateStateName(data.properties);
       triggerAnalyticsEvent(data.properties.areacd, state.name);
-    } catch {
+    } catch(error) {
+      console.error("Error fetching or processing data:", error.message, error.stack);
       alert(`Requested GSS code ${code} is unavailable or invalid.`);
     }
     history.replaceState(null, null, " ");
@@ -47,20 +48,40 @@ export function handleDrawDataSelection() {
   }
   
   function updateSelectionWithData(data) {
-    selected.update(s=>[...s,{
-      oa: new Set(centroids.expand(data.properties.c21cds)),
-      lsoa: new Set(
-        centroids.expand(
-          data.properties.c21cds.filter(code => !code.startsWith("e00") && !code.startsWith("w00"))
+    console.log("Updating selection with data:", data);
+
+    if (!data.properties || !Array.isArray(data.properties.c21cds)) {
+      console.error("Invalid data format: c21cds is missing or not an array.");
+      return;
+    }
+
+    let oaSet, lsoaSet;
+    try {
+      oaSet = new Set(get(centroids).expand(data.properties.c21cds,"oa"));
+      lsoaSet = new Set(
+        get(centroids).expand(
+          data.properties.c21cds.filter(code => !code.startsWith("e00") && !code.startsWith("w00")),"lsoa"
         )
-      ),
+      );
+    } catch (error) {
+      console.error("Error expanding centroids:", error);
+      return;
+    }
+
+    selected.update(s=>[...s,{
+      oa: oaSet,
+      lsoa: lsoaSet,
       geo: data.geometry,
     }]);
     user_geometry.set(data.geometry);
     changeData("userGeo", data.geometry);
+
+    console.log("Updated selection:", selected);
+    console.log("Updated user geometry:", user_geometry);
   }
   
   function updateSelection(oa, lsoa, geo) {
+    console.log("Updating selection with:", { oa, lsoa, geo });
     selected.set([{
         oa: new Set(oa),
         lsoa: new Set(get(centroids).expand(lsoa, "lsoa")),
@@ -71,14 +92,17 @@ export function handleDrawDataSelection() {
   }
   
   function updateMapWithBounds(bounds) {
+    console.log("Updating map with bounds:", bounds);
     get(mapObject).fitBounds(bounds, { padding: 40, linear: true });
   }
   
   function updateStateName(properties) {
+    console.log("Updating state name with properties:", properties);
     state.name = properties.hclnm || properties.areanm || properties.areacd;
     setDrawData();
   }
   
   function triggerAnalyticsEvent(areaCode, areaName) {
+    console.log("Triggering analytics event:", { areaCode, areaName });
     analyticsEvent({ event: "hashSelect", areaCode, areaName });
   }  

@@ -226,6 +226,7 @@
 
       // Main execution logic
       let hash = window.location.hash;
+
       if (hash.match(/#[EKNSW]\d{8}/)) {
         handleHashSelection(hash);
       } else if (localStorage.getItem("onsbuild")) {
