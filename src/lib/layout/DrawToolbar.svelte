@@ -13,7 +13,7 @@ export let radius=0.5;
 
 </script>
 
-<div style="z-index:99;position:relative;">
+<div style="z-index:99;position:relative;pointer-events:none;">
   <ToolbarsContainer>
     <Toolbar>
       <ToolbarButton id="move" icon="move" label="Move and Pan" on:click={setPanMode} sticky>
