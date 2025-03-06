@@ -7,8 +7,7 @@ import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/dr
 import Select, { getPlace } from "$lib/ui/Select.svelte";
 
 
-
-let uploader;
+let uploader
 export let state;
 export let radius=0.5;
 
@@ -44,11 +43,11 @@ export let radius=0.5;
 
       <ToolbarDivider />
 
-      <ToolbarButton id="zoomin" icon="zoomin" label="Zoom in" on:click={zoomIn} transient>
+      <ToolbarButton id="zoomin" icon="zoomin" label="Zoom in" on:click={zoomIn} transient disabled={$currentMapZoom >= maxzoom}>
         <p>Get a more detailed view of areas of the map by using the Zoom in </p>
       </ToolbarButton> 
 
-      <ToolbarButton id="zoomout" icon="zoomout" label="Zoom out" on:click={zoomOut} transient>
+      <ToolbarButton id="zoomout" icon="zoomout" label="Zoom out" on:click={zoomOut} transient disabled={$currentMapZoom <= minzoom}>
         <p>and Zoom out tool.</p>
       </ToolbarButton>
       

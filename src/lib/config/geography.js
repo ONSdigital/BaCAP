@@ -56,7 +56,7 @@ export const promoteId = (() => {
 })();
 
 // map constants
-export const minzoom = 4;
+export const minzoom = 6;
 export const maxzoom = 14;
 export const drawtools = true
 export const location = {

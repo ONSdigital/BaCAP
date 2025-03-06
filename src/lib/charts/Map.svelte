@@ -25,7 +25,7 @@
       maxBounds: maxbounds,
       //   pitch: 10, // 30,
       center: [-1, 52.2],
-      zoom: 5,
+      zoom: 6,
       hash: false, // set options in hash string
     });
 
@@ -95,7 +95,7 @@
   onMount(init);
 </script>
 
-<div tabindex="0" aria-label="Map" id="mapcontainer" bind:this={webglCanvas} />
+<div aria-label="Map" id="mapcontainer" bind:this={webglCanvas} />
 
 <style>
   #mapcontainer {
@@ -107,5 +107,8 @@
   }
   :global(.maplibregl-ctrl button) {
     margin: 0;
+  }
+  :global(.maplibregl-ctrl-bottom-right .mapboxgl-ctrl-bottom-right) {
+    bottom:14px;
   }
 </style>

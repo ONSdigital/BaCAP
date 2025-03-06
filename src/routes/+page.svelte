@@ -6,7 +6,8 @@
     Titleblock,
     Button,
     Cards,Card,
-    Footer
+    Footer,
+    Twisty
   } from "@onsvisual/svelte-components";
   import HeaderImage from "$lib/layout/HeaderImage.svelte";
   import Lede from "$lib/layout/Lede.svelte";
@@ -77,28 +78,65 @@
         </Card>
       </Cards>
         <!-- </Section> -->
-        <Section>
+        <Section width="wide">
+          
         
         
 
         <h3>Which datasets are available?</h3>
         <p>This is a list of the datasets available through this tool:</p>
-        <h4>Census 2021 datasets:</h4>
-        <ul>
-          <li>Dataset name 1</li>
-          <li>Dataset name 2</li>
-          <li>Dataset name 3</li>
-          <li>Dataset name 4</li>
+        <Twisty title="Census 2021 datasets">
+          <ul class="list-container">
+            <li class="list-item">Age profile</li>
+            <li class="list-item">Country of birth</li>
+            <li class="list-item">Disability</li>
+            <li class="list-item">Ethnic group</li>
+            <li class="list-item">General health</li>
+            <li class="list-item">Highest level of qualification</li>
+            <li class="list-item">National identity</li>
+            <li class="list-item">Proficiency in English</li>
+            <li class="list-item">Religion</li>
+            <li class="list-item">Sex</li>
+            <li class="list-item">Welsh language skills</li>
+            <li class="list-item">Welsh speaking ability</li>
+            <li class="list-item">Accommodation type</li>
+            <li class="list-item">Household composition</li>
+            <li class="list-item">Household deprivation</li>
+            <li class="list-item">Household size</li>
+            <li class="list-item">Legal partnership status</li>
+            <li class="list-item">Length of residence in the UK</li>
+            <li class="list-item">Number of bedrooms</li>
+            <li class="list-item">Number of cars and vans</li>
+            <li class="list-item">Number of households</li>
+            <li class="list-item">Occupancy rating for bedrooms</li>
+            <li class="list-item">Tenure of household</li>
+            <li class="list-item">Economic activity status</li>
+            <li class="list-item">Employment history</li>
+            <li class="list-item">Hours per week worked</li>
+            <li class="list-item">Occupation</li>
+            <li class="list-item">Socio-economic classification (NS-Sec)</li>
+            <li class="list-item">Provision of unpaid care</li>
+            <li class="list-item">Central heating</li>
+            <li class="list-item">Distance travelled to work</li>
+            <li class="list-item">Method of travel to workplace</li>
+            <li class="list-item">Population</li>
+            <li class="list-item">Residential property sales</li>
+            <li class="list-item">School children and full-time students</li>
+            <li class="list-item">Second address indicator</li>
+            <li class="list-item">Passports held</li>
         </ul>
-        <h4>Non-Census datasets:</h4>
-
-        <ul>
-          <li>Dataset name 1</li>
-          <li>Dataset name 2</li>
-          <li>Dataset name 3</li>
-          <li>Dataset name 4</li>
-        </ul>
-
+        </Twisty>
+        <div style="height: 16px"></div>
+        
+        <Twisty title="Non-Census datasets">
+          <ul class="list-container">
+              <li class="list-item">Residential house sales</li>
+              <li class="list-item">Energy efficiency</li>
+          </ul>
+        </Twisty>
+        <div style="height: 16px"></div>
+      </Section>
+      <Section>
         <h3>How does this tool produce these figures?</h3>
           <p>The tool takes your chosen shape and compares it to your selected datasets.</p>
           <p>It produces a best-fit shape, which is the closest available to your chosen shape. It adds up the data for your best-fit shape and returns it as an estimated total.</p>
@@ -110,3 +148,36 @@
   </div>
 </div>
 <Footer />
+<style>
+  .list-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            list-style-type: none;
+            padding: 0;
+        }
+  .list-item {
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      padding: 10px 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      min-width: 200px;
+      flex: 1 1 auto;
+      transition: all 0.2s ease;
+  }
+  /* .list-item:hover {
+      background-color: #e9ecef;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+  } */
+  @media (max-width: 768px) {
+      .list-item {
+          min-width: 150px;
+      }
+  }
+  @media (max-width: 480px) {
+      .list-item {
+          min-width: 100%;
+      }
+  }
+</style>

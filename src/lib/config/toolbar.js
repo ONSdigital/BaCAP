@@ -8,7 +8,7 @@ import { download, clip } from "$lib/util/functions";
 import {goto} from '$app/navigation';
 import {base} from '$app/paths';
 
-const blank_geo = {type: 'Feature',geometry: {type: 'Polygon',coordinates: [],}}
+export const blank_geo = {type: 'Feature',geometry: {type: 'Polygon',coordinates: [],}}
 
 export function doSelect(e) {
   newselect();

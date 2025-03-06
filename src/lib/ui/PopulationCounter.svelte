@@ -1,8 +1,9 @@
 <script>
     import { tweened } from 'svelte/motion';
     import { cubicOut } from 'svelte/easing';
-    import { onMount, tick } from 'svelte';
-  
+    import { tick } from 'svelte';
+    import { roundCount } from "$lib/util/functions";
+
     export let population = 0;
   
     let count = tweened(0, {
@@ -10,12 +11,9 @@
       easing: cubicOut
     });
 
-    function formatNumber(value) {
-        return value.toLocaleString();
-    }
-  
+ 
     // Update tweened value whenever population changes
-    $: tick().then(() => count.set(Math.round(population)));
+    $: tick().then(() => count.set(roundCount(population)));
   </script>
 
 
@@ -47,6 +45,6 @@
   
   <div class="counter">
     <p>Population selected</p>
-    <p class='bigger'>{formatNumber(Math.round($count))}</p>
+    <p class='bigger'>{roundCount(population).toLocaleString("en-GB")}</p>
   </div>
   

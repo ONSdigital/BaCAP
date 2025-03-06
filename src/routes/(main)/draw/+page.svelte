@@ -1,18 +1,18 @@
 <script>
   import ONSloader from "$lib/ui/ONSloader.svelte";
-  import { goto } from "$app/navigation";
-  import { base } from "$app/paths";
-  import tooltip from "$lib/ui/tooltip";
-  import Select, { getPlace } from "$lib/ui/Select.svelte";
-  import Slider from "$lib/ui/Slider.svelte";
-  import Icon from "$lib/ui/Icon.svelte";
-  import { download, clip } from "$lib/util/functions";
-  import bbox from "@turf/bbox";
+  // import { goto } from "$app/navigation";
+  // import { base } from "$app/paths";
+  // import tooltip from "$lib/ui/tooltip";
+  // import Select, { getPlace } from "$lib/ui/Select.svelte";
+  // import Slider from "$lib/ui/Slider.svelte";
+  // import Icon from "$lib/ui/Icon.svelte";
+  // import { download, clip } from "$lib/util/functions";
+  // import bbox from "@turf/bbox";
   import Map from "$lib/charts/Map.svelte";
   import "$lib/css/maplibre-gl.css";
   import { onMount } from "svelte";
-  import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
-  import { roundCount } from "$lib/util/functions";
+  // import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
+  // import { roundCount } from "$lib/util/functions";
   import {
     mapObject,
     drawType,
@@ -23,13 +23,15 @@
     user_geometry,
     isLoading,
     state,
-    pselect
+    pselect,
+    currentMapZoom
   } from "$lib/stores/mapstore";
-  import { cdnbase } from "$lib/config/geography";
-  import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+  // import { cdnbase } from "$lib/config/geography";
+  // import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+  import { handleHashSelection, handleLocalStorageSelection, handleDrawDataSelection } from "$lib/util/load-utils";
 
   import DrawToolbar from "$lib/layout/DrawToolbar.svelte";
-  import { recolour, newselect, loadGeo } from "$lib/config/toolbar"; 
+  import { recolour } from "$lib/config/toolbar"; 
   import PopulationCounter from "$lib/ui/PopulationCounter.svelte";
 
 
@@ -55,7 +57,7 @@
   };
   const zoomstop = 6;
   let zoom; // prop bound to map zoom level
-  let uploader; // DOM element for geojson file upload
+  // let uploader; // DOM element for geojson file upload
   // $pselect = "0";
   // const blank_geo = {type: 'Feature',geometry: {type: 'Polygon',coordinates: [],}}
 
@@ -122,112 +124,121 @@
       //   user_geometry.set(blank_geo)
       // };
 
+      // let hash = window.location.hash;
+      // if (hash.match(/#[EKNSW]\d{8}/)) {
+      //   let code = hash.slice(1);
+      //   try {
+      //     const res = await fetch(
+      //       `${cdnbase}/${code.slice(0, 3)}/${code}.json`,
+      //     );
+      //     const data = await res.json();
+      //     newselect();
+      //     selected.set([{
+      //       oa: new Set(), 
+      //       lsoa: new Set(),
+      //       geo:blank_geo
+      //     }]);
+      //     user_geometry.set(blank_geo)
+      //     localStorage.clear();
+
+      //     $selected = [
+      //       ...$selected,
+      //       {
+      //         oa: new Set($centroids.expand(data.properties.c21cds)),
+      //         lsoa: new Set($centroids.expand(data.properties.c21cds.filter(code => !code.startsWith('e00') && !code.startsWith('w00')))),
+      //         geo:data.geometry
+      //       },
+      //     ];
+      //     user_geometry.set(data.geometry)
+      //     changeData('userGeo',data.geometry)
+
+      //     $mapObject.fitBounds(data.properties.bounds, { padding: 40 });
+
+      //     state.name = data.properties.hclnm
+      //       ? data.properties.hclnm
+      //       : data.properties.areanm
+      //         ? data.properties.areanm
+      //         : data.properties.areacd;
+      //     setDrawData();
+
+      //     analyticsEvent({
+      //       event: "hashSelect",
+      //       areaCode: data.properties.areacd,
+      //       areaName: state.name,
+      //     });
+      //   } catch {
+      //     alert(`Requested GSS code ${code} is unavailable or invalid.`);
+      //   }
+
+      //   history.replaceState(null, null, " ");
+      // } else if (localStorage.getItem("onsbuild")) {
+      //   var q = JSON.parse(localStorage.getItem("onsbuild"));
+      //   state.name = q.properties.name;
+
+      //   if (!q.properties?.oaAll?.length) {
+      //     newselect();
+      //     return 0;
+      //   }
+        
+
+      //   var bbox = $centroids.boundsFromGeometry(q.geojson);
+
+      //   $mapObject.fitBounds(bbox, {
+      //     padding: 40,
+      //     linear: true,
+      //   });
+
+      //   $selected = [{
+      //       oa: new Set(q.properties.oaAll),
+      //       lsoa: new Set($centroids.expand(q.properties.compressedToLsoa,'lsoa')),
+      //       geo:q.geojson
+      //     }];
+       
+      //   user_geometry.set(q.geojson)  
+      //   changeData('userGeo',q.geojson)
+        
+      // } else if (localStorage.getItem("draw_data") || false) {
+      //   var q = JSON.parse(localStorage.getItem("draw_data"));
+      //   if (!q.oa.length) {
+      //     newselect();
+      //     return 0;
+      //   }
+      //   // var bbox = $centroids.bounds([...q.oa]);
+      //   // var bbox = $centroids.boundsFromGeometry(q.geo);
+      //   var bbox = q.geo ? $centroids.boundsFromGeometry(q.geo) : $centroids.bounds([...q.oa],'oa');
+
+        
+      //   $mapObject.fitBounds(bbox, {
+      //     padding: 40,
+      //     linear: true,
+      //   });
+
+      //   // need some fallback if there's no geo eg. through search for a place
+      //   selected.set([{
+      //     oa:new Set(q.oa),
+      //     lsoa:new Set(q.lsoa),
+      //     geo:q.geo
+      //   }]);
+
+      //   user_geometry.set(q.geo)
+      //   changeData('userGeo',q.geo)
+      // }
+
+      // Main execution logic
       let hash = window.location.hash;
       if (hash.match(/#[EKNSW]\d{8}/)) {
-        let code = hash.slice(1);
-        try {
-          const res = await fetch(
-            `${cdnbase}/${code.slice(0, 3)}/${code}.json`,
-          );
-          const data = await res.json();
-          newselect();
-          selected.set([{
-            oa: new Set(), 
-            lsoa: new Set(),
-            geo:blank_geo
-          }]);
-          user_geometry.set(blank_geo)
-          localStorage.clear();
-
-          $selected = [
-            ...$selected,
-            {
-              oa: new Set($centroids.expand(data.properties.c21cds)),
-              lsoa: new Set($centroids.expand(data.properties.c21cds.filter(code => !code.startsWith('e00') && !code.startsWith('w00')))),
-              geo:data.geometry
-            },
-          ];
-          user_geometry.set(data.geometry)
-          changeData('userGeo',data.geometry)
-
-          $mapObject.fitBounds(data.properties.bounds, { padding: 40 });
-
-          state.name = data.properties.hclnm
-            ? data.properties.hclnm
-            : data.properties.areanm
-              ? data.properties.areanm
-              : data.properties.areacd;
-          setDrawData();
-
-          analyticsEvent({
-            event: "hashSelect",
-            areaCode: data.properties.areacd,
-            areaName: state.name,
-          });
-        } catch {
-          alert(`Requested GSS code ${code} is unavailable or invalid.`);
-        }
-
-        history.replaceState(null, null, " ");
+        handleHashSelection(hash);
       } else if (localStorage.getItem("onsbuild")) {
-        var q = JSON.parse(localStorage.getItem("onsbuild"));
-        state.name = q.properties.name;
-
-        if (!q.properties?.oaAll?.length) {
-          newselect();
-          return 0;
-        }
-        
-
-        var bbox = $centroids.boundsFromGeometry(q.geojson);
-
-        $mapObject.fitBounds(bbox, {
-          padding: 40,
-          linear: true,
-        });
-
-        $selected = [{
-            oa: new Set(q.properties.oaAll),
-            lsoa: new Set($centroids.expand(q.properties.compressedToLsoa,'lsoa')),
-            geo:q.geojson
-          }];
-       
-        user_geometry.set(q.geojson)  
-        changeData('userGeo',q.geojson)
-        
-      } else if (localStorage.getItem("draw_data") || false) {
-        var q = JSON.parse(localStorage.getItem("draw_data"));
-        if (!q.oa.length) {
-          newselect();
-          return 0;
-        }
-        // var bbox = $centroids.bounds([...q.oa]);
-        // var bbox = $centroids.boundsFromGeometry(q.geo);
-        var bbox = q.geo ? $centroids.boundsFromGeometry(q.geo) : $centroids.bounds([...q.oa],'oa');
-
-        
-        $mapObject.fitBounds(bbox, {
-          padding: 40,
-          linear: true,
-        });
-
-        // need some fallback if there's no geo eg. through search for a place
-        selected.set([{
-          oa:new Set(q.oa),
-          lsoa:new Set(q.lsoa),
-          geo:q.geo
-        }]);
-
-        user_geometry.set(q.geo)
-        changeData('userGeo',q.geo)
+        handleLocalStorageSelection("onsbuild");
+      } else if (localStorage.getItem("draw_data")) {
+        handleDrawDataSelection();
       }
 
       // Keep track of map zoom level
-      zoom = $mapObject.getZoom();
-      $mapObject.on("moveend", () => (zoom = $mapObject.getZoom()));
-      console.log('finished map load')
+      $currentMapZoom = $mapObject.getZoom();
+      $mapObject.on("moveend", () => ($currentMapZoom = $mapObject.getZoom()));
+      console.log("finished map load");
       $isLoading = false;
-
       selected.subscribe(recolour);
     });
 
@@ -344,6 +355,7 @@
 
   $:console.log('centroids',$centroids)
 </script>
+
 <div class="draw-page-container">
   <ONSloader isLoading={$isLoading} />
   <div id="map">
@@ -352,14 +364,6 @@
     <Map drawingTools={true} />
   </div>
 </div>
-
-<!-- <input
-      type="file"
-      accept=".geojson,.json"
-      style:display="block"
-      bind:this={uploader}
-      on:input={loadGeo}
-    /> -->
 
 
  <!-- <nav>
