@@ -19,7 +19,8 @@
     ],
     "lowestGeography": "oa",
     "doNotRound":false,
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Population and geography"
   },
   {
     "code": "households",
@@ -41,7 +42,8 @@
     ],
     "lowestGeography": "oa",
     "doNotRound":false,
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Population and geography"
   },
   {
     "code": "residential_property_sales",
@@ -65,7 +67,8 @@
     "lowestGeography": "lsoa",
     "source": "HM Land Registry",
     "doNotRound":true,
-    "timePeriod":"Quarterly rolling annual data"
+    "timePeriod":"Quarterly rolling annual data",
+    "topic": "Housing and energy"
   },
   {
     "code": "resident_age",
@@ -189,7 +192,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demographic information"
   },
   {
     "code": "sex",
@@ -216,7 +220,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demographic information"
   },
   {
     "code": "legal_partnership_status",
@@ -261,7 +266,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demographic information"
   },
   {
     "code": "country_of_birth",
@@ -294,7 +300,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Travel and mobility"
   },
   {
     "code": "passports_all",
@@ -333,7 +340,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Travel and mobility"
   },
   {
     "code": "residence_length",
@@ -378,7 +386,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Travel and mobility"
   },
   {
     "code": "hh_size",
@@ -421,7 +430,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Household characteristics"
   },
   {
     "code": "hh_family_composition",
@@ -454,7 +464,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Household characteristics"
   },
   {
     "code": "hh_deprivation",
@@ -499,7 +510,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Household characteristics"
   },
   {
     "code": "energy_efficiency_of_housing",
@@ -557,7 +569,8 @@
     ],
     "lowestGeography": "lsoa",
     "source": "Office for National Statistics",
-    "timePeriod":"Financial year ending 2023"
+    "timePeriod":"Financial year ending 2023",
+    "topic":"Housing and energy"
   },
   {
     "code": "ethnic_group_tb",
@@ -602,7 +615,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "national_identity_all",
@@ -640,7 +654,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "religion_tb",
@@ -711,7 +726,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "health_in_general",
@@ -758,7 +774,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "disability",
@@ -787,7 +804,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "is_carer",
@@ -828,7 +846,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "english_proficiency",
@@ -873,7 +892,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "welsh_skills_all",
@@ -915,7 +935,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "welsh_skills_speak",
@@ -945,7 +966,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Population and geography"
   },
   {
     "code": "accommodation_type",
@@ -983,7 +1005,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "number_of_cars",
@@ -1022,7 +1045,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "heating_type",
@@ -1059,7 +1083,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "number_bedrooms",
@@ -1098,7 +1123,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "occupancy_rating_bedrooms",
@@ -1143,7 +1169,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "hh_tenure",
@@ -1186,7 +1213,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "alternative_address_indicator",
@@ -1219,7 +1247,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Housing and energy"
   },
   {
     "code": "workplace_travel",
@@ -1271,7 +1300,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Travel and mobility"
   },
   {
     "code": "transport_to_workplace",
@@ -1354,7 +1384,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Travel and mobility"
   },
   {
     "code": "economic_activity",
@@ -1391,7 +1422,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   },
   {
     "code": "has_ever_worked",
@@ -1426,7 +1458,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   },
   {
     "code": "occupation_current",
@@ -1497,7 +1530,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   },
   {
     "code": "ns_sec",
@@ -1568,7 +1602,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   },
   {
     "code": "hours_per_week_worked",
@@ -1609,7 +1644,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   },
   {
     "code": "highest_qualification",
@@ -1656,7 +1692,8 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   },
   {
     "code": "in_full_time_education",
@@ -1683,6 +1720,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021"
+    "source": "Office for National Statistics - Census 2021",
+    "topic":"Economic and employment status"
   }
 ]

@@ -1,5 +1,14 @@
 <script>
-  import {Titleblock, Breadcrumb,Theme, Container, Button} from "@onsvisual/svelte-components"
+  import {
+    Titleblock,
+    Breadcrumb,
+    Theme,
+    Container,
+    Button,
+    Checkbox,
+    Divider,
+    Twisty,
+  } from "@onsvisual/svelte-components";
   import { centroids, isLoading, state, selected } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
@@ -31,7 +40,7 @@
   let coverage = ["E", "W"];
   let topics = [...topicsAll]; // Topics might be filtered based on coverage
   let uploader; // DOM element for geojson file upload
-  let highestLevel='oa';
+  let highestLevel = "oa";
 
   let topicsLookup = Object.fromEntries(topics.map((d) => [d.code, d]));
   // would this not be better off as a MAP and not a dict?
@@ -49,27 +58,44 @@
   //   comparison: null,
   // };
 
-  // Define geography levels from lowest to highest
-  const GEOGRAPHY_LEVELS = ['oa', 'lsoa', 'msoa', 'ltla'];
+  let topicsGrouped = {};
 
-  const geographyLookup ={"oa":"Output area", "lsoa":"Lower layer super output area", "msoa":"Middle layer super output area","ltla":"Lower tier local authority"}
+  topicsAll.forEach((item) => {
+    if (!topicsGrouped[item.topic]) {
+      topicsGrouped[item.topic] = [];
+    }
+    topicsGrouped[item.topic].push(item);
+  });
+
+  let selectComparison = true;
+
+  // Define geography levels from lowest to highest
+  const GEOGRAPHY_LEVELS = ["oa", "lsoa", "msoa", "ltla"];
+
+  const geographyLookup = {
+    oa: "Output area",
+    lsoa: "Lower layer super output area",
+    msoa: "Middle layer super output area",
+    ltla: "Lower tier local authority",
+  };
 
   // Creates a geography filter function for use in a filter chain
   const geographyFilter = (selectedGeography) => {
-    const selectedLevel = GEOGRAPHY_LEVELS.indexOf(selectedGeography.toLowerCase());
-    
+    const selectedLevel = GEOGRAPHY_LEVELS.indexOf(
+      selectedGeography.toLowerCase()
+    );
+
     // Return a filter function
     return (topic) => {
-        // If selected level is lsoa or higher, keep all topics. this is hardcoded
-        if (selectedLevel >= GEOGRAPHY_LEVELS.indexOf('lsoa')) {
-            return true;
-        }
-        // For oa, only keep topics with lowestGeography === 'oa'
-        return topic.lowestGeography?.toLowerCase() === 'oa';
+      // If selected level is lsoa or higher, keep all topics. this is hardcoded
+      if (selectedLevel >= GEOGRAPHY_LEVELS.indexOf("lsoa")) {
+        return true;
+      }
+      // For oa, only keep topics with lowestGeography === 'oa'
+      return topic.lowestGeography?.toLowerCase() === "oa";
     };
   };
 
-  
   function filterTopics(topics, selected, regex, highestLevel) {
     /// display only those which exist
     let topicsStart = [];
@@ -78,7 +104,7 @@
     [...topics]
       .filter(geographyFilter(highestLevel))
       .filter(
-        (t) => !t.coverage || t.coverage.every((c) => coverage.includes(c)),
+        (t) => !t.coverage || t.coverage.every((c) => coverage.includes(c))
       )
       .sort((a, b) => a.label.localeCompare(b.label))
       .forEach((topic) => {
@@ -111,13 +137,13 @@
           : data.properties.areanm
             ? data.properties.areanm
             : code,
-        highestLevel: $centroids.identifyHighestGeography(compressed) 
+        highestLevel: $centroids.identifyHighestGeography(compressed),
       },
     };
   }
 
   async function init() {
-    isLoading.set(true)
+    isLoading.set(true);
 
     // in case we call for a pre loaded area as a hash string
     let hash = window.location.hash;
@@ -160,7 +186,7 @@
     coverage = par.coverage;
     parents = par.parents;
     topics = topicsAll.filter(
-      (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c)),
+      (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))
     );
     state.comparison = parents[0];
 
@@ -168,7 +194,7 @@
     // console.warn(state.compressed);
   }
 
-  onMount(init);
+  // onMount(init);
 
   ////////////////////////////////////////////////////////////////
   // Processing functions
@@ -188,7 +214,7 @@
       }
       tables.push({ code: data[i].code, data: table });
     }
-    console.log('tables',tables)
+    console.log("tables", tables);
     return tables;
   }
 
@@ -198,7 +224,7 @@
     comp,
     data,
     includemap,
-    includecomp,
+    includecomp
   ) {
     if (start) {
       var ls = JSON.parse(localStorage.getItem("onsbuild"));
@@ -209,7 +235,7 @@
       let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
       tables = await getData(
         topics.filter((t) => codes.includes(t.code)),
-        compcds,
+        compcds
       );
 
       embedHash = `#/?name=${btoa(name)}${
@@ -230,7 +256,7 @@
           id: "iframe",
           title: "Embedded area profile",
         });
-        isLoading.set(false)
+        isLoading.set(false);
       } else {
         document.getElementById("iframe").contentWindow.location.hash =
           embedHash;
@@ -249,7 +275,7 @@
     state.comparison,
     state.topics,
     includemap,
-    includecomp,
+    includecomp
   );
 
   function makeEmbed(embedHash) {
@@ -264,7 +290,7 @@
     csv += `"Source: Office for National Statistics - Census 2021"\n\n`;
     csv += `"Data generated by the Build a custom area profile tool on ${new Date().toLocaleDateString(
       "en-GB",
-      { year: "numeric", month: "short", day: "numeric" },
+      { year: "numeric", month: "short", day: "numeric" }
     )}"\n`;
     csv += `"The data in this profile are aggregated from small areas on a best-fit basis, and therefore may differ slightly from other sources."\n\n`;
     csv += `"Variable","Category","${getName("capitalise")}","${state.comparison.areanm}","Unit","${getName("capitalise")}","${state.comparison.areanm}","Unit","Base population","Source","Geography","Time period"\n`;
@@ -275,20 +301,21 @@
       for (let i = 0; i < len; i++) {
         csv += `"${meta.label}","${meta.categories[i].label}",${
           t.data[i].value ? t.data[i].value : "NA"
-        },${
-          t.data[len + i].value ? t.data[len + i].value : "NA"
-        },"${
-        meta.unit}","${
-        t.data[i].percentage ? t.data[i].count : "NA"}","${
-        t.data[len + i].percentage ? t.data[len + i].count : "NA"}","${
-        meta.base.replace("all ","")}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.timePeriod ? meta.timePeriod : "2021"}"\n`;
+        },${t.data[len + i].value ? t.data[len + i].value : "NA"},"${
+          meta.unit
+        }","${t.data[i].percentage ? t.data[i].count : "NA"}","${
+          t.data[len + i].percentage ? t.data[len + i].count : "NA"
+        }","${meta.base.replace(
+          "all ",
+          ""
+        )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.timePeriod ? meta.timePeriod : "2021"}"\n`;
       }
     });
 
     var file = new Blob([csv], { type: "text/csv" });
     download(
       file,
-      `${state.name ? state.name.replaceAll(" ", "_") : "custom_area_data"}.csv`,
+      `${state.name ? state.name.replaceAll(" ", "_") : "custom_area_data"}.csv`
     );
     let opts = state.name ? { areaName: state.name } : {};
     analyticsEvent({ event: "fileDownload", fileExtension: "csv", ...opts });
@@ -350,46 +377,119 @@
       reader.readAsText(file);
     }
   }
-  console.log($state)
+  console.log($state);
+
+  let showAll = false;
+  function handleShowAllClick() {
+    showAll = !showAll;
+  }
 </script>
 
 <!-- <ONSloader isLoading={$isLoading} /> -->
- <Theme theme='light'background="#F5F5F6">
-  <Breadcrumb links={[
-    { label: 'Home', href: 'https://www.ons.gov.uk/', refresh: true },
-    { label: 'Build a custom area profile', href: `${base}/`, refresh: true },
-    { label: 'Edit map', href: `${base}/draw/` }
-  ]}/>
-  <Container>
+<Theme theme="light" background="#F5F5F6">
+  <Breadcrumb
+    width="wider"
+    links={[
+      { label: "Home", href: "https://www.ons.gov.uk/", refresh: true },
+      { label: "Build a custom area profile", href: `${base}/`, refresh: true },
+      { label: "Edit map", href: `${base}/draw/` },
+    ]}
+  />
+  <Container width="wider">
     <h2>Area profile</h2>
+    
   </Container>
-  <Titleblock title="{$state.name}" >
-  </Titleblock>
-  <Container>
+  <Titleblock width="wider" title={$state.name}></Titleblock>
+  <Container width="wider">
     <Button variant="secondary">Change area name</Button>
   </Container>
-  <div style="height:16px;"/>
+  <div style="height:16px;" />
 
   <!-- <AreaMap/> -->
 </Theme>
-<Container width="wide" cls="" marginTop>
-    <div class="ons-grid ons-grid-flex">
-      <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
-        <div class="ons-pl-grid-col">
+<Container width="wider" marginTop>
+  <div class="ons-grid ons-grid-flex">
+    <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
+      <Checkbox
+        id="selectComparison"
+        label="Select comparison area"
+        bind:checked={selectComparison}
+        compact
+      ></Checkbox>
 
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus fermentum felis in velit accumsan, eget pulvinar risus sollicitudin. Pellentesque eget ullamcorper ante. Vivamus id eros tristique, gravida odio at, dapibus nunc. Proin quis ullamcorper sapien, vel mollis massa. Proin quis eros sem. Integer elit quam, eleifend vel est ac, consectetur dignissim quam. Nullam commodo odio non suscipit ullamcorper. Mauris a iaculis purus. Morbi scelerisque pretium auctor. Maecenas iaculis vehicula dolor, ac aliquet felis mattis ut. Sed lacinia suscipit augue vitae facilisis. Quisque dolor neque, dignissim a lobortis non, tincidunt tincidunt eros. Nunc vitae dolor massa.
-          
-          </div>
-      </div>
-      <div class="ons-grid__col ons-col-9@m">
-        <div class="ons-pl-grid-col">
+      {#if selectComparison}
+        <div>
+          <Select
+            value={state.comparison}
+            autoClear={false}
+            isClearable
+            on:select={(e) => (state.comparison = e.detail)}
+            on:clear={() => (state.comparison = null)}
+          />
+        </div>
+      {/if}
+      <hr class="hr-full" />
+      <div style="display: flex;justify-content: space-between;align-items:center;">
+        <p class="font-bold">Datasets</p>
 
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus fermentum felis in velit accumsan, eget pulvinar risus sollicitudin. Pellentesque eget ullamcorper ante. Vivamus id eros tristique, gravida odio at, dapibus nunc. Proin quis ullamcorper sapien, vel mollis massa. Proin quis eros sem. Integer elit quam, eleifend vel est ac, consectetur dignissim quam. Nullam commodo odio non suscipit ullamcorper. Mauris a iaculis purus. Morbi scelerisque pretium auctor. Maecenas iaculis vehicula dolor, ac aliquet felis mattis ut. Sed lacinia suscipit augue vitae facilisis. Quisque dolor neque, dignissim a lobortis non, tincidunt tincidunt eros. Nunc vitae dolor massa.
-          
-          </div>
+        <button class="btn-link" aria-label="Show all datasets" on:click={handleShowAllClick}>{showAll ? 'Hide all' : 'Show all'}</button
+        >
       </div>
-    </div>  
+
+      {#each Object.entries(topicsGrouped) as [topic, items]}
+        <Twisty title={topic} open={showAll}>
+          {#each items as item}
+            <Checkbox
+              id={item.code}
+              label={item.label}
+              bind:checked={state.topics}
+              value={item.code}
+              compact
+            ></Checkbox>
+          {/each}
+        </Twisty>
+        <hr class="hr-full" />
+      {/each}
+
+      <div style="height:16px;" />
+
+      <p class="font-bold">Help and guidance for topics</p>
+      <p>
+        More information about the definition and background of topics is
+        available on our <a href="{base}/glossary/">topic glossary</a>.
+      </p>
+      <p class="font-bold">Looking for another topic?</p>
+      <p>
+        Due to technical constraints, not all Census 2021 topics can be included
+        in this tool.
+      </p>
+      <p>
+        Data for a wider range of topics can be found on <a
+          href="https://www.nomisweb.co.uk/sources/census_2021">Nomis</a
+        >. Multi-variate data can be found via the
+        <a href="https://www.ons.gov.uk/datasets/create"
+          >Create a custom dataset</a
+        > service.
+      </p>
+      <div class="ons-u-mb-xl"></div>
+    </div>
+    <div class="ons-grid__col ons-col-9@m">
+      <div class="ons-pl-grid-col">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+        fermentum felis in velit accumsan, eget pulvinar risus sollicitudin.
+        Pellentesque eget ullamcorper ante. Vivamus id eros tristique, gravida
+        odio at, dapibus nunc. Proin quis ullamcorper sapien, vel mollis massa.
+        Proin quis eros sem. Integer elit quam, eleifend vel est ac, consectetur
+        dignissim quam. Nullam commodo odio non suscipit ullamcorper. Mauris a
+        iaculis purus. Morbi scelerisque pretium auctor. Maecenas iaculis
+        vehicula dolor, ac aliquet felis mattis ut. Sed lacinia suscipit augue
+        vitae facilisis. Quisque dolor neque, dignissim a lobortis non,
+        tincidunt tincidunt eros. Nunc vitae dolor massa.
+      </div>
+    </div>
+  </div>
 </Container>
+
 <!-- <nav>
   <div class="nav-left">
     <button class="text" on:click={() => goto(`${base}/draw/`)}>
@@ -658,8 +758,23 @@
     margin-left: 1px;
   }
 
-  h2{
-    color:#206095;
+  h2 {
+    color: #206095;
     margin-bottom: -20px;
+  }
+
+  .font-bold {
+    font-weight: 700;
+  }
+
+  hr.hr-full {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid #707071;
+  }
+
+  .ons-collapsible__content .ons-js-collapsible-content{
+    border-left: none;
   }
 </style>
