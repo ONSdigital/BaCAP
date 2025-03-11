@@ -6,6 +6,8 @@
   import ONSFooter from "$lib/layout/ONSFooter.svelte";
   // import Title from "$lib/layout/Title.svelte";
   import { Footer } from "@onsvisual/svelte-components";
+  import { page } from "$app/stores";
+
 
   // GOOGLE ANALYTICS
   // Settings for page analytics. Values must be shared with <AnalyticsBanner> component
@@ -44,18 +46,24 @@
     content="Create your own profile for local areas with data for England and Wales. Data topics include population, age, sex, ethnicity, religion, the work people do, and the homes they live in."
   />
 </svelte:head>
-<div class="ons-grid--flex ons-grid--column">
-  <div>
-    <AnalyticsBanner {analyticsId} {analyticsProps} />
-  <header>
-    <ONSHeader />
-  </header>
-  </div>
+{#if $page.url.pathname.includes("embed")}
+  <slot />  
+{:else}
+  <div class="ons-grid--flex ons-grid--column">
+    <div>
+      <AnalyticsBanner {analyticsId} {analyticsProps} />
+    <header>
+      <ONSHeader />
+    </header>
+    </div>
 
-  <div class="ons-u-flex-grow">
-    <main>
-        <slot />
-    </main>
+    <div class="ons-u-flex-grow">
+      <main>
+          <slot />
+      </main>
+    </div>
   </div>
-</div>
+{/if}
+
+
 

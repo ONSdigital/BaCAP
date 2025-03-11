@@ -66,3 +66,6 @@ export const currentMapZoom = writable(5);
 export const isLoading = writable(false);
 export const state = writable({});
 export const pselect = writable(0);
+export const buildstate = writable({});
+export const tables = writable([]);
+export const topicsLookup = writable({});
