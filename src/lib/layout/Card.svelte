@@ -1,12 +1,14 @@
 <script>
   import { getContext } from "svelte";
+  import { geographyLookup } from "$lib/util/build-utils";
 
   export let colspan = 1; // 1, 2 or 3
   export let rowspan = 1;
   export let title = null;
   export let links = null;
   export let blank = false;
-  export let source 
+  export let source
+  export let geography 
 
   const { cols } = getContext("tiles");
 </script>
@@ -29,6 +31,10 @@
     </header>
   {/if}
   <slot />
+  {#if geography}
+  <span class="footnote">Geography: {@html geographyLookup[geography]}</span>
+  <br/>
+  {/if}
   {#if source}
   <span class="footnote"
   >Source: {@html source}</span

@@ -12,7 +12,6 @@ export async function handleHashSelection(hash) {
     try {
       const res = await fetch(`${cdnbase}/${code.slice(0, 3)}/${code}.json`);
       const data = await res.json();
-      console.log(data)
       newselect();
       updateSelectionWithData(data);
       updateMapWithBounds(data.properties.bounds);
@@ -27,13 +26,13 @@ export async function handleHashSelection(hash) {
   
 export function handleLocalStorageSelection(storageKey) {
     const q = JSON.parse(localStorage.getItem(storageKey));
-    if (!q || !q.properties?.oaAll?.length) {
+    if (!q || !q.properties?.oa_all?.length) {
         newselect();
       return;
     }
     const bbox = get(centroids).boundsFromGeometry(q.geojson);
     updateMapWithBounds(bbox);
-    updateSelection(q.properties.oaAll, q.properties.compressedToLsoa, q.geojson);
+    updateSelection(q.properties.oa_all, q.properties.compressedToLsoa, q.geojson);
   }
   
 export function handleDrawDataSelection() {
@@ -48,7 +47,6 @@ export function handleDrawDataSelection() {
   }
   
   function updateSelectionWithData(data) {
-    console.log("Updating selection with data:", data);
 
     if (!data.properties || !Array.isArray(data.properties.c21cds)) {
       console.error("Invalid data format: c21cds is missing or not an array.");
@@ -75,13 +73,9 @@ export function handleDrawDataSelection() {
     }]);
     user_geometry.set(data.geometry);
     changeData("userGeo", data.geometry);
-
-    console.log("Updated selection:", selected);
-    console.log("Updated user geometry:", user_geometry);
   }
   
   function updateSelection(oa, lsoa, geo) {
-    console.log("Updating selection with:", { oa, lsoa, geo });
     selected.set([{
         oa: new Set(oa),
         lsoa: new Set(get(centroids).expand(lsoa, "lsoa")),
@@ -92,17 +86,14 @@ export function handleDrawDataSelection() {
   }
   
   function updateMapWithBounds(bounds) {
-    console.log("Updating map with bounds:", bounds);
     get(mapObject).fitBounds(bounds, { padding: 40, linear: true });
   }
   
   function updateStateName(properties) {
-    console.log("Updating state name with properties:", properties);
     state.name = properties.hclnm || properties.areanm || properties.areacd;
     setDrawData();
   }
   
   function triggerAnalyticsEvent(areaCode, areaName) {
-    console.log("Triggering analytics event:", { areaCode, areaName });
     analyticsEvent({ event: "hashSelect", areaCode, areaName });
   }  

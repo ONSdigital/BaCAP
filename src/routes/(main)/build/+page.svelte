@@ -6,164 +6,104 @@
     Container,
     Button,
     Checkbox,
-    Divider,
     Twisty,
     Checkboxes,
   } from "@onsvisual/svelte-components";
-  import { centroids, isLoading, state, selected } from "$lib/stores/mapstore";
+  import { isLoading } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  import { flip } from "svelte/animate";
+  // import { flip } from "svelte/animate";
   import pym from "pym.js";
-  import tooltip from "$lib/ui/tooltip";
-  import Notice from "$lib/ui/Notice.svelte";
-  import TopicItem from "$lib/ui/TopicItem.svelte";
-  import Icon from "$lib/ui/Icon.svelte";
+  // import tooltip from "$lib/ui/tooltip";
+  // import Notice from "$lib/ui/Notice.svelte";
+  // import TopicItem from "$lib/ui/TopicItem.svelte";
+  // import Icon from "$lib/ui/Icon.svelte";
   import Select from "$lib/ui/Select.svelte";
   import topicsAll from "$lib/config/topics.json";
-  import { simplifyGeo, geoBlob } from "$lib/util/drawing-utils";
+  import { simplifyGeo } from "$lib/util/drawing-utils";
   import getTable from "$lib/util/get-table";
   import getParents from "$lib/util/get-parents";
-  import { cdnbase } from "$lib/config/geography";
-  import { download, clip } from "$lib/util/functions";
+  // import { cdnbase } from "$lib/config/geography";
+  // import { download, clip } from "$lib/util/functions";
   import { onMount } from "svelte";
   import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
-  import {getAreaData, getName, downloadData, geographyLookup, GEOGRAPHY_LEVELS, makeEmbed, copyEmbed, showEmbed } from "$lib/util/build-utils";
-  import { buildstate, tables, topicsLookup } from "$lib/stores/mapstore";
+  import {
+    getAreaData,
+    downloadData,
+    makeEmbed,
+    copyEmbed,
+    showEmbed,
+    geographyFilter,
+    handleDatasetsShowAllClick,
+    savePNG,
+    checkForHashSelection,
+  } from "$lib/util/build-utils";
+  import { buildstate } from "$lib/stores/mapstore";
 
-  // let isLoading = false;
-  let pymParent; // Variabl for pym
+  // Embed-related variables
+  let pymParent; // Variable for pym
   let embedHash; // Variable for embed hash string
-  // let tables = []; // Array to hold table data
-  let includemap = true;
-  let includecomp = false;
-  let parents;
-  let coverage = ["E", "W"];
-  let topics = [...topicsAll]; // Topics might be filtered based on coverage
-  let uploader; // DOM element for geojson file upload
-  let highestLevel = "oa";
 
-  $topicsLookup = Object.fromEntries(topics.map((d) => [d.code, d]));
-  // would this not be better off as a MAP and not a dict?
+  // Geography & Coverage
+  let highestLevel = "oa";
+  let coverage = ["E", "W"];
+
+  // Data storage
+  let tables = []; // Array to hold table data
+  let topicsGrouped = {};
+  let currentTopics = [];
+
+  // UI States
+  let includemap = false;
+  let includecomp = false;
+  let store;
+  let geojson;
+  let parents;
+  let topics = [];
+  // let uploader; // DOM element for geojson file upload
+  // let selectComparison = true;
+
 
   $buildstate = {
-    mode: "move",
-    radius: 5,
-    select: "add",
-    name: "",
+    start: false,
+    // mode: "move",
+    // radius: 5,
+    // select: "add",
+    name: "Selected area",
     showSave: false,
     showEmbed: false,
-    topics: [topics[0]],
-    topicsExpand: false,
-    topicsFilter: "",
+    topics: [],
+    // topicsExpand: false,
+    // topicsFilter: "",
     comparison: null,
+    showAllDatasets: false,
   };
 
-  let topicsGrouped = {};
 
-  let currentTopics = [];
-  tables.subscribe(value => currentTopics = value);
 
   function handleCheckboxChange(event) {
     const { id, checked } = event.detail;
-    tables.update(currentTopics => {
-      if (checked && !currentTopics.includes(id)) {
-        return [...currentTopics, id];
-      } else if (!checked && currentTopics.includes(id)) {
-        return currentTopics.filter(topicId => topicId !== id);
+    const topic = topicsAll.find((t) => t.code === id);
+
+    if (!topic) return;
+
+    const topicCodes = new Set(currentTopics.map((t) => t.code));
+
+    if (checked) {
+      if (!topicCodes.has(id)) {
+        currentTopics = [...currentTopics, topic];
       }
-      return currentTopics;
-    });
+    } else {
+      currentTopics = currentTopics.filter((t) => t.code !== id);
+    }
   }
-
-  let selectComparison = true;
-
-  // Creates a geography filter function for use in a filter chain
-  const geographyFilter = (selectedGeography) => {
-    const selectedLevel = GEOGRAPHY_LEVELS.indexOf(
-      selectedGeography.toLowerCase()
-    );
-
-    // Return a filter function
-    return (topic) => {
-      // If selected level is lsoa or higher, keep all topics. this is hardcoded
-      if (selectedLevel >= GEOGRAPHY_LEVELS.indexOf("lsoa")) {
-        return true;
-      }
-      // For oa, only keep topics with lowestGeography === 'oa'
-      return topic.lowestGeography?.toLowerCase() === "oa";
-    };
-  };
-
-  function filterTopics(topics, selected, regex, highestLevel) {
-    /// display only those which exist
-    let topicsStart = [];
-    let topicsEnd = [];
-
-    [...topics]
-      .filter(geographyFilter(highestLevel))
-      .filter(
-        (t) => !t.coverage || t.coverage.every((c) => coverage.includes(c))
-      )
-      .sort((a, b) => a.label.localeCompare(b.label))
-      .forEach((topic) => {
-        if (selected.includes(topic)) {
-          topicsStart.push(topic);
-        } else {
-          topicsEnd.push(topic);
-        }
-      });
-    if (regex) topicsEnd = topicsEnd.filter((t) => regex.test(t.label));
-    return [...topicsStart, ...topicsEnd];
-  }
-  $: regex =
-    state.topicsFilter.length > 1 ? new RegExp(state.topicsFilter, "i") : null;
-
-  let store;
-  let geojson;
-
-  // async function getAreaData(code, options = {}) {
-  //   const res = await fetch(`${cdnbase}/${code.slice(0, 3)}/${code}.json`);
-  //   const data = await res.json();
-  //   const compressed = data.properties.c21cds;
-  //   return {
-  //     geojson: data,
-  //     properties: {
-  //       oa_all: !options?.comparison ? $centroids.expand(compressed) : null,
-  //       compressed,
-  //       name: data.properties.hclnm
-  //         ? data.properties.hclnm
-  //         : data.properties.areanm
-  //           ? data.properties.areanm
-  //           : code,
-  //       highestLevel: $centroids.identifyHighestGeography(compressed),
-  //     },
-  //   };
-  // }
 
   async function init() {
     isLoading.set(true);
 
-    // in case we call for a pre loaded area as a hash string
-    let hash = window.location.hash;
-    if (hash.match(/#[EKNSW]\d{8}/)) {
-      let code = hash.slice(1);
-      try {
-        const info = await getAreaData(code);
-        localStorage.setItem("onsbuild", JSON.stringify(info));
-        analyticsEvent({
-          event: "hashSelect",
-          areaCode: code,
-          areaName: info.properties.name,
-        });
-      } catch (err) {
-        console.error("Error fetching or processing data:", err.message, err.stack);
-        console.warn(`Requested GSS code ${code} is unavailable or invalid.`);
-        history.replaceState(null, "", " ");
-      }
-    }
+    checkForHashSelection();
 
     // resume as normal
     store = JSON.parse(localStorage.getItem("onsbuild"));
@@ -173,39 +113,7 @@
       goto(`${base}/draw/`);
     }
 
-    highestLevel = store.properties.highestLevel;
-
-    topicsAll
-      .filter(geographyFilter(highestLevel))
-      .filter(
-        (t) => !t.coverage || t.coverage.every((c) => coverage.includes(c))
-      )
-      .forEach((item) => {
-        if (!topicsGrouped[item.topic]) {
-          topicsGrouped[item.topic] = [];
-        }
-        topicsGrouped[item.topic].push(item);
-      });
-
-    geojson = simplifyGeo(store.geojson);
-
-    let props = store.properties;
-    // console.log('props', props);
-
-    $buildstate.name = props.name;
-    $buildstate.codes = props.oa_all;
-    $buildstate.compressed = props.compressed;
-
-    let par = await getParents($buildstate.compressed);
-    coverage = par.coverage;
-    parents = par.parents;
-    topics = topicsAll.filter(
-      (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))
-    );
-    $buildstate.comparison = parents[0];
-
-    $buildstate.start = true;
-    // console.warn(state.compressed);
+    processStoreData();
     isLoading.set(false);
   }
 
@@ -216,19 +124,18 @@
   ////////////////////////////////////////////////////////////////
   let cache = {};
   async function getData(data, comp) {
-    if (!state.start) return [];
-    if (!cache[comp]) cache[comp] = {};
-    let tables = [];
-    for (let i = 0; i < data.length; i++) {
-      let table;
-      if (cache[comp][data[i].code]) {
-        table = cache[comp][data[i].code];
-      } else {
-        table = await getTable(data[i], state, comp);
-        cache[comp][data[i].code] = table;
-      }
-      tables.push({ code: data[i].code, data: table });
-    }
+    if (!$buildstate.start) return [];
+
+    cache[comp] ||= {};
+    let tables = await Promise.all(
+      data.map(async (d) => {
+        if (!cache[comp][d.code]) {
+          cache[comp][d.code] = await getTable(d, $buildstate, comp);
+        }
+        return { code: d.code, data: cache[comp][d.code] };
+      })
+    );
+
     console.log("tables", tables);
     return tables;
   }
@@ -241,186 +148,182 @@
     includemap,
     includecomp
   ) {
-    if (start) {
-      var ls = JSON.parse(localStorage.getItem("onsbuild"));
-      ls.properties.name = name;
-      localStorage.setItem("onsbuild", JSON.stringify(ls));
+    if (!start) return;
 
-      let codes = data.map((d) => d.code);
-      let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
-      $tables = await getData(
-        topics.filter((t) => codes.includes(t.code)),
-        compcds
-      );
+    updateLocalStorage(name);
+    let codes = data.map((d) => d.code);
+    let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
 
-      embedHash = `#/?name=${btoa(name)}${
-        comp ? `&comp=${btoa(comp.areanm)}` : ""
-      }&tabs=${btoa(JSON.stringify($tables))}${
-        includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
-      }${
-        includemap && includecomp && comp?.geometry
-          ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
-          : ""
-      }`;
+    tables = await getData(filterTopicsByCodes(codes), compcds);
+    embedHash = generateEmbedHash(name, comp, includemap, includecomp);
 
-      // alert(population)
+    updateEmbedFrame();
+  }
 
-      if (!pymParent) {
-        pymParent = new pym.Parent("embed", `${base}/embed/${embedHash}`, {
-          name: "embed",
-          id: "iframe",
-          title: "Embedded area profile",
-        });
-        isLoading.set(false);
-      } else {
-        document.getElementById("iframe").contentWindow.location.hash =
-          embedHash;
-      }
+  function updateLocalStorage(name) {
+    let ls = JSON.parse(localStorage.getItem("onsbuild"));
+    ls.properties.name = name;
+    localStorage.setItem("onsbuild", JSON.stringify(ls));
+  }
+
+  function filterTopicsByCodes(codes) {
+    return topics.filter((t) => codes.includes(t.code));
+  }
+
+  function generateEmbedHash(name, comp, includemap, includecomp) {
+    return `#/?name=${btoa(name)}${
+      comp ? `&comp=${btoa(comp.areanm)}` : ""
+    }&tabs=${btoa(JSON.stringify(tables))}${
+      includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
+    }${
+      includemap && includecomp && comp?.geometry
+        ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
+        : ""
+    }`;
+  }
+
+  function updateEmbedFrame() {
+    if (!pymParent) {
+      pymParent = new pym.Parent("embed", `${base}/embed/${embedHash}`, {
+        name: "embed",
+        id: "iframe",
+        title: "Embedded area profile",
+      });
+    } else {
+      document.getElementById("iframe").contentWindow.location.hash = embedHash;
     }
   }
 
-  
+  function filterTopics(allTopics, level, coverage) {
+    return allTopics
+      .filter(geographyFilter(level))
+      .filter(
+        (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))
+      );
+  }
+
+  function groupTopics(topics) {
+    return topics.reduce((acc, item) => {
+      if (!acc[item.topic]) acc[item.topic] = [];
+      acc[item.topic].push(item);
+      return acc;
+    }, {});
+  }
+
+  async function processStoreData() {
+    highestLevel = store.properties.highestLevel;
+    topics = filterTopics(topicsAll, highestLevel, coverage);
+    topicsGrouped = groupTopics(topics);
+    geojson = simplifyGeo(store.geojson);
+    parents = await getParents(store.properties.compressed);
+    coverage = parents.coverage;
+
+    $buildstate = {
+      ...$buildstate,
+      name: store.properties.name,
+      codes: store.properties.oa_all,
+      compressed: store.properties.compressed,
+      comparison: parents.parents[0],
+      start: true,
+    };
+
+    currentTopics = [topics[0]]; // Default to population topic
+  }
 
   $: updateProfile(
     $buildstate.start,
     $buildstate.name,
     $buildstate.comparison,
-    $buildstate.topics,
+    currentTopics,
     includemap,
     includecomp
   );
-
-  $:{console.log(currentTopics)}
-
-  
-
-  function loadGeo() {
-    let file = uploader.files[0] ? uploader.files[0] : null;
-
-    if (file) {
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        try {
-          // Read + simplify the boundary
-          let b = JSON.parse(e.target.result);
-
-          if (b.type == "FeatureCollection") {
-            b = b.features[0];
-          } else if (b.type == "Geometry") {
-            b = { type: "Feature", geometry: b };
-          }
-          if (!b.properties) b.properties = {};
-
-          if (!b?.properties?.codes_compressed && b?.geometry) {
-            if (JSON.stringify(b.geometry).length > 10000)
-              b.geometry = simplifyGeo(b.geometry, 10000);
-            const oas = $centroids.contains(b);
-            b.properties.codes_compressed = $centroids.compress([...oas.oa]);
-          }
-
-          if (b) {
-            const props = b.properties;
-            state.comparison = {
-              areanm: props.areanm
-                ? props.areanm
-                : props.name
-                  ? props.name
-                  : "Custom area",
-              areacd: props.areacd
-                ? props.areacd
-                : props.code
-                  ? props.code
-                  : "",
-              group: "Uploaded area",
-              geometry: b.geometry,
-              codes: b.properties.codes_compressed,
-            };
-            analyticsEvent({
-              event: "geoUpload",
-              areaName: state.comparison.areanm,
-            });
-          } else {
-            alert("Please upload a valid GeoJSON file.");
-          }
-        } catch {
-          alert("Error. Please make sure you uploaded a valid GeoJSON file.");
-        }
-      };
-      reader.readAsText(file);
-    }
-  }
-  console.log($buildstate);
-
-  let showAll = false;
-  function handleShowAllClick() {
-    showAll = !showAll;
-  }
 </script>
 
-<!-- <ONSloader isLoading={$isLoading} /> -->
+<ONSloader isLoading={$isLoading} />
 <Theme theme="light" background="#F5F5F6">
-  <Breadcrumb
-    width="wider"
-    links={[
-      { label: "Home", href: "https://www.ons.gov.uk/", refresh: true },
-      { label: "Build a custom area profile", href: `${base}/`, refresh: true },
-      { label: "Edit map", href: `${base}/draw/` },
-    ]}
-  />
-  <Container width="wider">
-    <h2>Area profile</h2>
-    
-  </Container>
-  <Titleblock width="wider" title={$buildstate.name}></Titleblock>
-  <Container width="wider">
-    <Button variant="secondary">Change area name</Button>
-  </Container>
-  <div style="height:16px;" />
+  <div class="header-div">
+    <Breadcrumb
+      width="wider"
+      links={[
+        { label: "Home", href: "https://www.ons.gov.uk/", refresh: true },
+        {
+          label: "Build a custom area profile",
+          href: `${base}/`,
+          refresh: true,
+        },
+        { label: "Edit map", href: `${base}/draw/` },
+      ]}
+    />
+    <Container width="wider">
+      <h2>Area profile</h2>
+    </Container>
+    <Titleblock width="wider" title={$buildstate.name}></Titleblock>
+    <Container width="wider">
+      <Button variant="secondary">Change area name</Button>
+    </Container>
+  </div>
+  <div class="area-map-container">
+    <div class="fade" />
+    {#if geojson}
+      <AreaMap name={$buildstate.name} comp={null} {geojson} />
+    {/if}
+  </div>
+
+  <!-- <div style="height:16px;" /> -->
 
   <!-- <AreaMap/> -->
+  <!-- <AreaMap name={$buildstate.name} comp={$buildstate.comparison.areanm} {geojson} compGeojson={$buildstate.comparison.geometry} /> -->
 </Theme>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
     <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
-      <Checkbox
+      <!-- <Checkbox
         id="selectComparison"
         label="Select comparison area"
         bind:checked={selectComparison}
         compact
-      ></Checkbox>
+      ></Checkbox> -->
 
-      {#if selectComparison}
-        <div>
-          <Select
-            value={state.comparison}
-            autoClear={false}
-            isClearable
-            on:select={(e) => (state.comparison = e.detail)}
-            on:clear={() => (state.comparison = null)}
-          />
-        </div>
-      {/if}
+      <!-- {#if selectComparison} -->
+      <div>
+        <Select
+          value={$buildstate.comparison}
+          autoClear={false}
+          isClearable
+          on:select={(e) => ($buildstate.comparison = e.detail)}
+          on:clear={() => ($buildstate.comparison = null)}
+        />
+      </div>
+      <!-- {/if} -->
       <hr class="hr-full" />
-      <div style="display: flex;justify-content: space-between;align-items:center;">
+      <div
+        style="display: flex;justify-content: space-between;align-items:center;"
+      >
         <p class="font-bold dataset">Datasets</p>
 
-        <button class="btn-link" style="margin-bottom:-4px" aria-label="Show all datasets" on:click={handleShowAllClick}>{showAll ? 'Hide all' : 'Show all'}</button
+        <button
+          class="btn-link"
+          style="margin-bottom:-4px"
+          aria-label="Show all datasets"
+          on:click={handleDatasetsShowAllClick}
+          >{$buildstate.showAllDatasets ? "Hide all" : "Show all"}</button
         >
       </div>
 
       {#each Object.entries(topicsGrouped) as [topic, items]}
-        <Twisty title={topic} open={showAll}>
+        <Twisty title={topic} open={$buildstate.showAllDatasets}>
           <Checkboxes on:change={handleCheckboxChange}>
-          {#each items as item}
-            <Checkbox
-              id={item.code}
-              label={item.label}
-              value={item.code}
-              compact
-              on:change={handleCheckboxChange}
-            ></Checkbox>
-          {/each}
+            {#each items as item}
+              <Checkbox
+                id={item.code}
+                label={item.label}
+                value={item.code}
+                compact
+                checked={currentTopics.some((t) => t.code === item.code)}
+                on:change={handleCheckboxChange}
+              ></Checkbox>
+            {/each}
           </Checkboxes>
         </Twisty>
         <hr class="hr-full" />
@@ -450,25 +353,28 @@
     </div>
     <div class="ons-grid__col ons-col-9@m">
       <div id="embed" />
-      <div class="ons-pl-grid-col">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-        fermentum felis in velit accumsan, eget pulvinar risus sollicitudin.
-        Pellentesque eget ullamcorper ante. Vivamus id eros tristique, gravida
-        odio at, dapibus nunc. Proin quis ullamcorper sapien, vel mollis massa.
-        Proin quis eros sem. Integer elit quam, eleifend vel est ac, consectetur
-        dignissim quam. Nullam commodo odio non suscipit ullamcorper. Mauris a
-        iaculis purus. Morbi scelerisque pretium auctor. Maecenas iaculis
-        vehicula dolor, ac aliquet felis mattis ut. Sed lacinia suscipit augue
-        vitae facilisis. Quisque dolor neque, dignissim a lobortis non,
-        tincidunt tincidunt eros. Nunc vitae dolor massa.
-      </div>
       <hr class="hr-full" />
-      <Button variant="secondary" on:click={showEmbed}>{$buildstate.showEmbed ? 'Hide' : 'Show'} embed code</Button>
-      <Button variant="primary" on:click={downloadData}>Download data (CSV)</Button>
-      {#if embedHash && $state.showEmbed}
+      <Button variant="primary" on:click={showEmbed}
+        >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
+      >
+      <Button variant="primary" on:click={downloadData}
+        >Download data (CSV)</Button
+      >
+      <Button variant="primary" on:click={savePNG(pymParent)}
+        >Save as image (PNG)</Button
+      >
+      <Button
+        variant="primary"
+        on:click={() => document.getElementById("iframe").contentWindow.print()}
+      >
+        Print profile
+      </Button>
+      {#if embedHash && $buildstate.showEmbed}
         <p style:margin-bottom={0}>Embed code</p>
         <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
-        <Button variant="secondary" on:click={copyEmbed}>Copy embed code</Button>
+        <Button variant="secondary" on:click={copyEmbed(embedHash)}
+          >Copy embed code</Button
+        >
       {/if}
     </div>
   </div>
@@ -758,11 +664,38 @@
     border-top: 2px solid #707071;
   }
 
-  .dataset{
-    margin:1rem 0;
+  .dataset {
+    margin: 1rem 0;
   }
 
-  :global(div.ons-collapsible__content.ons-js-collapsible-content){
+  :global(div.ons-collapsible__content.ons-js-collapsible-content) {
     border-left: none;
+  }
+
+  .area-map-container {
+    position: absolute;
+    top: 0;
+    min-width: 50%;
+    right: 0;
+  }
+
+  .fade {
+    position: absolute;
+    height: 100%;
+    width: 20%;
+    background: linear-gradient(
+      to left,
+      rgba(255, 255, 255, 0),
+      var(--background, #f5f5f5)
+    );
+    z-index: 1000;
+  }
+
+  .header-div {
+    height: 300px;
+  }
+
+  textarea {
+    width: 100%;
   }
 </style>

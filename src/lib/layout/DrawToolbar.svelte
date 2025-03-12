@@ -98,7 +98,7 @@ export let radius=0.5;
     </Toolbar>
     <Toolbar>
       
-      <ToolbarButton id="download" icon="download" label="Download area" disabled={$selected.length < 2} on:click={downloadArea(state)}>
+      <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0} on:click={downloadArea(state)}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
       <ToolbarButton id="upload" icon="upload" label="Upload a geometry" on:click={uploader.click()}>

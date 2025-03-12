@@ -12,11 +12,10 @@ export const blank_geo = {type: 'Feature',geometry: {type: 'Polygon',coordinates
 
 export function doSelect(e) {
   newselect();
-  console.log('e',e)
   if (e.detail.type == "place") {
     let bbox = e.detail.bbox;
     let oa = new Set(get(centroids).expand(e.detail.codes,'oa'));
-    let lsoa = new Set(get(centroids).expand(e.detail.codes,'lsoa'));
+    let lsoa = new Set(get(centroids).expand(e.detail.codes,'lsoa')); 
     let geometry = e.detail.geometry;
     selected.update(s=>[...s,{oa:oa,lsoa:lsoa,geo:geometry}])
     changeData("userGeo", geometry);
@@ -49,8 +48,6 @@ export function recolour(){
 
   if (!items.oa || !items.oa.size) return;
 
-  console.log('items from recolour', items);
-
   const totalPopulation = items.oa && items.oa.size
     ? [...items.oa]
         .map((d) => get(centroids).population(d) || 0)
@@ -70,9 +67,6 @@ export function recolour(){
     //     "transparent",
     //   ]);
 
-    console.log('items.geo',items.geo)
-    console.log('mapObject',get(mapObject))
-    console.log('userGeometry',get(user_geometry))
      if (get(mapObject)) {
       changeData("userGeo", items.geo);
     }
@@ -195,13 +189,9 @@ export async function savedata() {
  * Loads GeoJSON file and updates selection.
  */
 export function loadGeo(uploader) {
-  console.log('loadGeo')
-  console.log('uploader',uploader)
-  console.log('state',get(state))
   let file = uploader.files[0] || null;
 
   if (file) {
-    console.log('file',file)
     // selected.set({ oa: new Set(), lsoa: new Set(), geo: blank_geo });
     newselect();
     const reader = new FileReader();

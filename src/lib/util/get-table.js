@@ -5,7 +5,6 @@ import { analyticsEvent } from '$lib/layout/AnalyticsBanner.svelte';
 function makeUrl(table, codes, comp) {
   let url = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table.categories)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
   if (table.queryExt) url += table.queryExt;
-  console.log(url)
   return url;
 }
 

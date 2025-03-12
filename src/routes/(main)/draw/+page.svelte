@@ -64,7 +64,6 @@
   // $: showTray = ["polygon", "radius"].includes(state.mode);
 
   $:console.log('selected',$selected)
-  $:console.log('population',$pselect)
 
   // function setDrawData() {
   //   let items = $selected[$selected.length - 1];
@@ -238,7 +237,6 @@
       // Keep track of map zoom level
       $currentMapZoom = $mapObject.getZoom();
       $mapObject.on("moveend", () => ($currentMapZoom = $mapObject.getZoom()));
-      console.log("finished map load");
       $isLoading = false;
       selected.subscribe(recolour);
     });
@@ -354,7 +352,6 @@
   //   setDrawData();
   // }
 
-  $:console.log('centroids',$centroids)
 </script>
 
 <div class="draw-page-container">

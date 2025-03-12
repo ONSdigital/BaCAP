@@ -9,6 +9,7 @@
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import ProfileChart from "$lib/charts/ProfileChart.svelte";
   import BigNumber from "$lib/charts/BigNumber.svelte";
+  import { Notice } from "@onsvisual/svelte-components";
 
   let pymChild, name, comp, geojson, compGeojson, tables, population;
   let stats = [];
@@ -83,6 +84,8 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
+
+  $:console.log('tables', tables);
 </script>
 
 <svelte:window on:hashchange={update} />
@@ -92,18 +95,22 @@
   <meta name="googlebot" content="noindex,indexifembedded" />
 </svelte:head>
 
+<Notice>
+  Census and non-Census datasets will use different best-fit shapes to estimate the data to be returned to users.
+</Notice>
+
 {#if tables}
   {#if name && name !== "Selected area"}
     <h1>{name}</h1>
   {/if}
   <Cards>
-    {#if geojson}
+    <!-- {#if geojson}
       <Card title="Area map">
         <AreaMap {name} {comp} {geojson} {compGeojson} />
       </Card>
-    {/if}
+    {/if} -->
     {#each tables || [] as tab}
-      <Card title={topicsLookup[tab.code].label} source={topicsLookup[tab.code].source}>
+      <Card title={topicsLookup[tab.code].label} source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography}>
         {#if topicsLookup[tab.code]?.chart === "number"}
           <BigNumber
             value={tab.data[0].count}

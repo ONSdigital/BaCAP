@@ -204,14 +204,14 @@ class Centroids {
     mapObject
   ) {
     // console.log(selected)
-    const oaAll = Array.from(selected['oa']);
+    const oa_all = Array.from(selected['oa']);
     const lsoaAll = Array.from(selected['lsoa']);
     // compress the codes
-    const compressed = this.compress(oaAll,'oa');
+    const compressed = this.compress(oa_all,'oa');
     // Filter compressed to strip out OAs
     const compressedToLsoa = this.compress(lsoaAll,'lsoa');
-    const bbox = this.bounds(oaAll,'oa');
-    const highestLevel = this.identifyHighestGeography(this.compress(oaAll,'oa'))
+    const bbox = this.bounds(oa_all,'oa');
+    const highestLevel = this.identifyHighestGeography(this.compress(oa_all,'oa'))
     var merge = {};
     merge.properties = {
       name,
@@ -219,8 +219,8 @@ class Centroids {
       compressed,
       compressedToLsoa,
       highestLevel,
-      oaAll,
-      original: oaAll.length,
+      oa_all,
+      original: oa_all.length,
     };
     /// geo
 
