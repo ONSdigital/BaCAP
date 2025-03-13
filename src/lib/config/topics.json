@@ -177,7 +177,7 @@
   {
     "code": "property_sales",
     "label": "Residential property sales",
-    "desc": "",
+    "desc": "The number of residential properties sold per year.",
     "tableCode": "NM_2402_1",
     "cellCode": "date",
     "measures": 20100,
@@ -198,7 +198,7 @@
   {
     "code": "energy_efficiency",
     "label": "Energy efficiency of housing",
-    "desc": "",
+    "desc": "The proportion of residential properties by Energy Performance Certificate (EPC) band rating.",
     "tableCode": "NM_2401_1",
     "cellCode": "energy_efficiency_8",
     "measures": 20301,
@@ -306,7 +306,7 @@
   {
     "code": "property_sales_change",
     "label": "Residential property sales timeseries",
-    "desc": "",
+    "desc": "The number of residential properties sold per year.",
     "tableCode": "NM_2402_1",
     "cellCode": "date",
     "measures": 20100,
