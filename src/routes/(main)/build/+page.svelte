@@ -8,39 +8,42 @@
     Checkbox,
     Twisty,
     Checkboxes,
+    Input
   } from "@onsvisual/svelte-components";
   import { isLoading } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
-  // import { flip } from "svelte/animate";
   import pym from "pym.js";
+  // import { flip } from "svelte/animate";
   // import tooltip from "$lib/ui/tooltip";
   // import Notice from "$lib/ui/Notice.svelte";
   // import TopicItem from "$lib/ui/TopicItem.svelte";
   // import Icon from "$lib/ui/Icon.svelte";
+  // import { cdnbase } from "$lib/config/geography";
+  // import { download, clip } from "$lib/util/functions";
+  // import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
   import Select from "$lib/ui/Select.svelte";
   import topicsAll from "$lib/config/topics.json";
   import { simplifyGeo } from "$lib/util/drawing-utils";
-  import getTable from "$lib/util/get-table";
   import getParents from "$lib/util/get-parents";
-  // import { cdnbase } from "$lib/config/geography";
-  // import { download, clip } from "$lib/util/functions";
   import { onMount } from "svelte";
-  import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import {
-    getAreaData,
+    getData,
     downloadData,
     makeEmbed,
     copyEmbed,
     showEmbed,
-    geographyFilter,
     handleDatasetsShowAllClick,
     savePNG,
     checkForHashSelection,
+    groupTopics,
+    updateLocalStorage,
+    filterTopics
   } from "$lib/util/build-utils";
   import { buildstate } from "$lib/stores/mapstore";
+  import Title from "$lib/layout/Title.svelte";
 
   // Embed-related variables
   let pymParent; // Variable for pym
@@ -56,7 +59,7 @@
   let currentTopics = [];
 
   // UI States
-  let includemap = false;
+  let includemap = true;
   let includecomp = false;
   let store;
   let geojson;
@@ -122,24 +125,6 @@
   ////////////////////////////////////////////////////////////////
   // Processing functions
   ////////////////////////////////////////////////////////////////
-  let cache = {};
-  async function getData(data, comp) {
-    if (!$buildstate.start) return [];
-
-    cache[comp] ||= {};
-    let tables = await Promise.all(
-      data.map(async (d) => {
-        if (!cache[comp][d.code]) {
-          cache[comp][d.code] = await getTable(d, $buildstate, comp);
-        }
-        return { code: d.code, data: cache[comp][d.code] };
-      })
-    );
-
-    console.log("tables", tables);
-    return tables;
-  }
-
   async function updateProfile(
     start,
     name,
@@ -158,16 +143,6 @@
     embedHash = generateEmbedHash(name, comp, includemap, includecomp);
 
     updateEmbedFrame();
-  }
-
-  function updateLocalStorage(name) {
-    let ls = JSON.parse(localStorage.getItem("onsbuild"));
-    ls.properties.name = name;
-    localStorage.setItem("onsbuild", JSON.stringify(ls));
-  }
-
-  function filterTopicsByCodes(codes) {
-    return topics.filter((t) => codes.includes(t.code));
   }
 
   function generateEmbedHash(name, comp, includemap, includecomp) {
@@ -194,20 +169,8 @@
     }
   }
 
-  function filterTopics(allTopics, level, coverage) {
-    return allTopics
-      .filter(geographyFilter(level))
-      .filter(
-        (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))
-      );
-  }
-
-  function groupTopics(topics) {
-    return topics.reduce((acc, item) => {
-      if (!acc[item.topic]) acc[item.topic] = [];
-      acc[item.topic].push(item);
-      return acc;
-    }, {});
+  function filterTopicsByCodes(codes) {
+    return topics.filter((t) => codes.includes(t.code));
   }
 
   async function processStoreData() {
@@ -238,6 +201,20 @@
     includemap,
     includecomp
   );
+  let showChangeName = false
+  let nameChangeInputValue = ""
+  function handleChangeName(){
+    showChangeName = !showChangeName
+  }
+
+  function saveNameChange(){
+    showChangeName = false
+    $buildstate.name = nameChangeInputValue
+  }
+
+  function cancelChangeName(){
+    showChangeName = false
+  }
 </script>
 
 <ONSloader isLoading={$isLoading} />
@@ -258,9 +235,17 @@
     <Container width="wider">
       <h2>Area profile</h2>
     </Container>
-    <Titleblock width="wider" title={$buildstate.name}></Titleblock>
+    <!-- <Titleblock width="wider" title={$buildstate.name}></Titleblock> -->
+     <Titleblock width="wider" title=""/>
     <Container width="wider">
-      <Button variant="secondary">Change area name</Button>
+      {#if showChangeName}
+        <Input bind:value={nameChangeInputValue} hideLabel label="Enter area name"/>
+        <div style="height:16px;" />
+        <Button variant="secondary" on:click={cancelChangeName}>Cancel</Button>
+        <Button variant="primary" on:click={saveNameChange}>Save</Button>
+      {:else if showChangeName == false}
+        <Button variant="secondary" on:click={handleChangeName}>Change area name</Button>
+      {/if}
     </Container>
   </div>
   <div class="area-map-container">
@@ -354,28 +339,30 @@
     <div class="ons-grid__col ons-col-9@m">
       <div id="embed" />
       <hr class="hr-full" />
-      <Button variant="primary" on:click={showEmbed}
-        >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
-      >
-      <Button variant="primary" on:click={downloadData}
-        >Download data (CSV)</Button
-      >
-      <Button variant="primary" on:click={savePNG(pymParent)}
-        >Save as image (PNG)</Button
-      >
-      <Button
-        variant="primary"
-        on:click={() => document.getElementById("iframe").contentWindow.print()}
-      >
-        Print profile
-      </Button>
-      {#if embedHash && $buildstate.showEmbed}
-        <p style:margin-bottom={0}>Embed code</p>
-        <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
-        <Button variant="secondary" on:click={copyEmbed(embedHash)}
-          >Copy embed code</Button
+      <div class="button-container">
+        <Button variant="primary" on:click={showEmbed}
+          >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
-      {/if}
+        <Button variant="primary" on:click={downloadData}
+          >Download data (CSV)</Button
+        >
+        <Button variant="primary" on:click={savePNG(pymParent)}
+          >Save as image (PNG)</Button
+        >
+        <Button
+          variant="primary"
+          on:click={() => document.getElementById("iframe").contentWindow.print()}
+        >
+          Print profile
+        </Button>
+        {#if embedHash && $buildstate.showEmbed}
+          <p style:margin-bottom={0}>Embed code</p>
+          <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
+          <Button variant="secondary" on:click={copyEmbed(embedHash)}
+            >Copy embed code</Button
+          >
+        {/if}
+      </div>
     </div>
   </div>
 </Container>
@@ -632,6 +619,13 @@
 </div> -->
 
 <style>
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px; /* Adjust spacing */
+}
+
   :global(#lmap) {
     filter: invert(0.9);
     opacity: 0.9;

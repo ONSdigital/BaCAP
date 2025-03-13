@@ -5,11 +5,52 @@ import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
 import { download, clip } from "$lib/util/functions";
 import { cdnbase } from "$lib/config/geography";
 import topicsAll from "$lib/config/topics.json";
+import getTable from "$lib/util/get-table";
 
 
 const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
 
+let cache = {};
 
+export function filterTopics(allTopics, level, coverage) {
+  return allTopics
+    .filter(geographyFilter(level))
+    .filter(
+      (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))
+    );
+}
+
+export function updateLocalStorage(name) {
+  let ls = JSON.parse(localStorage.getItem("onsbuild"));
+  ls.properties.name = name;
+  localStorage.setItem("onsbuild", JSON.stringify(ls));
+}
+
+
+
+export async function getData(data, comp) {
+  if (!get(buildstate).start) return [];
+
+  cache[comp] ||= {};
+  let tables = await Promise.all(
+    data.map(async (d) => {
+      if (!cache[comp][d.code]) {
+        cache[comp][d.code] = await getTable(d, get(buildstate), comp);
+      }
+      return { code: d.code, data: cache[comp][d.code] };
+    })
+  );
+
+  return tables;
+}
+
+export function groupTopics(topics) {
+  return topics.reduce((acc, item) => {
+    if (!acc[item.topic]) acc[item.topic] = [];
+    acc[item.topic].push(item);
+    return acc;
+  }, {});
+}
 
 export async function checkForHashSelection() {
   let hash = window.location.hash;

@@ -84,8 +84,6 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
-
-  $:console.log('tables', tables);
 </script>
 
 <svelte:window on:hashchange={update} />
@@ -104,11 +102,11 @@
     <h1>{name}</h1>
   {/if}
   <Cards>
-    <!-- {#if geojson}
+    {#if geojson}
       <Card title="Area map">
         <AreaMap {name} {comp} {geojson} {compGeojson} />
       </Card>
-    {/if} -->
+    {/if}
     {#each tables || [] as tab}
       <Card title={topicsLookup[tab.code].label} source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography}>
         {#if topicsLookup[tab.code]?.chart === "number"}
