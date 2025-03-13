@@ -48,7 +48,7 @@
         {:else}
             <p>{topic.desc}</p>
         {/if}
-        <a class="btn-link" href={`${base}/{topic.url}`} target="_blank">Read more</a>
+        {#if topic.url}<a class="btn-link" href={`${base}/${topic.url}`} target="_blank">Read more</a>{/if}
         <hr class="hr-full">
       {/each}
     </div>
@@ -58,5 +58,10 @@
 <style>
   .bold {
     font-weight: bold;
+  }
+
+  p.bold{
+    margin-top:16px;
+    margin-bottom: 28px;
   }
 </style>

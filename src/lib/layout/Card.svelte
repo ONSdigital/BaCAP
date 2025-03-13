@@ -9,6 +9,7 @@
   export let blank = false;
   export let source
   export let geography 
+  export let timeperiod
 
   const { cols } = getContext("tiles");
 </script>
@@ -25,9 +26,10 @@
 >
   {#if title}
     <header class="margin-top--1">
-      <h3 class="margin-top--0 margin-right--0 margin-bottom--0 margin-left--0">
-        {title}
-      </h3>
+        <h3 class="margin-top--0 margin-right--0 margin-bottom--0 margin-left--0">
+          {title}
+        </h3>
+        {#if timeperiod}<span>{timeperiod}</span>{/if}
     </header>
   {/if}
   <slot />

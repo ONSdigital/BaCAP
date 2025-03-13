@@ -9,6 +9,7 @@
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import ProfileChart from "$lib/charts/ProfileChart.svelte";
   import BigNumber from "$lib/charts/BigNumber.svelte";
+  import LineChart from "$lib/charts/LineChart.svelte";
   import { Notice } from "@onsvisual/svelte-components";
 
   let pymChild, name, comp, geojson, compGeojson, tables, population;
@@ -84,6 +85,8 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
+
+  $:console.log('tables',tables);
 </script>
 
 <svelte:window on:hashchange={update} />
@@ -108,7 +111,7 @@
       </Card>
     {/if}
     {#each tables || [] as tab}
-      <Card title={topicsLookup[tab.code].label} source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography}>
+      <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={tab.date ? tab.date : '2021'}>
         {#if topicsLookup[tab.code]?.chart === "number"}
           <BigNumber
             value={tab.data[0].count}
@@ -132,6 +135,8 @@
             base="% of {topicsLookup[tab.code].base}"
             table={!hideTables}
           />
+        {:else if topicsLookup[tab.code]?.chart === "line"}
+        <LineChart data={tab.data} zKey="areanm" xDomain={topicsLookup[tab.code].categories.map(c => c.label)} base="% change since {topicsLookup[tab.code].categories[0].label}" />
         {:else}
           <BarChart
             xKey="value"
