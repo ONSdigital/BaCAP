@@ -1,5 +1,30 @@
 [
   {
+    "code": "population",
+    "label": "Population",
+    "desc": "Mid-year estimate of the total number of people.",
+    "tableCode": ["NM_2014_1", "NM_2002_1"],
+    "cellCode": "c_age",
+    "date": 2022,
+    "measures": 20100,
+    "chart": "number",
+    "unit": "people",
+    "base": "all people",
+    "categories": [
+      {
+        "label": "Population",
+        "cells": [
+          200
+        ]
+      }
+    ],
+    "queryExt": "&gender=0",
+    "lowestGeography": "oa",
+    "doNotRound":false,
+    "source": "Office for National Statistics",
+    "topic": "Population and geography"
+  },
+  {
     "code": "households",
     "label": "Number of households",
     "desc": "The number of households on Census Day, 21 March 2021.",
