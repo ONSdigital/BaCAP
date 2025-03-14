@@ -190,7 +190,7 @@
       start: true,
     };
 
-    // currentTopics = [topics[0]]; // Default to population topic
+    currentTopics = [topics[0]]; // Default to population topic
   }
 
   $: updateProfile(
@@ -215,8 +215,6 @@
   function cancelChangeName(){
     showChangeName = false
   }
-
-  $:console.log($buildstate.comparison)
 </script>
 
 <ONSloader isLoading={$isLoading} />
