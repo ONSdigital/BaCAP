@@ -2,8 +2,8 @@ import { csvParse, autoType } from 'd3-dsv';
 import { roundCount } from '$lib/util/functions';
 import { analyticsEvent } from '$lib/layout/AnalyticsBanner.svelte';
 
-function makeUrl(table, codes, comp) {
-  let url = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
+function makeUrl(table, tableCode, codes, comp) {
+  let url = `https://www.nomisweb.co.uk/api/v01/dataset/${tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
   if (table.queryExt) url += table.queryExt;
   // console.log(url)
   return url;
@@ -52,13 +52,57 @@ function makeCells(table) {
 //   return dataNew;
 // }
 
+function filterCodes(codes, level = "none") {
+  return level === "none" ? codes :
+    level === "lower" ? codes.filter(c => ["01", "02"].includes(c.slice(1, 3))) :
+    codes.filter(c => !["01", "02"].includes(c.slice(1, 3)));
+}
+
+function sumData(data1, data2) {
+  if (!data1?.[0]) return data2;
+  if (!data2?.[0]) return data1;
+
+  const newData = {};
+
+  for (const data of [data1, data2]) {
+    if (Array.isArray(data)) {
+      for (const d of data) {
+        const key = `${d.areanm}_${d.category}`;
+        if (!newData[key]) newData[key] = d;
+        else newData[key].value += d.value;
+      }
+    }
+  }
+  return Object.keys(newData).map(key => newData[key]);
+}
+
+function calcPercent(data) {
+  let totals = {};
+  data.forEach(d => {
+    if (!totals[d.areanm]) {
+      totals[d.areanm] = d.value;
+    } else {
+      totals[d.areanm] += d.value
+    }
+  });
+  let dataNew = JSON.parse(JSON.stringify(data));
+  dataNew.forEach(d => {
+    d.originalValue = d.value;
+    d.count = d.value;
+    d.percentage = +((d.value / totals[d.areanm]) * 100).toFixed(1);
+    d.value = d.percentage;
+  });
+  return dataNew;
+}
+
 function processNomiswebData(data, table) {
 
   const hasBothCountAndPercentage = table.measures.length === 2;
 
   const processedData = [];
 
-  if(hasBothCountAndPercentage){
+  if(hasBothCountAndPercentage && !Array.isArray(table.tableCode)){
+    // use counts and percentages from nomis
     for(let i=1;i<data.length;i+=2){
       processedData.push({
         ...data[i],
@@ -68,12 +112,15 @@ function processNomiswebData(data, table) {
       })
     }
     return processedData;
+  }else if(hasBothCountAndPercentage && Array.isArray(table.tableCode)){
+    // calculate percentage ourselves
+    return calcPercent(data);
   }else{
     return data.map(d => {
       const count = d.value;
   
       // Conditionally handle rounding for specific types
-      const processedCount = ["population", "households"].includes(table.code)
+      const processedCount = ["population", "households", "births"].includes(table.code)
         ? roundCount(count)
         : count;
   
@@ -87,28 +134,72 @@ function processNomiswebData(data, table) {
     };
   }
 
-export default async function fetchNomiswebData(table, state, comp = "K04000001") {
-  const codes = table.onlyOA ? state.codes : state.compressed;
-  const url = makeUrl(table, codes, comp);
-  const res = await fetch(url);
-  const str = (await res.text())
-    .replace("GEOGRAPHY_NAME", "areanm")
-    .replace("OBS_VALUE", "value")
-    .replace(`${table.cellCode}_name`.toUpperCase(), "category");
-  
-  let data = csvParse(str, autoType);
+export default async function fetchNomiswebData(table, state, comp = ["K04000001"]) {
 
-  // Analytical tracking
-  analyticsEvent({
-    event: "topicSelect",
-    topicName: table.label,
-    topicCode: table.code
-  });
+  let data = null;
 
-  // If the table is count-based, calculate percentages
-  // if (table.unit === "%" && table.measures === 20100) {
+  // Ensure tableCode is treated as an array
+  const tableCodes = Array.isArray(table.tableCode) ? table.tableCode : [table.tableCode];
+  // same for comp
+  comp = Array.isArray(comp) ? comp : [comp];
+
+  for (const tableCode of tableCodes) {
+    const codes = table.onlyOA ? state.codes : state.compressed;
+    const filter = tableCodes.length === 1 ? "none" : tableCode === tableCodes[0] ? "lower" : "higher";
+    const cds = filterCodes(codes, filter);
+    const compcds = filterCodes(comp, filter);
+    const url = makeUrl(table, tableCode, cds, compcds);
+
+    // console.log(`Fetching data from: ${url}`);
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to fetch ${tableCode}, Status: ${res.status}`);
+
+      const str = (await res.text())
+        .replace("GEOGRAPHY_NAME", "areanm")
+        .replace("OBS_VALUE", "value")
+        .replace(`${table.cellCode}_name`.toUpperCase(), "category");
+
+      const parsedData = csvParse(str, autoType);
+      data = sumData(data, parsedData);
+
+    } catch (error) {
+      console.error(`Error fetching data for ${tableCode}:`, error);
+    }
+  }
+
+    // Analytical tracking
+    analyticsEvent({
+      event: "topicSelect",
+      topicName: table.label,
+      topicCode: table.code
+    });
+
     data = processNomiswebData(data, table);
-  // }
+    return data || [];
 
-  return data;
+  // const codes = table.onlyOA ? state.codes : state.compressed;
+  // const url = makeUrl(table, codes, comp);
+  // const res = await fetch(url);
+  // const str = (await res.text())
+  //   .replace("GEOGRAPHY_NAME", "areanm")
+  //   .replace("OBS_VALUE", "value")
+  //   .replace(`${table.cellCode}_name`.toUpperCase(), "category");
+  
+  // let data = csvParse(str, autoType);
+
+  // // Analytical tracking
+  // analyticsEvent({
+  //   event: "topicSelect",
+  //   topicName: table.label,
+  //   topicCode: table.code
+  // });
+
+  // // If the table is count-based, calculate percentages
+  // // if (table.unit === "%" && table.measures === 20100) {
+  //   data = processNomiswebData(data, table);
+  // // }
+
+  // return data;
 }

@@ -188,7 +188,8 @@
         ]
       }
     ],
-    "lowestGeography": "oa",
+    "lowestGeography": "lsoa",
+    "timePeriod":2022,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demographic information"
   },

@@ -42,7 +42,7 @@
     updateLocalStorage,
     filterTopics
   } from "$lib/util/build-utils";
-  import { buildstate } from "$lib/stores/mapstore";
+  import { buildstate,tables } from "$lib/stores/mapstore";
   import Title from "$lib/layout/Title.svelte";
 
   // Embed-related variables
@@ -54,12 +54,12 @@
   let coverage = ["E", "W"];
 
   // Data storage
-  let tables = []; // Array to hold table data
+  // let tables = []; // Array to hold table data
   let topicsGrouped = {};
   let currentTopics = [];
 
   // UI States
-  let includemap = true;
+  let includemap = false;
   let includecomp = false;
   let store;
   let geojson;
@@ -139,7 +139,7 @@
     let codes = data.map((d) => d.code);
     let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
 
-    tables = await getData(filterTopicsByCodes(codes), compcds);
+    $tables = await getData(filterTopicsByCodes(codes), compcds);
     embedHash = generateEmbedHash(name, comp, includemap, includecomp);
 
     updateEmbedFrame();
@@ -148,7 +148,7 @@
   function generateEmbedHash(name, comp, includemap, includecomp) {
     return `#/?name=${btoa(name)}${
       comp ? `&comp=${btoa(comp.areanm)}` : ""
-    }&tabs=${btoa(JSON.stringify(tables))}${
+    }&tabs=${btoa(JSON.stringify($tables))}${
       includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
     }${
       includemap && includecomp && comp?.geometry
@@ -190,9 +190,6 @@
       start: true,
     };
 
-    console.log(store)
-    console.log("list of OAs", store.properties.oa_all);
-    console.log("list of OAs compressed to higher geographies", store.properties.compressed);
     // currentTopics = [topics[0]]; // Default to population topic
   }
 
@@ -218,6 +215,8 @@
   function cancelChangeName(){
     showChangeName = false
   }
+
+  $:console.log($buildstate.comparison)
 </script>
 
 <ONSloader isLoading={$isLoading} />
@@ -274,7 +273,9 @@
       ></Checkbox> -->
 
       <!-- {#if selectComparison} -->
-      <div>
+      
+      <div class="ons-u-mb-s">
+        <p class='font-bold' style="margin-bottom:0">Select comparison area</p>
         <Select
           value={$buildstate.comparison}
           autoClear={false}
@@ -283,6 +284,13 @@
           on:clear={() => ($buildstate.comparison = null)}
         />
       </div>
+
+      <Checkbox
+        id="includemap"
+        label="Include map in profile"
+        bind:checked={includemap}
+        compact
+      ></Checkbox>
       <!-- {/if} -->
       <hr class="hr-full" />
       <div
@@ -299,8 +307,8 @@
         >
       </div>
 
-      {#each Object.entries(topicsGrouped) as [topic, items]}
-        <Twisty title={topic} open={$buildstate.showAllDatasets}>
+      {#each Object.entries(topicsGrouped) as [topic, items],i}
+        <Twisty title={topic} open={$buildstate.showAllDatasets||i==0}>
           <Checkboxes on:change={handleCheckboxChange}>
             {#each items as item}
               <Checkbox

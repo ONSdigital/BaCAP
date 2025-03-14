@@ -10,7 +10,6 @@ import getTable from "$lib/util/get-table";
 
 const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
 
-let cache = {};
 
 export function filterTopics(allTopics, level, coverage) {
   return allTopics
@@ -29,6 +28,8 @@ export function updateLocalStorage(name) {
 
 
 export async function getData(data, comp) {
+  let cache = {};
+
   if (!get(buildstate).start) return [];
 
   cache[comp] ||= {};
@@ -100,10 +101,10 @@ export async function downloadData() {
     { year: "numeric", month: "short", day: "numeric" }
   )}"\n`;
   csv += `"The data in this profile are aggregated from small areas on a best-fit basis, and therefore may differ slightly from other sources."\n\n`;
-  csv += `"Variable","Category","${getName("capitalise")}","${buildstate.comparison.areanm}","Unit","${getName("capitalise")}","${buildstate.comparison.areanm}","Unit","Base population","Source","Geography","Time period"\n`;
+  csv += `"Variable","Category","${getName("capitalise")}","${get(buildstate).comparison.areanm}","Unit","${getName("capitalise")}","${get(buildstate).comparison.areanm}","Unit","Base population","Source","Geography","Time period"\n`;
 
   get(tables).forEach((t) => {
-    let meta = get(topicsLookup)[t.code];
+    let meta = topicsLookup[t.code];
     let len = meta.categories.length;
     for (let i = 0; i < len; i++) {
       csv += `"${meta.label}","${meta.categories[i].label}",${t.data[i].value ? t.data[i].value : "NA"

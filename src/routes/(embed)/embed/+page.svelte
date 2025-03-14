@@ -86,7 +86,7 @@
     update();
   });
 
-  // $:console.log('tables',tables);
+  $:console.log('tables',tables);
 </script>
 
 <svelte:window on:hashchange={update} />
