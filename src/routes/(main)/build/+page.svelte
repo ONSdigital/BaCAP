@@ -190,6 +190,7 @@
       start: true,
     };
 
+    console.log(store)
     console.log("list of OAs", store.properties.oa_all);
     console.log("list of OAs compressed to higher geographies", store.properties.compressed);
     // currentTopics = [topics[0]]; // Default to population topic

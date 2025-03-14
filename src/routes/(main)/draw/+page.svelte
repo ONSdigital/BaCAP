@@ -63,8 +63,10 @@
 
   // $: showTray = ["polygon", "radius"].includes(state.mode);
 
-  $:console.log('selected',$selected)
+  // $:console.log('selected',$selected)
 
+  $:console.log('list of LSOA selected', Array.from($selected[$selected.length - 1].lsoa).join(", "));
+  $:console.log('list of OA selected', Array.from($selected[$selected.length - 1].oa).join(", "));
   // function setDrawData() {
   //   let items = $selected[$selected.length - 1];
 
