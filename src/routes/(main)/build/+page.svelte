@@ -190,7 +190,7 @@
       start: true,
     };
 
-    currentTopics = [topics[0]]; // Default to population topic
+    // currentTopics = [topics[0]]; // Default to population topic
   }
 
   $: updateProfile(

@@ -3,17 +3,32 @@ import { roundCount } from '$lib/util/functions';
 import { analyticsEvent } from '$lib/layout/AnalyticsBanner.svelte';
 
 function makeUrl(table, codes, comp) {
-  let url = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table.categories)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
+  let url = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
   if (table.queryExt) url += table.queryExt;
+  console.log(url)
   return url;
 }
 
-function makeCells(categories) {
+// function makeCells(categories) {
+//   let cells = [];
+//   if (categories.map(c => c.cells.length).reduce((a, b) => a + b, 0) > categories.length) {
+//     categories.forEach(c => {
+//       cells.push(`MAKE|${c.label}|${c.cells.join(";")}`);
+//     });
+//   } else {
+//     cells = categories.map(c => c.cells[0]);
+//   }
+//   return cells.join(",");
+// };
+
+function makeCells(table) {
+  if (table.cellCode === "date") return table.categories.map(c => c.cells[0]).join(",");
+  const categories = table.categories;
   let cells = [];
   if (categories.map(c => c.cells.length).reduce((a, b) => a + b, 0) > categories.length) {
-    categories.forEach(c => {
+    for (const c of categories) {
       cells.push(`MAKE|${c.label}|${c.cells.join(";")}`);
-    });
+    }
   } else {
     cells = categories.map(c => c.cells[0]);
   }
