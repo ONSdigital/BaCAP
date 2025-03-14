@@ -65,8 +65,12 @@
 
   // $:console.log('selected',$selected)
 
-  $:console.log('list of LSOA selected', Array.from($selected[$selected.length - 1].lsoa).join(", "));
-  $:console.log('list of OA selected', Array.from($selected[$selected.length - 1].oa).join(", "));
+  
+  $:if(Array.from($selected[$selected.length - 1].oa).length > 0){
+    console.log('list of LSOA selected', Array.from($selected[$selected.length - 1].lsoa).join(", "));
+    console.log('list of OA selected', Array.from($selected[$selected.length - 1].oa).join(", "));
+  }
+  
   // function setDrawData() {
   //   let items = $selected[$selected.length - 1];
 
