@@ -203,6 +203,10 @@ export function loadGeo(uploader) {
         b = b.features[0];
       } else if (b.type == "Geometry") {
         b = { type: "Feature", geometry: b };
+      } else if (b.type == "Polygon") {
+        b = { type: "Feature", geometry: b };
+      } else if (b.type == "GeometryCollection") {
+        b= { type: "Feature", geometry: b.geometries[0] };
       }
 
       if (b.properties && b.properties.codes) {
