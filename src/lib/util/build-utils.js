@@ -25,20 +25,24 @@ export function updateLocalStorage(name) {
   localStorage.setItem("onsbuild", JSON.stringify(ls));
 }
 
+let cache = {};// this is the same if the area changes, so need to make a unique cache for each area somehow
+
+
 
 
 export async function getData(data, comp) {
-  let cache = {};
-
+  let compressedCodes = get(buildstate).compressed.join("") || "default";
+  let cacheForArea = cache[compressedCodes] = {};
+  
   if (!get(buildstate).start) return [];
 
-  cache[comp] ||= {};
+  cacheForArea[comp] ||= {};
   let tables = await Promise.all(
     data.map(async (d) => {
-      if (!cache[comp][d.code]) {
-        cache[comp][d.code] = await getTable(d, get(buildstate), comp);
+      if (!cacheForArea[comp][d.code]) {
+        cacheForArea[comp][d.code] = await getTable(d, get(buildstate), comp);
       }
-      return { code: d.code, data: cache[comp][d.code] };
+      return { code: d.code, data: cacheForArea[comp][d.code] };
     })
   );
 

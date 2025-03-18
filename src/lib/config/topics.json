@@ -20,8 +20,9 @@
     ],
     "queryExt": "&gender=0",
     "timePeriod":2022,
-    "lowestGeography": "lsoa",
+    "lowestGeography": "oa",
     "doNotRound":false,
+    "census":false,
     "source": "Office for National Statistics",
     "topic": "Population and geography"
   },
@@ -46,6 +47,7 @@
     ],
     "lowestGeography": "oa",
     "doNotRound":false,
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Population and geography"
   },
@@ -71,6 +73,7 @@
     "lowestGeography": "lsoa",
     "source": "HM Land Registry",
     "doNotRound":true,
+    "census":false,
     "timePeriod":"Quarterly rolling annual data",
     "topic": "Housing and energy"
   },
@@ -160,9 +163,10 @@
       }
     ],
     "queryExt": "&gender=0",
-    "lowestGeography": "lsoa",
+    "lowestGeography": "oa",
     "timePeriod":2022,
-    "source": "Office for National Statistics - Census 2021",
+    "census":false,
+    "source": "Office for National Statistics",
     "topic": "Demographic information"
   },
   {
@@ -189,9 +193,10 @@
         ]
       }
     ],
-    "lowestGeography": "lsoa",
+    "lowestGeography": "oa",
     "timePeriod":2022,
-    "source": "Office for National Statistics - Census 2021",
+    "census":false,
+    "source": "Office for National Statistics",
     "topic": "Demographic information"
   },
   {
@@ -213,6 +218,7 @@
     ],
     "lowestGeography": "lsoa",
     "timePeriod":2023,
+    "census":false,
     "source": "Office for National Statistics",
     "topic":"Demographic information"
   },
@@ -237,6 +243,7 @@
     "lowestGeography": "lsoa",
     "doNotRound":true,
     "timePeriod":2023,
+    "census":false,
     "source": "Office for National Statistics",
     "topic":"Demographic information"
 
@@ -319,6 +326,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Travel and mobility"
   },
@@ -360,6 +368,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Travel and mobility"
   },
@@ -407,6 +416,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Travel and mobility"
   },
@@ -452,6 +462,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Household characteristics"
   },
@@ -487,6 +498,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Household characteristics"
   },
@@ -534,6 +546,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Household characteristics"
   },
@@ -593,6 +606,7 @@
     ],
     "date":2023,
     "lowestGeography": "lsoa",
+    "census":false,
     "source": "Office for National Statistics",
     "timePeriod":"Financial year ending 2023",
     "topic":"Housing and energy"
@@ -641,6 +655,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -681,6 +696,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -754,6 +770,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -803,6 +820,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -834,6 +852,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -877,6 +896,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -924,6 +944,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -968,6 +989,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -1000,6 +1022,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Population and geography"
   },
@@ -1040,6 +1063,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1081,6 +1105,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1120,6 +1145,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1161,6 +1187,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1208,6 +1235,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1253,6 +1281,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1288,6 +1317,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Housing and energy"
   },
@@ -1342,6 +1372,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Travel and mobility"
   },
@@ -1427,6 +1458,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Travel and mobility"
   },
@@ -1465,6 +1497,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   },
@@ -1502,6 +1535,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   },
@@ -1575,6 +1609,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   },
@@ -1648,6 +1683,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   },
@@ -1691,6 +1727,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   },
@@ -1740,6 +1777,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   },
@@ -1769,6 +1807,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic":"Economic and employment status"
   }

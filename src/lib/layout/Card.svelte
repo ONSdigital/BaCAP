@@ -33,15 +33,18 @@
     </header>
   {/if}
   <slot />
-  {#if geography}
-  <span class="footnote">Geography: {@html geographyLookup[geography]}</span>
-  <br/>
-  {/if}
-  {#if source}
-  <span class="footnote"
-  >Source: {@html source}</span
->
-  {/if}
+  <div class="ons-u-mt-s">
+    {#if source}
+    <span class="footnote"
+    >Source: {@html source}</span
+  >
+    {/if}
+    <br/>
+    {#if geography}
+    <span class="footnote">Geography: {@html geographyLookup[geography]}</span>
+    {/if}
+  </div>
+
 
   {#if links && links[0]}
     <div class="margin-top--2">

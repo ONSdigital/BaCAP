@@ -110,7 +110,7 @@
       </Card>
     {/if}
     {#each tables || [] as tab}
-      <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={tab.date ? tab.date : '2021'}>
+      <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={topicsLookup[tab.code].date ? topicsLookup[tab.code].date : '2021'}>
         {#if topicsLookup[tab.code]?.chart === "number"}
           <BigNumber
             value={tab.data[0].count}
