@@ -36,7 +36,7 @@
         <h2>How to use the profile builder</h2>
 
         <p>There are two steps to build your custom area profile.</p>
-        <p>
+        <!-- <p>
           The first is to draw your area. You can do this using the map on the
           next page.
         </p>
@@ -48,32 +48,34 @@
           Once you have drawn your area and chosen your datasets, you will be
           able to build your profile. You will be able to download data and
           charts from your profile.
-        </p>
+        </p> -->
         </Section>
         <!-- <Section width="wide" background="#f5f5f5"> -->
           <Cards>
-            <Card title="Step 1 - Create an area profile">
-              <p>There are four ways to create an area profile:</p>
+            <Card title="Step 1 - Select an area">
+              <p>There are four ways to select an area:</p>
           <ol>
             <li>Search for an area in the search box.</li>
             <li>Draw a polygon on the map.</li>
             <li>Draw a circle on the map.</li>
-            <li>Upload a saved area.</li>
+            <li>Upload a area boundary.</li>
           </ol>
-          <p>Select “Build profile for the area”.</p>
+          <p>Once you have finished selecting an area, click on the “Build profile” button.</p>
         </Card>
   
             <Card title="Step 2 - Build a profile for the area">
           <p>
-            Once you have drawn your area, choose which datasets you want for your
+            Once you have selected your area, choose which datasets you want for your
             profile. These are available in the Datasets section.
           </p>
   
           <p>
             Choose as many datasets as you want. The profile will be built as you
             choose your datasets. Your comparison area will be preset depending on
-            the area you drew in Step 1. You can change this comparison area.
+            the area you selected in Step 1. You can change this comparison area.
           </p>
+
+          <p>You will be able to download data and charts from your profile.</p>
         </Card>
       </Cards>
         <!-- </Section> -->
@@ -83,10 +85,9 @@
         
 
         <h3>Which datasets are available?</h3>
-        <p>This is a list of the datasets available through this tool:</p>
-        <Twisty title="Census 2021 datasets">
+        <p>This is a list of the datasets and topics available through this tool:</p>
+        <Twisty title="Census 2021 topics">
           <ul class="list-container">
-            <li class="list-item">Age profile</li>
             <li class="list-item">Country of birth</li>
             <li class="list-item">Disability</li>
             <li class="list-item">Ethnic group</li>
@@ -118,7 +119,6 @@
             <li class="list-item">Central heating</li>
             <li class="list-item">Distance travelled to work</li>
             <li class="list-item">Method of travel to workplace</li>
-            <li class="list-item">Population</li>
             <li class="list-item">Residential property sales</li>
             <li class="list-item">School children and full-time students</li>
             <li class="list-item">Second address indicator</li>
@@ -129,6 +129,9 @@
         
         <Twisty title="Non-Census datasets">
           <ul class="list-container">
+              <li class="list-item">Mid-year population estimates</li>
+              <li class="list-item">Live births</li>
+              <li class="list-item">Deaths</li>
               <li class="list-item">Residential house sales</li>
               <li class="list-item">Energy efficiency</li>
           </ul>
@@ -138,10 +141,10 @@
       <Section>
         <h3>How does this tool produce these figures?</h3>
           <p>The tool takes your chosen shape and compares it to your selected datasets.</p>
-          <p>It produces a best-fit shape, which is the closest available to your chosen shape. It adds up the data for your best-fit shape and returns it as an estimated total.</p>
-          <p>Census 2021 datasets and non-Census datasets use different small area types.</p>
-          <p>Census 2021 datasets use Output Areas (OAs) whereas non-Census datasets use larger Lower layer Super Output Areas (LSOAs).</p>
-          <p>We advise caution when comparing values between Census and non-Census datasets because these best-fit shapes will have different boundaries.</p>
+          <p>It produces a best-fit shape, which is the closest available to your chosen shape. It adds up the small area data for your best-fit shape and returns it as an estimated total.</p>
+          <p>Census 2021 topics and non-Census datasets use different small area types.</p>
+          <p>Census 2021 topics use Output Areas (OAs) whereas non-Census datasets use larger Lower layer Super Output Areas (LSOAs).</p>
+          <p>We advise caution when comparing values between Census topics and non-Census datasets because these best-fit shapes will have different boundaries.</p>
       </Section>
     </Theme>
   </div>

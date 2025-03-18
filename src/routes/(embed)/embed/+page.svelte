@@ -96,7 +96,7 @@
 </svelte:head>
 
 <Notice>
-  Census and non-Census datasets will use different best-fit shapes to estimate the data to be returned to users.
+  Census topics and non-Census datasets will use different best-fit shapes to estimate the data to be returned to users.
 </Notice>
 
 {#if tables}

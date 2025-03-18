@@ -21,7 +21,7 @@ export let radius=0.5;
       </ToolbarButton>
 
       <ToolbarButton id="polygon" icon="polygon" label="Draw a polygon" hasAriaControls on:click={setDrawMode} sticky>
-        <p>Draw custom boundaries by creating a polygon shape. Simply click on the map to set the vertices of your polygon, and the tool will automatically connect the points to form the boundary.</p><img src='/img/polygon.png' alt='Map showing drawing boundaries by clicking'/>
+        <p>Draw custom boundaries by creating a polygon shape. Simply click on the map to set the vertices of your polygon, and the tool will automatically connect the points to form the boundary.</p><img src='/img/polygon.png' alt='Map showing drawing boundaries by clicking.'/>
       </ToolbarButton>
 
       <ToolbarButton id="circle" icon="radius" label="Draw a circle" hasAriaControls on:click={setRadiusMode} sticky>
@@ -44,11 +44,11 @@ export let radius=0.5;
       <ToolbarDivider />
 
       <ToolbarButton id="zoomin" icon="zoomin" label="Zoom in" on:click={zoomIn} transient disabled={$currentMapZoom >= maxzoom}>
-        <p>Get a more detailed view of areas of the map by using the Zoom in </p>
+        <p>Get a more detailed view of areas of the map by using the Zoom in.</p>
       </ToolbarButton> 
 
       <ToolbarButton id="zoomout" icon="zoomout" label="Zoom out" on:click={zoomOut} transient disabled={$currentMapZoom <= minzoom}>
-        <p>and Zoom out tool.</p>
+        <p>Get a wider view of the map by using the Zoom out tool.</p>
       </ToolbarButton>
       
       
@@ -90,7 +90,7 @@ export let radius=0.5;
           </ButtonGroup>
         </ToolControl>
         <ToolControl id="search">
-          <p>Use the search to select an area to apply it to the map</p>
+          <p>Use the search to select an area to apply it to the map.</p>
           <Select on:select={doSelect} />
         </ToolControl>
         
@@ -105,10 +105,10 @@ export let radius=0.5;
         <p>To automatically select a defined custom area, you can upload a GeoJSON file that had been saved previously.</p>
       </ToolbarButton>
       <ToolbarDivider />
-      <ToolbarButton id="help" icon="help" label="Help" sticky>
+      <!-- <ToolbarButton id="help" icon="help" label="Help" sticky>
         <p>To show help and guidance at any time, select this option in the toolbar.</p>
       </ToolbarButton>
-      <ToolbarDivider />
+      <ToolbarDivider /> -->
       <ToolbarButton id="getstarted" custom label="Get started">
         <p>Once you are happy with the area shape, you can start choosing from a wide variety of datasets to build your area profile.</p>
         <div slot="custom">
