@@ -105,8 +105,7 @@
 
   async function init() {
     isLoading.set(true);
-
-    checkForHashSelection();
+    await checkForHashSelection();
 
     // resume as normal
     store = JSON.parse(localStorage.getItem("onsbuild"));

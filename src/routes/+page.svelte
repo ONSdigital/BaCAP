@@ -35,7 +35,6 @@
       <Section marginTop>
         <h2>How to use the profile builder</h2>
 
-        <p>How to use the profile builder</p>
         <p>There are two steps to build your custom area profile.</p>
         <p>
           The first is to draw your area. You can do this using the map on the
