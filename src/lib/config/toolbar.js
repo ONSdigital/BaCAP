@@ -212,12 +212,13 @@ export function loadGeo(uploader) {
       if (b.properties && b.properties.codes) {
         let bb = b.properties.bbox ? b.properties.bbox : bbox(b);
         let oa = b.properties.codes;
+        let lsoa = b.properties.codes_compressed_to_lsoa
 
         selected.update((sel) => [
           ...sel,
           {
             oa: new Set(oa),
-            lsoa: new Set(get(centroids).compress(oa, "lsoa")),
+            lsoa: new Set(lsoa),
             geo: b,
           },
         ]);
