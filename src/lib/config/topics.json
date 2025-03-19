@@ -60,13 +60,13 @@
     "cellCode": "date",
     "chart": "number",
     "measures": 20100,
-    "date": 2022,
+    "date": "YE Sep 2023",
     "unit": "sales",
     "base": "all sales",
     "categories": [
       {
         "label": "Sales",
-        "cells": ["2022-12"]
+        "cells": ["2023-09"]
       }
     ],
     "queryExt": "&sales=0",
@@ -605,7 +605,7 @@
         ]
       }
     ],
-    "date":2023,
+    "date":"FYE2023",
     "lowestGeography": "lsoa",
     "census":false,
     "source": "Office for National Statistics",
