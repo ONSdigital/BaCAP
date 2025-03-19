@@ -54,27 +54,11 @@ function makeCells(table) {
 
 function filterCodes(codes, level = "none") {
   return level === "none" ? codes :
-    level === "lower" ? codes.filter(c => ["01", "02"].includes(c.slice(1, 3))) :
-    codes.filter(c => !["01", "02"].includes(c.slice(1, 3)));
+    level === "lower" ? codes.filter(c => ["00","01", "02"].includes(c.slice(1, 3))) :
+    codes.filter(c => !["00","01", "02"].includes(c.slice(1, 3)));
 }
 
-function sumData(data1, data2) {
-  if (!data1?.[0]) return data2;
-  if (!data2?.[0]) return data1;
 
-  const newData = {};
-
-  for (const data of [data1, data2]) {
-    if (Array.isArray(data)) {
-      for (const d of data) {
-        const key = `${d.areanm}_${d.category}`;
-        if (!newData[key]) newData[key] = d;
-        else newData[key].value += d.value;
-      }
-    }
-  }
-  return Object.keys(newData).map(key => newData[key]);
-}
 
 function calcPercent(data) {
   let totals = {};
@@ -96,12 +80,15 @@ function calcPercent(data) {
 }
 
 function processNomiswebData(data, table) {
-
+  
   const hasBothCountAndPercentage = table.measures.length === 2;
-
+  const hasTwoTables = Array.isArray(table.tableCode);
   const processedData = [];
 
-  if(hasBothCountAndPercentage && !Array.isArray(table.tableCode)){
+  if(hasTwoTables){
+    // calculate percentage ourselves
+    return calcPercent(data);
+  }else if(hasBothCountAndPercentage && !hasTwoTables){
     // use counts and percentages from nomis
     for(let i=1;i<data.length;i+=2){
       processedData.push({
@@ -112,9 +99,6 @@ function processNomiswebData(data, table) {
       })
     }
     return processedData;
-  }else if(hasBothCountAndPercentage && Array.isArray(table.tableCode)){
-    // calculate percentage ourselves
-    return calcPercent(data);
   }else{
     return data.map(d => {
       const count = d.value;
@@ -125,12 +109,12 @@ function processNomiswebData(data, table) {
         : count;
   
       return { 
-        ...d,
-        value:processedCount,
-        count: processedCount,
-        originalValue: count
-      };
-    })
+          ...d,
+          value:processedCount,
+          count: processedCount,
+          originalValue: count
+        };
+      })
     };
   }
 
@@ -151,22 +135,23 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
     const url = makeUrl(table, tableCode, cds, compcds);
 
     // console.log(`Fetching data from: ${url}`);
-
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to fetch ${tableCode}, Status: ${res.status}`);
-
-      const str = (await res.text())
-        .replace("GEOGRAPHY_NAME", "areanm")
-        .replace("OBS_VALUE", "value")
-        .replace(`${table.cellCode}_name`.toUpperCase(), "category");
-
-      const parsedData = csvParse(str, autoType);
-      data = sumData(data, parsedData);
-
-    } catch (error) {
-      console.error(`Error fetching data for ${tableCode}:`, error);
+    if(cds.length !== 0){
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Failed to fetch ${tableCode}, Status: ${res.status}`);
+  
+        const str = (await res.text())
+          .replace("GEOGRAPHY_NAME", "areanm")
+          .replace("OBS_VALUE", "value")
+          .replace(`${table.cellCode}_name`.toUpperCase(), "category");
+  
+        const parsedData = csvParse(str, autoType);
+        data = sumData(data, parsedData);
+      } catch (error) {
+        console.error(`Error fetching data for ${tableCode}:`, error);
+      }
     }
+    
   }
 
     // Analytical tracking
@@ -202,4 +187,22 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
   // // }
 
   // return data;
+}
+
+function sumData(data1, data2) {
+  if (!data1?.[0]) return data2;
+  if (!data2?.[0]) return data1;
+
+  const newData = {};
+
+  for (const data of [data1, data2]) {
+    if (Array.isArray(data)) {
+      for (const d of data) {
+        const key = `${d.areanm}_${d.category}`;
+        if (!newData[key]) newData[key] = d;
+        else newData[key].value += d.value;
+      }
+    }
+  }
+  return Object.keys(newData).map(key => newData[key]);
 }

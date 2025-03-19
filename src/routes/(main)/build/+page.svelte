@@ -75,7 +75,7 @@
     // radius: 5,
     // select: "add",
     name: "Selected area",
-    showSave: false,
+    // showSave: false,
     showEmbed: false,
     topics: [],
     // topicsExpand: false,
@@ -213,6 +213,13 @@
 
   function cancelChangeName(){
     showChangeName = false
+  }
+  $:console.log('store',store)
+  $:console.log('tables',$tables)
+  $:if(store!=undefined){
+    console.log('list of OAs,',store.properties.oa_all.join(','))
+    console.log('list of OAs compressed to higher geographies, ',store.properties.compressed.join(","))
+    if(store.properties.compressedToLsoa){console.log('list of LSOA compressed to higher geographies, ',store.properties.compressedToLsoa.join(","))}
   }
 </script>
 

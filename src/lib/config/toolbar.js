@@ -46,8 +46,6 @@ export function doSelect(e) {
 export function recolour(){
   const items = get(selected).at(-1);
 
-  if (!items.oa || !items.oa.size) return;
-
   const totalPopulation = items.oa && items.oa.size
     ? [...items.oa]
         .map((d) => get(centroids).population(d) || 0)
@@ -56,6 +54,8 @@ export function recolour(){
 
 
   pselect.set(totalPopulation);
+
+  if (!items.oa || !items.oa.size) return;
 
     // This makes the OA layer coloured in when selecting an area
     // if ($mapObject.getLayer("bounds"))
@@ -67,10 +67,9 @@ export function recolour(){
     //     "transparent",
     //   ]);
 
-     if (get(mapObject)) {
+    if (get(mapObject)) {
       changeData("userGeo", items.geo);
     }
-
       
     if (get(selected).length > 1 && state.name) state.name = "";
   }

@@ -290,10 +290,13 @@ export async function update(geo) {
   document.querySelector('#mapcontainer div canvas').style.cursor = 'wait';
   // console.log('update',geo)
   if(check_geo_empty(await get(user_geometry))){ //check if there's an existing geometry in the store
-    changeData('userGeo',geo) // change the layer with the user drawn geometry
-    user_geometry.set(geo) // store it to the store
+    if(get(addMode)){
+      changeData('userGeo',geo) // change the layer with the user drawn geometry
+      user_geometry.set(geo) // store it to the store
+    }
   }else{
     let union = addOrSubtractGeo(await get(user_geometry),geo) //if there's something there check it intersect and make a union
+    if(union==null){union = blank} //if the union is null, set it to blank
     changeData ('userGeo',union) //update map
     user_geometry.set(union) //update store
   }

@@ -143,7 +143,7 @@
           <p>The tool takes your chosen shape and compares it to your selected datasets.</p>
           <p>It produces a best-fit shape, which is the closest available to your chosen shape. It adds up the small area data for your best-fit shape and returns it as an estimated total.</p>
           <p>Census 2021 topics and non-Census datasets use different small area types.</p>
-          <p>Census 2021 topics use Output Areas (OAs) whereas non-Census datasets use larger Lower layer Super Output Areas (LSOAs).</p>
+          <p>Census 2021 topics use Output Areas (OAs) whereas non-Census datasets primarily use larger Lower layer Super Output Areas (LSOAs).</p>
           <p>We advise caution when comparing values between Census topics and non-Census datasets because these best-fit shapes will have different boundaries.</p>
       </Section>
     </Theme>
