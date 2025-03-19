@@ -17,9 +17,11 @@ export function doSelect(e) {
     let oa = new Set(get(centroids).expand(e.detail.codes,'oa'));
     let lsoa = new Set(get(centroids).expand(e.detail.codes,'lsoa')); 
     let geometry = e.detail.geometry;
-    selected.update(s=>[...s,{oa:oa,lsoa:lsoa,geo:geometry}])
+    let geojson = {type: 'Feature', geometry: geometry}
+
+    user_geometry.set(geojson);
+    selected.update(s=>[...s,{oa:oa,lsoa:lsoa,geo:geojson}])
     changeData("userGeo", geometry);
-    user_geometry.set(geometry); 
     get(mapObject).fitBounds(bbox, { padding: 40 });
     state.name = e.detail.areanm;
   } else if (e.detail.type == "postcode") {
@@ -255,7 +257,7 @@ export const newselect = function () {
         clearGeo();
         localStorage.removeItem('draw_data');
         localStorage.removeItem('onsbuild');
-        selected.set([{ oa: new Set(), lsoa: new Set(), geo: blank_geo }]);
+        selected.update(s=>[...s,{ oa: new Set(), lsoa: new Set(), geo: blank_geo }]);
         user_geometry.set(blank_geo)
         pselect.set(0);
         state.name = "";

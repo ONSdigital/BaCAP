@@ -12,6 +12,8 @@
   import HeaderImage from "$lib/layout/HeaderImage.svelte";
   import Lede from "$lib/layout/Lede.svelte";
   import { base } from "$app/paths";
+
+  import topicsAll from "$lib/config/topics.json";
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -88,52 +90,18 @@
         <p>This is a list of the datasets and topics available through this tool:</p>
         <Twisty title="Census 2021 topics">
           <ul class="list-container">
-            <li class="list-item">Country of birth</li>
-            <li class="list-item">Disability</li>
-            <li class="list-item">Ethnic group</li>
-            <li class="list-item">General health</li>
-            <li class="list-item">Highest level of qualification</li>
-            <li class="list-item">National identity</li>
-            <li class="list-item">Proficiency in English</li>
-            <li class="list-item">Religion</li>
-            <li class="list-item">Sex</li>
-            <li class="list-item">Welsh language skills</li>
-            <li class="list-item">Welsh speaking ability</li>
-            <li class="list-item">Accommodation type</li>
-            <li class="list-item">Household composition</li>
-            <li class="list-item">Household deprivation</li>
-            <li class="list-item">Household size</li>
-            <li class="list-item">Legal partnership status</li>
-            <li class="list-item">Length of residence in the UK</li>
-            <li class="list-item">Number of bedrooms</li>
-            <li class="list-item">Number of cars and vans</li>
-            <li class="list-item">Number of households</li>
-            <li class="list-item">Occupancy rating for bedrooms</li>
-            <li class="list-item">Tenure of household</li>
-            <li class="list-item">Economic activity status</li>
-            <li class="list-item">Employment history</li>
-            <li class="list-item">Hours per week worked</li>
-            <li class="list-item">Occupation</li>
-            <li class="list-item">Socio-economic classification (NS-Sec)</li>
-            <li class="list-item">Provision of unpaid care</li>
-            <li class="list-item">Central heating</li>
-            <li class="list-item">Distance travelled to work</li>
-            <li class="list-item">Method of travel to workplace</li>
-            <li class="list-item">Residential property sales</li>
-            <li class="list-item">School children and full-time students</li>
-            <li class="list-item">Second address indicator</li>
-            <li class="list-item">Passports held</li>
+            {#each topicsAll.filter(t=>t.census==true).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
+              <li class="list-item">{label}</li>
+            {/each}
         </ul>
         </Twisty>
         <div style="height: 16px"></div>
         
         <Twisty title="Non-Census datasets">
           <ul class="list-container">
-              <li class="list-item">Mid-year population estimates</li>
-              <li class="list-item">Live births</li>
-              <li class="list-item">Deaths</li>
-              <li class="list-item">Residential house sales</li>
-              <li class="list-item">Energy efficiency</li>
+            {#each topicsAll.filter(t=>t.census==false).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
+              <li class="list-item">{label}</li>
+            {/each}
           </ul>
         </Twisty>
         <div style="height: 16px"></div>

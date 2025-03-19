@@ -288,8 +288,7 @@ export function changeData(layer, data) {
 export async function update(geo) {
   // update all polygon like draw items
   document.querySelector('#mapcontainer div canvas').style.cursor = 'wait';
-  // console.log('update',geo)
-  if(check_geo_empty(await get(user_geometry))){ //check if there's an existing geometry in the store
+  if(is_geo_empty(get(user_geometry))){ //check if there's an existing geometry in the store
     if(get(addMode)){
       changeData('userGeo',geo) // change the layer with the user drawn geometry
       user_geometry.set(geo) // store it to the store
@@ -388,8 +387,8 @@ function circleFast(clear = false, center = radiusCenter) {
 // Query
 ////////////////////
 
-function check_geo_empty(feature){
-  if (!feature || !feature.geometry || !feature.geometry.coordinates) {
+function is_geo_empty(feature){
+  if (!feature || !feature.geometry || !feature.geometry.coordinates ) {
     return true; // Handle cases where geometry or coordinates are missing
   }
   return feature.geometry.coordinates.length === 0;
