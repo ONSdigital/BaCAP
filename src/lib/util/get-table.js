@@ -5,7 +5,7 @@ import { analyticsEvent } from '$lib/layout/AnalyticsBanner.svelte';
 function makeUrl(table, tableCode, codes, comp) {
   let url = `https://www.nomisweb.co.uk/api/v01/dataset/${tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
   if (table.queryExt) url += table.queryExt;
-  // console.log(url)
+  console.log(url)
   return url;
 }
 
@@ -129,13 +129,15 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
 
   for (const tableCode of tableCodes) {
     const codes = table.onlyOA ? state.codes : state.compressed;
+    console.log('codes', codes)
     const filter = tableCodes.length === 1 ? "none" : tableCode === tableCodes[0] ? "lower" : "higher";
     const cds = filterCodes(codes, filter);
+    console.log('codes filtered', cds)
     const compcds = filterCodes(comp, filter);
     const url = makeUrl(table, tableCode, cds, compcds);
 
     // console.log(`Fetching data from: ${url}`);
-    if(cds.length !== 0){
+    if(cds.length !== 0 || compcds.length !== 0){
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Failed to fetch ${tableCode}, Status: ${res.status}`);
