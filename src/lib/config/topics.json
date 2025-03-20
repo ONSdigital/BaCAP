@@ -65,7 +65,6 @@
     "base": "all sales",
     "categories": [
       {
-        "label": "Sales",
         "cells": ["2023-09"]
       }
     ],
@@ -209,7 +208,7 @@
     "date": 2023,
     "cellCode":"date",
     "chart": "number",
-    "unit": "births",
+    "unit": "live births",
     "base": "all live births",
     "categories": [
       {
