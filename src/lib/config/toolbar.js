@@ -219,7 +219,7 @@ export function loadGeo(uploader) {
           ...sel,
           {
             oa: new Set(oa),
-            lsoa: new Set(lsoa),
+            lsoa: new Set(get(centroids).expand(lsoa, "lsoa")),
             geo: b,
           },
         ]);
