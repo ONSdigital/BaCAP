@@ -10,7 +10,7 @@
 	let censusColor = theme == "dark" ? "white" : "#902082";
 </script>
 
-<PhaseBanner phase="alpha" />
+<PhaseBanner phase="alpha" href="https://consultations.ons.gov.uk/digital-publishing/8302beaa/consultation/intro/"/>
 <Header compact />
 
 
