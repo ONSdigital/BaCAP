@@ -60,7 +60,7 @@
             <li>Search for an area in the search box.</li>
             <li>Draw a polygon on the map.</li>
             <li>Draw a circle on the map.</li>
-            <li>Upload a area boundary.</li>
+            <li>Upload an area boundary.</li>
           </ol>
           <p>Once you have finished selecting an area, click on the “Build profile” button.</p>
         </Card>
