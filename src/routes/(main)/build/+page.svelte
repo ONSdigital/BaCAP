@@ -174,11 +174,13 @@
 
   async function processStoreData() {
     highestLevel = store.properties.highestLevel;
-    topics = filterTopics(topicsAll, highestLevel, coverage);
-    topicsGrouped = groupTopics(topics);
+   
     geojson = simplifyGeo(store.geojson);
     parents = await getParents(store.properties.compressed);
     coverage = parents.coverage;
+
+    topics = filterTopics(topicsAll, highestLevel, coverage);
+    topicsGrouped = groupTopics(topics);
 
     $buildstate = {
       ...$buildstate,
