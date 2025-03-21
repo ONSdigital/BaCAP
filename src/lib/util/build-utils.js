@@ -117,7 +117,7 @@ export async function downloadData() {
         }","${meta.base.replace(
           "all ",
           ""
-        )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.timePeriod ? meta.timePeriod : "2021"}"\n`;
+        )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.dateLabelLong ? meta.dateLabelLong : "2021"}"\n`;
     }
   });
 

@@ -5,7 +5,8 @@
     "desc": "Mid-year estimate of the total number of people.",
     "tableCode": ["NM_2014_1", "NM_2002_1"],
     "cellCode": "c_age",
-    "date": 2022,
+    "dateLabel": 2022,
+    "date":2022,
     "measures": [20100],
     "chart": "number",
     "unit": "people",
@@ -19,7 +20,7 @@
       }
     ],
     "queryExt": "&gender=0",
-    "timePeriod":2022,
+    "dateLabelLong":2022,
     "lowestGeography": "oa",
     "doNotRound":false,
     "census":false,
@@ -57,23 +58,24 @@
     "desc": "Number of residential property sales in England and Wales.",
     "url": "peoplepopulationandcommunity/housing/methodologies/housepricestatisticsforsmallareasqmi",
     "tableCode": "NM_2402_1",
-    "cellCode": "date",
+    "cellCode": "sales",
     "chart": "number",
     "measures": 20100,
-    "date": "YE Sep 2023",
+    "dateLabel": "YE Sep 2023",
+    "date":"2023-09",
     "unit": "sales",
     "base": "all sales",
     "categories": [
       {
-        "cells": ["2023-09"]
+        "label": "Count of sales",
+        "cells": [0]
       }
     ],
-    "queryExt": "&sales=0",
     "lowestGeography": "lsoa",
     "source": "HM Land Registry",
     "doNotRound":true,
     "census":false,
-    "timePeriod":"Quarterly rolling annual data",
+    "dateLabelLong":"Year ending September 2023",
     "topic": "Housing and energy"
   },
   {
@@ -83,7 +85,8 @@
     "tableCode": ["NM_2014_1", "NM_2002_1"],
     "cellCode": "c_age",
     "measures": [20100],
-    "date": 2022,
+    "dateLabel": 2022,
+    "date":2022,
     "chart": "profile",
     "unit": "%",
     "base": "all people",
@@ -163,7 +166,7 @@
     ],
     "queryExt": "&gender=0",
     "lowestGeography": "oa",
-    "timePeriod":2022,
+    "dateLabelLong":2022,
     "census":false,
     "source": "Office for National Statistics",
     "topic": "Demographic information"
@@ -175,7 +178,8 @@
     "tableCode": ["NM_2014_1", "NM_2002_1"],
     "cellCode": "gender",
     "measures": [20100],
-    "date": 2022,
+    "dateLabel": 2022,
+    "date":2022,
     "unit": "%",
     "base": "all people",
     "categories": [
@@ -193,7 +197,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "timePeriod":2022,
+    "dateLabelLong":2022,
     "census":false,
     "queryExt": "&c_age=200",
     "source": "Office for National Statistics",
@@ -205,7 +209,8 @@
     "desc": "The number of babies born in a year, excluding stillbirths.",
     "tableCode": "NM_206_1",
     "measures": 20100,
-    "date": 2023,
+    "dateLabel": 2023,
+    "date":2023,
     "cellCode":"date",
     "chart": "number",
     "unit": "live births",
@@ -217,8 +222,9 @@
       }
     ],
     "lowestGeography": "lsoa",
-    "timePeriod":2023,
+    "dateLabelLong":2023,
     "census":false,
+    "doNotRound":true,
     "source": "Office for National Statistics",
     "topic":"Demographic information"
   },
@@ -229,7 +235,8 @@
     "tableCode": "NM_161_1",
     "cellCode": "measure",
     "measures": 20100,
-    "date": 2023,
+    "dateLabel": 2023,
+    "date":2023,
     "chart": "number",
     "unit": "deaths",
     "base": "all deaths",
@@ -242,7 +249,7 @@
     "queryExt": "&cause_of_death=0&gender=0&age=0",
     "lowestGeography": "lsoa",
     "doNotRound":true,
-    "timePeriod":2023,
+    "dateLabelLong":2023,
     "census":false,
     "source": "Office for National Statistics",
     "topic":"Demographic information"
@@ -604,11 +611,11 @@
         ]
       }
     ],
-    "date":"FYE2023",
+    "dateLabel":"FYE2023",
     "lowestGeography": "lsoa",
     "census":false,
     "source": "Office for National Statistics",
-    "timePeriod":"Financial year ending 2023",
+    "dateLabelLong":"Financial year ending 2023",
     "topic":"Housing and energy"
   },
   {

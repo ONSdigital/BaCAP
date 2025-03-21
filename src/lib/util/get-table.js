@@ -14,7 +14,9 @@ function makeUrl(table, tableCode, codes, comp) {
   let url = `https://www.nomisweb.co.uk/api/v01/dataset/${tableCode}.data.csv?geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
 
   // Check if table.cellCode is not 'date', then add date=latest
-  if (table.cellCode !== "date") {
+  if (table.date) {
+    url += "&date=" + table.date;
+  } else {
     url += "&date=latest";
   }
 
@@ -91,7 +93,7 @@ function calcPercent(data) {
   let dataNew = JSON.parse(JSON.stringify(data));
   dataNew.forEach(d => {
     d.originalValue = d.value;
-    d.count = d.value;
+    d.count = roundCount(d.value);
     d.percentage = +((d.value / totals[d.areanm]) * 100).toFixed(1);
     d.value = d.percentage;
   });
@@ -148,10 +150,8 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
 
   for (const tableCode of tableCodes) {
     const codes = table.onlyOA ? state.codes : state.compressed;
-    console.log('codes', codes)
     const filter = tableCodes.length === 1 ? "none" : tableCode === tableCodes[0] ? "lower" : "higher";
     const cds = filterCodes(codes, filter);
-    console.log('codes filtered', cds)
     const compcds = filterCodes(comp, filter);
     const url = makeUrl(table, tableCode, cds, compcds);
 

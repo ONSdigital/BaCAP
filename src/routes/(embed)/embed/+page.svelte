@@ -110,7 +110,7 @@
       </Card>
     {/if}
     {#each tables || [] as tab}
-      <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={topicsLookup[tab.code].date ? topicsLookup[tab.code].date : '2021'}>
+      <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={topicsLookup[tab.code].dateLabel ? topicsLookup[tab.code].dateLabel : '2021'}>
         {#if topicsLookup[tab.code]?.chart === "number"}
           <BigNumber
             value={tab.data[0].count}
@@ -119,11 +119,14 @@
             description={comp
               ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
               : ""}
-            rounded={topicsLookup[tab.code]?.doNotRound ? topicsLookup[tab.code]?.timePeriod : tab.data[0].value > 1000
-              ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
-              : tab.data[0].value > 100
-                ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                : null}
+            rounded={topicsLookup[tab.code]?.doNotRound 
+              ? null
+              : tab.data[0].count > 1000
+                ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                : tab.data[0].count > 100
+                  ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                  : null
+              }
           />
         {:else if topicsLookup[tab.code]?.chart === "profile"}
           <ProfileChart
