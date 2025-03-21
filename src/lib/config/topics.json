@@ -294,6 +294,7 @@
       }
     ],
     "lowestGeography": "oa",
+    "census":true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration"
   },
