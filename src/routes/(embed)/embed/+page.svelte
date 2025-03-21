@@ -125,7 +125,7 @@
                 ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
                 : tab.data[0].count > 100
                   ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                  : null
+                  : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
               }
           />
         {:else if topicsLookup[tab.code]?.chart === "profile"}

@@ -123,7 +123,6 @@ function processNomiswebData(data, table) {
   }else{
     return data.map(d => {
       const count = d.value;
-      console.log(table,'table')
       // Conditionally handle rounding for specific types
       const processedCount = table.doNotRound ? count : roundCount(count);
         
