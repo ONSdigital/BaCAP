@@ -81,7 +81,7 @@ function filterCodes(codes, level = "none") {
 
 
 
-function calcPercent(data) {
+function calcPercent(data, table) {
   let totals = {};
   data.forEach(d => {
     if (!totals[d.areanm]) {
@@ -93,7 +93,7 @@ function calcPercent(data) {
   let dataNew = JSON.parse(JSON.stringify(data));
   dataNew.forEach(d => {
     d.originalValue = d.value;
-    d.count = roundCount(d.value);
+    d.count = table.doNotRound ? d.value : roundCount(d.value);
     d.percentage = +((d.value / totals[d.areanm]) * 100).toFixed(1);
     d.value = d.percentage;
   });
@@ -108,7 +108,7 @@ function processNomiswebData(data, table) {
 
   if(hasTwoTables){
     // calculate percentage ourselves
-    return calcPercent(data);
+    return calcPercent(data, table);
   }else if(hasBothCountAndPercentage && !hasTwoTables){
     // use counts and percentages from nomis
     for(let i=1;i<data.length;i+=2){
@@ -123,12 +123,10 @@ function processNomiswebData(data, table) {
   }else{
     return data.map(d => {
       const count = d.value;
-  
+      console.log(table,'table')
       // Conditionally handle rounding for specific types
-      const processedCount = ["population", "households", "births"].includes(table.code)
-        ? roundCount(count)
-        : count;
-  
+      const processedCount = table.doNotRound ? count : roundCount(count);
+        
       return { 
           ...d,
           value:processedCount,

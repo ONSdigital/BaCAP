@@ -197,9 +197,8 @@ export function loadGeo(uploader) {
     newselect();
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       let b = JSON.parse(e.target.result);
-
       if (b.type == "FeatureCollection") {
         b = b.features[0];
       } else if (b.type == "Geometry") {
@@ -230,11 +229,10 @@ export function loadGeo(uploader) {
       } else if (b.geometry) {
         if (JSON.stringify(b.geometry).length > 10000)
           b.geometry = simplifyGeo(b.geometry, 10000);
-
         let bb = bbox(b);
-        update(b);
-        user_geometry.set(b);
-        changeData("userGeo", b);
+        await update(b);
+        // user_geometry.set(b);
+        // changeData("userGeo", b);
         get(mapObject).fitBounds(bb, { padding: 40 });
       } else {
         alert("Invalid geography file. Must be GeoJSON format.");
@@ -257,10 +255,11 @@ export const newselect = function () {
         clearGeo();
         localStorage.removeItem('draw_data');
         localStorage.removeItem('onsbuild');
-        selected.update(s=>[...s,{ oa: new Set(), lsoa: new Set(), geo: blank_geo }]);
         user_geometry.set(blank_geo)
         pselect.set(0);
         state.name = "";
+        if(get(selected).at(-1).oa.size == 0) return; // don't add a new blank selection if the last one is already blank
+        selected.update(s=>[...s,{ oa: new Set(), lsoa: new Set(), geo: blank_geo }]);
       };
 
 

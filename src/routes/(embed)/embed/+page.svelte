@@ -96,12 +96,12 @@
 </svelte:head>
 
 <Notice>
-  Census topics and non-Census datasets will use different best-fit shapes to estimate the data to be returned to users.
+  Census topics and non-Census datasets will primarily use different best-fit shapes to estimate the data to be returned to users.
 </Notice>
 
 {#if tables}
   {#if name && name !== "Selected area"}
-    <h1>{name}</h1>
+    <h1 class="ons-u-mt-s ons-u-mb-s">{name}</h1>
   {/if}
   <Cards>
     {#if geojson}

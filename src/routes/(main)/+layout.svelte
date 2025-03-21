@@ -31,6 +31,6 @@
 {/if}
 
 
-{#if $page.url.pathname.includes("build")}
+{#if ['build', 'glossary'].some(term => $page.url.pathname.includes(term))}
   <Footer />
 {/if}

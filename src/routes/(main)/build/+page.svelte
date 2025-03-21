@@ -311,7 +311,7 @@
         >
       </div>
 
-      {#each Object.entries(topicsGrouped) as [topic, items],i}
+      {#each Object.entries(topicsGrouped).sort() as [topic, items],i}
         <Twisty title={topic} open={$buildstate.showAllDatasets||i==0}>
           <Checkboxes on:change={handleCheckboxChange}>
             {#each items as item}

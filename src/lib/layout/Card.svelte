@@ -41,7 +41,7 @@
     {/if}
     <br/>
     {#if geography}
-    <span class="footnote">Geography: {@html geographyLookup[geography]}</span>
+    <span class="footnote">Small area: {@html geographyLookup[geography]}</span>
     {/if}
   </div>
 
