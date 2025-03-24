@@ -140,25 +140,28 @@ class Centroids {
     return { bbox: bounds, oa: new Set(oas), lsoa: new Set(lsoas) };
   }
 
-  // compresses an array codes to the highest geography level specified (oa or lsoa)
+  // compresses an array codes to the highest geography level specified (oa or lsoa). Although doesn't work if you set it compress to lsoa, as it skips out lsoa and just gives back MSOAs or higher
   compress(codes,geo) {
     let all = {};
     let compressed = [];
-    all[geo] = codes;
+    all[geo] = codes;//this contains all the area codes for the specified geography
+
 
     this.data[geo].parents.forEach(p => {
       all[p.key] = codes.map(area => this.data[geo].lookup[area][p.code]);
-    });
+    });//for all the parents geography levels, add the parents codes at that level to each area code
+    // this means that often codes are repeated
 
-    const keys = Object.keys(all).reverse();
-    for (let i = 0; i < codes.length; i++) {
-      if (this.data[geo].parents.every(p => !compressed.includes(all[p.key][i]))) {
+
+    const keys = Object.keys(all).reverse(); // go through from highest to lowest geography level
+    for (let i = 0; i < codes.length; i++) { // go through all the codes
+      if (this.data[geo].parents.every(p => !compressed.includes(all[p.key][i]))) { //if compressed does not include the ith code at that parent level, continue
         for (let j = 0; j < keys.length; j++) {
           let thiskey = keys[j];
           if (j === keys.length - 1) {
             compressed.push(all[thiskey][i]);
           } else if (
-            all[thiskey].filter(cd => all[thiskey][i] === cd).length ===
+            (all[thiskey].filter(cd => all[thiskey][i] === cd)).length ===
             this.data[geo][`${thiskey}_count`][all[thiskey][i]]
           ) {
             compressed.push(all[thiskey][i]);
@@ -167,7 +170,6 @@ class Centroids {
         }
       }
     }
-
     return compressed;
   }
 
@@ -209,7 +211,7 @@ class Centroids {
     // compress the codes
     const compressed = this.compress(oa_all,'oa');
     // Filter compressed to strip out OAs
-    const compressedToLsoa = this.compress(lsoaAll,'lsoa');
+    const compressedToLsoa = compressed.filter(d => !d.startsWith('E00') && !d.startsWith('W00'));
     const bbox = this.bounds(oa_all,'oa');
     const highestLevel = this.identifyHighestGeography(this.compress(oa_all,'oa'))
     var merge = {};
