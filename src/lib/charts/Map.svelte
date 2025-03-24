@@ -7,7 +7,7 @@
 
   import { onMount } from "svelte";
   import { initDraw } from "$lib/util/drawing-utils";
-  import { mapsource, maplayer, mapObject, currentMapZoom, } from "$lib/stores/mapstore";
+  import { mapsource, maplayer, mapObject } from "$lib/stores/mapstore";
   import { minzoom, maxzoom, maxbounds, mapstyle } from "$lib/config/geography";
 
   const mapboxgl = maplibregl;
@@ -17,7 +17,7 @@
 
   /// MAP creation
   async function init() {
-    $mapObject = new mapboxgl.Map({
+    $mapObject = new maplibregl.Map({
       container: "mapcontainer",
       style: mapstyle,
       minZoom: minzoom,
