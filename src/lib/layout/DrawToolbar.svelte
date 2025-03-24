@@ -17,38 +17,38 @@ export let radius=0.5;
   <ToolbarsContainer>
     <Toolbar>
       <ToolbarButton id="move" icon="move" label="Move and Pan" on:click={setPanMode} sticky>
-        <p>Left-click anywhere on the map and hold the button down while dragging the mouse to move the map in the desired direction.</p><img src='/img/movepan.png' alt='Move and pan' />
+        <p>Left-click and hold anywhere on the map to move.</p><img src='/img/movepan.png' alt='Move and pan' />
       </ToolbarButton>
 
       <ToolbarButton id="polygon" icon="polygon" label="Draw a polygon" hasAriaControls on:click={setDrawMode} sticky>
-        <p>Draw custom boundaries by creating a polygon shape. Simply click on the map to set the vertices of your polygon, and the tool will automatically connect the points to form the boundary.</p><img src='/img/polygon.png' alt='Map showing drawing boundaries by clicking.'/>
+        <p>Draw a custom shape. Click on the map to set the corners of your shape boundary and the tool will automatically connect the points to form a polygon.</p><img src='/img/polygon.png' alt='Map showing drawing boundaries by clicking.'/>
       </ToolbarButton>
 
       <ToolbarButton id="circle" icon="radius" label="Draw a circle" hasAriaControls on:click={setRadiusMode} sticky>
-        <p>Select an area radius on the map by using the radius tool. Choose from different size selection before clicking on the map to select that area.</p>
+        <p>Select a circular area on the map. Choose your radius size before clicking on the map to select.</p>
       </ToolbarButton>
 
       <ToolbarButton id="erase" icon="erase" label="Erase a circle" hasAriaControls on:click={setEraseMode} sticky>
-        <p>To remove an area from the map, select the Eraser tool. This allows you to select an eraser size, and remove a selected area by clicking on the map.</p>
+        <p>Deselect part of your highlighted area shape. Select how large an area you wish to remove and click on the map.</p>
       </ToolbarButton>
 
       <ToolbarDivider />
 
       <ToolbarButton id="clear" icon="bin" label="Clear all drawn areas" on:click={newselect} transient>
-        <p>Clear all drawn areas from the map.</p>
+        <p>Clear all selected areas from the map.</p>
       </ToolbarButton>
       <ToolbarButton id="undo" icon="undo" label="Undo last step" on:click={undo} disabled={$selected.length < 2} transient>
-        <p>If you make a mistake, you can undo actions by selecting the Undo button from the toolbar.</p>
+        <p>Undo your last action.</p>
       </ToolbarButton>
 
       <ToolbarDivider />
 
       <ToolbarButton id="zoomin" icon="zoomin" label="Zoom in" on:click={zoomIn} transient disabled={$currentMapZoom >= maxzoom}>
-        <p>Get a more detailed view of areas of the map by using the Zoom in.</p>
+        <p>Zoom in.</p>
       </ToolbarButton> 
 
       <ToolbarButton id="zoomout" icon="zoomout" label="Zoom out" on:click={zoomOut} transient disabled={$currentMapZoom <= minzoom}>
-        <p>Get a wider view of the map by using the Zoom out tool.</p>
+        <p>Zoom out.</p>
       </ToolbarButton>
       
       
