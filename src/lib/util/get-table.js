@@ -154,7 +154,6 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
     if(table.code === "residential_property_sales"){
       //replace cds with nomis codes
       cds = cds.map(c => nomislookup[c] !== undefined ? nomislookup[c] : c);
-      console.log(cds);
     }
     const url = makeUrl(table, tableCode, cds, compcds);
 
