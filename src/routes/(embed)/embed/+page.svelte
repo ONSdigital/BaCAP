@@ -112,22 +112,27 @@
     {#each tables || [] as tab}
       <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={topicsLookup[tab.code].dateLabel ? topicsLookup[tab.code].dateLabel : '2021'}>
         {#if topicsLookup[tab.code]?.chart === "number"}
-          <BigNumber
-            value={tab.data[0].count}
-            unit={topicsLookup[tab.code].unit}
-            prefix={topicsLookup[tab.code].prefix}
-            description={comp
-              ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
-              : ""}
-            rounded={topicsLookup[tab.code]?.doNotRound 
-              ? null
-              : tab.data[0].count > 1000
-                ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
-                : tab.data[0].count > 100
-                  ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                  : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-              }
-          />
+          {#if tab.data.length<2}
+            <p>No data available</p>
+          {:else}
+        
+            <BigNumber
+              value={tab.data[0].count}
+              unit={topicsLookup[tab.code].unit}
+              prefix={topicsLookup[tab.code].prefix}
+              description={comp
+                ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+                : ""}
+              rounded={topicsLookup[tab.code]?.doNotRound 
+                ? null
+                : tab.data[0].count > 1000
+                  ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                  : tab.data[0].count > 100
+                    ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                    : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                }
+            />
+          {/if}
         {:else if topicsLookup[tab.code]?.chart === "profile"}
           <ProfileChart
             xKey="category"
