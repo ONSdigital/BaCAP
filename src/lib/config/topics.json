@@ -210,12 +210,15 @@
     "tableCode": "NM_206_1",
     "measures": 20100,
     "dateLabel": 2023,
-    "date":2023,
-    "cellCode":"date",
+    "date":false,
+    "cellCode":"time",
     "chart": "number",
     "unit": "live births",
     "base": "all live births",
-    "categories": [],
+    "categories": [{
+      "label": "Live births",
+      "cells": [2023]
+    }],
     "lowestGeography": "lsoa",
     "dateLabelLong":2023,
     "census":false,

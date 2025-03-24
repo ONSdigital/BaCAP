@@ -17,7 +17,9 @@ function makeUrl(table, tableCode, codes, comp) {
   // Check if table.cellCode is not 'date', then add date=latest
   if (table.date) {
     url += "&date=" + table.date;
-  } else {
+  } else if (table.date==false){
+
+  } else   {
     url += "&date=latest";
   }
 

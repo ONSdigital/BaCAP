@@ -111,13 +111,16 @@ export async function downloadData() {
     let meta = topicsLookup[t.code];
     let len = meta.categories.length;
     for (let i = 0; i < len; i++) {
-      csv += `"${meta.label}","${meta.categories[i].label}",${t.data[i].percentage ? t.data[i].value : "NA"
-        },${t.data[len + i].percentage ? t.data[len + i].value : "NA"},"${meta.unit
-        }","${t.data[i].percentage ? t.data[i].count : t.data[i].value}","${t.data[len + i].percentage ? t.data[len + i].count : t.data[len + i].value
-        }","${meta.base.replace(
-          "all ",
-          ""
-        )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.dateLabelLong ? meta.dateLabelLong : "2021"}"\n`;
+      csv += `"${meta.label
+      }","${meta.categories[i].label
+      }",${t.data[i].percentage ? t.data[i].value : "NA"
+      },${t.data[len + i].percentage ? t.data[len + i].value : "NA"
+      },"%","${t.data[i].percentage ? t.data[i].count : t.data[i].value
+      }","${t.data[len + i].percentage ? t.data[len + i].count : t.data[len + i].value
+      }","${meta.base.replace(
+        "all ",
+        ""
+      )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.dateLabelLong ? meta.dateLabelLong : "2021"}"\n`;
     }
   });
 
