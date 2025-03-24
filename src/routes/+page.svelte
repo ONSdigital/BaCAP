@@ -68,13 +68,11 @@
             <Card title="Step 2 - Build a profile for the area">
           <p>
             Once you have selected your area, choose which datasets you want for your
-            profile. These are available in the Datasets section.
+            profile.
           </p>
   
           <p>
-            Choose as many datasets as you want. The profile will be built as you
-            choose your datasets. Your comparison area will be preset depending on
-            the area you selected in Step 1. You can change this comparison area.
+            The profile will be built as you choose datasets showing values for your area and a preset comparison area for context. You can change this comparison area. 
           </p>
 
           <p>You will be able to download data and charts from your profile.</p>
