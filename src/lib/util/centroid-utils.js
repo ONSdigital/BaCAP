@@ -7,6 +7,7 @@ import { decompressData } from "compress-csv-to-json";
 // import { dissolve } from '$lib/util/bundled/mapshaper';
 // import { roundAll } from '$lib/util/functions';
 import { boundaries, lsoaBoundaries } from '$lib/config/geography';
+import {codesToBreakDown} from '$lib/config/geography-changes';
 
 class Centroids {
   constructor(sourceConfigs){
@@ -198,6 +199,34 @@ class Centroids {
     }
 
     return "No valid geography codes found";
+  }
+
+  getChildrenMsoas(code) {
+    return this.data['lsoa'].childLookup[code];
+  }
+
+  // replaces specific codes for LAs with their children MSOA codes
+  replaceCodesWithMSOA(codes) {
+    let updatedCodes = [...codes]; // Create a copy to avoid modifying the original array
+
+    // Break down codes authorities into children MSOAs
+    let finalCodes = [];
+    for (const code of updatedCodes) {
+      if (codesToBreakDown.includes(code)) {
+        const msoas = this.getChildrenMsoas(code);
+
+        if (msoas) {
+          finalCodes.push(...msoas);
+        } else {
+          // Handle case where childLookup doesn't have the code
+          console.warn(`Warning: Could not find children MSOAs for LA code: ${code}`);
+          finalCodes.push(code); // Or decide to exclude it
+        }
+      } else {
+        finalCodes.push(code);
+      }
+    }
+  return finalCodes;
   }
 
   async simplify(

@@ -2,6 +2,8 @@ import { csvParse, autoType } from 'd3-dsv';
 import { roundCount } from '$lib/util/functions';
 import { analyticsEvent } from '$lib/layout/AnalyticsBanner.svelte';
 import nomislookup from "$lib/config/nomislookup.json";
+import { centroids } from "$lib/stores/mapstore";
+import { get } from 'svelte/store';
 
 // function makeUrl(table, tableCode, codes, comp) {
 //   let url = `https://www.nomisweb.co.uk/api/v01/dataset/${tableCode}.data.csv?date=latest&geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
@@ -151,7 +153,8 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
   for (const tableCode of tableCodes) {
     const codes = table.onlyOA ? state.codes : state.compressed;
     const filter = tableCodes.length === 1 ? "none" : tableCode === tableCodes[0] ? "lower" : "higher";
-    let cds = filterCodes(codes, filter);
+    let cds=get(centroids).replaceCodesWithMSOA(codes);
+    cds = filterCodes(cds, filter);
     const compcds = filterCodes(comp, filter);
     if(table.code === "residential_property_sales"){
       //replace cds with nomis codes
