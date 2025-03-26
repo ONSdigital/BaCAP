@@ -8,6 +8,7 @@
   // import Icon from "$lib/ui/Icon.svelte";
   // import { download, clip } from "$lib/util/functions";
   // import bbox from "@turf/bbox";
+  import {Main} from "@onsvisual/svelte-components"
   import Map from "$lib/charts/Map.svelte";
   import "$lib/css/maplibre-gl.css";
   import { onMount } from "svelte";
@@ -66,11 +67,7 @@
   // $:console.log('selected',$selected)
 
   
-  $:if(Array.from($selected[$selected.length - 1].oa).length > 0){
-    console.log('list of LSOA selected', Array.from($selected[$selected.length - 1].lsoa).join(", "));
-    console.log('list of OA selected', Array.from($selected[$selected.length - 1].oa).join(", "));
-  }
-  
+ 
   // function setDrawData() {
   //   let items = $selected[$selected.length - 1];
 
@@ -248,7 +245,6 @@
     });
 
   
-    // recolour($selected);
   } //endinit
 
   // function loadGeo() {
@@ -357,16 +353,17 @@
   //   }
   //   setDrawData();
   // }
-
 </script>
 
 <div class="draw-page-container">
   <ONSloader isLoading={$isLoading} />
+  <Main>
   <div id="map">
     <DrawToolbar {state} bind:radius={$radiusInKm}/>
     <PopulationCounter population={$pselect}/>
     <Map drawingTools={true} />
   </div>
+  </Main>
 </div>
 
 

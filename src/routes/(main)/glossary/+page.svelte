@@ -6,7 +6,7 @@
     Breadcrumb,
     Container,
     Titleblock,
-    Button,
+    Main
   } from "@onsvisual/svelte-components";
 </script>
 
@@ -30,7 +30,7 @@
     <Titleblock width="wider" title="Glossary" />
   </div>
 </Theme>
-
+<Main>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
     <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
@@ -54,7 +54,7 @@
     </div>
   </div>
 </Container>
-
+</Main>
 <style>
   .bold {
     font-weight: bold;
