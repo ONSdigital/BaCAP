@@ -32,7 +32,6 @@ function makeUrl(table, tableCode, codes, comp) {
     url += table.queryExt;
   }
 
-  console.log(url);
   return url;
 }
 

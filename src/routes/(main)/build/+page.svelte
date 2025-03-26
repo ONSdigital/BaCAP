@@ -216,13 +216,6 @@
   function cancelChangeName(){
     showChangeName = false
   }
-  $:console.log('store',store)
-  $:console.log('tables',$tables)
-  $:if(store!=undefined){
-    console.log('list of OAs,',store.properties.oa_all.join(','))
-    console.log('list of OAs compressed to higher geographies, ',store.properties.compressed.join(","))
-    if(store.properties.compressedToLsoa){console.log('list of LSOA compressed to higher geographies, ',store.properties.compressedToLsoa.join(","))}
-  }
 </script>
 
 <ONSloader isLoading={$isLoading} />

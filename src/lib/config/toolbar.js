@@ -35,7 +35,6 @@ export function doSelect(e) {
       let features = get(mapObject).queryRenderedFeatures([coords.x, coords.y], {
         layers: ["bounds"],
       });
-      console.log('features',features)
       // add in lsoas and geo???
       var oa = new Set(features.map((f) => f.properties.oa));
       selected.update(s=>[...s,{oa}])
