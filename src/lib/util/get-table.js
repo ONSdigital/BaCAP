@@ -19,6 +19,8 @@ function makeUrl(table, tableCode, codes, comp) {
   // Check if table.cellCode is not 'date', then add date=latest
   if (table.date) {
     url += "&date=" + table.date;
+  } else if (table.time){
+    url += "&time=" + table.time;
   } else if (table.date==false){
 
   } else   {
@@ -156,10 +158,10 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
     let cds=get(centroids).replaceCodesWithMSOA(codes);
     cds = filterCodes(cds, filter);
     const compcds = filterCodes(comp, filter);
-    if(table.code === "residential_property_sales"){
-      //replace cds with nomis codes
-      cds = cds.map(c => nomislookup[c] !== undefined ? nomislookup[c] : c);
-    }
+    // if(table.code === "residential_property_sales"){
+    //   //replace cds with nomis codes
+    //   cds = cds.map(c => nomislookup[c] !== undefined ? nomislookup[c] : c);
+    // }
     const url = makeUrl(table, tableCode, cds, compcds);
 
     // console.log(`Fetching data from: ${url}`);
