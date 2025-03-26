@@ -32,8 +32,8 @@ let cache = {};// this is the same if the area changes, so need to make a unique
 
 export async function getData(data, comp) {
   let compressedCodes = get(buildstate).compressed.join("") || "default";
-  let cacheForArea = cache[compressedCodes] = {};
-  
+  cache[compressedCodes] ||= {}; // Only create a new object if it doesn't exist
+  let cacheForArea = cache[compressedCodes];
   if (!get(buildstate).start) return [];
 
   cacheForArea[comp] ||= {};
@@ -113,8 +113,8 @@ export async function downloadData() {
     for (let i = 0; i < len; i++) {
       csv += `"${meta.label
       }","${meta.categories[i].label
-      }",${t.data[i].percentage ? t.data[i].value : "NA"
-      },${t.data[len + i].percentage ? t.data[len + i].value : "NA"
+      }",${t.code == 'population' ? "NA" : t.data[i].percentage ? t.data[i].value : "NA"
+      },${t.code == 'population' ? "NA" : t.data[len + i].percentage ? t.data[len + i].value : "NA"
       },"%","${t.data[i].percentage ? t.data[i].count : t.data[i].value
       }","${t.data[len + i].percentage ? t.data[len + i].count : t.data[len + i].value
       }","${meta.base.replace(
