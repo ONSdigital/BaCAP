@@ -50,13 +50,14 @@
   <slot />  
 {:else}
   <div class="ons-grid--flex ons-grid--column">
+    {#if !$page.url.pathname.includes("landing")}
     <div>
       <AnalyticsBanner {analyticsId} {analyticsProps} />
     <header>
       <ONSHeader />
     </header>
     </div>
-
+    {/if}
     <div class="ons-u-flex-grow">
       <main>
           <slot />
