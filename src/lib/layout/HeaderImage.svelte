@@ -1,5 +1,9 @@
+<script>
+	import {base} from "$app/paths";
+</script>
+
 <div class="ons-grid__col ons-col-2@m">
-    <img src="/img/og.png" alt="ONS logo" class="header-image" />
+    <img src="{base}/img/og.png" alt="ONS logo" class="header-image" />
 </div>
 
 <style>
