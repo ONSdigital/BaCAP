@@ -6,7 +6,6 @@
     Breadcrumb,
     Container,
     Titleblock,
-    Main
   } from "@onsvisual/svelte-components";
 </script>
 
@@ -30,7 +29,6 @@
     <Titleblock width="wider" title="Glossary" />
   </div>
 </Theme>
-<Main>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
     <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
@@ -48,13 +46,12 @@
         {:else}
             <p>{topic.desc}</p>
         {/if}
-        {#if topic.url}<a class="btn-link" href={`${base}/${topic.url}`} target="_blank">Read more</a>{/if}
+        {#if topic.url}<a class="btn-link" href={`/${topic.url}`} target="_blank">Read more</a>{/if}
         <hr class="hr-full">
       {/each}
     </div>
   </div>
 </Container>
-</Main>
 <style>
   .bold {
     font-weight: bold;

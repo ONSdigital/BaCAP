@@ -8,7 +8,7 @@
     Checkbox,
     Twisty,
     Checkboxes,
-    Input, Main
+    Input
   } from "@onsvisual/svelte-components";
   import { isLoading } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
@@ -263,7 +263,6 @@
   <!-- <AreaMap/> -->
   <!-- <AreaMap name={$buildstate.name} comp={$buildstate.comparison.areanm} {geojson} compGeojson={$buildstate.comparison.geometry} /> -->
 </Theme>
-<Main>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
     <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
@@ -379,7 +378,6 @@
     </div>
   </div>
 </Container>
-</Main>
 <!-- <nav>
   <div class="nav-left">
     <button class="text" on:click={() => goto(`${base}/draw/`)}>

@@ -81,9 +81,19 @@
 
   function init() {
     $isLoading = true;
+    
+    // clear local storage if it doesn't have new things in
+    if (!JSON.parse(localStorage.getItem("draw_data")).lsoa) {
+      localStorage.clear();
+    } else if (!JSON.parse(localStorage.getItem("onsbuild")).properties.compressedToLsoa) {
+      localStorage.clear();
+    }
+    
     /* 
     A section to clear the local storage if past the last update date
     */
+
+
     // if (new Date(localStorage.getItem("lastdate")) < new Date("2022-18-18")) {
     //   localStorage.clear();
     // }
@@ -357,13 +367,13 @@
 
 <div class="draw-page-container">
   <ONSloader isLoading={$isLoading} />
-  <Main>
+  
   <div id="map">
     <DrawToolbar {state} bind:radius={$radiusInKm}/>
     <PopulationCounter population={$pselect}/>
     <Map drawingTools={true} />
   </div>
-  </Main>
+  
 </div>
 
 

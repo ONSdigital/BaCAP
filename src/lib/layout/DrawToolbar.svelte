@@ -5,6 +5,7 @@ import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry }
 import { minzoom, maxzoom } from "$lib/config/geography";
 import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
 import Select, { getPlace } from "$lib/ui/Select.svelte";
+import { base } from "$app/paths";
 
 
 let uploader
@@ -17,11 +18,11 @@ export let radius=0.5;
   <ToolbarsContainer>
     <Toolbar>
       <ToolbarButton id="move" icon="move" label="Move and Pan" on:click={setPanMode} sticky>
-        <p>Left-click and hold anywhere on the map to move.</p><img src='/img/movepan.png' alt='Move and pan' />
+        <p>Left-click and hold anywhere on the map to move.</p><img src="{base}/img/movepan.png" alt='Move and pan' />
       </ToolbarButton>
 
       <ToolbarButton id="polygon" icon="polygon" label="Draw a polygon" hasAriaControls on:click={setDrawMode} sticky>
-        <p>Draw a custom shape. Click on the map to set the corners of your shape boundary and the tool will automatically connect the points to form a polygon.</p><img src='/img/polygon.png' alt='Map showing drawing boundaries by clicking.'/>
+        <p>Draw a custom shape. Click on the map to set the corners of your shape boundary and the tool will automatically connect the points to form a polygon.</p><img src="{base}/img/polygon.png" alt='Map showing drawing boundaries by clicking.'/>
       </ToolbarButton>
 
       <ToolbarButton id="circle" icon="radius" label="Draw a circle" hasAriaControls on:click={setRadiusMode} sticky>

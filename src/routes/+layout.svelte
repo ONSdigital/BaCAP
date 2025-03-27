@@ -59,7 +59,7 @@
     </div>
     {/if}
     <div class="ons-u-flex-grow">
-      <main>
+      <main id="main">
           <slot />
       </main>
     </div>
