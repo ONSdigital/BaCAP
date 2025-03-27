@@ -83,9 +83,17 @@
     $isLoading = true;
     
     // clear local storage if it doesn't have new things in
-    if (!JSON.parse(localStorage.getItem("draw_data")).lsoa) {
+    const drawDataString = localStorage.getItem("draw_data");
+    const drawData = drawDataString ? JSON.parse(drawDataString) : null;
+
+    if (!drawData?.lsoa) {
       localStorage.clear();
-    } else if (!JSON.parse(localStorage.getItem("onsbuild")).properties.compressedToLsoa) {
+    }
+
+    const onsbuildString = localStorage.getItem("onsbuild");
+    const onsbuild = onsbuildString ? JSON.parse(onsbuildString) : null;
+
+    if (!onsbuild?.properties?.compressedToLsoa) {
       localStorage.clear();
     }
     
