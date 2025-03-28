@@ -40,14 +40,16 @@ export const boundaries = {
   layer: "boundaries",
   url: "https://cdn.ons.gov.uk/maptiles/administrative/2021/oa/v3/boundaries/{z}/{x}/{y}.pbf",
   idKey: "areacd",
-  ptKey: "parentcd"
+  ptKey: "parentcd",
+  colour:'blue'
 };
 export const lsoaBoundaries = {
   key: "lsoa",
   layer: "boundaries",
   url: "https://cdn.ons.gov.uk/maptiles/administrative/2021/lsoa/v3/boundaries/{z}/{x}/{y}.pbf",
   idKey: "areacd",
-  ptKey: "parentcd"
+  ptKey: "parentcd",
+  colour:'red'
 };
 export const promoteId = (() => {
   const pId = {};

@@ -28,6 +28,7 @@
   import { simplifyGeo } from "$lib/util/drawing-utils";
   import getParents from "$lib/util/get-parents";
   import { onMount } from "svelte";
+  import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import {
     getData,
@@ -59,7 +60,8 @@
   let currentTopics = [];
 
   // UI States
-  let includemap = false;
+  let includemap = true;
+  let showMapInProfile = false
   let includecomp = false;
   let store;
   let geojson;
@@ -130,7 +132,9 @@
     comp,
     data,
     includemap,
-    includecomp
+    includecomp,
+    oa_all,
+    lsoa_all
   ) {
     if (!start) return;
 
@@ -139,22 +143,27 @@
     let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
 
     $tables = await getData(filterTopicsByCodes(codes), compcds);
-    embedHash = generateEmbedHash(name, comp, includemap, includecomp);
-
+    embedHash = generateEmbedHash(name, comp, includemap, includecomp, oa_all, lsoa_all);
     updateEmbedFrame();
   }
 
-  function generateEmbedHash(name, comp, includemap, includecomp) {
-    return `#/?name=${btoa(name)}${
-      comp ? `&comp=${btoa(comp.areanm)}` : ""
-    }&tabs=${btoa(JSON.stringify($tables))}${
-      includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
-    }${
-      includemap && includecomp && comp?.geometry
-        ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
-        : ""
-    }`;
-  }
+  function generateEmbedHash(name, comp, includemap, includecomp, oa_all, lsoa_all) {
+  return `#/?name=${btoa(name)}${
+    comp ? `&comp=${btoa(comp.areanm)}` : ""
+  }&tabs=${btoa(JSON.stringify($tables))}${
+    includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
+  }${
+    includemap && includecomp && comp?.geometry
+      ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
+      : ""
+  }${
+    oa_all ? `&oa=${btoa(JSON.stringify(oa_all))}` : ""
+  }${
+    lsoa_all ? `&lsoa=${btoa(JSON.stringify(lsoa_all))}` : ""
+  }${
+    showMapInProfile ? `&showMap=${showMapInProfile}` : ""
+  }`;
+}
 
   function updateEmbedFrame() {
     if (!pymParent) {
@@ -174,7 +183,6 @@
 
   async function processStoreData() {
     highestLevel = store.properties.highestLevel;
-   
     geojson = simplifyGeo(store.geojson);
     parents = await getParents(store.properties.compressed);
     coverage = parents.coverage;
@@ -200,7 +208,10 @@
     $buildstate.comparison,
     currentTopics,
     includemap,
-    includecomp
+    includecomp,
+    store?.properties.oa_all,
+    store?.properties.lsoa_all,
+    showMapInProfile
   );
   let showChangeName = false
   let nameChangeInputValue = ""
@@ -254,7 +265,7 @@
   <div class="area-map-container">
     <div class="fade" />
     {#if geojson}
-      <AreaMap name={$buildstate.name} comp={null} {geojson} />
+      <AreaMap name={$buildstate.name} comp={null} {geojson}/>
     {/if}
   </div>
 
@@ -265,7 +276,7 @@
 </Theme>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
-    <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
+    <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink" style="width:100%">
       <!-- <Checkbox
         id="selectComparison"
         label="Select comparison area"
@@ -275,21 +286,23 @@
 
       <!-- {#if selectComparison} -->
       
-      <div class="ons-u-mb-s">
+      <div class="ons-u-mb-s" style="width:100%">
         <p class='font-bold' style="margin-bottom:0">Select comparison area</p>
-        <Select
+        <div >
+          <Select
           value={$buildstate.comparison}
           autoClear={false}
           isClearable
           on:select={(e) => ($buildstate.comparison = e.detail)}
           on:clear={() => ($buildstate.comparison = null)}
         />
+        </div>
       </div>
 
       <Checkbox
         id="includemap"
         label="Include map in profile"
-        bind:checked={includemap}
+        bind:checked={showMapInProfile}
         compact
       ></Checkbox>
       <!-- {/if} -->
@@ -351,7 +364,7 @@
     <div class="ons-grid__col ons-col-9@m">
       <div id="embed" />
       <hr class="hr-full" />
-      <div class="button-container">
+      <div class="button-container no-margin-left">
         <Button variant="primary" on:click={showEmbed}
           >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
@@ -367,6 +380,7 @@
         >
           Print profile
         </Button>
+        <br/>
         {#if embedHash && $buildstate.showEmbed}
           <p style:margin-bottom={0}>Embed code</p>
           <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>

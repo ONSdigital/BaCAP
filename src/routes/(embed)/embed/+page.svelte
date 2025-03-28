@@ -7,12 +7,13 @@
   import Card from "$lib/layout/Card.svelte";
   import BarChart from "$lib/charts/BarChart.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
+  import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
   import ProfileChart from "$lib/charts/ProfileChart.svelte";
   import BigNumber from "$lib/charts/BigNumber.svelte";
   import LineChart from "$lib/charts/LineChart.svelte";
-  import { Notice } from "@onsvisual/svelte-components";
+  import { Notice, Twisty } from "@onsvisual/svelte-components";
 
-  let pymChild, name, comp, geojson, compGeojson, tables, population;
+  let pymChild, name, comp, geojson, compGeojson, tables, population, oa_all, lsoa_all, showMapInProfile;
   let stats = [];
   let hideTables = false;
 
@@ -43,24 +44,24 @@
 
   function update() {
     let hash = document.location.hash;
-
     if (hash && hash.includes("name=")) {
       let props = {};
       let searchParams = new URLSearchParams(hash.slice(3));
-
       for (let pair of searchParams.entries()) {
-        if (["name", "comp"].includes(pair[0])) {
+        if (["name", "comp","showMap"].includes(pair[0])) {
           props[pair[0]] = atob(pair[1]);
         } else if (
-          ["tabs", "poly", "comppoly", "population", "stats"].includes(pair[0])
+          ["tabs", "poly", "comppoly", "population", "stats","oa","lsoa"].includes(pair[0])
         ) {
           props[pair[0]] = JSON.parse(atob(pair[1]));
         }
       }
-
       name = props.name || "Selected area";
       comp = props.comp || "";
+      oa_all= props.oa || [];
+      lsoa_all= props.lsoa || [];
       geojson = props.poly;
+      showMapInProfile = props.showMap
       compGeojson = props.comppoly;
       population = props.population;
       tables = props.tabs;
@@ -98,13 +99,23 @@
 <Notice>
   Census topics and non-Census datasets will primarily use different best-fit shapes to estimate the data to be returned to users.
 </Notice>
+<div class="ons-u-mt-s ons-u-mb-s">
+  <Twisty title="See the differences in best fit areas">
+    <p>Maybe some text here to explain the differences between the areas.</p>
+    {#if oa_all && lsoa_all}
+      <AreaMapComparison {name} comp={null} {geojson} {oa_all} {lsoa_all} />
+    {/if}
+    <!-- <AreaMapComparison {name} {comp} {geojson} {compGeojson} {oa_all} {lsoa_all}/> -->
+  </Twisty>
+  
+</div>
 
 {#if tables}
   {#if name && name !== "Selected area"}
     <h1 class="ons-u-mt-s ons-u-mb-s">{name}</h1>
   {/if}
   <Cards>
-    {#if geojson}
+    {#if geojson && showMapInProfile}
       <Card title="Area map">
         <AreaMap {name} {comp} {geojson} {compGeojson} />
       </Card>

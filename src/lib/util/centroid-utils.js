@@ -236,7 +236,7 @@ class Centroids {
   ) {
     // console.log(selected)
     const oa_all = Array.from(selected['oa']);
-    const lsoaAll = Array.from(selected['lsoa']);
+    const lsoa_all = Array.from(selected['lsoa']);
     // compress the codes
     const compressed = this.compress(oa_all,'oa');
     // Filter compressed to strip out OAs
@@ -251,6 +251,7 @@ class Centroids {
       compressedToLsoa,
       highestLevel,
       oa_all,
+      lsoa_all,
       original: oa_all.length,
     };
     /// geo
