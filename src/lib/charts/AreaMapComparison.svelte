@@ -29,8 +29,9 @@
 			container,
 			style,
 			bounds,
-			interactive: false,
+			interactive: true,
 			preserveDrawingBuffer: true,
+			maxZoom:12.9
 		});
 
 		map.on("load", () => {
@@ -44,7 +45,7 @@
 					paint:{
 						"fill-color":layer.colour,
 						"fill-opacity":0.2,
-						"fill-outline-color": 'rgba(0,0,0,0)'
+						"fill-outline-color": 'rgba(0,0,0,1)'
 					},
 					filter:['in', layer.idKey, ...codes[layer.key]]
 				})
@@ -120,7 +121,7 @@
 					style:color={item.colour}
 				></div>
 				<span class="legend-text-{item.key}"
-					>{item.key=='oa' ? 'Best fit based on output areas' : "Best fit based on lower super output areas"}</span
+					>{item.key=='oa' ? 'Best-fit shape based on output areas' : "Best-fit shape based on lower super output areas"}</span
 				>
 			</li>
 		{/each}

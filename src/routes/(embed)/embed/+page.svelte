@@ -100,8 +100,8 @@
   Census topics and non-Census datasets will primarily use different best-fit shapes to estimate the data to be returned to users.
 </Notice>
 <div class="ons-u-mt-s ons-u-mb-s">
-  <Twisty title="See the differences in best fit areas">
-    <p>Maybe some text here to explain the differences between the areas.</p>
+  <Twisty title="See the difference in best-fit shapes">
+    <p>The map below shows the best-fit shape, which is the closest available to your chosen shape. The small area data has been added together for your best-fit shape and provides you with an estimated total. Census 2021 topics and non-Census datasets use different small area types. We advise caution when comparing values between Census topics and non-Census datasets because these best-fit shapes will have different boundaries.</p>
     {#if oa_all && lsoa_all}
       <AreaMapComparison {name} comp={null} {geojson} {oa_all} {lsoa_all} />
     {/if}
