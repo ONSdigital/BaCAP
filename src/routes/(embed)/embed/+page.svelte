@@ -99,16 +99,15 @@
 <Notice>
   Census topics and non-Census datasets will primarily use different best-fit shapes to estimate the data to be returned to users.
 </Notice>
-<div class="ons-u-mt-s ons-u-mb-s">
+<!-- <div class="ons-u-mt-s ons-u-mb-s">
   <Twisty title="See the difference in best-fit shapes">
     <p>The map below shows the best-fit shape, which is the closest available to your chosen shape. The small area data has been added together for your best-fit shape and provides you with an estimated total. Census 2021 topics and non-Census datasets use different small area types. We advise caution when comparing values between Census topics and non-Census datasets because these best-fit shapes will have different boundaries.</p>
     {#if oa_all && lsoa_all}
       <AreaMapComparison {name} comp={null} {geojson} {oa_all} {lsoa_all} />
     {/if}
-    <!-- <AreaMapComparison {name} {comp} {geojson} {compGeojson} {oa_all} {lsoa_all}/> -->
   </Twisty>
   
-</div>
+</div> -->
 
 {#if tables}
   {#if name && name !== "Selected area"}
@@ -122,49 +121,92 @@
     {/if}
     {#each tables || [] as tab}
       <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={topicsLookup[tab.code].dateLabel ? topicsLookup[tab.code].dateLabel : '2021'}>
-        {#if topicsLookup[tab.code]?.chart === "number"}
-          {#if tab.data.length<2}
-            <p>No data available</p>
+        {#if tab.data[0]?.value}
+        <!-- use new version -->
+          {#if topicsLookup[tab.code]?.chart === "number"}
+            {#if tab.data.length<2}
+              <p>No data available</p>
+            {:else}
+              <BigNumber
+                value={tab.data[0].count}
+                unit={topicsLookup[tab.code].unit}
+                prefix={topicsLookup[tab.code].prefix}
+                description={comp
+                  ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+                  : ""}
+                rounded={topicsLookup[tab.code]?.doNotRound 
+                  ? null
+                  : tab.data[0].count > 1000
+                    ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                    : tab.data[0].count > 100
+                      ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                      : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                  }
+              />
+            {/if}
+          {:else if topicsLookup[tab.code]?.chart === "profile"}
+           <ProfileChart
+              xKey="category"
+              yKey="value"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            /> 
+          {:else if topicsLookup[tab.code]?.chart === "line"}
+            <LineChart data={tab.data} zKey="areanm" xDomain={topicsLookup[tab.code].categories.map(c => c.label)} base="% change since {topicsLookup[tab.code].categories[0].label}" />
           {:else}
-        
-            <BigNumber
-              value={tab.data[0].count}
-              unit={topicsLookup[tab.code].unit}
-              prefix={topicsLookup[tab.code].prefix}
-              description={comp
-                ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
-                : ""}
-              rounded={topicsLookup[tab.code]?.doNotRound 
-                ? null
-                : tab.data[0].count > 1000
-                  ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
-                  : tab.data[0].count > 100
-                    ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                    : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                }
-            />
+             <BarChart
+              xKey="value"
+              yKey="category"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            /> 
           {/if}
-        {:else if topicsLookup[tab.code]?.chart === "profile"}
-          <ProfileChart
-            xKey="category"
-            yKey="value"
-            zKey="areanm"
-            data={expandTable(tab, name, comp)}
-            base="% of {topicsLookup[tab.code].base}"
-            table={!hideTables}
-          />
-        {:else if topicsLookup[tab.code]?.chart === "line"}
-        <LineChart data={tab.data} zKey="areanm" xDomain={topicsLookup[tab.code].categories.map(c => c.label)} base="% change since {topicsLookup[tab.code].categories[0].label}" />
         {:else}
-          <BarChart
-            xKey="value"
-            yKey="category"
-            zKey="areanm"
-            data={expandTable(tab, name, comp)}
-            base="% of {topicsLookup[tab.code].base}"
-            table={!hideTables}
-          />
+        
+        <!-- //   <p>Please visit Build A Custom Area Profile to look up a new embed code.</p>
+        //    {#if topicsLookup[tab.code]?.chart === "number"}
+        //     <BigNumber
+        //       value={tab.data[0]}
+        //       unit={topicsLookup[tab.code].unit}
+        //       prefix={topicsLookup[tab.code].prefix}
+        //       description={comp
+        //         ? `<mark>${tab.data[1].toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+        //         : ""}
+        //       rounded={tab.data[0] > 1000
+        //         ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+        //         : tab.data[0] > 100
+        //           ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+        //           : null}
+        //     />
+        //   {:else if topicsLookup[tab.code]?.chart === "profile"}
+        //   {JSON.stringify(tab)}
+        //   {JSON.stringify(expandTable(tab,name,comp))} 
+        //    <ProfileChart
+        //       xKey="category"
+        //       yKey="value"
+        //       zKey="areanm"
+        //       data={expandTable(tab, name, comp)}
+        //       base="% of {topicsLookup[tab.code].base}"
+        //       table={!hideTables}
+        //     /> 
+        //  {:else}
+        //         {JSON.stringify(tab)} 
+        //      <BarChart
+        //       xKey="value"
+        //       yKey="category"
+        //       zKey="areanm"
+        //       data={expandTable(tab, name, comp)}
+        //       base="% of {topicsLookup[tab.code].base}"
+        //       table={!hideTables}
+        //     /> 
+        //  {/if}  -->
         {/if}
+
+        
       </Card>
     {/each}
   </Cards>
