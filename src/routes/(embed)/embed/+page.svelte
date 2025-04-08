@@ -248,10 +248,11 @@
       {/if}
     {/each}
   </Cards>
-
-  <!-- <span class="footnote"
+  {#if version==1}
+  <span class="footnote"
     >Source: Office for National Statistics - Census 2021</span
-  > -->
+  >
+  {/if}
   <div class="spacer" />
 {/if}
 
