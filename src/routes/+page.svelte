@@ -88,7 +88,7 @@
         <p>This is a list of the datasets and topics available through this tool:</p>
         <Twisty title="Census 2021 topics">
           <ul class="list-container">
-            {#each topicsAll.filter(t=>t.census==true).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
+            {#each topicsAll.filter(t=>t.inVersion.includes(2)).filter(t=>t.census==true).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
               <li class="list-item">{label}</li>
             {/each}
         </ul>
@@ -97,7 +97,7 @@
         
         <Twisty title="Non-Census datasets">
           <ul class="list-container">
-            {#each topicsAll.filter(t=>t.census==false).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
+            {#each topicsAll.filter(t=>t.inVersion.includes(2)).filter(t=>t.census==false).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
               <li class="list-item">{label}</li>
             {/each}
           </ul>

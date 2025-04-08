@@ -43,7 +43,7 @@
     updateLocalStorage,
     filterTopics
   } from "$lib/util/build-utils";
-  import { buildstate,tables } from "$lib/stores/mapstore";
+  import { buildstate,tables, version } from "$lib/stores/mapstore";
   import Title from "$lib/layout/Title.svelte";
 
   // Embed-related variables
@@ -162,6 +162,8 @@
     lsoa_all ? `&lsoa=${btoa(JSON.stringify(lsoa_all))}` : ""
   }${
     showMapInProfile ? `&showMap=${showMapInProfile}` : ""
+  }${
+    `&version=${btoa($version)}`
   }`;
 }
 

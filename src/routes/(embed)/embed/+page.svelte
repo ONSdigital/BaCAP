@@ -13,7 +13,17 @@
   import LineChart from "$lib/charts/LineChart.svelte";
   import { Notice, Twisty } from "@onsvisual/svelte-components";
 
-  let pymChild, name, comp, geojson, compGeojson, tables, population, oa_all, lsoa_all, showMapInProfile;
+  let pymChild,
+    name,
+    comp,
+    geojson,
+    compGeojson,
+    tables,
+    population,
+    oa_all,
+    lsoa_all,
+    showMapInProfile,
+    version;
   let stats = [];
   let hideTables = false;
 
@@ -35,7 +45,16 @@
         : [areaName, compName];
     names.forEach((name) => {
       def.categories.forEach((cat) => {
-        data.push({ areanm: name, category: cat.label, value: def.code === "resident_age" ? table.data[i].percentage : table.data[i].value});
+        data.push({
+          areanm: name,
+          category: cat.label,
+          value:
+            version == 1
+              ? table.data[i]
+              : def.code === "resident_age"
+                ? table.data[i].percentage
+                : table.data[i].value,
+        });
         i++;
       });
     });
@@ -48,20 +67,29 @@
       let props = {};
       let searchParams = new URLSearchParams(hash.slice(3));
       for (let pair of searchParams.entries()) {
-        if (["name", "comp","showMap"].includes(pair[0])) {
+        if (["name", "comp", "showMap", "version"].includes(pair[0])) {
           props[pair[0]] = atob(pair[1]);
         } else if (
-          ["tabs", "poly", "comppoly", "population", "stats","oa","lsoa"].includes(pair[0])
+          [
+            "tabs",
+            "poly",
+            "comppoly",
+            "population",
+            "stats",
+            "oa",
+            "lsoa",
+          ].includes(pair[0])
         ) {
           props[pair[0]] = JSON.parse(atob(pair[1]));
         }
       }
       name = props.name || "Selected area";
       comp = props.comp || "";
-      oa_all= props.oa || [];
-      lsoa_all= props.lsoa || [];
+      oa_all = props.oa || [];
+      lsoa_all = props.lsoa || [];
       geojson = props.poly;
-      showMapInProfile = props.showMap
+      version = props.version || 1;
+      showMapInProfile = props.showMap;
       compGeojson = props.comppoly;
       population = props.population;
       tables = props.tabs;
@@ -86,7 +114,6 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
-
 </script>
 
 <svelte:window on:hashchange={update} />
@@ -96,8 +123,10 @@
   <meta name="googlebot" content="noindex,indexifembedded" />
 </svelte:head>
 
+{#if version == 2}
 <Notice>
-  Census topics and non-Census datasets will primarily use different best-fit shapes to estimate the data to be returned to users.
+  Census topics and non-Census datasets will primarily use different best-fit
+  shapes to estimate the data to be returned to users.
 </Notice>
 <!-- <div class="ons-u-mt-s ons-u-mb-s">
   <Twisty title="See the difference in best-fit shapes">
@@ -108,6 +137,8 @@
   </Twisty>
   
 </div> -->
+{/if}
+
 
 {#if tables}
   {#if name && name !== "Selected area"}
@@ -120,11 +151,18 @@
       </Card>
     {/if}
     {#each tables || [] as tab}
-      <Card title="{topicsLookup[tab.code].label}" source={topicsLookup[tab.code].source} geography={topicsLookup[tab.code].lowestGeography} timeperiod={topicsLookup[tab.code].dateLabel ? topicsLookup[tab.code].dateLabel : '2021'}>
-        {#if tab.data[0]?.value}
-        <!-- use new version -->
+      {#if version == 2}
+        <Card
+          title={topicsLookup[tab.code].label}
+          source={topicsLookup[tab.code].source}
+          geography={topicsLookup[tab.code].lowestGeography}
+          timeperiod={topicsLookup[tab.code].dateLabel
+            ? topicsLookup[tab.code].dateLabel
+            : "2021"}
+        >
+          <!-- use new version -->
           {#if topicsLookup[tab.code]?.chart === "number"}
-            {#if tab.data.length<2}
+            {#if tab.data.length < 2}
               <p>No data available</p>
             {:else}
               <BigNumber
@@ -134,80 +172,80 @@
                 description={comp
                   ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
                   : ""}
-                rounded={topicsLookup[tab.code]?.doNotRound 
+                rounded={topicsLookup[tab.code]?.doNotRound
                   ? null
                   : tab.data[0].count > 1000
                     ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
                     : tab.data[0].count > 100
                       ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                      : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                  }
+                      : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`}
               />
             {/if}
           {:else if topicsLookup[tab.code]?.chart === "profile"}
-           <ProfileChart
+            <ProfileChart
               xKey="category"
               yKey="value"
               zKey="areanm"
               data={expandTable(tab, name, comp)}
               base="% of {topicsLookup[tab.code].base}"
               table={!hideTables}
-            /> 
+            />
           {:else if topicsLookup[tab.code]?.chart === "line"}
-            <LineChart data={tab.data} zKey="areanm" xDomain={topicsLookup[tab.code].categories.map(c => c.label)} base="% change since {topicsLookup[tab.code].categories[0].label}" />
+            <LineChart
+              data={tab.data}
+              zKey="areanm"
+              xDomain={topicsLookup[tab.code].categories.map((c) => c.label)}
+              base="% change since {topicsLookup[tab.code].categories[0].label}"
+            />
           {:else}
-             <BarChart
+            <BarChart
               xKey="value"
               yKey="category"
               zKey="areanm"
               data={expandTable(tab, name, comp)}
               base="% of {topicsLookup[tab.code].base}"
               table={!hideTables}
-            /> 
+            />
           {/if}
-        {:else}
-        
-        <!-- //   <p>Please visit Build A Custom Area Profile to look up a new embed code.</p>
-        //    {#if topicsLookup[tab.code]?.chart === "number"}
-        //     <BigNumber
-        //       value={tab.data[0]}
-        //       unit={topicsLookup[tab.code].unit}
-        //       prefix={topicsLookup[tab.code].prefix}
-        //       description={comp
-        //         ? `<mark>${tab.data[1].toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
-        //         : ""}
-        //       rounded={tab.data[0] > 1000
-        //         ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
-        //         : tab.data[0] > 100
-        //           ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-        //           : null}
-        //     />
-        //   {:else if topicsLookup[tab.code]?.chart === "profile"}
-        //   {JSON.stringify(tab)}
-        //   {JSON.stringify(expandTable(tab,name,comp))} 
-        //    <ProfileChart
-        //       xKey="category"
-        //       yKey="value"
-        //       zKey="areanm"
-        //       data={expandTable(tab, name, comp)}
-        //       base="% of {topicsLookup[tab.code].base}"
-        //       table={!hideTables}
-        //     /> 
-        //  {:else}
-        //         {JSON.stringify(tab)} 
-        //      <BarChart
-        //       xKey="value"
-        //       yKey="category"
-        //       zKey="areanm"
-        //       data={expandTable(tab, name, comp)}
-        //       base="% of {topicsLookup[tab.code].base}"
-        //       table={!hideTables}
-        //     /> 
-        //  {/if}  -->
-        {/if}
-
-        
-      </Card>
+        </Card>
+      {:else}
+        <Card title={topicsLookup[tab.code].label}>
+          <!-- Use old version -->
+          {#if topicsLookup[tab.code]?.chart === "number"}
+            <BigNumber
+              value={tab.data[0]}
+              unit={topicsLookup[tab.code].unit}
+              prefix={topicsLookup[tab.code].prefix}
+              description={comp
+                ? `<mark>${tab.data[1].toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+                : ""}
+              rounded={tab.data[0] > 1000
+                ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                : tab.data[0] > 100
+                  ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                  : null}
+            />
+          {:else if topicsLookup[tab.code]?.chart === "profile"}
+            <ProfileChart
+              xKey="category"
+              yKey="value"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            />
+          {:else}
+            <BarChart
+              xKey="value"
+              yKey="category"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            />
+          {/if}
+        </Card>
+      {/if}
     {/each}
   </Cards>
 

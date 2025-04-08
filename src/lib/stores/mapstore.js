@@ -68,3 +68,4 @@ export const state = writable({});
 export const pselect = writable(0);
 export const buildstate = writable({});
 export const tables = writable([]);
+export const version = writable(2);

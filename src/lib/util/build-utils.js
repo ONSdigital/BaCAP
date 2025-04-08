@@ -1,4 +1,4 @@
-import { mapObject, centroids, selected, state, user_geometry } from "$lib/stores/mapstore";
+import { mapObject, centroids, selected, state, version } from "$lib/stores/mapstore";
 import { get } from "svelte/store";
 import { buildstate, tables } from "$lib/stores/mapstore";
 import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
@@ -13,6 +13,7 @@ const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
 
 export function filterTopics(allTopics, level, coverage) {
   return allTopics
+    .filter(t=>t.inVersion.includes(get(version)))//just topics in version 2
     .filter(geographyFilter(level))
     .filter(
       (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))
@@ -113,8 +114,8 @@ export async function downloadData() {
     for (let i = 0; i < len; i++) {
       csv += `"${meta.label
       }","${meta.categories[i].label
-      }",${t.code == 'population' ? "NA" : t.data[i].percentage ? t.data[i].value : "NA"
-      },${t.code == 'population' ? "NA" : t.data[len + i].percentage ? t.data[len + i].value : "NA"
+      }",${t.code == 'population_mye' ? "NA" : t.data[i].percentage ? t.data[i].value : "NA"
+      },${t.code == 'population_mye' ? "NA" : t.data[len + i].percentage ? t.data[len + i].value : "NA"
       },"%","${t.data[i].percentage ? t.data[i].count : t.data[i].value
       }","${t.data[len + i].percentage ? t.data[len + i].count : t.data[len + i].value
       }","${meta.base.replace(

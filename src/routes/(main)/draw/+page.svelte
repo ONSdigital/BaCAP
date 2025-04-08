@@ -371,6 +371,8 @@
   //   }
   //   setDrawData();
   // }
+
+  $:console.log('selected',$selected)
 </script>
 
 <div class="draw-page-container">
