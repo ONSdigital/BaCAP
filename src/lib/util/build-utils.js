@@ -6,6 +6,8 @@ import { download, clip } from "$lib/util/functions";
 import { cdnbase } from "$lib/config/geography";
 import topicsAll from "$lib/config/topics.json";
 import getTable from "$lib/util/get-table";
+import { goto } from "$app/navigation";
+import { base } from "$app/paths";
 
 
 const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
@@ -66,6 +68,11 @@ export async function checkForHashSelection() {
       const info = await getAreaData(code);
       localStorage.setItem("onsbuild", JSON.stringify(info));
       analyticsEvent({ event: "hashSelect", areaCode: code, areaName: info.properties.name });
+      if(info.properties.compressed.length==0){
+        alert("This area does not cover a population-weighted centroid. Please select a slightly larger area in the drawing area.");
+        goto(`${base}/draw/${hash}`);
+        return;
+      }
     } catch (err) {
       console.error("Error fetching or processing data:", err);
       history.replaceState(null, "", " ");

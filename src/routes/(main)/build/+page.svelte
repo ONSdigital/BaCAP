@@ -44,7 +44,6 @@
     filterTopics
   } from "$lib/util/build-utils";
   import { buildstate,tables, version } from "$lib/stores/mapstore";
-  import Title from "$lib/layout/Title.svelte";
 
   // Embed-related variables
   let pymParent; // Variable for pym
