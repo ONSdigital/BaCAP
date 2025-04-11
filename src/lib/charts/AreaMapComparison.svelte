@@ -31,8 +31,15 @@
 			bounds,
 			interactive: true,
 			preserveDrawingBuffer: true,
-			maxZoom:12.9
+			maxZoom:12.9,
+			minZoom:6
 		});
+
+		// Add zoom and rotation controls to the map.
+		map.addControl(new maplibre.NavigationControl({
+			showZoom: true,
+			showCompass:false
+		}));
 
 		map.on("load", () => {
 			for(const layer of [lsoaBoundaries,boundaries]){

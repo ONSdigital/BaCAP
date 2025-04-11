@@ -84,4 +84,7 @@
     line-height: 1;
     color:#323132;
   }
+  .bold{
+    font-weight: 700;
+  }
 </style>

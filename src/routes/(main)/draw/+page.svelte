@@ -8,7 +8,6 @@
   // import Icon from "$lib/ui/Icon.svelte";
   // import { download, clip } from "$lib/util/functions";
   // import bbox from "@turf/bbox";
-  import {Main} from "@onsvisual/svelte-components"
   import Map from "$lib/charts/Map.svelte";
   import "$lib/css/maplibre-gl.css";
   import { onMount } from "svelte";
