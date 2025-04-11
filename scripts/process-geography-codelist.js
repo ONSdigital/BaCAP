@@ -1,3 +1,6 @@
+// this scripts processes a geography codelist XML file from NOMIS and creates a GSS->NOMIS code lookup.
+
+
 import fs from 'fs';
 import { DOMParser } from 'xmldom';
 
