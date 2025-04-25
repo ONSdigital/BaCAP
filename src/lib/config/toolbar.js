@@ -43,6 +43,24 @@ export function doSelect(e) {
   setDrawData();
 }
 
+export function copyOAsToClipboard() {
+  const latest = get(selected).at(-1);
+  const oas = Array.from(latest.oa)
+    .map(item => `"${item}"`)
+    .join(', ');
+
+    navigator.clipboard.writeText(oas)
+    .then(() => {
+      console.log('OAS copied to clipboard!'); // Optional success message
+      // You might want to provide visual feedback to the user here
+    })
+    .catch(err => {
+      console.error('Failed to copy OAS to clipboard:', err);
+      // Handle the error appropriately, perhaps by informing the user
+    });
+  
+  
+}
 
 export function recolour(){
   const items = get(selected).at(-1);

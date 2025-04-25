@@ -1,5 +1,5 @@
 <script>
-import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, setDrawData, loadGeo, setEraseMode, doSelect } from "$lib/config/toolbar"; 
+import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, setDrawData, loadGeo, setEraseMode, doSelect, copyOAsToClipboard } from "$lib/config/toolbar"; 
 import { ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, HelpModal, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
 import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
@@ -97,9 +97,10 @@ export let radius=0.5;
         
       </ToolControls>
     </Toolbar>
+
     <Toolbar>
-      
-      <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0} on:click={downloadArea(state)}>
+ 
+      <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
       <ToolbarButton id="upload" icon="upload" label="Upload a geometry" on:click={uploader.click()}>
@@ -116,6 +117,24 @@ export let radius=0.5;
           <Button disabled={!$selected[$selected.length - 1].oa.size > 0} small on:click={buildProfile}>Build profile</Button>
         </div>
       </ToolbarButton>
+      <ToolControls slot="controls">
+        <ToolControl id="download">
+          <div>
+            <p>Download the selected area as a GeoJSON file.</p>
+          
+            <Button variant="primary" on:click={downloadArea(state)}>Download GeoJSON file</Button>
+          </div>
+          <div>
+            <p>You can also copy a list of output area codes.</p>
+            <textarea>{Array.from($selected[$selected.length-1].oa)
+              .map(item => `"${item}"`)
+              .join(', ')}
+            </textarea>
+            <Button variant="secondary" on:click={copyOAsToClipboard}>Copy output areas to clipboard</Button>
+          </div>
+          
+        </ToolControl>
+      </ToolControls>
     </Toolbar>
   </ToolbarsContainer>
 </div>
