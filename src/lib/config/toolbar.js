@@ -1,4 +1,4 @@
-import { mapObject,drawType, centroids, selected, user_geometry, isLoading, state, pselect, addMode } from "$lib/stores/mapstore";
+import { mapObject,drawType, centroids, selected, user_geometry, isLoading, state, pselect, addMode, buildstate } from "$lib/stores/mapstore";
 import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
 import bbox from "@turf/bbox";
 import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
@@ -129,6 +129,7 @@ export async function buildProfile() {
  * Downloads the selected area as a GeoJSON file.
  */
 export async function downloadArea(state) {
+  console.log("downloadArea", state);
   const centroidVal = get(centroids);
   const selectedVal = get(selected);
   const mapObjectVal = get(mapObject);

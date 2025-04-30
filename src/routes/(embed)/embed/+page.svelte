@@ -141,7 +141,7 @@
 
 
 {#if tables}
-  {#if name && name !== "Selected area"}
+  {#if name && name !== "Selected area" && name !== "undefined"}
     <h1 class="ons-u-mt-s ons-u-mb-s">{name}</h1>
   {/if}
   <Cards>

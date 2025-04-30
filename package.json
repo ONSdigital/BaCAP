@@ -50,7 +50,7 @@
 		"node": ">= 12.17.0"
 	},
 	"dependencies": {
-		"@onsvisual/svelte-components": "^0.1.98-component.toolbar",
+		"@onsvisual/svelte-components": "^0.1.102-component.toolbar",
 		"@turf/difference": "^7.0.0",
 		"@turf/helpers": "^7.0.0",
 		"@turf/union": "^7.0.0"

@@ -43,7 +43,7 @@
     updateLocalStorage,
     filterTopics
   } from "$lib/util/build-utils";
-  import { buildstate,tables, version } from "$lib/stores/mapstore";
+  import { state, buildstate,tables, version } from "$lib/stores/mapstore";
 
   // Embed-related variables
   let pymParent; // Variable for pym
@@ -69,13 +69,11 @@
   // let uploader; // DOM element for geojson file upload
   // let selectComparison = true;
 
-
   $buildstate = {
     start: false,
     // mode: "move",
     // radius: 5,
     // select: "add",
-    name: "Selected area",
     // showSave: false,
     showEmbed: false,
     topics: [],
@@ -84,8 +82,6 @@
     comparison: null,
     showAllDatasets: false,
   };
-
-
 
   function handleCheckboxChange(event) {
     const { id, checked } = event.detail;
@@ -193,7 +189,7 @@
 
     $buildstate = {
       ...$buildstate,
-      name: store.properties.name,
+      name: $state.name,
       codes: store.properties.oa_all,
       compressed: store.properties.compressed,
       comparison: parents.parents[0],
@@ -205,7 +201,7 @@
 
   $: updateProfile(
     $buildstate.start,
-    $buildstate.name,
+    $state.name,
     $buildstate.comparison,
     currentTopics,
     includemap,
@@ -222,7 +218,7 @@
 
   function saveNameChange(){
     showChangeName = false
-    $buildstate.name = nameChangeInputValue
+    $state.name = nameChangeInputValue
   }
 
   function cancelChangeName(){
@@ -266,7 +262,7 @@
   <div class="area-map-container">
     <div class="fade" />
     {#if geojson}
-      <AreaMap name={$buildstate.name} comp={null} {geojson}/>
+      <AreaMap name={$state.name} comp={null} {geojson}/>
     {/if}
   </div>
 

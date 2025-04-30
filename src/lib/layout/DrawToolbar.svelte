@@ -1,21 +1,20 @@
 <script>
-import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, setDrawData, loadGeo, setEraseMode, doSelect, copyOAsToClipboard } from "$lib/config/toolbar"; 
-import { ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, HelpModal, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
+import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, loadGeo, setEraseMode, doSelect, copyOAsToClipboard } from "$lib/config/toolbar"; 
+import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, HelpModal, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
 import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
-import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
 import Select, { getPlace } from "$lib/ui/Select.svelte";
 import { base } from "$app/paths";
 
+let container;
 
 let uploader
 export let state;
 export let radius=0.5;
-
 </script>
 
 <div style="z-index:99;position:relative;pointer-events:none;">
-  <ToolbarsContainer>
+  <ToolbarsContainer bind:this={container}>
     <Toolbar>
       <ToolbarButton id="move" icon="move" label="Move and Pan" on:click={setPanMode} sticky>
         <p>Left-click and hold anywhere on the map to move.</p><img src="{base}/img/movepan.png" alt='Move and pan' />
@@ -107,10 +106,10 @@ export let radius=0.5;
         <p>To automatically select a defined custom area, you can upload a GeoJSON file that had been saved previously.</p>
       </ToolbarButton>
       <ToolbarDivider />
-      <!-- <ToolbarButton id="help" icon="help" label="Help" sticky>
+      <ToolbarButton id="help" icon="help" label="Help" on:click={container.resetHelp}>
         <p>To show help and guidance at any time, select this option in the toolbar.</p>
       </ToolbarButton>
-      <ToolbarDivider /> -->
+      <ToolbarDivider />
       <ToolbarButton id="getstarted" custom label="Get started">
         <p>Once you are happy with the area shape, you can start choosing from a wide variety of datasets to build your area profile.</p>
         <div slot="custom">
@@ -119,18 +118,19 @@ export let radius=0.5;
       </ToolbarButton>
       <ToolControls slot="controls">
         <ToolControl id="download">
-          <div>
-            <p>Download the selected area as a GeoJSON file.</p>
-          
-            <Button variant="primary" on:click={downloadArea(state)}>Download GeoJSON file</Button>
-          </div>
-          <div>
-            <p>You can also copy a list of output area codes.</p>
-            <textarea>{Array.from($selected[$selected.length-1].oa)
-              .map(item => `"${item}"`)
-              .join(', ')}
-            </textarea>
-            <Button variant="secondary" on:click={copyOAsToClipboard}>Copy output areas to clipboard</Button>
+          <div style="width: 250px;">
+            <Input bind:value={$state.name} id="nameinput" label="Name your area"/>
+            <div class='ons-u-mt-xs'>           
+              <Button variant="primary" icon="download" on:click={downloadArea($state)}>Download GeoJSON file</Button>
+            </div>
+            <div>
+              <p>You can also copy a list of output area codes.</p>
+              <textarea>{Array.from($selected[$selected.length-1].oa)
+                .map(item => `"${item}"`)
+                .join(', ')}
+              </textarea>
+              <Button variant="secondary" on:click={copyOAsToClipboard}>Copy areas codes</Button>
+            </div>
           </div>
           
         </ToolControl>
@@ -149,6 +149,10 @@ export let radius=0.5;
 <style>
   p {
    margin:0;
+  }
+
+  :global(#nameinput.ons-input.ons-input--text.ons-input-type__input) {
+    width: 100%;
   }
 </style>
 
