@@ -40,7 +40,11 @@ The topics are set in `/src/lib/config`. This is an important file and drives a 
 | doNotRound      | Boolean         | Whether to round the results.                                                                                                                       |
 | source          | String          | Source of the dataset/topic to be displayed on tiles and data download                                                                              |
 | topic           | String          | Datasets are grouped on the build page by these topics.                                                                                             |
-| inVersion       | Array           | Determines if dataset shows as an option in the build page menu                                                                                     |
+| validFromVersion       | Integer           | Version number where the dataset is available from                                                                                     |
+| lastValidVersion       | Integer           | Version number where the dataset is not available after this                                                                               |
+| versions       | Object           | uses integer as keys with metadata to overwrite                                                                               |
+
+
 
 ### Home page
 Uses +layout.svelte to set the cookie banner and phase banner (alpha).

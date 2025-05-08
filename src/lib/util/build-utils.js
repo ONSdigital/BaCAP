@@ -8,6 +8,8 @@ import topicsAll from "$lib/config/topics.json";
 import getTable from "$lib/util/get-table";
 import { goto } from "$app/navigation";
 import { base } from "$app/paths";
+import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
+
 
 
 const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
@@ -15,7 +17,8 @@ const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
 
 export function filterTopics(allTopics, level, coverage) {
   return allTopics
-    .filter(t=>t.inVersion.includes(get(version)))//just topics in version 2
+    .filter(d => isDatasetAvailableInVersion(d, get(version)))
+    .map(d => getDatasetForVersion(d, get(version)))
     .filter(geographyFilter(level))
     .filter(
       (t) => !t.coverage || coverage.every((c) => t.coverage.includes(c))

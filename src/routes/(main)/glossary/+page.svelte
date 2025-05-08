@@ -7,6 +7,10 @@
     Container,
     Titleblock,
   } from "@onsvisual/svelte-components";
+  import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
+  import {version} from "$lib/stores/mapstore.js";
+  import { get } from "svelte/store";
+
 </script>
 
 <Theme theme="light" background="#F5F5F6">
@@ -33,13 +37,13 @@
   <div class="ons-grid ons-grid-flex">
     <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
       <h3>Topics</h3>
-      {#each topicsAll.sort((a, b) => a.label.localeCompare(b.label)) as topic}
+      {#each topicsAll.filter(d => isDatasetAvailableInVersion(d, get(version))).map(d => getDatasetForVersion(d, get(version))).sort((a, b) => a.label.localeCompare(b.label)) as topic}
         <!-- <Button href={`${base}/glossary#${topic.code}`}>{topic.label}</Button> -->
         <div><a class="btn-link" href={`${base}/glossary#${topic.code}`}>{topic.label}</a></div><br/>
       {/each}
     </div>
     <div class="ons-grid__col ons-col-9@m">
-      {#each topicsAll.sort((a, b) => a.label.localeCompare(b.label)) as topic}
+      {#each topicsAll.filter(d => isDatasetAvailableInVersion(d, get(version))).map(d => getDatasetForVersion(d, get(version))).sort((a, b) => a.label.localeCompare(b.label)) as topic}
         <p id={topic.code} class="bold">{topic.label}</p>
         {#if topic.descLong}
             {@html topic.descLong}

@@ -12,6 +12,9 @@
   import HeaderImage from "$lib/layout/HeaderImage.svelte";
   import Lede from "$lib/layout/Lede.svelte";
   import { base } from "$app/paths";
+  import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
+  import {version} from "$lib/stores/mapstore.js";
+  import { get } from "svelte/store";
 
   import topicsAll from "$lib/config/topics.json";
 </script>
@@ -88,7 +91,7 @@
         <p>This is a list of the datasets and topics available through this tool:</p>
         <Twisty title="Census 2021 topics">
           <ul class="list-container">
-            {#each topicsAll.filter(t=>t.inVersion.includes(2)).filter(t=>t.census==true).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
+            {#each topicsAll.filter(d => isDatasetAvailableInVersion(d, get(version))).filter(t=>t.census==true).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
               <li class="list-item">{label}</li>
             {/each}
         </ul>
@@ -97,7 +100,7 @@
         
         <Twisty title="Non-Census datasets">
           <ul class="list-container">
-            {#each topicsAll.filter(t=>t.inVersion.includes(2)).filter(t=>t.census==false).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
+            {#each topicsAll.filter(d => isDatasetAvailableInVersion(d, get(version))).filter(t=>t.census==false).map(t=>t.label).sort((a,b)=>a.localeCompare(b)) as label}
               <li class="list-item">{label}</li>
             {/each}
           </ul>

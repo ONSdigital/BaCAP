@@ -12,6 +12,7 @@
   import BigNumber from "$lib/charts/BigNumber.svelte";
   import LineChart from "$lib/charts/LineChart.svelte";
   import { Notice, Twisty } from "@onsvisual/svelte-components";
+  import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
 
   let pymChild,
     name,
@@ -27,11 +28,21 @@
   let stats = [];
   let hideTables = false;
 
-  let topicsLookup = (() => {
-    let lookup = {};
-    topics.forEach((t) => (lookup[t.code] = t));
-    return lookup;
-  })();
+  // let topicsLookup = (() => {
+  //   let lookup = {};
+  //   topics.filter(d => isDatasetAvailableInVersion(d, version))
+  //   .map(d => getDatasetForVersion(d, version))
+  //   .forEach((t) => (lookup[t.code] = t));
+  //   return lookup;
+  // })();
+
+  let topicsLookup = {};
+  function makeTopicsLookup() {
+    topics.filter((d) => isDatasetAvailableInVersion(d, version))
+      .map((d) => getDatasetForVersion(d, version))
+      .forEach((t) => (topicsLookup[t.code] = t));
+  }
+
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -94,6 +105,7 @@
       population = props.population;
       tables = props.tabs;
       stats = props.stats;
+      makeTopicsLookup();
     }
   }
 
@@ -123,7 +135,7 @@
   <meta name="googlebot" content="noindex,indexifembedded" />
 </svelte:head>
 
-{#if version == 2}
+{#if version >= 2}
 <Notice>
   Census topics and non-Census datasets will primarily use different best-fit
   shapes to estimate the data to be returned to users.
@@ -151,7 +163,7 @@
       </Card>
     {/if}
     {#each tables || [] as tab}
-      {#if version == 2}
+      {#if version >= 2}
         <Card
           title={topicsLookup[tab.code].label}
           source={topicsLookup[tab.code].source}

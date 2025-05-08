@@ -5,12 +5,15 @@ import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry }
 import { minzoom, maxzoom } from "$lib/config/geography";
 import Select, { getPlace } from "$lib/ui/Select.svelte";
 import { base } from "$app/paths";
+import { updateLocalStorage } from "$lib/util/build-utils";
 
 let container;
 
 let uploader
 export let state;
 export let radius=0.5;
+
+$:updateLocalStorage($state.name)
 </script>
 
 <div style="z-index:99;position:relative;pointer-events:none;">

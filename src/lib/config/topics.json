@@ -21,7 +21,8 @@
     "doNotRound":false,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1]
+    "validFromVersion": 1,
+    "lastValidVersion":1
   },
   {
     "code": "population_mye",
@@ -56,7 +57,7 @@
     "census": false,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "inVersion": [2]
+    "validFromVersion":2
   },
   {
     "code": "households",
@@ -83,7 +84,7 @@
     "census": true,
     "source": "Office for National Statistics – Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "residential_property_sales",
@@ -113,7 +114,17 @@
     "census": false,
     "dateLabelLong": "Year ending September 2023",
     "topic": "Housing",
-    "inVersion": [2]
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel":"Year ending September 2023",
+        "date":"2023-09"
+      },
+      "3":{
+        "dateLabel":"Year ending September 2024",
+        "date":"2024-09"
+      }
+    }
   },
   {
     "code": "resident_age",
@@ -241,7 +252,8 @@
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
     "census": true,
-    "inVersion": [1],
+    "validFromVersion": 1,
+    "lastValidVersion":1,
     "dateLabelLong":2021
   },
   {
@@ -378,7 +390,7 @@
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "inVersion": [2]
+    "validFromVersion": 2
   },
   {
     "code": "sex",
@@ -409,7 +421,8 @@
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
     "census": true,
-    "inVersion": [1]
+    "validFromVersion": 1,
+    "lastValidVersion":1
   },
   {
     "code": "sex_mye",
@@ -448,7 +461,7 @@
     "queryExt": "&c_age=200",
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "inVersion": [2]
+    "validFromVersion": 2
   },
   {
     "code": "births",
@@ -477,7 +490,7 @@
     "doNotRound": true,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "inVersion": [2]
+    "validFromVersion": 2
   },
   {
     "code": "deaths",
@@ -507,7 +520,7 @@
     "census": false,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "inVersion": [2]
+    "validFromVersion": 2
   },
   {
     "code": "legal_partnership_status",
@@ -559,7 +572,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "country_of_birth",
@@ -598,7 +611,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "passports_all",
@@ -644,7 +657,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "residence_length",
@@ -696,7 +709,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "hh_size",
@@ -746,7 +759,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "hh_family_composition",
@@ -786,7 +799,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "hh_deprivation",
@@ -838,7 +851,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "energy_efficiency_of_housing",
@@ -905,7 +918,7 @@
     "source": "ONS analysis of Energy Performance Certificates",
     "dateLabelLong": "Financial year ending 2024",
     "topic": "Housing",
-    "inVersion": [2]
+    "validFromVersion": 2
   },
   {
     "code": "ethnic_group_tb",
@@ -957,7 +970,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "national_identity_all",
@@ -1002,7 +1015,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "religion_tb",
@@ -1080,7 +1093,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "health_in_general",
@@ -1134,7 +1147,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Health and wellbeing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "disability",
@@ -1170,7 +1183,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Health and wellbeing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "is_carer",
@@ -1218,7 +1231,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Health and wellbeing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "english_proficiency",
@@ -1270,7 +1283,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "welsh_skills_all",
@@ -1319,7 +1332,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "welsh_skills_speak",
@@ -1356,7 +1369,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "accommodation_type",
@@ -1401,7 +1414,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "number_of_cars",
@@ -1447,7 +1460,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "heating_type",
@@ -1491,7 +1504,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "number_bedrooms",
@@ -1537,7 +1550,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "occupancy_rating_bedrooms",
@@ -1589,7 +1602,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "hh_tenure",
@@ -1639,7 +1652,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "alternative_address_indicator",
@@ -1679,7 +1692,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Housing",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "workplace_travel",
@@ -1738,7 +1751,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "transport_to_workplace",
@@ -1828,7 +1841,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "economic_activity",
@@ -1871,7 +1884,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "has_ever_worked",
@@ -1913,7 +1926,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "occupation_current",
@@ -1991,7 +2004,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "ns_sec",
@@ -2069,7 +2082,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "hours_per_week_worked",
@@ -2117,7 +2130,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Economy",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "highest_qualification",
@@ -2171,7 +2184,7 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Education and skills",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   },
   {
     "code": "in_full_time_education",
@@ -2205,6 +2218,6 @@
     "census": true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Education and skills",
-    "inVersion": [1,2]
+    "validFromVersion": 1
   }
 ]

@@ -28,7 +28,7 @@
   import { simplifyGeo } from "$lib/util/drawing-utils";
   import getParents from "$lib/util/get-parents";
   import { onMount } from "svelte";
-  import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
+  // import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import {
     getData,
@@ -187,6 +187,8 @@
     topics = filterTopics(topicsAll, highestLevel, coverage);
     topicsGrouped = groupTopics(topics);
 
+    $state.name = store.properties.name || "Selected area";
+
     $buildstate = {
       ...$buildstate,
       name: $state.name,
@@ -198,6 +200,8 @@
 
     currentTopics = [topics[0]]; // Default to population topic
   }
+
+$:console.log($state.name)
 
   $: updateProfile(
     $buildstate.start,
@@ -219,6 +223,7 @@
   function saveNameChange(){
     showChangeName = false
     $state.name = nameChangeInputValue
+    updateLocalStorage(nameChangeInputValue)
   }
 
   function cancelChangeName(){
