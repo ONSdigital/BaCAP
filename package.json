@@ -8,7 +8,7 @@
 		"build:prod": "cross-env APP_PATH=ons vite build && node ./scripts/js-fix",
 		"buildgit": "vite build && cp -r build docs",
 		"compress-data": "node ./scripts/compress-data",
-		"start": "vite preview",
+		"start": "vite preview --outDir build",
 		"deploy": "netlify build && netlify deploy -p",
 		"push": "git add -A; git commit -m 'npm update';git push",
 		"process-xml": "node ./scripts/process-geography-codelist"

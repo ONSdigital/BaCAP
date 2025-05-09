@@ -27,8 +27,12 @@ export function filterTopics(allTopics, level, coverage) {
 
 export function updateLocalStorage(name) {
   let ls = JSON.parse(localStorage.getItem("onsbuild"));
-  ls.properties.name = name;
+  if(ls){
+    ls.properties.name = name;
   localStorage.setItem("onsbuild", JSON.stringify(ls));
+  } else {
+    return;
+  }
 }
 
 let cache = {};// this is the same if the area changes, so need to make a unique cache for each area somehow

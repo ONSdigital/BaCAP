@@ -201,8 +201,6 @@
     currentTopics = [topics[0]]; // Default to population topic
   }
 
-$:console.log($state.name)
-
   $: updateProfile(
     $buildstate.start,
     $state.name,

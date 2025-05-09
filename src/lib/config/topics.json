@@ -117,12 +117,14 @@
     "validFromVersion": 2,
     "versions":{
       "2":{
-        "dateLabel":"Year ending September 2023",
-        "date":"2023-09"
+        "dateLabel":"Year ending Sept 2023",
+        "date":"2023-09",
+        "dateLabelLong": "Year ending September 2023"
       },
       "3":{
-        "dateLabel":"Year ending September 2024",
-        "date":"2024-09"
+        "dateLabel":"Year ending Sept 2024",
+        "date":"2024-09",
+        "dateLabelLong": "Year ending September 2024"
       }
     }
   },
