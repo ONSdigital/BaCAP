@@ -90,7 +90,7 @@ The version number is also now embedded in the hash.
 This page decodes from base64 to get back to the data and then loops through all the datasets chosen. It'll decide what visualisations to choose by what's set in the topics.json. It reads the version from the hash then applies the version specific overrides. 
 
 ### Updating metadata
-To update specific metadata for a dataset/topic do something like this. This example is for residential sales,  when it sends the query it uses the `date` field which matches what NOMIS expects for the `date` field. It then uses the `dateLabel` and `dataLabelLong` for the specific version to overwrite the base metadata when displaying the card or creating the data download.
+To update specific metadata for a dataset/topic do something like this. First update the version in the store, then update the `topics.json` file. This example is for residential sales,  when it sends the query it uses the `date` field which matches what NOMIS expects for the `date` field. It then uses the `dateLabel` and `dataLabelLong` for the specific version to overwrite the base metadata when displaying the card or creating the data download.
 
 ```
 "versions":{
