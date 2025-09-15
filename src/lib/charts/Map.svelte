@@ -17,7 +17,7 @@
 
   /// MAP creation
   async function init() {
-    $mapObject = new mapboxgl.Map({
+    $mapObject = new maplibregl.Map({
       container: "mapcontainer",
       style: mapstyle,
       minZoom: minzoom,
@@ -25,21 +25,21 @@
       maxBounds: maxbounds,
       //   pitch: 10, // 30,
       center: [-1, 52.2],
-      zoom: 5,
+      zoom: 6,
       hash: false, // set options in hash string
     });
 
     document.querySelector("#mapcontainer div canvas").style.cursor = "wait";
 
     // scale bar
-    $mapObject.addControl(
-      new mapboxgl.ScaleControl({
-        position: "bottom-left",
-      }),
-    );
+    // $mapObject.addControl(
+    //   new mapboxgl.ScaleControl({
+    //     position: "bottom-left",
+    //   }),
+    // );
 
     // navigation
-    $mapObject.addControl(new mapboxgl.NavigationControl(), "bottom-right");
+    // $mapObject.addControl(new mapboxgl.NavigationControl(), "bottom-right");
 
     //disable double click and rotation
     $mapObject.doubleClickZoom.disable();
@@ -58,6 +58,8 @@
     });
 
     $mapObject.on("load", SetLayers);
+
+
   }
 
   // onDestroy(() => {
@@ -66,8 +68,9 @@
 
   /// Set all Mapbox Parameters ///
   export async function SetLayers() {
+    $mapObject.resize();
+    
     // set mapbox layers
-
     mapsource.subscribe(async () => {
       // set the sources
       for (const [key, value] of Object.entries($mapsource)) {
@@ -92,16 +95,20 @@
   onMount(init);
 </script>
 
-<div tabindex="0" aria-label="Map" id="mapcontainer" bind:this={webglCanvas} />
+<div aria-label="Map" id="mapcontainer" bind:this={webglCanvas} />
 
 <style>
   #mapcontainer {
     position: absolute;
-    top: 142px;
+    top: 0;
     bottom: 0;
     width: 100%;
+    height:100%;
   }
   :global(.maplibregl-ctrl button) {
     margin: 0;
+  }
+  :global(.maplibregl-ctrl-bottom-right .mapboxgl-ctrl-bottom-right) {
+    bottom:14px;
   }
 </style>

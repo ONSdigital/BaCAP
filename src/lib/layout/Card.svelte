@@ -1,11 +1,15 @@
 <script>
   import { getContext } from "svelte";
+  import { geographyLookup } from "$lib/util/build-utils";
 
   export let colspan = 1; // 1, 2 or 3
   export let rowspan = 1;
   export let title = null;
   export let links = null;
   export let blank = false;
+  export let source
+  export let geography 
+  export let timeperiod
 
   const { cols } = getContext("tiles");
 </script>
@@ -22,12 +26,26 @@
 >
   {#if title}
     <header class="margin-top--1">
-      <h3 class="margin-top--0 margin-right--0 margin-bottom--0 margin-left--0">
-        {title}
-      </h3>
+        <h3 class="margin-top--0 margin-right--0 margin-bottom--0 margin-left--0">
+          {title}
+        </h3>
+        {#if timeperiod}<span>{timeperiod}</span>{/if}
     </header>
   {/if}
   <slot />
+  <div class="ons-u-mt-s">
+    {#if source}
+    <span class="footnote"
+    >Source: {@html source}</span
+  >
+    {/if}
+    <br/>
+    {#if geography}
+    <span class="footnote">Small area: {@html geographyLookup[geography]}</span>
+    {/if}
+  </div>
+
+
   {#if links && links[0]}
     <div class="margin-top--2">
       {#each links as link}
@@ -59,5 +77,14 @@
     margin: 4px 0 0 !important;
     display: block;
     page-break-inside: avoid;
+  }
+  .footnote{
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color:#323132;
+  }
+  .bold{
+    font-weight: 700;
   }
 </style>

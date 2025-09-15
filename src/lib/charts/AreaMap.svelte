@@ -7,7 +7,7 @@
 
 	const style = `${base}/data/style.json`;
 
-	export let name, comp;
+	export let name,comp;
 	export let geojson = null;
 	export let compGeojson = null;
 	export let config = {

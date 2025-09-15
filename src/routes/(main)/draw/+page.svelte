@@ -1,18 +1,18 @@
 <script>
   import ONSloader from "$lib/ui/ONSloader.svelte";
-  import { goto } from "$app/navigation";
-  import { base } from "$app/paths";
-  import tooltip from "$lib/ui/tooltip";
-  import Select, { getPlace } from "$lib/ui/Select.svelte";
-  import Slider from "$lib/ui/Slider.svelte";
-  import Icon from "$lib/ui/Icon.svelte";
-  import { download, clip } from "$lib/util/functions";
-  import bbox from "@turf/bbox";
+  // import { goto } from "$app/navigation";
+  // import { base } from "$app/paths";
+  // import tooltip from "$lib/ui/tooltip";
+  // import Select, { getPlace } from "$lib/ui/Select.svelte";
+  // import Slider from "$lib/ui/Slider.svelte";
+  // import Icon from "$lib/ui/Icon.svelte";
+  // import { download, clip } from "$lib/util/functions";
+  // import bbox from "@turf/bbox";
   import Map from "$lib/charts/Map.svelte";
   import "$lib/css/maplibre-gl.css";
   import { onMount } from "svelte";
-  import { update, simplifyGeo, geoBlob } from "$lib/util/drawing-utils";
-  import { roundCount } from "$lib/util/functions";
+  // import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
+  // import { roundCount } from "$lib/util/functions";
   import {
     mapObject,
     drawType,
@@ -20,20 +20,31 @@
     radiusInKm,
     selected,
     centroids,
+    user_geometry,
+    isLoading,
+    state,
+    pselect,
+    currentMapZoom
   } from "$lib/stores/mapstore";
-  import { boundaries, cdnbase } from "$lib/config/geography";
-  import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+  // import { cdnbase } from "$lib/config/geography";
+  // import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+  import { handleHashSelection, handleLocalStorageSelection, handleDrawDataSelection } from "$lib/util/load-utils";
 
-  const modes = [
-    { key: "move", label: "Pan and zoom" },
-    { key: "select", label: "Click to select" },
-    { key: "polygon", label: "Draw a polygon" },
-    { key: "radius", label: "Draw a radius" },
-  ];
+  import DrawToolbar from "$lib/layout/DrawToolbar.svelte";
+  import { recolour } from "$lib/config/toolbar"; 
+  import PopulationCounter from "$lib/ui/PopulationCounter.svelte";
+
+
+  // const modes = [
+  //   { key: "move", label: "Pan and zoom" },
+  //   // { key: "select", label: "Click to select" },
+  //   { key: "polygon", label: "Draw a polygon" },
+  //   { key: "radius", label: "Draw a radius" },
+  // ];
 
   // variable custom testing
-  let isLoading = false;
-  let state = {
+  // let isLoading = false;
+  $state = {
     mode: "move",
     radius: 5,
     select: "add",
@@ -46,286 +57,338 @@
   };
   const zoomstop = 6;
   let zoom; // prop bound to map zoom level
-  let uploader; // DOM element for geojson file upload
-  let pselect = "0";
+  // let uploader; // DOM element for geojson file upload
+  // $pselect = "0";
+  // const blank_geo = {type: 'Feature',geometry: {type: 'Polygon',coordinates: [],}}
 
-  $: showTray = ["polygon", "radius"].includes(state.mode);
+  // $: showTray = ["polygon", "radius"].includes(state.mode);
 
-  function setDrawData() {
-    let items = $selected[$selected.length - 1];
-    items = JSON.stringify(items, (_key, value) =>
-      value instanceof Set ? [...value] : value,
-    );
-    localStorage.setItem("draw_data", items);
-  }
+  // $:console.log('selected',$selected)
 
-  let newselect;
+  
+ 
+  // function setDrawData() {
+  //   let items = $selected[$selected.length - 1];
+
+  //   items = JSON.stringify(items, (_key, value) =>
+  //     value instanceof Set ? [...value] : value,
+  //   );
+  //   localStorage.setItem("draw_data", items);
+  // }
+
+  // let newselect;
 
   function init() {
-    isLoading = true;
+    $isLoading = true;
+    
+    // clear local storage if it doesn't have new things in
+    const drawDataString = localStorage.getItem("draw_data");
+    const drawData = drawDataString ? JSON.parse(drawDataString) : null;
+
+    if (!drawData?.lsoa) {
+      localStorage.clear();
+    }
+
+    const onsbuildString = localStorage.getItem("onsbuild");
+    const onsbuild = onsbuildString ? JSON.parse(onsbuildString) : null;
+
+    if (!onsbuild?.properties?.compressedToLsoa) {
+      localStorage.clear();
+    }
+    
     /* 
     A section to clear the local storage if past the last update date
     */
-    if (new Date(localStorage.getItem("lastdate")) < new Date("2022-18-18")) {
-      localStorage.clear();
-    }
-    localStorage.setItem("lastdate", +new Date());
+
+
+    // if (new Date(localStorage.getItem("lastdate")) < new Date("2022-18-18")) {
+    //   localStorage.clear();
+    // }
+    // localStorage.setItem("lastdate", +new Date());
 
     /* Initialisation function: This loads the map, any locally stored drawing and initialises the drawing tools */
     // console.clear();
 
-    function recolour(selected) {
-      const items = selected[selected.length - 1];
+    // function recolour(selected) {
+    //   const items = selected[selected.length - 1];
 
-      pselect = items.oa.size
-        ? [...items.oa]
-            .map((d) => $centroids.population(d) || 0)
-            .reduce((a, b) => a + b)
-        : 0;
+    //   pselect = items.oa.size
+    //     ? [...items.oa]
+    //         .map((d) => $centroids.population(d) || 0)
+    //         .reduce((a, b) => a + b)
+    //     : 0;
 
-      // if (!items.oa.size) return;
-      // console.debug('---recolour', items);
-      if ($mapObject.getLayer("bounds"))
-        $mapObject.setPaintProperty("bounds", "fill-color", [
-          "match",
-          ["get", "areacd"],
-          ["literal", ...items.oa],
-          "rgba(32, 96, 149, 0.4)",
-          "transparent",
-        ]);
-      if (selected.length > 1 && state.name) state.name = "";
-    }
+    //   // This makes the OA layer coloured in when selecting an area
+    //   // if ($mapObject.getLayer("bounds"))
+    //   //   $mapObject.setPaintProperty("bounds", "fill-color", [
+    //   //     "match",
+    //   //     ["get", "areacd"],
+    //   //     ["literal", ...items.oa],
+    //   //     "rgba(32, 96, 149, 0.4)",
+    //   //     "transparent",
+    //   //   ]);
+
+
+    //   if($mapObject.getLayer("userGeo")){changeData('userGeo',items.geo)};
+
+        
+    //   if (selected.length > 1 && state.name) state.name = "";
+    // }
 
     $mapObject.on("load", async () => {
-      newselect = function () {
-        localStorage.clear();
-        selected.set([{ oa: new Set() }]);
-      };
+      // newselect = function () {
+      //   clearGeo();
+      //   localStorage.clear();
+      //   selected.set([{ oa: new Set(), lsoa: new Set(), geo: blank_geo }]);
+      //   user_geometry.set(blank_geo)
+      // };
 
+      // let hash = window.location.hash;
+      // if (hash.match(/#[EKNSW]\d{8}/)) {
+      //   let code = hash.slice(1);
+      //   try {
+      //     const res = await fetch(
+      //       `${cdnbase}/${code.slice(0, 3)}/${code}.json`,
+      //     );
+      //     const data = await res.json();
+      //     newselect();
+      //     selected.set([{
+      //       oa: new Set(), 
+      //       lsoa: new Set(),
+      //       geo:blank_geo
+      //     }]);
+      //     user_geometry.set(blank_geo)
+      //     localStorage.clear();
+
+      //     $selected = [
+      //       ...$selected,
+      //       {
+      //         oa: new Set($centroids.expand(data.properties.c21cds)),
+      //         lsoa: new Set($centroids.expand(data.properties.c21cds.filter(code => !code.startsWith('e00') && !code.startsWith('w00')))),
+      //         geo:data.geometry
+      //       },
+      //     ];
+      //     user_geometry.set(data.geometry)
+      //     changeData('userGeo',data.geometry)
+
+      //     $mapObject.fitBounds(data.properties.bounds, { padding: 40 });
+
+      //     state.name = data.properties.hclnm
+      //       ? data.properties.hclnm
+      //       : data.properties.areanm
+      //         ? data.properties.areanm
+      //         : data.properties.areacd;
+      //     setDrawData();
+
+      //     analyticsEvent({
+      //       event: "hashSelect",
+      //       areaCode: data.properties.areacd,
+      //       areaName: state.name,
+      //     });
+      //   } catch {
+      //     alert(`Requested GSS code ${code} is unavailable or invalid.`);
+      //   }
+
+      //   history.replaceState(null, null, " ");
+      // } else if (localStorage.getItem("onsbuild")) {
+      //   var q = JSON.parse(localStorage.getItem("onsbuild"));
+      //   state.name = q.properties.name;
+
+      //   if (!q.properties?.oaAll?.length) {
+      //     newselect();
+      //     return 0;
+      //   }
+        
+
+      //   var bbox = $centroids.boundsFromGeometry(q.geojson);
+
+      //   $mapObject.fitBounds(bbox, {
+      //     padding: 40,
+      //     linear: true,
+      //   });
+
+      //   $selected = [{
+      //       oa: new Set(q.properties.oaAll),
+      //       lsoa: new Set($centroids.expand(q.properties.compressedToLsoa,'lsoa')),
+      //       geo:q.geojson
+      //     }];
+       
+      //   user_geometry.set(q.geojson)  
+      //   changeData('userGeo',q.geojson)
+        
+      // } else if (localStorage.getItem("draw_data") || false) {
+      //   var q = JSON.parse(localStorage.getItem("draw_data"));
+      //   if (!q.oa.length) {
+      //     newselect();
+      //     return 0;
+      //   }
+      //   // var bbox = $centroids.bounds([...q.oa]);
+      //   // var bbox = $centroids.boundsFromGeometry(q.geo);
+      //   var bbox = q.geo ? $centroids.boundsFromGeometry(q.geo) : $centroids.bounds([...q.oa],'oa');
+
+        
+      //   $mapObject.fitBounds(bbox, {
+      //     padding: 40,
+      //     linear: true,
+      //   });
+
+      //   // need some fallback if there's no geo eg. through search for a place
+      //   selected.set([{
+      //     oa:new Set(q.oa),
+      //     lsoa:new Set(q.lsoa),
+      //     geo:q.geo
+      //   }]);
+
+      //   user_geometry.set(q.geo)
+      //   changeData('userGeo',q.geo)
+      // }
+
+      // Main execution logic
       let hash = window.location.hash;
+
       if (hash.match(/#[EKNSW]\d{8}/)) {
-        let code = hash.slice(1);
-        try {
-          const res = await fetch(
-            `${cdnbase}/${code.slice(0, 3)}/${code}.json`,
-          );
-          const data = await res.json();
-          newselect();
-          selected.set([{ oa: new Set() }]);
-          localStorage.clear();
-
-          $selected = [
-            ...$selected,
-            {
-              oa: new Set($centroids.expand(data.properties.c21cds)),
-            },
-          ];
-
-          $mapObject.fitBounds(data.properties.bounds, { padding: 40 });
-
-          state.name = data.properties.hclnm
-            ? data.properties.hclnm
-            : data.properties.areanm
-              ? data.properties.areanm
-              : data.properties.areacd;
-          setDrawData();
-
-          analyticsEvent({
-            event: "hashSelect",
-            areaCode: data.properties.areacd,
-            areaName: state.name,
-          });
-        } catch {
-          alert(`Requested GSS code ${code} is unavailable or invalid.`);
-        }
-
-        history.replaceState(null, null, " ");
+        handleHashSelection(hash);
       } else if (localStorage.getItem("onsbuild")) {
-        var q = JSON.parse(localStorage.getItem("onsbuild")).properties;
-        state.name = q.name;
-
-        if (!q?.oa_all?.length) {
-          newselect();
-          return 0;
-        }
-
-        var bbox = $centroids.bounds([...q.oa_all]);
-
-        $mapObject.fitBounds(bbox, {
-          padding: 40,
-          linear: true,
-        });
-
-        $selected = [
-          {
-            oa: new Set(q.oa_all),
-          },
-        ];
-      } else if (localStorage.getItem("draw_data") || false) {
-        var q = JSON.parse(localStorage.getItem("draw_data"));
-
-        if (!q.oa.length) {
-          newselect();
-          return 0;
-        }
-
-        var bbox = $centroids.bounds([...q.oa]);
-
-        $mapObject.fitBounds(bbox, {
-          padding: 40,
-          linear: true,
-        });
-
-        q.oa = new Set(q.oa);
-        selected.set([q]);
+        handleLocalStorageSelection("onsbuild");
+      } else if (localStorage.getItem("draw_data")) {
+        handleDrawDataSelection();
       }
 
       // Keep track of map zoom level
-      zoom = $mapObject.getZoom();
-      $mapObject.on("moveend", () => (zoom = $mapObject.getZoom()));
-      isLoading = false;
+      $currentMapZoom = $mapObject.getZoom();
+      $mapObject.on("moveend", () => ($currentMapZoom = $mapObject.getZoom()));
+      $isLoading = false;
+      selected.subscribe(recolour);
     });
 
-    selected.subscribe(recolour);
-    recolour($selected);
+  
   } //endinit
 
-  function loadGeo() {
-    let file = uploader.files[0] ? uploader.files[0] : null;
+  // function loadGeo() {
+  //   let file = uploader.files[0] ? uploader.files[0] : null;
 
-    if (file) {
-      selected.set([{ oa: new Set() }]);
+  //   if (file) {
+  //     selected.set([{ oa: new Set() }]);
 
-      const reader = new FileReader();
+  //     const reader = new FileReader();
 
-      reader.onload = (e) => {
-        // Read + simplify the boundary
-        let b = JSON.parse(e.target.result);
+  //     reader.onload = (e) => {
+  //       // Read + simplify the boundary
+  //       let b = JSON.parse(e.target.result);
 
-        if (b.type == "FeatureCollection") {
-          b = b.features[0];
-        } else if (b.type == "Geometry") {
-          b = { type: "Feature", geometry: b };
-        }
+  //       if (b.type == "FeatureCollection") {
+  //         b = b.features[0];
+  //       } else if (b.type == "Geometry") {
+  //         b = { type: "Feature", geometry: b };
+  //       }
 
-        if (b.properties && b.properties.codes) {
-          let bb = b.properties.bbox ? b.properties.bbox : bbox(b);
-          let oa = b.properties.codes;
-          $selected = [
-            $selected,
-            {
-              oa: new Set(oa),
-            },
-          ];
-          $mapObject.fitBounds(bb, { padding: 40 });
-        } else if (b.geometry) {
-          if (JSON.stringify(b.geometry).length > 10000)
-            b.geometry = simplifyGeo(b.geometry, 10000);
-          let bb = bbox(b);
-          update(b.geometry);
-          $mapObject.fitBounds(bb, { padding: 40 });
-        } else {
-          b = null;
-          alert("Invalid geography file. Must be geojson format.");
-        }
+  //       if (b.properties && b.properties.codes) {
+  //         let bb = b.properties.bbox ? b.properties.bbox : bbox(b);
+  //         let oa = b.properties.codes;
+  //         $selected = [
+  //           $selected,
+  //           {
+  //             oa: new Set(oa),
+  //             lsoa: new Set($centroids.compress(oa,'lsoa')),
+  //             geo:b
+  //           },
+  //         ];
+  //         user_geometry.set(b)
+  //         changeData('userGeo',b)
+  //         $mapObject.fitBounds(bb, { padding: 40 });
+  //       } else if (b.geometry) {
+  //         if (JSON.stringify(b.geometry).length > 10000)
+  //           b.geometry = simplifyGeo(b.geometry, 10000);
+  //         let bb = bbox(b);
+  //         update(b);
+  //         user_geometry.set(b)
+  //         changeData('userGeo',b)
+  //         $mapObject.fitBounds(bb, { padding: 40 });
+  //       } else {
+  //         b = null;
+  //         alert("Invalid geography file. Must be geojson format.");
+  //       }
 
-        if (b) {
-          let props = b.properties;
-          state.name =
-            props && props.areanm
-              ? props.areanm
-              : props && props.name
-                ? props.name
-                : "";
-          setDrawData();
-          let opts = state.name ? { areaName: state.name } : {};
-          analyticsEvent({ event: "geoUpload", ...opts });
-        }
-      };
-      reader.readAsText(file);
-    }
-  }
+  //       if (b) {
+  //         let props = b.properties;
+  //         state.name =
+  //           props && props.areanm
+  //             ? props.areanm
+  //             : props && props.name
+  //               ? props.name
+  //               : "";
+  //         setDrawData();
+  //         let opts = state.name ? { areaName: state.name } : {};
+  //         analyticsEvent({ event: "geoUpload", ...opts });
+  //       }
+  //     };
+  //     reader.readAsText(file);
+  //   }
+  // }
 
   onMount(init);
 
-  /* 
-The save data and continue function
-*/
-  async function savedata() {
-    document.querySelector("#mapcontainer div canvas").style.cursor = "wait";
 
-    return $centroids
-      .simplify(state.name, $selected[$selected.length - 1], $mapObject)
 
-      .then((q) => {
-        if (q) {
-          const items = $selected[$selected.length - 1];
+  // function updateDrawMode(mode) {
+  //   let drawTypeNew = mode === "move" ? null : mode;
+  //   if ($drawType !== drawTypeNew) {
+  //     $drawType = drawTypeNew;
+  //     state.select = "add";
+  //   }
+  // }
+  // $: updateDrawMode(state.mode);
 
-          if (items.oa.size > 0) {
-            if (q.error) return false;
-
-            console.debug("buildpage", q);
-            localStorage.setItem("onsbuild", JSON.stringify(q));
-            document.querySelector("#mapcontainer div canvas").style.cursor =
-              "auto";
-            return true;
-          }
-        }
-
-        alert("No features selected.");
-        document.querySelector("#mapcontainer div canvas").style.cursor =
-          "auto";
-        return false;
-      });
-  }
-
-  function updateDrawMode(mode) {
-    let drawTypeNew = mode === "move" ? null : mode;
-    if ($drawType !== drawTypeNew) {
-      $drawType = drawTypeNew;
-      state.select = "add";
-    }
-  }
-  $: updateDrawMode(state.mode);
-
-  function updateAddSubtract(select) {
-    $addMode = select === "add" ? true : false;
-  }
-  $: updateAddSubtract(state.select);
+  // function updateAddSubtract(select) {
+  //   $addMode = select === "add" ? true : false;
+  // }
+  // $: updateAddSubtract(state.select);
 
   // $: console.log('selected', $selected);
 
-  function doSelect(e) {
-    newselect();
+  // function doSelect(e) {
+  //   newselect();
 
-    if (e.detail.type == "place") {
-      let bbox = e.detail.bbox;
-      let oa = new Set($centroids.expand(e.detail.codes));
-      $selected = [$selected, { oa }];
-      $mapObject.fitBounds(bbox, { padding: 40 });
-      state.name = e.detail.areanm;
-    } else if (e.detail.type == "postcode") {
-      let center = e.detail.center;
-      $mapObject.flyTo({ center: center, zoom: 14 });
-      $mapObject.once("idle", () => {
-        let coords = $mapObject.project(center);
-        let features = $mapObject.queryRenderedFeatures([coords.x, coords.y], {
-          layers: ["bounds"],
-        });
+  //   if (e.detail.type == "place") {
+  //     let bbox = e.detail.bbox;
+  //     let oa = new Set($centroids.expand(e.detail.codes));
+  //     $selected = [$selected, { oa }];
+  //     $mapObject.fitBounds(bbox, { padding: 40 });
+  //     state.name = e.detail.areanm;
+  //   } else if (e.detail.type == "postcode") {
+  //     let center = e.detail.center;
+  //     $mapObject.flyTo({ center: center, zoom: 14 });
+  //     $mapObject.once("idle", () => {
+  //       let coords = $mapObject.project(center);
+  //       let features = $mapObject.queryRenderedFeatures([coords.x, coords.y], {
+  //         layers: ["bounds"],
+  //       });
 
-        var oa = new Set(features.map((f) => f.properties.oa));
-        $selected = [$selected, { oa }];
-      });
-    }
-    setDrawData();
-  }
+  //       var oa = new Set(features.map((f) => f.properties.oa));
+  //       $selected = [$selected, { oa }];
+  //     });
+  //   }
+  //   setDrawData();
+  // }
+
+  // $:console.log('selected',$selected)
 </script>
 
-<ONSloader {isLoading} />
-<nav>
+<div class="draw-page-container">
+  <ONSloader isLoading={$isLoading} />
+  
+  <div id="map">
+    <DrawToolbar {state} bind:radius={$radiusInKm}/>
+    <PopulationCounter population={$pselect}/>
+    <Map drawingTools={true} />
+  </div>
+  
+</div>
+
+
+ <!-- <nav>
   <div class="nav-left" style:z-index={99}>
     {#each modes as mode}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <label
         id={"init_" + mode.key}
         class:active={state.mode == mode.key}
@@ -401,8 +464,8 @@ The save data and continue function
       <span>Build profile</span><Icon type="chevron" />
     </button>
   </div>
-</nav>
-{#if state.showSave}
+</nav> -->
+<!-- {#if state.showSave}
   <nav class="tray">
     <div />
     <div class="save-buttons">
@@ -458,7 +521,7 @@ The save data and continue function
       <div class="slider">
         <span>Radius</span>
         <Slider bind:value={$radiusInKm} />
-        <input type="text" class="input-text" bind:value={$radiusInKm} />km
+        <input type="number" class="input-text" bind:value={$radiusInKm} step="0.1" min="0" max="10"/>km
       </div>
     {/if}
     <div class="select-mode">
@@ -491,11 +554,11 @@ The save data and continue function
       </label>
     </div>
   </nav>
-{/if}
-<div id="map">
-  <Map drawingTools={true} />
-</div>
-<aside class="info-box" style:top="{showTray || state.showSave ? 200 : 158}px">
+{/if} -->
+
+
+
+<!-- <aside class="info-box" style:top="{showTray || state.showSave ? 200 : 158}px">
   <div class="search">
     <Select on:select={doSelect} />
     <button
@@ -522,7 +585,7 @@ The save data and continue function
           class="btn-link"
           on:click={() => {
             let q = $selected[$selected.length - 1];
-            let bbox = $centroids.bounds([...q.oa]);
+            let bbox = $centroids.bounds([...q.oa],'oa');
             $mapObject.fitBounds(bbox, { padding: 40 });
           }}>click here</button
         > to return to the area you have drawn.
@@ -590,4 +653,21 @@ The save data and continue function
       <Icon type="chevron" rotation={state.infoExpand ? 90 : -90} />
     </button>
   </div>
-</aside>
+</aside>  -->
+<style>
+  #map {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+  }
+  .draw-page-container{
+    position:fixed;
+    overflow: hidden;
+    height: calc(100vh - 94px);
+    width:100%;
+  }
+
+  :global(*) {
+    font-size: 0.875rem;
+  }
+</style>

@@ -7,18 +7,42 @@
   import Card from "$lib/layout/Card.svelte";
   import BarChart from "$lib/charts/BarChart.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
+  import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
   import ProfileChart from "$lib/charts/ProfileChart.svelte";
   import BigNumber from "$lib/charts/BigNumber.svelte";
+  import LineChart from "$lib/charts/LineChart.svelte";
+  import { Notice, Twisty } from "@onsvisual/svelte-components";
+  import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
 
-  let pymChild, name, comp, geojson, compGeojson, tables, population;
+  let pymChild,
+    name,
+    comp,
+    geojson,
+    compGeojson,
+    tables,
+    population,
+    oa_all,
+    lsoa_all,
+    showMapInProfile,
+    version;
   let stats = [];
   let hideTables = false;
 
-  let topicsLookup = (() => {
-    let lookup = {};
-    topics.forEach((t) => (lookup[t.code] = t));
-    return lookup;
-  })();
+  // let topicsLookup = (() => {
+  //   let lookup = {};
+  //   topics.filter(d => isDatasetAvailableInVersion(d, version))
+  //   .map(d => getDatasetForVersion(d, version))
+  //   .forEach((t) => (lookup[t.code] = t));
+  //   return lookup;
+  // })();
+
+  let topicsLookup = {};
+  function makeTopicsLookup() {
+    topics.filter((d) => isDatasetAvailableInVersion(d, version))
+      .map((d) => getDatasetForVersion(d, version))
+      .forEach((t) => (topicsLookup[t.code] = t));
+  }
+
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -32,7 +56,16 @@
         : [areaName, compName];
     names.forEach((name) => {
       def.categories.forEach((cat) => {
-        data.push({ areanm: name, category: cat.label, value: table.data[i] });
+        data.push({
+          areanm: name,
+          category: cat.label,
+          value:
+            version == 1
+              ? table.data[i]
+              : def.code === "resident_age"
+                ? table.data[i].percentage
+                : table.data[i].value,
+        });
         i++;
       });
     });
@@ -41,28 +74,38 @@
 
   function update() {
     let hash = document.location.hash;
-
     if (hash && hash.includes("name=")) {
       let props = {};
       let searchParams = new URLSearchParams(hash.slice(3));
-
       for (let pair of searchParams.entries()) {
-        if (["name", "comp"].includes(pair[0])) {
+        if (["name", "comp", "showMap", "version"].includes(pair[0])) {
           props[pair[0]] = atob(pair[1]);
         } else if (
-          ["tabs", "poly", "comppoly", "population", "stats"].includes(pair[0])
+          [
+            "tabs",
+            "poly",
+            "comppoly",
+            "population",
+            "stats",
+            "oa",
+            "lsoa",
+          ].includes(pair[0])
         ) {
           props[pair[0]] = JSON.parse(atob(pair[1]));
         }
       }
-
       name = props.name || "Selected area";
       comp = props.comp || "";
+      oa_all = props.oa || [];
+      lsoa_all = props.lsoa || [];
       geojson = props.poly;
+      version = props.version || 1;
+      showMapInProfile = props.showMap;
       compGeojson = props.comppoly;
       population = props.population;
       tables = props.tabs;
       stats = props.stats;
+      makeTopicsLookup();
     }
   }
 
@@ -92,58 +135,136 @@
   <meta name="googlebot" content="noindex,indexifembedded" />
 </svelte:head>
 
+{#if version >= 2}
+<Notice>
+  Census topics and non-Census datasets will primarily use different best-fit
+  shapes to estimate the data to be returned to users.
+</Notice>
+<div class="ons-u-mt-s ons-u-mb-s">
+  <Twisty title="See the difference in best-fit shapes">
+    <p>The map below shows the best-fit shape, which is the closest available to your chosen shape. The small area data has been added together for your best-fit shape and provides you with an estimated total. Census 2021 topics and non-Census datasets use different small area types. We advise caution when comparing values between Census topics and non-Census datasets because these best-fit shapes will have different boundaries.</p>
+    {#if oa_all && lsoa_all}
+      <AreaMapComparison {name} comp={null} {geojson} {oa_all} {lsoa_all} />
+    {/if}
+  </Twisty>
+  
+</div>
+{/if}
+
+
 {#if tables}
-  {#if name && name !== "Selected area"}
-    <h1>{name}</h1>
+  {#if name && name !== "Selected area" && name !== "undefined"}
+    <h1 class="ons-u-mt-s ons-u-mb-s">{name}</h1>
   {/if}
   <Cards>
-    {#if geojson}
+    {#if geojson && showMapInProfile}
       <Card title="Area map">
         <AreaMap {name} {comp} {geojson} {compGeojson} />
       </Card>
     {/if}
     {#each tables || [] as tab}
-      <Card title={topicsLookup[tab.code].label}>
-        {#if topicsLookup[tab.code]?.chart === "number"}
-          <BigNumber
-            value={tab.data[0]}
-            unit={topicsLookup[tab.code].unit}
-            prefix={topicsLookup[tab.code].prefix}
-            description={comp
-              ? `<mark>${tab.data[1].toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
-              : ""}
-            rounded={tab.data[0] > 1000
-              ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
-              : tab.data[0] > 100
-                ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
-                : null}
-          />
-        {:else if topicsLookup[tab.code]?.chart === "profile"}
-          <ProfileChart
-            xKey="category"
-            yKey="value"
-            zKey="areanm"
-            data={expandTable(tab, name, comp)}
-            base="% of {topicsLookup[tab.code].base}"
-            table={!hideTables}
-          />
-        {:else}
-          <BarChart
-            xKey="value"
-            yKey="category"
-            zKey="areanm"
-            data={expandTable(tab, name, comp)}
-            base="% of {topicsLookup[tab.code].base}"
-            table={!hideTables}
-          />
-        {/if}
-      </Card>
+      {#if version >= 2}
+        <Card
+          title={topicsLookup[tab.code].label}
+          source={topicsLookup[tab.code].source}
+          geography={topicsLookup[tab.code].lowestGeography}
+          timeperiod={topicsLookup[tab.code].dateLabel
+            ? topicsLookup[tab.code].dateLabel
+            : "2021"}
+        >
+          <!-- use new version -->
+          {#if topicsLookup[tab.code]?.chart === "number"}
+            {#if tab.data.length < 2}
+              <p>No data available</p>
+            {:else}
+              <BigNumber
+                value={tab.data[0].count}
+                unit={topicsLookup[tab.code].unit}
+                prefix={topicsLookup[tab.code].prefix}
+                description={comp
+                  ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+                  : ""}
+                rounded={topicsLookup[tab.code]?.doNotRound
+                  ? null
+                  : tab.data[0].count > 1000
+                    ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                    : tab.data[0].count > 100
+                      ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                      : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`}
+              />
+            {/if}
+          {:else if topicsLookup[tab.code]?.chart === "profile"}
+            <ProfileChart
+              xKey="category"
+              yKey="value"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            />
+          {:else if topicsLookup[tab.code]?.chart === "line"}
+            <LineChart
+              data={tab.data}
+              zKey="areanm"
+              xDomain={topicsLookup[tab.code].categories.map((c) => c.label)}
+              base="% change since {topicsLookup[tab.code].categories[0].label}"
+            />
+          {:else}
+            <BarChart
+              xKey="value"
+              yKey="category"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            />
+          {/if}
+        </Card>
+      {:else}
+        <Card title={topicsLookup[tab.code].label}>
+          <!-- Use old version -->
+          {#if topicsLookup[tab.code]?.chart === "number"}
+            <BigNumber
+              value={tab.data[0]}
+              unit={topicsLookup[tab.code].unit}
+              prefix={topicsLookup[tab.code].prefix}
+              description={comp
+                ? `<mark>${tab.data[1].toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+                : ""}
+              rounded={tab.data[0] > 1000
+                ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                : tab.data[0] > 100
+                  ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                  : null}
+            />
+          {:else if topicsLookup[tab.code]?.chart === "profile"}
+            <ProfileChart
+              xKey="category"
+              yKey="value"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            />
+          {:else}
+            <BarChart
+              xKey="value"
+              yKey="category"
+              zKey="areanm"
+              data={expandTable(tab, name, comp)}
+              base="% of {topicsLookup[tab.code].base}"
+              table={!hideTables}
+            />
+          {/if}
+        </Card>
+      {/if}
     {/each}
   </Cards>
-
+  {#if version==1}
   <span class="footnote"
     >Source: Office for National Statistics - Census 2021</span
   >
+  {/if}
   <div class="spacer" />
 {/if}
 
@@ -153,10 +274,10 @@
     margin: 0 0 -12px 0;
     font-weight: bold;
   }
-  h3 {
+  /* h3 {
     font-size: 1.3rem;
     font-weight: bold;
-  }
+  } */
   div.spacer {
     height: 10px;
   }

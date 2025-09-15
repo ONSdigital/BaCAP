@@ -1,0 +1,2 @@
+*.csv filter=lfs diff=lfs merge=lfs -text
+static/data/oa21-lookup.json filter=lfs diff=lfs merge=lfs -text

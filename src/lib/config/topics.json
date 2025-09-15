@@ -12,14 +12,58 @@
     "categories": [
       {
         "label": "Population",
-        "cells": [0]
+        "cells": [
+          0
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "doNotRound":false,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1,
+    "lastValidVersion":1
+  },
+  {
+    "code": "population_mye",
+    "label": "Population",
+    "desc": "Mid-year estimate of the total number of people.",
+    "tableCode": [
+      "NM_2014_1",
+      "NM_2002_1"
+    ],
+    "cellCode": "c_age",
+    "dateLabel": 2022,
+    "date": 2022,
+    "measures": [
+      20100
+    ],
+    "chart": "number",
+    "unit": "people",
+    "base": "all people",
+    "categories": [
+      {
+        "label": "Population",
+        "cells": [
+          200
+        ]
+      }
+    ],
+    "queryExt": "&gender=0",
+    "dateLabelLong": 2022,
+    "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
+    "lowestGeography": "oa",
+    "doNotRound": false,
+    "census": false,
+    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "topic": "Demography and migration",
+    "validFromVersion":2
   },
   {
     "code": "households",
     "label": "Number of households",
     "desc": "The number of households on Census Day, 21 March 2021.",
+    "descLong": "<p>The number of households on Census Day, 21 March 2021.</p>",
     "tableCode": "NM_2059_1",
     "cellCode": "c2021_hh_1",
     "measures": 20100,
@@ -29,1119 +73,2153 @@
     "categories": [
       {
         "label": "Total households",
-        "cells": [0]
+        "cells": [
+          0
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "doNotRound": false,
+    "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
+    "census": true,
+    "source": "Office for National Statistics – Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
+  },
+  {
+    "code": "residential_property_sales",
+    "label": "Residential property sales",
+    "desc": "Number of residential property sales in England and Wales.",
+    "descLong": "<p>The statistics in this dataset report the count of all dwellings sold and registered in the 12 months to September each year. They are calculated using open data from the HM Land Registry, a source of comprehensive record level administrative data on property transactions.</p>",
+    "url": "peoplepopulationandcommunity/housing/methodologies/housepricestatisticsforsmallareasqmi",
+    "tableCode": "NM_2402_1",
+    "cellCode": "sales",
+    "chart": "number",
+    "measures": 20100,
+    "dateLabel": "Year ending Sept 2023",
+    "date": "2023-09",
+    "unit": "sales",
+    "base": "all sales",
+    "categories": [
+      {
+        "label": "Count of sales",
+        "cells": [
+          0
+        ]
+      }
+    ],
+    "lowestGeography": "lsoa",
+    "source": "HM Land Registry – Price Paid Transaction Data",
+    "doNotRound": true,
+    "census": false,
+    "dateLabelLong": "Year ending September 2023",
+    "topic": "Housing",
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel":"Year ending Sept 2023",
+        "date":"2023-09",
+        "dateLabelLong": "Year ending September 2023"
+      },
+      "3":{
+        "dateLabel":"Year ending Sept 2024",
+        "date":"2024-09",
+        "dateLabelLong": "Year ending September 2024"
+      }
+    }
   },
   {
     "code": "resident_age",
     "label": "Age profile",
     "desc": "The age of a person on Census Day, 21 March 2021.",
+    "descLong":"<p>A person’s age on Census Day, 21 March 2021 in England and Wales. Infants aged under 1 year are classified as 0 years of age.</p>",
     "url": "demographyvariablescensus2021/age",
     "tableCode": "NM_2020_1",
     "cellCode": "c2021_age_19",
-    "measures": 20100,
+    "measures": [20100,20301],
     "chart": "profile",
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Aged 0 to 4",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Aged 5 to 9",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Aged 10 to 14",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Aged 15 to 19",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Aged 20 to 24",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       },
       {
         "label": "Aged 25 to 29",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       },
       {
         "label": "Aged 30 to 34",
-        "cells": [7]
+        "cells": [
+          7
+        ]
       },
       {
         "label": "Aged 35 to 39",
-        "cells": [8]
+        "cells": [
+          8
+        ]
       },
       {
         "label": "Aged 40 to 44",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       },
       {
         "label": "Aged 45 to 49",
-        "cells": [10]
+        "cells": [
+          10
+        ]
       },
       {
         "label": "Aged 50 to 54",
-        "cells": [11]
+        "cells": [
+          11
+        ]
       },
       {
         "label": "Aged 55 to 59",
-        "cells": [12]
+        "cells": [
+          12
+        ]
       },
       {
         "label": "Aged 60 to 64",
-        "cells": [13]
+        "cells": [
+          13
+        ]
       },
       {
         "label": "Aged 65 to 69",
-        "cells": [14]
+        "cells": [
+          14
+        ]
       },
       {
         "label": "Aged 70 to 74",
-        "cells": [15]
+        "cells": [
+          15
+        ]
       },
       {
         "label": "Aged 75 to 79",
-        "cells": [16]
+        "cells": [
+          16
+        ]
       },
       {
         "label": "Aged 80 to 84",
-        "cells": [17]
+        "cells": [
+          17
+        ]
       },
       {
         "label": "Aged 85 and over",
-        "cells": [18]
+        "cells": [
+          18
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "census": true,
+    "validFromVersion": 1,
+    "lastValidVersion":1,
+    "dateLabelLong":2021
+  },
+  {
+    "code": "resident_age_mye",
+    "label": "Age profile",
+    "desc": "Five year age bands based on mid-year population estimates.",
+    "tableCode": [
+      "NM_2014_1",
+      "NM_2002_1"
+    ],
+    "cellCode": "c_age",
+    "measures": [
+      20100
+    ],
+    "dateLabel": 2022,
+    "date": 2022,
+    "chart": "profile",
+    "unit": "%",
+    "base": "all people",
+    "categories": [
+      {
+        "label": "Aged 0 to 4",
+        "cells": [
+          1
+        ]
+      },
+      {
+        "label": "Aged 5 to 9",
+        "cells": [
+          3
+        ]
+      },
+      {
+        "label": "Aged 10 to 14",
+        "cells": [
+          4
+        ]
+      },
+      {
+        "label": "Aged 15 to 19",
+        "cells": [
+          5
+        ]
+      },
+      {
+        "label": "Aged 20 to 24",
+        "cells": [
+          6
+        ]
+      },
+      {
+        "label": "Aged 25 to 29",
+        "cells": [
+          7
+        ]
+      },
+      {
+        "label": "Aged 30 to 34",
+        "cells": [
+          8
+        ]
+      },
+      {
+        "label": "Aged 35 to 39",
+        "cells": [
+          9
+        ]
+      },
+      {
+        "label": "Aged 40 to 44",
+        "cells": [
+          10
+        ]
+      },
+      {
+        "label": "Aged 45 to 49",
+        "cells": [
+          11
+        ]
+      },
+      {
+        "label": "Aged 50 to 54",
+        "cells": [
+          12
+        ]
+      },
+      {
+        "label": "Aged 55 to 59",
+        "cells": [
+          13
+        ]
+      },
+      {
+        "label": "Aged 60 to 64",
+        "cells": [
+          14
+        ]
+      },
+      {
+        "label": "Aged 65 to 69",
+        "cells": [
+          15
+        ]
+      },
+      {
+        "label": "Aged 70 to 74",
+        "cells": [
+          16
+        ]
+      },
+      {
+        "label": "Aged 75 to 79",
+        "cells": [
+          17
+        ]
+      },
+      {
+        "label": "Aged 80 to 84",
+        "cells": [
+          18
+        ]
+      },
+      {
+        "label": "Aged 85 and over",
+        "cells": [
+          210
+        ]
+      }
+    ],
+    "queryExt": "&gender=0",
+    "lowestGeography": "oa",
+    "dateLabelLong": 2022,
+    "census": false,
+    "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
+    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "topic": "Demography and migration",
+    "validFromVersion": 2
   },
   {
     "code": "sex",
     "label": "Sex",
     "desc": "The sex recorded by the person completing the census.",
+    "descLong":"<p>This is the sex recorded by the person completing the census. The options were “Female” and “Male”.</p>",
     "url": "demographyvariablescensus2021/sex",
     "tableCode": "NM_2028_1",
     "cellCode": "c_sex",
-    "measures": 20301,
+    "measures": [20100,20301],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Female",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Male",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "census": true,
+    "validFromVersion": 1,
+    "lastValidVersion":1
+  },
+  {
+    "code": "sex_mye",
+    "label": "Sex",
+    "desc": "Mid-year estimate of the proportion of females and males.",
+    "tableCode": [
+      "NM_2014_1",
+      "NM_2002_1"
+    ],
+    "cellCode": "gender",
+    "measures": [
+      20100
+    ],
+    "dateLabel": 2022,
+    "date": 2022,
+    "unit": "%",
+    "base": "all people",
+    "categories": [
+      {
+        "label": "Female",
+        "cells": [
+          2
+        ]
+      },
+      {
+        "label": "Male",
+        "cells": [
+          1
+        ]
+      }
+    ],
+    "lowestGeography": "oa",
+    "dateLabelLong": 2022,
+    "census": false,
+    "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
+    "queryExt": "&c_age=200",
+    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "topic": "Demography and migration",
+    "validFromVersion": 2
+  },
+  {
+    "code": "births",
+    "label": "Live births",
+    "desc": "The number of babies born in a year, excluding stillbirths.",
+    "tableCode": "NM_206_1",
+    "measures": 20100,
+    "dateLabel": 2023,
+    "date": false,
+    "cellCode": "time",
+    "chart": "number",
+    "unit": "live births",
+    "base": "all live births",
+    "categories": [
+      {
+        "label": "Live births",
+        "cells": [
+          2023
+        ]
+      }
+    ],
+    "lowestGeography": "lsoa",
+    "dateLabelLong": 2023,
+    "census": false,
+    "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
+    "doNotRound": true,
+    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "topic": "Demography and migration",
+    "validFromVersion": 2
+  },
+  {
+    "code": "deaths",
+    "label": "Deaths",
+    "desc": "The number of people who died in a year, from all causes.",
+    "tableCode": "NM_161_1",
+    "cellCode": "measure",
+    "measures": 20100,
+    "dateLabel": 2023,
+    "date": 2023,
+    "chart": "number",
+    "unit": "deaths",
+    "base": "all deaths",
+    "categories": [
+      {
+        "label": "Deaths",
+        "cells": [
+          1
+        ]
+      }
+    ],
+    "queryExt": "&cause_of_death=0&gender=0&age=0",
+    "lowestGeography": "lsoa",
+    "doNotRound": true,
+    "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
+    "dateLabelLong": 2023,
+    "census": false,
+    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "topic": "Demography and migration",
+    "validFromVersion": 2
   },
   {
     "code": "legal_partnership_status",
     "label": "Legal partnership status",
     "desc": "People's marital or civil partnership status.",
-    "url": "demographyvariablescensus2021/maritalandcivilpartnershipstatus",
+    "descLong": "<p>Classifies a person according to their legal marital or registered civil partnership status on Census Day 21 March 2021.</p><p>It is the same as the 2011 census variable \"Marital status\" but has been updated for Census 2021 to reflect the revised Civil Partnership Act that came into force in 2019.</p><p>In Census 2021 results, \"single\" refers only to someone who has never been married or in a registered civil partnership.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/maritalandcivilpartnershipstatus",
     "tableCode": "NM_2022_1",
     "cellCode": "c2021_lpstat_12",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over",
     "categories": [
       {
         "label": "Never married and never registered a civil partnership",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Married or in a registered civil partnership",
-        "cells": [1001]
+        "cells": [
+          1001
+        ]
       },
       {
         "label": "Separated, but still legally married or still legally in a civil partnership",
-        "cells": [1004]
+        "cells": [
+          1004
+        ]
       },
       {
         "label": "Divorced or civil partnership dissolved",
-        "cells": [1005]
+        "cells": [
+          1005
+        ]
       },
       {
         "label": "Widowed or surviving civil partnership partner",
-        "cells": [1006]
+        "cells": [
+          1006
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
   },
   {
     "code": "country_of_birth",
     "label": "Country of birth",
     "desc": "Where people were born.",
-    "url": "internationalmigrationvariablescensus2021/countryofbirth",
+    "url": "census/census2021dictionary/variablesbytopic/internationalmigrationvariablescensus2021/countryofbirth",
     "tableCode": "NM_2024_1",
     "cellCode": "c2021_cob_12",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Born in the UK",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Born outside the UK",
-        "cells": [1002, 6, 7, 8, 9, 10, 11]
+        "cells": [
+          1002,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
   },
   {
     "code": "passports_all",
     "label": "Passports held",
     "desc": "The passports people hold.",
-    "url": "internationalmigrationvariablescensus2021/passportsheld",
+    "descLong": "<p>All passports classifies a person according to the passport or passports they held at the time of the census. This included expired passports or travel documents people were entitled to renew. Where a person recorded having more than one passport, they were counted only once, categorised in the following priority order: 1. UK passport, 2. Irish passport, 3. Other passport.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/internationalmigrationvariablescensus2021/passportsheld",
     "tableCode": "NM_2025_1",
     "cellCode": "c2021_pass_27",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "UK passport",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Non-UK passport",
-        "cells": [2, 1002, 1005, 1006, 1007, 24, 25]
+        "cells": [
+          2,
+          1002,
+          1005,
+          1006,
+          1007,
+          24,
+          25
+        ]
       },
       {
         "label": "No passport held",
-        "cells": [26]
+        "cells": [
+          26
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
   },
   {
     "code": "residence_length",
     "label": "Length of residence in the UK",
     "desc": "Length of residence in the UK.",
-    "url": "internationalmigrationvariablescensus2021/lengthofresidenceintheuk",
+    "descLong": "<p>The length of residence in the UK is derived from the date that a person most recently arrived to live in the UK. It does not include returning from a holiday or short stay outside the UK.</p><p>Length of residence is only applicable to usual residents who were not born in the UK. It does not include usual residents born in the UK who have emigrated and since returned - these are recorded in the category “born in the UK”.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/internationalmigrationvariablescensus2021/lengthofresidenceintheuk",
     "tableCode": "NM_2036_1",
     "cellCode": "c2021_resuk_6",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Born in the UK",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "10 years or more",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "5 years or more, but less than 10 years",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "2 years or more, but less than 5 years",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Less than 2 years",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
   },
   {
     "code": "hh_size",
     "label": "Household size",
     "desc": "The number of people in a household.",
-    "url": "demographyvariablescensus2021/householdsize",
+    "descLong": "<p>The number of people in the household.</p><p>Visitors staying at an address do not count to that household's size.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
     "tableCode": "NM_2037_1",
     "cellCode": "c2021_hhsize_10",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "1 person in household",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "2 people in household",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "3 people in household",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "4 or more people in household",
-        "cells": [5, 6, 7, 8, 9]
+        "cells": [
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
   },
   {
     "code": "hh_family_composition",
     "label": "Household composition",
     "desc": "Households according to the relationships between members.",
-    "url": "demographyvariablescensus2021/householdcomposition",
+    "descLong": "<p>Households according to the relationships between members.</p><p>One-family households are classified by:</p><ul><li>the number of dependent children</li><li>family type (married, civil partnership or cohabiting couple family, or lone parent family)</li></ul><p>Other households are classified by:</p><ul><li>the number of people</li><li>the number of dependent children</li><li>whether the household consists only of students or only of people aged 66 and over</li></ul>",
+    "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdcomposition",
     "tableCode": "NM_2023_1",
     "cellCode": "c2021_hhcomp_15",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "One person household",
-        "cells": [1001]
+        "cells": [
+          1001
+        ]
       },
       {
         "label": "Single family household",
-        "cells": [1002]
+        "cells": [
+          1002
+        ]
       },
       {
         "label": "Other household types",
-        "cells": [1007]
+        "cells": [
+          1007
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
   },
   {
     "code": "hh_deprivation",
     "label": "Household deprivation",
     "desc": "Whether a household is deprived in one or more ways.",
-    "url": "demographyvariablescensus2021/householddeprivation",
+    "descLong": "<p>The dimensions of deprivation used to classify households are indicators based on four selected household characteristics.</p><p>Education</p><p>A household is classified as deprived in the education dimension if no one has at least level 2 education and no one aged 16 to 18 years is a full-time student.</p><p>Employment</p><p>A household is classified as deprived in the employment dimension if any member, not a full-time student, is either unemployed or economically inactive due to long-term sickness or disability.</p><p>Health</p><p>A household is classified as deprived in the health dimension if any person in the household has general health that is bad or very bad or is identified as disabled.</p><p>People who have assessed their day-to-day activities as limited by long-term physical or mental health conditions or illnesses are considered disabled. This definition of a disabled person meets the harmonised standard for measuring disability and is in line with the Equality Act (2010).</p><p>Housing</p><p>A household is classified as deprived in the housing dimension if the household's accommodation is either overcrowded, in a shared dwelling, or has no central heating.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householddeprivation",
     "tableCode": "NM_2031_1",
     "cellCode": "c2021_dep_6",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "Household is not deprived in any dimension",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Household is deprived in one dimension",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Household is deprived in two dimensions",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Household is deprived in three dimensions",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Household is deprived in four dimensions",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Demography and migration",
+    "validFromVersion": 1
+  },
+  {
+    "code": "energy_efficiency_of_housing",
+    "label": "Energy efficiency of housing",
+    "desc": "The proportion of residential properties by Energy Performance Certificates (EPCs) band rating.",
+    "descLong": "<p>This dataset provides figures for the number of Energy Performance Certificates (EPCs) in each energy efficiency rating band up to the financial year ending 2024. Band A is very energy efficient and Band G is very energy inefficient.</p><p>An Energy Performance Certificate (EPC) provides information on the energy efficiency of a building. Since 2007, an EPC is required when a building is constructed, sold or let and it is valid for 10 years. Our analysis includes the latest EPC lodgements for a 10-year period up to the financial year end shown.</p><p>EPCs are based on data about a building's energy features (like the building materials used, heating systems and insulation, for example), which are collected by an accredited energy assessor and are entered into government-approved software to generate the EPC. These statistics were created using domestic, record-level EPC data published on Open Data Communities by the Ministry of Housing, Communities and Local Government (MHCLG).</p><p>This data does not reflect all dwellings in England and Wales, because not every dwelling has an EPC. These are only required when a dwelling is constructed, sold or let. We also use a subset of available EPC lodgements, as we only keep records with plausible values on key energy efficiency variables. There can be multiple EPC lodgements for the same dwelling, but we analyse the latest lodgement only so we do not double count dwellings. A lodgement is essentially a record in the EPC register.</p><p>The Individual EPC bands are calculated based on the energy efficiency scores at the time the EPC lodgement was assessed.This means that our statistics do not necessarily reflect energy efficiency improvements as the majority of alterations don't require a new EPC to be generated.</p>",
+    "url": "peoplepopulationandcommunity/housing/methodologies/energyefficiencyofhousinginenglandandwalesqmi",
+    "tableCode": "NM_2401_1",
+    "cellCode": "ENERGY_EFFICIENCY_8",
+    "measures": [
+      20100,
+      20301
+    ],
+    "unit": "%",
+    "base": "all assessed properties",
+    "categories": [
+      {
+        "label": "Band A",
+        "cells": [
+          1
+        ]
+      },
+      {
+        "label": "Band B",
+        "cells": [
+          2
+        ]
+      },
+      {
+        "label": "Band C",
+        "cells": [
+          3
+        ]
+      },
+      {
+        "label": "Band D",
+        "cells": [
+          4
+        ]
+      },
+      {
+        "label": "Band E",
+        "cells": [
+          5
+        ]
+      },
+      {
+        "label": "Band F",
+        "cells": [
+          6
+        ]
+      },
+      {
+        "label": "Band G",
+        "cells": [
+          7
+        ]
+      }
+    ],
+    "dateLabel": "Financial year ending 2024",
+    "time": 2024,
+    "lowestGeography": "lsoa",
+    "census": false,
+    "source": "ONS analysis of Energy Performance Certificates",
+    "dateLabelLong": "Financial year ending 2024",
+    "topic": "Housing",
+    "validFromVersion": 2
   },
   {
     "code": "ethnic_group_tb",
     "label": "Ethnic group",
     "desc": "The ethnic group a person identifies with.",
-    "url": "ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/ethnicgroup",
+    "descLong": "<p>The ethnic group that the person completing the census feels they belong to. This could be based on their culture, family background, identity or physical appearance.</p><p>Respondents could choose one out of 19 tick-box response categories, including write-in response options.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/ethnicgroup",
     "tableCode": "NM_2041_1",
     "cellCode": "c2021_eth_20",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Asian, Asian British or Asian Welsh",
-        "cells": [1001]
+        "cells": [
+          1001
+        ]
       },
       {
         "label": "Black, Black British, Black Welsh, Caribbean or African",
-        "cells": [1002]
+        "cells": [
+          1002
+        ]
       },
       {
         "label": "Mixed or Multiple ethnic groups",
-        "cells": [1003]
+        "cells": [
+          1003
+        ]
       },
       {
         "label": "White",
-        "cells": [1004]
+        "cells": [
+          1004
+        ]
       },
       {
         "label": "Other ethnic group",
-        "cells": [1005]
+        "cells": [
+          1005
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Ethnic group, national identity, language and religion",
+    "validFromVersion": 1
   },
   {
     "code": "national_identity_all",
     "label": "National identity",
     "desc": "People's national identity (where they feel they belong or could think of as home).",
-    "url": "ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/nationalidentity",
+    "descLong": "<p>Someone's national identity is a self-determined assessment of their own identity, it could be the country or countries where they feel they belong or think of as home. It is not dependent on ethnic group or citizenship.</p><p>Respondents could select more than one national identity.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/nationalidentity",
     "tableCode": "NM_2046_1",
     "cellCode": "c2021_natiduk_17",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "One or more UK identity only",
-        "cells": [1, 2, 3, 4, 5, 9995]
+        "cells": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          9995
+        ]
       },
       {
         "label": "UK identity and non-UK identity",
-        "cells": [9997]
+        "cells": [
+          9997
+        ]
       },
       {
         "label": "Non-UK identity only",
-        "cells": [9996]
+        "cells": [
+          9996
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Ethnic group, national identity, language and religion",
+    "validFromVersion": 1
   },
   {
     "code": "religion_tb",
     "label": "Religion",
     "desc": "The religion people connect or identify with.",
-    "url": "ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/religion",
+    "descLong": "<p>The religion people connect or identify with (their religious affiliation), whether or not they practise or have belief in it.</p><p>This question was voluntary and includes people who identified with one of 8 tick-box response options, including \"No religion\", alongside those who chose not to answer this question.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/religion",
     "caveatText": "There are quality considerations for the \"not answered\" category in university locations.",
     "caveatUrl": "peoplepopulationandcommunity/culturalidentity/ethnicity/methodologies/ethnicgroupnationalidentitylanguageandreligionqualityinformationforcensus2021",
     "tableCode": "NM_2049_1",
     "cellCode": "c2021_religion_10",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "No religion",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Christian",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Buddhist",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Hindu",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Jewish",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       },
       {
         "label": "Muslim",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       },
       {
         "label": "Sikh",
-        "cells": [7]
+        "cells": [
+          7
+        ]
       },
       {
         "label": "Other religion",
-        "cells": [8]
+        "cells": [
+          8
+        ]
       },
       {
         "label": "Not answered",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Ethnic group, national identity, language and religion",
+    "validFromVersion": 1
   },
   {
     "code": "health_in_general",
     "label": "General health",
     "desc": "How people rate their general health.",
-    "url": "healthdisabilityandunpaidcarevariablescensus2021/generalhealth",
+    "descLong": "<p>A person's assessment of the general state of their health from very good to very bad. This assessment is not based on a person's health over any specified period of time.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/healthdisabilityandunpaidcarevariablescensus2021/generalhealth",
     "caveatText": "Values for this variable will differ from other sources which provide age-standardised percentages.",
     "caveatUrl": "peoplepopulationandcommunity/healthandsocialcare/healthandwellbeing/methodologies/healthdisabilityandunpaidcarequalityinformationforcensus2021",
     "tableCode": "NM_2055_1",
     "cellCode": "c2021_health_6",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Very good health",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Good health",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Fair health",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Bad health",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Very bad health",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Health and wellbeing",
+    "validFromVersion": 1
   },
   {
     "code": "disability",
     "label": "Disability",
     "desc": "People with a long-term health problem or disability, including conditions or illnesses relating to old-age.",
-    "url": "healthdisabilityandunpaidcarevariablescensus2021/disability",
+    "descLong": "<p>People who assessed their day-to-day activities as limited by long-term physical or mental health conditions or illnesses are considered disabled. This definition of a disabled person meets the harmonised standard for measuring disability and is in line with the Equality Act (2010).</p>",
+    "url": "census/census2021dictionary/variablesbytopic/healthdisabilityandunpaidcarevariablescensus2021/disability",
     "caveatText": "Values for this variable will differ from other sources which provide age-standardised percentages.",
     "caveatUrl": "peoplepopulationandcommunity/healthandsocialcare/healthandwellbeing/methodologies/healthdisabilityandunpaidcarequalityinformationforcensus2021",
     "tableCode": "NM_2056_1",
     "cellCode": "c2021_disability_5",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all people",
     "categories": [
       {
         "label": "Disabled under the Equality Act",
-        "cells": [1001]
+        "cells": [
+          1001
+        ]
       },
       {
         "label": "Not disabled under the Equality Act",
-        "cells": [1002]
+        "cells": [
+          1002
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Health and wellbeing",
+    "validFromVersion": 1
   },
   {
     "code": "is_carer",
     "label": "Provision of unpaid care",
     "desc": "Hours of unpaid care provided per week.",
-    "url": "healthdisabilityandunpaidcarevariablescensus2021/provisionofunpaidcare",
+    "descLong": "<p>An unpaid carer may look after, give help or support to anyone who has long-term physical or mental ill-health conditions, illness or problems related to old age.</p><p>This does not include any activities as part of paid employment.</p><p>This help can be within or outside of the carer's household.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/healthdisabilityandunpaidcarevariablescensus2021/provisionofunpaidcare",
     "caveatText": "Values for this variable will differ from other sources which provide age-standardised percentages.",
     "caveatUrl": "peoplepopulationandcommunity/healthandsocialcare/healthandwellbeing/methodologies/healthdisabilityandunpaidcarequalityinformationforcensus2021",
     "tableCode": "NM_2057_1",
     "cellCode": "c2021_carer_7",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged five years and over",
     "categories": [
       {
         "label": "Provides no unpaid care",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Provides 19 hours or less unpaid care a week",
-        "cells": [101]
+        "cells": [
+          101
+        ]
       },
       {
         "label": "Provides 20 to 49 hours unpaid care a week",
-        "cells": [102]
+        "cells": [
+          102
+        ]
       },
       {
         "label": "Provides 50 or more hours unpaid care a week",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Health and wellbeing",
+    "validFromVersion": 1
   },
   {
     "code": "english_proficiency",
     "label": "Proficiency in English",
     "desc": "How well people whose main language is not English (or in Wales, English or Welsh) speak English.",
-    "url": "ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/proficiencyinenglishlanguage",
+    "descLong": "<p>How well people whose main language is not English (English or Welsh in Wales) speak English.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/proficiencyinenglishlanguage",
     "tableCode": "NM_2048_1",
     "cellCode": "c2021_engprf_6",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged three years and over",
     "categories": [
       {
         "label": "Main language is English (English or Welsh in Wales)",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Can speak English very well",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Can speak English well",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Cannot speak English well",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Cannot speak English",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Ethnic group, national identity, language and religion",
+    "validFromVersion": 1
   },
   {
     "code": "welsh_skills_all",
     "label": "Welsh language skills",
     "desc": "Whether people can understand, speak, read, or write Welsh. This question was only asked in Wales.",
-    "url": "ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/welshlanguageskills",
+    "descLong": "<p>Whether a person has Welsh language skills. If they do, can they do any of the following:</p><ul><li>understand spoken Welsh</li><li>speak Welsh</li><li>read Welsh</li><li>write Welsh</li><li>no skills in Welsh</li></ul><p>The census questionnaire only asked this question to people in Wales.</p><p>In results that classify people by Welsh language skills, a person may appear in more than one category depending on which combination of skills they have.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/welshlanguageskills",
     "tableCode": "NM_2050_1",
     "cellCode": "c2021_wlang_9",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged three years and over",
-    "coverage": ["W"],
+    "coverage": [
+      "W"
+    ],
     "categories": [
       {
         "label": "Can understand spoken Welsh only",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Can speak, read or write Welsh",
-        "cells": [2, 3, 4, 5, 6, 7, 8]
+        "cells": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
       },
       {
         "label": "No skills in Welsh",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Ethnic group, national identity, language and religion",
+    "validFromVersion": 1
   },
   {
     "code": "welsh_skills_speak",
     "label": "Welsh speaking ability",
     "desc": "People who can speak Welsh. This question was only asked in Wales.",
-    "url": "ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/welshspeakingability",
+    "descLong": "<p>This classifies a person as being able to \"Speak Welsh\". They may have also ticked one or more of the following:</p><ul><li>understand spoken Welsh</li><li>read Welsh</li><li>write Welsh</li></ul><p>In results that classify people by Welsh language skills, a person may appear in more than one category depending on which combination of skills they have.</p><p>The census questionnaire only asked this question to people in Wales.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/welshspeakingability",
     "tableCode": "NM_2051_1",
     "cellCode": "c2021_wlangs_3",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged three years and over",
-    "coverage": ["W"],
+    "coverage": [
+      "W"
+    ],
     "categories": [
       {
         "label": "Cannot speak Welsh",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Can speak Welsh",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Ethnic group, national identity, language and religion",
+    "validFromVersion": 1
   },
   {
     "code": "accommodation_type",
     "label": "Accommodation type",
     "desc": "The type of buildings people live in.",
-    "url": "housingvariablescensus2021/accommodationtype",
+    "descLong": "<p>The type of building or structure used or available by an individual or household.</p><p>This could be:</p><ul><li>the whole house or bungalow</li><li>a flat, maisonette or apartment</li><li>a temporary or mobile structure, such as a caravan</li></ul><p>More information about accommodation types</p><p>Whole house or bungalow: This property type is not divided into flats or other living accommodation. There are three types of whole houses or bungalows.</p><p>Detached: None of the living accommodation is attached to another property but can be attached to a garage.</p><p>Semi-detached: The living accommodation is joined to another house or bungalow by a common wall that they share.</p><p>Terraced: A mid-terraced house is located between two other houses and shares two common walls. An end-of-terrace house is part of a terraced development but only shares one common wall.</p><p>Flats (Apartments) and maisonettes: An apartment is another word for a flat. A maisonette is a 2-storey flat.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/accommodationtype",
     "tableCode": "NM_2062_1",
     "cellCode": "c2021_acctype_9",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "Whole house or bungalow",
-        "cells": [1, 2, 3]
+        "cells": [
+          1,
+          2,
+          3
+        ]
       },
       {
         "label": "Flat, maisonette or apartment",
-        "cells": [4, 5, 6, 7]
+        "cells": [
+          4,
+          5,
+          6,
+          7
+        ]
       },
       {
         "label": "A caravan or other mobile or temporary structure",
-        "cells": [8]
+        "cells": [
+          8
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "number_of_cars",
     "label": "Number of cars or vans",
     "desc": "Cars or vans owned or available for use by a household.",
-    "url": "housingvariablescensus2021/numberofcarsorvans",
+    "descLong": "<p>The number of cars or vans owned or available for use by household members.</p><p>Vehicles included:</p><ul><li>pick-ups, camper vans and motor homes</li><li>vehicles that are temporarily not working</li><li>vehicles that have failed their MOT</li><li>vehicles owned or used by a lodger</li><li>company cars or vans if they're available for private use</li></ul><p>Vehicles not included:</p><ul><li>motorbikes, trikes, quad bikes or mobility scooters</li><li>vehicles that have a Statutory Off Road Notification (SORN)</li><li>vehicles owned or used only by a visitor</li><li>vehicles that are kept at another address or not easily accessed</li></ul><p>The number of cars or vans in an area relates only to households. Cars or vans used by communal establishment residents are not counted. Households with 10 to 20 cars or vans are counted as having only 10. Households with more than 20 cars or vans were treated as invalid and a value imputed.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/numberofcarsorvans",
     "tableCode": "NM_2063_1",
     "cellCode": "c2021_cars_5",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "No cars or vans in household",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "1 car or van in household",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "2 cars or vans in household",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "3 or more cars or vans in household",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "heating_type",
     "label": "Central heating",
     "desc": "The type of central heating in a household.",
-    "url": "housingvariablescensus2021/typeofcentralheatinginhousehold",
+    "descLong": "<p>Central heating is a heating system used to heat multiple rooms in a building by circulating air or heated water through pipes to radiators or vents. Single or multiple fuel sources can fuel these systems.</p>    <p>Central heating systems that are unused or not working are still considered. No information is available for household spaces with no usual residents.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/typeofcentralheatinginhousehold",
     "tableCode": "NM_2064_1",
     "cellCode": "c2021_heating_13",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "Does not have central heating",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Does have central heating",
-        "cells": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        "cells": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "number_bedrooms",
     "label": "Number of bedrooms",
     "desc": "The number of bedrooms in a household.",
-    "url": "housingvariablescensus2021/numberofbedrooms",
+    "descLong": "<p>The number of bedrooms in a household's accommodation.</p><p>This number is not available for household spaces with no usual residents.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/numberofbedrooms",
     "tableCode": "NM_2068_1",
     "cellCode": "c2021_bedrooms_5",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "1 bedroom",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "2 bedrooms",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "3 bedrooms",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "4 or more bedrooms",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "occupancy_rating_bedrooms",
     "label": "Occupancy rating for bedrooms",
     "desc": "Whether homes are overcrowded, ideally occupied or under-occupied, based on bedrooms.",
-    "url": "housingvariablescensus2021/occupancyratingforbedrooms",
+    "descLong": "<p>Whether a household's accommodation is overcrowded, ideally occupied or under-occupied. This is calculated by comparing the number of bedrooms the household requires to the number of available bedrooms.</p><p>The number of bedrooms the household requires is calculated according to the Bedroom Standard, where the following should have their own bedroom:</p><ol><li>adult couple</li><li>any remaining adult (aged 21 years or over)</li><li>two males (aged 10 to 20 years)</li><li>one male (aged 10 to 20 years) and one male (aged 9 years or under), if there are an odd number of males aged 10-20</li><li>one male aged 10-20 if there are no males aged 0-9 to pair with him.</li><li>repeat steps 3-5 for females</li><li>two children (aged 9 years or under) regardless of sex</li><li>any remaining child (aged 9 years or under)</li></ol><p>An occupancy rating of:</p><ul><li>-1 or less implies that a household's accommodation has fewer bedrooms than required (overcrowded)</li><li>+1 or more implies that a household's accommodation has more bedrooms than required (under-occupied)</li><li>0 suggests that a household's accommodation has an ideal number of bedrooms</li></ul>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/occupancyratingforbedrooms",
     "tableCode": "NM_2070_1",
     "cellCode": "c2021_occrat_bedrooms_6",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "+2 or more",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "+1",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "0",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "-1",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "-2 or less",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "hh_tenure",
     "label": "Tenure of household",
     "desc": "Whether a household owns or rents.",
-    "url": "housingvariablescensus2021/tenureofhousehold",
+    "descLong": "<p>Whether a household owns or rents the accommodation that it occupies. Owner-occupied accommodation can be:</p><ul><li>owned outright, which is where the household owns all of the accommodation</li><li>with a mortgage or loan</li><li>part-owned on a shared ownership scheme</li></ul><p>Rented accommodation can be:</p><ul><li>private rented, for example, rented through a private landlord or letting agent</li><li>social rented through a local council or housing association</li></ul><p>This information is not available for household spaces with no usual residents.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/tenureofhousehold",
     "tableCode": "NM_2072_1",
     "cellCode": "c2021_tenure_9",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "Owns outright",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Owns with a mortgage or loan or shared ownership",
-        "cells": [2, 3]
+        "cells": [
+          2,
+          3
+        ]
       },
       {
         "label": "Social rented",
-        "cells": [4, 5]
+        "cells": [
+          4,
+          5
+        ]
       },
       {
         "label": "Private rented or lives rent free",
-        "cells": [6, 7, 8]
+        "cells": [
+          6,
+          7,
+          8
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "alternative_address_indicator",
     "label": "Second address indicator",
     "desc": "An address (in or out of the UK) a person stays at for more than 30 days per year that isn't their place of usual residence.",
-    "url": "housingvariablescensus2021/secondaddressindicator",
+    "descLong": "<p>An address (in or out of the UK) a person stays at for more than 30 days per year that is not their place of usual residence. Second addresses typically include: <ul><li>armed forces bases</li><li>addresses used by people working away from home</li><li>a student's home address</li><li>the address of another parent or guardian</li><li>a partner's address</li><li>a holiday home</li></ul> If a person with a second address was staying there on census night, they were classed as a visitor to the second address but counted as a usual resident at their home address.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/secondaddressindicator",
     "tableCode": "NM_2074_1",
     "cellCode": "c2021_2addr_4",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "all households",
     "categories": [
       {
         "label": "No second address",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Second address is in the UK",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Second address is outside the UK",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Housing",
+    "validFromVersion": 1
   },
   {
     "code": "workplace_travel",
     "label": "Distance travelled to work",
     "desc": "The distance between home and work, in kilometres.",
-    "url": "traveltoworkvariablescensus2021/distancetravelledtowork",
+    "descLong": "<p>The distance, in kilometres, between a person's residential postcode and their workplace postcode measured in a straight line. A distance travelled of 0.1km indicates that the workplace postcode is the same as the residential postcode. Distances over 1200km are treated as invalid, and an imputed or estimated value is added.</p><p>“Work mainly at or from home” is made up of those that ticked either the \"Mainly work at or from home\" box for the address of workplace question, or the \"Work mainly at or from home\" box for the method of travel to work question.</p><p>Distance is calculated as the straight line distance between the enumeration postcode and the workplace postcode.</p><p>Combine this variable with “Economic activity status” to identify those in employment at the time of the census.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/traveltoworkvariablescensus2021/distancetravelledtowork",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/employmentandemployeetypes/methodologies/traveltoworkqualityinformationforcensus2021",
     "tableCode": "NM_2075_1",
     "cellCode": "c2021_ttwdist_11",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over in employment",
     "categories": [
       {
         "label": "Less than 10km",
-        "cells": [1, 2, 3]
+        "cells": [
+          1,
+          2,
+          3
+        ]
       },
       {
         "label": "10km to less than 30km",
-        "cells": [4, 5]
+        "cells": [
+          4,
+          5
+        ]
       },
       {
         "label": "30km and over",
-        "cells": [6, 7, 8]
+        "cells": [
+          6,
+          7,
+          8
+        ]
       },
       {
         "label": "Works mainly from home",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       },
       {
         "label": "Other",
-        "cells": [10]
+        "cells": [
+          10
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "transport_to_workplace",
     "label": "Method of travel to workplace",
     "desc": "How people travel from their home to their workplace.",
-    "url": "traveltoworkvariablescensus2021/methodoftraveltoworkplace",
+    "descLong": "<p>A person's place of work and their method of travel to work. This is the 2001 method of producing travel to work variables.</p><p>\"Work mainly from home\" applies to someone who indicated their place of work as their home address and travelled to work by driving a car or van, for example visiting clients.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/traveltoworkvariablescensus2021/methodoftraveltoworkplace",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/employmentandemployeetypes/methodologies/traveltoworkqualityinformationforcensus2021",
     "tableCode": "NM_2078_1",
     "cellCode": "c2021_ttwmeth_12",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over in employment",
     "categories": [
       {
         "label": "Work mainly at or from home",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Underground, metro, light rail, tram",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Train",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Bus, minibus or coach",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Taxi",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       },
       {
         "label": "Motorcycle, scooter or moped",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       },
       {
         "label": "Driving a car or van",
-        "cells": [7]
+        "cells": [
+          7
+        ]
       },
       {
         "label": "Passenger in a car or van",
-        "cells": [8]
+        "cells": [
+          8
+        ]
       },
       {
         "label": "Bicycle",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       },
       {
         "label": "On foot",
-        "cells": [10]
+        "cells": [
+          10
+        ]
       },
       {
         "label": "Other method of travel to work",
-        "cells": [11]
+        "cells": [
+          11
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "economic_activity",
     "label": "Economic activity status",
     "desc": "People in employment, looking for work, waiting to start a job or economically inactive.",
-    "url": "labourmarketvariablescensus2021/economicactivitystatus",
+    "url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/economicactivitystatus",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/earningsandworkinghours/methodologies/labourmarketqualityinformationforcensus2021",
     "tableCode": "NM_2083_1",
     "cellCode": "c2021_eastat_20",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over",
     "categories": [
       {
         "label": "Economically active: In employment",
-        "cells": [1002, 1007]
+        "cells": [
+          1002,
+          1007
+        ]
       },
       {
         "label": "Economically active: Unemployed",
-        "cells": [7, 14]
+        "cells": [
+          7,
+          14
+        ]
       },
       {
         "label": "Economically inactive",
-        "cells": [1011]
+        "cells": [
+          1011
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "has_ever_worked",
     "label": "Employment history",
     "desc": "The employment history of people who are currently not working.",
-    "url": "labourmarketvariablescensus2021/employmenthistory",
+    "descLong": "<p>Classifies people who were not in employment on Census Day into:</p><ul><li>Not in employment: Worked in the last 12 months</li><li>Not in employment: Not worked in the last 12 months</li><li>Not in employment: Never worked</li></ul>",
+    "url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/employmenthistory",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/earningsandworkinghours/methodologies/labourmarketqualityinformationforcensus2021",
     "tableCode": "NM_2082_1",
     "cellCode": "c2021_worked_4",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over not in employment",
     "categories": [
       {
         "label": "Not in employment: Worked in the last 12 months",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Not in employment: Not worked in the last 12 months",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Not in employment: Never worked",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "occupation_current",
     "label": "Occupation",
     "desc": "People's main jobs.",
-    "url": "labourmarketvariablescensus2021/occupationcurrent",
+    "descLong": "<p>Classifies what people aged 16 years and over do as their main job. Their job title or details of activities they do in their job and any supervisory or management responsibilities form this classification. This information is used to code responses to an occupation using the Standard Occupational Classification (SOC) 2020.</p><p>It classifies people who were in employment between 15 March and 21 March 2021, by the SOC code that represents their current occupation. The lowest level of detail available is the four-digit SOC code which includes all codes in three, two and one digit SOC code levels.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/occupationcurrent",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/earningsandworkinghours/methodologies/labourmarketqualityinformationforcensus2021",
     "tableCode": "NM_2080_1",
     "cellCode": "c2021_occ_10",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over in employment",
     "categories": [
       {
         "label": "1. Managers, directors and senior officials",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "2. Professional occupations",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "3. Associate professional and technical occupations",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "4. Administrative and secretarial occupations",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "5. Skilled trades occupations",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       },
       {
         "label": "6. Caring, leisure and other service occupations",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       },
       {
         "label": "7. Sales and customer service occupations",
-        "cells": [7]
+        "cells": [
+          7
+        ]
       },
       {
         "label": "8. Process, plant and machine operatives",
-        "cells": [8]
+        "cells": [
+          8
+        ]
       },
       {
         "label": "9. Elementary occupations",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "ns_sec",
     "label": "Socio-economic Classification (NS-SeC)",
     "desc": "People's socioeconomic position based on their occupation and other job characteristics.",
-    "url": "labourmarketvariablescensus2021/nationalstatisticssocio-economicclassificationns-sec",
+    "descLong": "<p>The National Statistics Socio-economic Classification (NS-SEC) indicates a person's socio-economic position based on their occupation and other job characteristics.</p><p>It is an Office for National Statistics standard classification. NS-SEC categories are assigned based on a person's occupation, whether employed, self-employed, or supervising other employees.</p><p>Full-time students are recorded in the \"full-time students\" category regardless of whether they are economically active.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/nationalstatisticssocio-economicclassificationns-sec",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/earningsandworkinghours/methodologies/labourmarketqualityinformationforcensus2021",
     "tableCode": "NM_2079_1",
     "cellCode": "c2021_nssec_10",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over",
     "categories": [
       {
         "label": "L1, L2 and L3: Higher managerial, administrative and professional occupations",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "L4, L5 and L6: Lower managerial, administrative and professional occupations",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "L7: Intermediate occupations",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "L8 and L9: Small employers and own account workers",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "L10 and L11: Lower supervisory and technical occupations",
-        "cells": [5]
+        "cells": [
+          5
+        ]
       },
       {
         "label": "L12: Semi-routine occupations",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       },
       {
         "label": "L13: Routine occupations",
-        "cells": [7]
+        "cells": [
+          7
+        ]
       },
       {
         "label": "L14.1 and L14.2: Never worked and long-term unemployed",
-        "cells": [8]
+        "cells": [
+          8
+        ]
       },
       {
         "label": "L15: Full-time students",
-        "cells": [9]
+        "cells": [
+          9
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "hours_per_week_worked",
     "label": "Hours per week worked",
     "desc": "The number of hours people work per week.",
-    "url": "labourmarketvariablescensus2021/hoursworked",
+    "descLong": "<p>The number of hours worked per week before the census includes paid and unpaid overtime. This covers the main job of anyone aged 16 years and over.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/hoursworked",
     "caveatText": "There are pandemic-related quality considerations for this variable.",
     "caveatUrl": "employmentandlabourmarket/peopleinwork/earningsandworkinghours/methodologies/labourmarketqualityinformationforcensus2021",
     "tableCode": "NM_2076_1",
     "cellCode": "c2021_hours_5",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over in employment",
     "categories": [
       {
         "label": "Part-time: 15 hours or less worked",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Part-time: 16 to 30 hours worked",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       },
       {
         "label": "Full-time: 31 to 48 hours worked",
-        "cells": [3]
+        "cells": [
+          3
+        ]
       },
       {
         "label": "Full-time: 49 or more hours worked",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Economy",
+    "validFromVersion": 1
   },
   {
     "code": "highest_qualification",
     "label": "Highest level of qualification",
     "desc": "The highest level of qualification a person has reported.",
-    "url": "educationvariablescensus2021/highestlevelofqualification",
+    "descLong": "<p>The highest level of qualification is derived from the question asking people to indicate all qualifications held, or their nearest equivalent.</p><p>This may include foreign qualifications where they were matched to the closest UK equivalent.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/educationvariablescensus2021/highestlevelofqualification",
     "tableCode": "NM_2084_1",
     "cellCode": "c2021_hiqual_8",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged 16 years and over",
     "categories": [
       {
         "label": "No qualifications",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Level 1, 2 or 3 qualifications",
-        "cells": [2, 3, 5]
+        "cells": [
+          2,
+          3,
+          5
+        ]
       },
       {
         "label": "Apprenticeship",
-        "cells": [4]
+        "cells": [
+          4
+        ]
       },
       {
         "label": "Level 4 qualifications and above",
-        "cells": [6]
+        "cells": [
+          6
+        ]
       },
       {
         "label": "Other qualifications",
-        "cells": [7]
+        "cells": [
+          7
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Education and skills",
+    "validFromVersion": 1
   },
   {
     "code": "in_full_time_education",
     "label": "Schoolchildren and full-time students",
     "desc": "People in full-time education.",
-    "url": "educationvariablescensus2021/schoolchildorfull-timestudentindicator",
+    "descLong": "<p>Indicates whether a person aged 5 years and over was in full-time education on Census Day, 21 March 2021. This includes schoolchildren and adults in full-time education.</p><p>Schoolchildren and students in full-time education studying away from home are treated as usually resident at their term-time address.</p>",
+    "url": "census/census2021dictionary/variablesbytopic/educationvariablescensus2021/schoolchildorfull-timestudentindicator",
     "tableCode": "NM_2085_1",
     "cellCode": "c2021_student_3",
-    "measures": 20301,
+    "measures": [
+      20100,
+      20301
+    ],
     "unit": "%",
     "base": "people aged five years and over",
     "categories": [
       {
         "label": "Student",
-        "cells": [1]
+        "cells": [
+          1
+        ]
       },
       {
         "label": "Not a student",
-        "cells": [2]
+        "cells": [
+          2
+        ]
       }
-    ]
+    ],
+    "lowestGeography": "oa",
+    "census": true,
+    "source": "Office for National Statistics - Census 2021",
+    "topic": "Education and skills",
+    "validFromVersion": 1
   }
 ]

@@ -4,7 +4,7 @@ import { boundaries, promoteId } from '$lib/config/geography';
 // global variables shared between units.
 export const centroids = writable();
 export const drawType = writable(undefined); // drawing tool type
-export const selected = writable([{ oa: new Set() }]); // which layers contain data e.g. ['centroids']
+export const selected = writable([{ oa: new Set(), geo:{type: 'Feature',geometry: {type: 'Polygon',coordinates: [],}} }]); // which layers contain data e.g. ['centroids']
 export const mapsource = derived(centroids, ($centroids) => ({
     area: {
         type: 'vector',
@@ -19,6 +19,7 @@ export const mapsource = derived(centroids, ($centroids) => ({
     },
 })); // source dictionary
 export const maplayer = readable([
+    // stuff for OA
     {
         id: 'bounds',
         source: 'area',
@@ -35,7 +36,7 @@ export const maplayer = readable([
         'source-layer': boundaries.layer,
         type: 'line',
         paint: {
-            'line-color': 'steelblue',
+            'line-color': 'transparent',
             'line-width': ['case', ['==', ['feature-state', 'hovered'], true], 2, 0.3]
         },
     },
@@ -54,3 +55,17 @@ export const mapObject = writable(undefined); // the mapbox 'map' object
 export let addMode = writable(true);
 export let drawEnabled = writable(false);
 export const radiusInKm = writable(1);
+export const user_geometry = writable({
+    type: 'Feature',
+    geometry: {
+      type: 'Polygon',
+      coordinates: [],
+    },
+  });//store the polygon created by the user
+export const currentMapZoom = writable(5);
+export const isLoading = writable(false);
+export const state = writable({});
+export const pselect = writable(0);
+export const buildstate = writable({});
+export const tables = writable([]);
+export const version = writable(3);

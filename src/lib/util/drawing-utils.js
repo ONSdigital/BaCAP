@@ -7,6 +7,7 @@ import {
   addMode,
   drawEnabled,
   centroids,
+  user_geometry
 } from '$lib/stores/mapstore';
 import { boundaries } from '$lib/config/geography';
 import { roundAll, extent, union, difference } from '$lib/util/functions';
@@ -19,8 +20,19 @@ import buffer from '@turf/buffer';
 // import turfInPolygon from '@turf/boolean-point-in-polygon';
 import { dissolve } from '$lib/util/bundled/mapshaper';
 import bbox from '@turf/bbox';
+import turfunion from '@turf/union';
+import turfdifference from '@turf/difference';
+import {featureCollection} from '@turf/helpers';
 
 const mzm = 10;
+const blank = {
+  type: 'Feature',
+  geometry: {
+    type: 'Polygon',
+    coordinates: [],
+  },
+}
+
 export var Draw;
 export let coordinates = [];
 // keep track of coordinates of centre of radius drawing tool
@@ -56,6 +68,42 @@ function cursor() {
 export async function initDraw() {
   const map = get(mapObject);
 
+   //map stuff for user generated area
+   map.addSource ('userGeo', {
+    type: 'geojson',
+    data: {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [],
+      },
+    },
+  });
+
+  map.addLayer ({
+    id: 'userGeo_layer',
+    type: 'fill',
+    source: 'userGeo',
+    paint: {
+      'fill-color': '#1f8ab0',
+      'fill-outline-color': '#1f8ab0',
+      'fill-opacity': 0.2,
+    },
+  });
+
+  map.addLayer ({
+    id: 'userGeo_outline',
+    type: 'line',
+    source: 'userGeo',
+    layout: {'line-cap': 'round', 'line-join': 'round'},
+    paint: {
+      'line-color': '#1f8ab0',
+      // 'line-dasharray': [0.2, 2],
+      'line-width': 2.5,
+    },
+  });
+
+  //map stuff for drawing
   map.addSource('drawsrc', {
     type: 'geojson',
     data: {
@@ -107,7 +155,7 @@ export async function initDraw() {
     var data = Draw.getAll();
     var geo = await data.features[0];
     update(geo);
-    clearPoly();
+    clearDraw();
   }
   map.on('zoomend', function () {
     const de = map.getZoom() < mzm;
@@ -156,23 +204,23 @@ export async function initDraw() {
   map.on('click', 'bounds', boundClick); //mouse
   map.on('touchstart', 'bounds', boundClick); //touch
 
-  let hovered;
+  // let hovered;
 
-  function boundHover(e) {
-    if (hovered) map.removeFeatureState(
-      { source: "area", sourceLayer: boundaries.layer, id: hovered },
-    );
-    if (e.features?.[0] && get(drawType) === "select") {
-      hovered = e.features[0].properties[boundaries.idKey];
-      map.setFeatureState(
-        { source: "area", sourceLayer: boundaries.layer, id: hovered },
-        { hovered: true }
-      );
-    } else {
-      hovered = null;
-    }
-  }
-  map.on('mousemove', 'bounds', boundHover); //hover
+  // function boundHover(e) {
+  //   if (hovered) map.removeFeatureState(
+  //     { source: "area", sourceLayer: boundaries.layer, id: hovered },
+  //   );
+  //   if (e.features?.[0] && get(drawType) === "select") {
+  //     hovered = e.features[0].properties[boundaries.idKey];
+  //     map.setFeatureState(
+  //       { source: "area", sourceLayer: boundaries.layer, id: hovered },
+  //       { hovered: true }
+  //     );
+  //   } else {
+  //     hovered = null;
+  //   }
+  // }
+  // map.on('mousemove', 'bounds', boundHover); //hover
 }
 
 export function simplifyGeo(geometry, maxLength = 3000) {
@@ -213,19 +261,17 @@ function makeBoundary(geojson, simplify = false) {
   return { type: 'Feature', geometry: simple };
 }
 
-function clear() {
+function clear() { //clears the drawing layers
   coordinates = [];
-  changeData('drawsrc', {
-    type: 'Feature',
-    geometry: {
-      type: 'Polygon',
-      coordinates: [],
-    },
-  });
+  changeData('drawLayer', blank);
 }
 
-export function clearPoly() {
-  // clear()
+export function clearGeo(){ //resets the user generated geometry
+  changeData('userGeo', blank);
+  user_geometry.set(blank)
+}
+
+export function clearDraw() {
   Draw.deleteAll();
   Draw.changeMode('draw_polygon', {});
 }
@@ -242,48 +288,62 @@ export function changeData(layer, data) {
 export async function update(geo) {
   // update all polygon like draw items
   document.querySelector('#mapcontainer div canvas').style.cursor = 'wait';
+  if(is_geo_empty(get(user_geometry))){ //check if there's an existing geometry in the store
+    if(get(addMode)){
+      changeData('userGeo',geo) // change the layer with the user drawn geometry
+      user_geometry.set(geo) // store it to the store
+    }
+  }else{
+    let union = addOrSubtractGeo(await get(user_geometry),geo) //if there's something there check it intersect and make a union
+    if(union==null){union = blank} //if the union is null, set it to blank
+    changeData ('userGeo',union) //update map
+    user_geometry.set(union) //update store
+  }
 
   const features = await get(centroids).contains(geo);
 
   var current = get(selected);
   var last = current[current.length - 1];
-  // console.debug ('update,last', last, current);
-
+  
   if (get(addMode)) {
     current.push({
+      lsoa: union(last.lsoa, new Set(features.lsoa)),
       oa: union(last.oa, new Set(features.oa)),
+      geo:await(get(user_geometry))
     });
   } else {
     current.push({
+      lsoa: difference(last.lsoa, new Set(features.lsoa)),
       oa: difference(last.oa, new Set(features.oa)),
+      geo:await(get(user_geometry))
     });
   }
-
   updateLocal(current);
   cursor();
+
 }
 
-function drawPoint(e) {
-  // update using select tool
-  let feature = e.features[0];
-  if (feature) {
-    let code = feature.properties[boundaries.idKey];
-    let parentcd = feature.properties[boundaries.ptKey];
-    let current = get(selected);
-    let oas = current[current.length - 1].oa;
-    if (oas.has(code) && parentcd) {
-      oas = difference(oas, new Set(get(centroids).expand([parentcd])));
-    } else if (oas.has(code)) {
-      oas = difference(oas, new Set([code]));
-    } else if (parentcd) {
-      oas = union(oas, new Set(get(centroids).expand([parentcd])));
-    } else {
-      oas = new Set([...oas, code]);
-    }
-    current.push({ oa: oas });
-    updateLocal(current);
-  }
-}
+// function drawPoint(e) {
+//   // update using select tool
+//   let feature = e.features[0];
+//   if (feature) {
+//     let code = feature.properties[boundaries.idKey];
+//     let parentcd = feature.properties[boundaries.ptKey];
+//     let current = get(selected);
+//     let oas = current[current.length - 1].oa;
+//     if (oas.has(code) && parentcd) {
+//       oas = difference(oas, new Set(get(centroids).expand([parentcd])));
+//     } else if (oas.has(code)) {
+//       oas = difference(oas, new Set([code]));
+//     } else if (parentcd) {
+//       oas = union(oas, new Set(get(centroids).expand([parentcd])));
+//     } else {
+//       oas = new Set([...oas, code]);
+//     }
+//     current.push({ oa: oas, boundary:'geometry' });
+//     updateLocal(current);
+//   }
+// }
 
 function updateLocal(current) {
   // limit our undo list to 20
@@ -327,6 +387,21 @@ function circleFast(clear = false, center = radiusCenter) {
 // Query
 ////////////////////
 
+function is_geo_empty(feature){
+  if (!feature || !feature.geometry || !feature.geometry.coordinates ) {
+    return true; // Handle cases where geometry or coordinates are missing
+  }
+  return feature.geometry.coordinates.length === 0;
+}
+
+function addOrSubtractGeo(geojson1,geojson2){
+  if(get(addMode)){
+    return turfunion(featureCollection([geojson1, geojson2]));
+  }else{
+    return turfdifference(featureCollection([geojson1,geojson2]))
+  }
+}
+
 export function geoBlob(q) {
   const geojson = q.geojson;
   geojson.properties = {
@@ -334,6 +409,7 @@ export function geoBlob(q) {
     bbox: bbox(geojson),
     codes: q.properties.oa_all,
     codes_compressed: q.properties.compressed,
+    codes_compressed_to_lsoa:q.properties.compressedToLsoa// add compressed to LSOA and above
   };
   return new Blob([JSON.stringify(geojson)], {
     type: 'application/json',
