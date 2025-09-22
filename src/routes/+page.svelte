@@ -115,6 +115,10 @@
           <p>Census 2021 topics use Output Areas (OAs) whereas non-Census datasets primarily use larger Lower layer Super Output Areas (LSOAs).</p>
           <p>We advise caution when comparing values between Census topics and non-Census datasets because these best-fit shapes will have different boundaries.</p>
       </Section>
+      <Section>
+        <h3>Share your feedback</h3>
+          <p>We value your feedback on this service. If you would like to get in touch, please email <a href="mailto:explore.local.statistics@ons.gov.uk">explore.local.statistics@ons.gov.uk</a>.</p>
+      </Section>
     </Theme>
   </div>
 </div>
