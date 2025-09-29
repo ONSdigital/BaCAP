@@ -92,7 +92,7 @@
       group,
       geometry: geo.geometry,
       bbox: geo.properties.bounds,
-      codes: geo.properties.c21cds,
+      codes: geo.properties.oa21cds,
     };
 
     analyticsEvent({
