@@ -83,6 +83,8 @@
     showAllDatasets: false,
   };
 
+  let nameChangeInputValue
+
   function handleCheckboxChange(event) {
     const { id, checked } = event.detail;
     const topic = topicsAll.find((t) => t.code === id);
@@ -198,6 +200,8 @@
       start: true,
     };
 
+    nameChangeInputValue = $state.name
+
     currentTopics = [topics[0]]; // Default to population topic
   }
 
@@ -213,8 +217,7 @@
     showMapInProfile
   );
   let showChangeName = false
-  let nameChangeInputValue = ""
-  function handleChangeName(){
+    function handleChangeName(){
     showChangeName = !showChangeName
   }
 
