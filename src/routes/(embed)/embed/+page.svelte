@@ -28,21 +28,12 @@
   let stats = [];
   let hideTables = false;
 
-  // let topicsLookup = (() => {
-  //   let lookup = {};
-  //   topics.filter(d => isDatasetAvailableInVersion(d, version))
-  //   .map(d => getDatasetForVersion(d, version))
-  //   .forEach((t) => (lookup[t.code] = t));
-  //   return lookup;
-  // })();
-
   let topicsLookup = {};
   function makeTopicsLookup() {
     topics.filter((d) => isDatasetAvailableInVersion(d, version))
       .map((d) => getDatasetForVersion(d, version))
       .forEach((t) => (topicsLookup[t.code] = t));
   }
-
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -126,6 +117,8 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
+
+  $:console.log(tables)
 </script>
 
 <svelte:window on:hashchange={update} />
@@ -174,8 +167,21 @@
         >
           <!-- use new version -->
           {#if topicsLookup[tab.code]?.chart === "number"}
-            {#if tab.data.length < 2}
+            {#if tab.data.length < 1}
               <p>No data available</p>
+            {:else if tab.data.length <2}
+              <BigNumber
+                value={tab.data[0].count}
+                unit={topicsLookup[tab.code].unit}
+                prefix={topicsLookup[tab.code].prefix}
+                rounded={topicsLookup[tab.code]?.doNotRound
+                  ? null
+                  : tab.data[0].count > 1000
+                    ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
+                    : tab.data[0].count > 100
+                      ? `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`
+                      : `Rounded to the nearest 10 ${topicsLookup[tab.code].unit}`}
+              />
             {:else}
               <BigNumber
                 value={tab.data[0].count}
