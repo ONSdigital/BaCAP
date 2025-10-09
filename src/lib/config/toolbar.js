@@ -14,8 +14,8 @@ export function doSelect(e) {
   newselect();
   if (e.detail.type == "place") {
     let bbox = e.detail.bbox;
-    let oa = new Set(get(centroids).expand(e.detail.codes,'oa'));
-    let lsoa = new Set(get(centroids).expand(e.detail.codes,'lsoa')); 
+    let oa = new Set(get(centroids).expand(e.detail.oa21cds,'oa'));
+    let lsoa = new Set(get(centroids).expand(e.detail.lsoa21cds,'lsoa')); 
     let geometry = e.detail.geometry;
     let geojson = {type: 'Feature', geometry: geometry}
 

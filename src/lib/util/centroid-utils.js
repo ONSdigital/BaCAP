@@ -7,13 +7,13 @@ import { decompressData } from "compress-csv-to-json";
 // import { dissolve } from '$lib/util/bundled/mapshaper';
 // import { roundAll } from '$lib/util/functions';
 import { boundaries, lsoaBoundaries } from '$lib/config/geography';
-import {codesToBreakDown} from '$lib/config/geography-changes';
+import { codesToBreakDown } from '$lib/config/geography-changes';
 
 class Centroids {
-  constructor(sourceConfigs){
+  constructor(sourceConfigs) {
     this.sourceConfigs = sourceConfigs;
     this.data = {}; // Store fetched data for each source
-  } 
+  }
 
   async initialize() {
     for (const sourceConfig of this.sourceConfigs) {
@@ -29,7 +29,7 @@ class Centroids {
   }
 
   async _fetchDataForSource(sourceConfig) {
-    try{
+    try {
       const res = await fetch(sourceConfig.url);
       if (!res.ok) {
         throw new Error(`Failed to fetch data from ${sourceConfig.url}: ${res.statusText}`);
@@ -39,7 +39,7 @@ class Centroids {
       console.error('Error fetching data:', error);
       throw error; // Re-throw the error to handle it at a higher level
     }
-    
+
   }
 
   _processDataForSource(sourceConfig, data, sourceName) {
@@ -52,23 +52,23 @@ class Centroids {
     this.data[sourceName].geojson = { type: 'FeatureCollection', features: [] };
     this.data[sourceName].lookup = {}
     this.data[sourceName].childLookup = { "E92000001": [] }
-    
+
     this.data[sourceName].parents = sourceConfig.parents.map(key => {
       const code = `${key}${this.data[sourceName].year}cd`;
       return { key, code };
     });
-    let parentCt={};
+    let parentCt = {};
     this.data[sourceName].parents.forEach(p => parentCt[p.key] = {});
 
-    arr.forEach(d=>{
-      this.data[sourceName].lookup[d[code]]=d;
+    arr.forEach(d => {
+      this.data[sourceName].lookup[d[code]] = d;
       this.data[sourceName].geojson.features.push({
         type: 'Feature',
         properties: { areacd: d[code] },
         geometry: { type: 'Point', coordinates: [d.lng, d.lat] },
       })
-      
-      this.data[sourceName].parents.forEach(p=>{
+
+      this.data[sourceName].parents.forEach(p => {
         if (!parentCt[p.key][d[p.code]]) {
           parentCt[p.key][d[p.code]] = 1;
           this.data[sourceName].childLookup[d[p.code]] = [d[code]];
@@ -89,19 +89,36 @@ class Centroids {
   //     this.data[geo].childLookup[codes] ? this.data[geo].childLookup[codes] : [];
   // }
   expand(codes, geo) {
+    const geoData = this.data && this.data[geo];
+    if (!geoData || !geoData.childLookup) return [];
+
+    const filterOutOAs = arr => arr.filter(v => !v.startsWith('E00') && !v.startsWith('W00'));
+
     if (Array.isArray(codes)) {
-        return codes.map(c => this.data[geo].childLookup[c] ? this.data[geo].childLookup[c] : (geo === 'lsoa' ? [] : c)).flat();
+      return codes
+        .map(c => {
+          const children = this.data[geo].childLookup[c]
+          if (Array.isArray(children) && children.length > 0) {
+            return geo === 'lsoa' ? filterOutOAs(children) : children;
+          } else {
+            return geo === 'lsoa' ? filterOutOAs([c]) : [c];
+          }
+        })
+        .flat()
+        .filter((d, i, a) => a.indexOf(d) === i);
     } else {
-        if (!this.data[geo].childLookup[codes]) {
-            return geo === 'lsoa' ? [] : [codes];
-        }
-        return this.data[geo].childLookup[codes];
+      const children = this.data[geo].childLookup[codes];
+      if (Array.isArray(children) && children.length > 0) {
+        return geo === 'lsoa' ? filterOutEandW(children) : children;
+      } else {
+        return geo === 'lsoa' ? filterOutEandW([codes]) : [codes];
+      }
     }
   }
 
 
   // get a boundingbox for a list of OA codes
-  bounds(oas,geo) {
+  bounds(oas, geo) {
     let points = {
       type: 'GeometryCollection',
       geometries: oas.map(oa => {
@@ -118,7 +135,7 @@ class Centroids {
   }
 
   // get a boundingbox from a geometry
-  boundsFromGeometry(geometry){
+  boundsFromGeometry(geometry) {
     let bounds = bbox(geometry)
     bounds = [bounds[0] - 0.01, bounds[1] - 0.01, bounds[2] + 0.01, bounds[3] + 0.01];
     return bounds;
@@ -142,7 +159,7 @@ class Centroids {
   }
 
   // compresses an array codes to the highest geography level specified (oa or lsoa). Although doesn't work if you set it compress to lsoa, as it skips out lsoa and just gives back MSOAs or higher
-  compress(codes,geo) {
+  compress(codes, geo) {
     let all = {};
     let compressed = [];
     all[geo] = codes;//this contains all the area codes for the specified geography
@@ -179,23 +196,23 @@ class Centroids {
     let highestLevel = null;
 
     for (const code of codeList) {
-        const match = code.match(pattern);
-        if (match) {
-            const level = parseInt(match[1]);
-            if (highestLevel === null || level > highestLevel) {  // Changed < to > to find highest
-                highestLevel = level;
-            }
+      const match = code.match(pattern);
+      if (match) {
+        const level = parseInt(match[1]);
+        if (highestLevel === null || level > highestLevel) {  // Changed < to > to find highest
+          highestLevel = level;
         }
+      }
     }
 
     if (highestLevel !== null) {
-        switch (highestLevel) {
-            case 0: return "oa";
-            case 1: return "lsoa";
-            case 2: return "msoa";
-            case 6:
-            case 7: return "ltla";
-        }
+      switch (highestLevel) {
+        case 0: return "oa";
+        case 1: return "lsoa";
+        case 2: return "msoa";
+        case 6:
+        case 7: return "ltla";
+      }
     }
 
     return "No valid geography codes found";
@@ -226,7 +243,7 @@ class Centroids {
         finalCodes.push(code);
       }
     }
-  return finalCodes;
+    return finalCodes;
   }
 
   async simplify(
@@ -238,11 +255,11 @@ class Centroids {
     const oa_all = Array.from(selected['oa']);
     const lsoa_all = Array.from(selected['lsoa']);
     // compress the codes
-    const compressed = this.compress(oa_all,'oa');
+    const compressed = this.compress(oa_all, 'oa');
     // Filter compressed to strip out OAs
     const compressedToLsoa = compressed.filter(d => !d.startsWith('E00') && !d.startsWith('W00'));
-    const bbox = this.bounds(oa_all,'oa');
-    const highestLevel = this.identifyHighestGeography(this.compress(oa_all,'oa'))
+    const bbox = this.bounds(oa_all, 'oa');
+    const highestLevel = this.identifyHighestGeography(this.compress(oa_all, 'oa'))
     var merge = {};
     merge.properties = {
       name,
