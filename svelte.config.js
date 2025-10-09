@@ -23,9 +23,7 @@ const config = {
 	},
 	preprocess: vitePreprocess(), // Ensures Svelte processes linked files
 	vitePlugin: {
-		experimental: {
-			inspector: true // Enables the Svelte inspector in development (optional)
-		}
+		inspector: true // Enables the Svelte inspector in development (optional)
 	}
 };
 
