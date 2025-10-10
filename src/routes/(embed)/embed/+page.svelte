@@ -126,6 +126,8 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
+
+  $:console.log(tables)
 </script>
 
 <svelte:window on:hashchange={update} />
