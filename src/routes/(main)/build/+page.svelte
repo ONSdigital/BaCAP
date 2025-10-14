@@ -222,9 +222,10 @@
   }
 
   function saveNameChange(){
-    showChangeName = false
-    $state.name = nameChangeInputValue
-    updateLocalStorage(nameChangeInputValue)
+    showChangeName = false;
+    $buildstate.name = nameChangeInputValue;
+    $state.name = nameChangeInputValue;
+    updateLocalStorage(nameChangeInputValue);
   }
 
   function cancelChangeName(){
