@@ -15,20 +15,11 @@
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
   import pym from "pym.js";
-  // import { flip } from "svelte/animate";
-  // import tooltip from "$lib/ui/tooltip";
-  // import Notice from "$lib/ui/Notice.svelte";
-  // import TopicItem from "$lib/ui/TopicItem.svelte";
-  // import Icon from "$lib/ui/Icon.svelte";
-  // import { cdnbase } from "$lib/config/geography";
-  // import { download, clip } from "$lib/util/functions";
-  // import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
   import Select from "$lib/ui/Select.svelte";
   import topicsAll from "$lib/config/topics.json";
   import { simplifyGeo } from "$lib/util/drawing-utils";
   import getParents from "$lib/util/get-parents";
   import { onMount } from "svelte";
-  // import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import {
     getData,
@@ -71,17 +62,13 @@
 
   $buildstate = {
     start: false,
-    // mode: "move",
-    // radius: 5,
-    // select: "add",
-    // showSave: false,
     showEmbed: false,
     topics: [],
-    // topicsExpand: false,
-    // topicsFilter: "",
     comparison: null,
     showAllDatasets: false,
   };
+
+  let nameChangeInputValue
 
   function handleCheckboxChange(event) {
     const { id, checked } = event.detail;
@@ -198,6 +185,8 @@
       start: true,
     };
 
+    nameChangeInputValue = $state.name
+
     currentTopics = [topics[0]]; // Default to population topic
   }
 
@@ -213,15 +202,15 @@
     showMapInProfile
   );
   let showChangeName = false
-  let nameChangeInputValue = ""
-  function handleChangeName(){
+    function handleChangeName(){
     showChangeName = !showChangeName
   }
 
   function saveNameChange(){
-    showChangeName = false
-    $state.name = nameChangeInputValue
-    updateLocalStorage(nameChangeInputValue)
+    showChangeName = false;
+    $buildstate.name = nameChangeInputValue;
+    $state.name = nameChangeInputValue;
+    updateLocalStorage(nameChangeInputValue);
   }
 
   function cancelChangeName(){
@@ -269,22 +258,10 @@
     {/if}
   </div>
 
-  <!-- <div style="height:16px;" /> -->
-
-  <!-- <AreaMap/> -->
-  <!-- <AreaMap name={$buildstate.name} comp={$buildstate.comparison.areanm} {geojson} compGeojson={$buildstate.comparison.geometry} /> -->
 </Theme>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
     <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink" style="width:100%">
-      <!-- <Checkbox
-        id="selectComparison"
-        label="Select comparison area"
-        bind:checked={selectComparison}
-        compact
-      ></Checkbox> -->
-
-      <!-- {#if selectComparison} -->
       
       <div class="ons-u-mb-s" style="width:100%">
         <p class='font-bold' style="margin-bottom:0">Select comparison area</p>
@@ -305,7 +282,7 @@
         bind:checked={showMapInProfile}
         compact
       ></Checkbox>
-      <!-- {/if} -->
+
       <hr class="hr-full" />
       <div
         style="display: flex;justify-content: space-between;align-items:center;"
@@ -392,256 +369,6 @@
     </div>
   </div>
 </Container>
-<!-- <nav>
-  <div class="nav-left">
-    <button class="text" on:click={() => goto(`${base}/draw/`)}>
-      <Icon type="chevron" rotation={180} /><span>Edit area</span>
-    </button>
-  </div>
-  <div class="nav-right">
-    <button
-      title={state.showSave ? "Close save options" : "Save selected area"}
-      use:tooltip
-      on:click={() => (state.showSave = !state.showSave)}
-      class:active={state.showSave}
-    >
-      <Icon
-        type={state.showSave ? "add" : "download"}
-        rotation={state.showSave ? 45 : 0}
-      />
-    </button>
-  </div>
-</nav>
-{#if state.showSave}
-  <nav class="tray">
-    <div />
-    <div class="save-buttons">
-      <input
-        type="text"
-        class="input-text"
-        bind:value={state.name}
-        placeholder="Type your area name"
-      />
-      <button
-        class="text"
-        on:click={async () => {
-          let blob = geoBlob(store);
-          download(
-            blob,
-            `${state.name ? state.name.replaceAll(" ", "_") : "custom_area"}.geojson`,
-          );
-          state.showSave = false;
-          let opts = state.name ? { areaName: state.name } : {};
-          analyticsEvent({
-            event: "fileDownload",
-            fileExtension: "json",
-            ...opts,
-          });
-        }}
-      >
-        <Icon type="download" /><span>Save geography</span>
-      </button>
-      <button
-        class="text"
-        on:click={() => {
-          var codes = store.properties.oa_all.join(",");
-          clip(codes, "Copied output area codes to clipboard");
-          state.showSave = false;
-          let opts = state.name ? { areaName: state.name } : {};
-          analyticsEvent({ event: "geoCopy", ...opts });
-        }}
-      >
-        <Icon type="copy" /><span>Copy area codes</span>
-      </button>
-    </div>
-  </nav>
-{/if}
-<div class="container">
-  <aside class="topics-box">
-    <h2>Name your area</h2>
-    <input
-      type="text"
-      class="input-text"
-      bind:value={state.name}
-      placeholder="Type your area name"
-    />
-
-    <label>
-      <input type="checkbox" bind:checked={includemap} />
-      Include map
-    </label>
-
-    {#if parents}
-      <h2>Select comparison area</h2>
-      <div class="search">
-        <Select
-          value={state.comparison}
-          autoClear={false}
-          isClearable
-          on:select={(e) => (state.comparison = e.detail)}
-          on:clear={() => (state.comparison = null)}
-        />
-        <button
-          title="Upload a saved area"
-          use:tooltip
-          on:click={() => uploader.click()}
-        >
-          <Icon type="upload" />
-        </button>
-        <input
-          type="file"
-          accept=".geojson,.json"
-          style:display="none"
-          bind:this={uploader}
-          on:input={loadGeo}
-        />
-      </div>
-
-      <label
-        class:label-disabled={!includemap || !state.comparison}
-        style:margin-top="8px"
-      >
-        <input
-          type="checkbox"
-          bind:checked={includecomp}
-          disabled={!includemap || !state.comparison}
-        />
-        Show on map
-      </label>
-    {/if}
-
-    <h2>Select topics</h2>
-    <input
-      type="text"
-      class="input-text"
-      placeholder="Type to filter"
-      bind:value={state.topicsFilter}
-    />
-    {#each filterTopics(topics, state.topics, regex,highestLevel) as topic, i (topic.code)}
-      <div
-        animate:flip={{ duration: 500 }}
-        style:z-index={state.topics.includes(topic) ? 10 : 0}
-      >
-        <TopicItem
-          {topic}
-          {regex}
-          show={state.topics.includes(topic) || i < 6 || state.topicsExpand}
-          selected={state.topics.includes(topic)}
-        >
-          <input
-            type="checkbox"
-            bind:group={state.topics}
-            name="topics"
-            value={topic}
-          />
-        </TopicItem>
-      </div>
-    {/each}
-    {#if !regex}
-      <button
-        class="btn-link"
-        style:margin="6px 0"
-        on:click={() => (state.topicsExpand = !state.topicsExpand)}
-      >
-        {state.topicsExpand
-          ? "Show fewer"
-          : `Show ${state.topics.length > 6 ? topics.length - state.topics.length : topics.length - 6} more`}
-      </button>
-    {/if}
-
-    <div class="related-content">
-      <p><strong>Looking for another topic?</strong></p>
-      <p>
-        Due to technical constraints, not all Census 2021 topics can be included
-        in this tool.
-      </p>
-      <p>
-        Data for a wider range of topics can be found on <a
-          href="https://www.nomisweb.co.uk/sources/census_2021"
-          target="_blank"
-          rel="noreferrer">Nomis</a
-        >
-        <span style:font-size="0.8em" style:margin="0 2px"
-          ><Icon type="launch" /></span
-        >. Multi-variate data can be found via the
-        <a href="https://www.ons.gov.uk/datasets/create" target="_blank"
-          >Create a custom dataset</a
-        > service.
-      </p>
-    </div>
-  </aside>
-  <article class="profile">
-    <h2>Profile preview</h2>
-
-    <div id="embed" />
-    <Notice>
-      The data and boundaries displayed in this profile are aggregated from
-      small areas on a best-fit basis, and therefore may differ slightly from
-      other sources.
-    </Notice>
-    <div class="embed-actions">
-      <button
-        class="btn-link"
-        disabled={!state.topics}
-        on:click={() => document.getElementById("iframe").contentWindow.print()}
-      >
-        Print profile
-      </button>
-      |
-      <button
-        class="btn-link"
-        on:click={() => {
-          pymParent.sendMessage("makePNG", null);
-          let opts = state.name ? { areaName: state.name } : {};
-          analyticsEvent({
-            event: "fileDownload",
-            fileExtension: "png",
-            ...opts,
-          });
-        }}
-      >
-        Save as image (PNG)
-      </button>
-      |
-      <button class="btn-link" disabled={!state.topics} on:click={downloadData}
-        >Download data (CSV)</button
-      >
-      |
-      <button
-        class="btn-link"
-        on:click|preventDefault={() => {
-          state.showEmbed = !state.showEmbed;
-
-          setTimeout(() => {
-            const el = document.querySelector("textarea");
-            if (!el) return;
-
-            el.scrollIntoView({
-              behavior: "smooth",
-            });
-          });
-        }}
-      >
-        {state.showEmbed ? "Hide embed code" : "Show embed code"}
-      </button>
-      {#if embedHash && state.showEmbed}
-        <p style:margin-bottom={0}>Embed code</p>
-        <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
-        <button
-          class="copy-embed"
-          on:click={() => {
-            clip(makeEmbed(embedHash), "Copied embed code to clipboard");
-            let opts = state.name ? { areaName: state.name } : {};
-            analyticsEvent({ event: "embed", ...opts });
-          }}
-        >
-          <Icon type="copy" />
-          <span>Copy embed code</span>
-        </button>
-      {/if}
-    </div>
-  </article>
-</div> -->
 
 <style>
 
