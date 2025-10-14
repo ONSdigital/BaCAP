@@ -90,7 +90,7 @@ export async function checkForHashSelection() {
 export async function getAreaData(code, options = {}) {
   const res = await fetch(`${cdnbase}/${code.slice(0, 3)}/${code}.json`);
   const data = await res.json();
-  const compressed = data.properties.c21cds;
+  const compressed = data.properties.oa21cds;
 
   return {
     geojson: data,
