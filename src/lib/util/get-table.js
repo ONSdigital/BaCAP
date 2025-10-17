@@ -47,9 +47,7 @@ function filterCodes(codes, level = "none") {
 }
 
 const myCustomAreaFirst = (a, b) => {
-  if (a.areanm === "MyCustomArea") return -1; // a comes first
-  if (b.areanm === "MyCustomArea") return 1;  // b comes first
-  return 0; // keep order otherwise
+  b.areanm.localeCompare(a.areanm);
 }
 
 function calcPercent(data, table) {
@@ -86,8 +84,8 @@ function processNomiswebData(data, table) {
       processedData.push({
         ...data[i],
         count: data[i-1].value,
-        percentage:data[i].value,
-        originalValue:data[i].value
+        percentage: data[i].value,
+        originalValue: data[i].value
       })
     }
     return processedData;
@@ -132,7 +130,7 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
           .replace(`${table.cellCode}_name`.toUpperCase(), "category");
   
         const parsedData = csvParse(str, autoType);
-        data = sumData(data, parsedData).sort(myCustomAreaFirst);
+        data = sumData(data, parsedData)
       } catch (error) {
         console.error(`Error fetching data for ${tableCode}:`, error);
       }
@@ -147,7 +145,7 @@ export default async function fetchNomiswebData(table, state, comp = ["K04000001
       topicCode: table.code
     });
 
-    data = processNomiswebData(data, table);
+    data = processNomiswebData(data, table).sort(myCustomAreaFirst);
     return data || [];
 }
 
