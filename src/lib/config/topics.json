@@ -471,7 +471,7 @@
     "desc": "The number of babies born in a year, excluding stillbirths.",
     "tableCode": "NM_206_1",
     "measures": 20100,
-    "dateLabel": 2023,
+    "dateLabel": 2024,
     "date": false,
     "cellCode": "time",
     "chart": "number",
@@ -481,12 +481,12 @@
       {
         "label": "Live births",
         "cells": [
-          2023
+          2024
         ]
       }
     ],
     "lowestGeography": "lsoa",
-    "dateLabelLong": 2023,
+    "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "doNotRound": true,
@@ -501,8 +501,8 @@
     "tableCode": "NM_161_1",
     "cellCode": "measure",
     "measures": 20100,
-    "dateLabel": 2023,
-    "date": 2023,
+    "dateLabel": 2024,
+    "date": 2024,
     "chart": "number",
     "unit": "deaths",
     "base": "all deaths",
@@ -518,7 +518,7 @@
     "lowestGeography": "lsoa",
     "doNotRound": true,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "dateLabelLong": 2023,
+    "dateLabelLong": 2024,
     "census": false,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
