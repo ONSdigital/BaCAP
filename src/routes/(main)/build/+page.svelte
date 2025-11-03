@@ -146,8 +146,6 @@
     comp,
     includemap,
     includecomp,
-    oa_all,
-    lsoa_all
   ) {
     return `#/?name=${btoa(name)}${
       comp ? `&comp=${btoa(comp.areanm)}` : ""
@@ -158,10 +156,6 @@
         ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
         : ""
     }${
-    //     oa_all ? `&oa=${btoa(JSON.stringify(oa_all))}` : ""
-    // }${
-    //   lsoa_all ? `&lsoa=${btoa(JSON.stringify(lsoa_all))}` : ""
-    // }${
       showMapInProfile ? `&showMap=${showMapInProfile}` : ""
     }${`&version=${btoa($version)}`}`;
   }
