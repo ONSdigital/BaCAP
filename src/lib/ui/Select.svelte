@@ -93,8 +93,8 @@
       geometry: geo.geometry,
       bbox: geo.properties.bounds,
       oa21cds: geo.properties.oa21cds,
-      lsoa21cds: geo.properties.lsoa21cds,
-      msoa21cds: geo.properties.msoa21cds,
+      lsoa21cds: geo.properties.lsoa21cds ?? [],
+      msoa21cds: geo.properties.msoa21cds ?? [],
     };
     analyticsEvent({
       event: "searchSelect",
