@@ -1,3 +1,4 @@
+
 <script>
   import { onMount } from "svelte";
   import pym from "pym.js";
@@ -10,7 +11,10 @@
   import ProfileChart from "$lib/charts/ProfileChart.svelte";
   import BigNumber from "$lib/charts/BigNumber.svelte";
   import LineChart from "$lib/charts/LineChart.svelte";
-  import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
+  import {
+    isDatasetAvailableInVersion,
+    getDatasetForVersion,
+  } from "$lib/util/topic-functions";
 
   let pymChild,
     name,
@@ -26,7 +30,8 @@
 
   let topicsLookup = {};
   function makeTopicsLookup() {
-    topics.filter((d) => isDatasetAvailableInVersion(d, version))
+    topics
+      .filter((d) => isDatasetAvailableInVersion(d, version))
       .map((d) => getDatasetForVersion(d, version))
       .forEach((t) => (topicsLookup[t.code] = t));
   }
@@ -68,13 +73,7 @@
         if (["name", "comp", "showMap", "version"].includes(pair[0])) {
           props[pair[0]] = atob(pair[1]);
         } else if (
-          [
-            "tabs",
-            "poly",
-            "comppoly",
-            "population",
-            "stats",
-          ].includes(pair[0])
+          ["tabs", "poly", "comppoly", "population", "stats"].includes(pair[0])
         ) {
           props[pair[0]] = JSON.parse(atob(pair[1]));
         }
@@ -94,8 +93,10 @@
 
   async function makePNG(e) {
     hideTables = true;
-    await sleep(100);
-    let canvas = await html2canvas(document.body);
+    await sleep(1000)
+    let canvas = await html2canvas(document.body, {
+      useCORS: true,
+    });
     const base64 = canvas.toDataURL();
     let a = document.createElement("a");
     a.href = base64;
@@ -109,8 +110,6 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
-
-  $:console.log(tables)
 </script>
 
 <svelte:window on:hashchange={update} />
@@ -144,7 +143,7 @@
           {#if topicsLookup[tab.code]?.chart === "number"}
             {#if tab.data.length < 1}
               <p>No data available</p>
-            {:else if tab.data.length <2}
+            {:else if tab.data.length < 2}
               <BigNumber
                 value={tab.data[0].count}
                 unit={topicsLookup[tab.code].unit}
@@ -241,10 +240,10 @@
       {/if}
     {/each}
   </Cards>
-  {#if version==1}
-  <span class="footnote"
-    >Source: Office for National Statistics - Census 2021</span
-  >
+  {#if version == 1}
+    <span class="footnote"
+      >Source: Office for National Statistics - Census 2021</span
+    >
   {/if}
   <div class="spacer" />
 {/if}
