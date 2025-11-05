@@ -53,7 +53,6 @@
   let currentTopics = [];
 
   // UI States
-  let includemap = true;
   let showMapInProfile = false;
   let includecomp = false;
   let store;
@@ -118,7 +117,7 @@
     name,
     comp,
     data,
-    includemap,
+    showMapInProfile,
     includecomp,
     oa_all,
     lsoa_all
@@ -133,7 +132,7 @@
     embedHash = generateEmbedHash(
       name,
       comp,
-      includemap,
+      showMapInProfile,
       includecomp,
       oa_all,
       lsoa_all
@@ -144,15 +143,15 @@
   function generateEmbedHash(
     name,
     comp,
-    includemap,
+    showMapInProfile,
     includecomp,
   ) {
     return `#/?name=${btoa(name)}${
       comp ? `&comp=${btoa(comp.areanm)}` : ""
     }&tabs=${btoa(JSON.stringify($tables))}${
-      includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
+      showMapInProfile ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
     }${
-      includemap && includecomp && comp?.geometry
+      showMapInProfile && includecomp && comp?.geometry
         ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
         : ""
     }${
@@ -206,12 +205,13 @@
     $state.name,
     $buildstate.comparison,
     currentTopics,
-    includemap,
+    showMapInProfile,
     includecomp,
     store?.properties.oa_all,
     store?.properties.lsoa_all,
     showMapInProfile
   );
+
   let showChangeName = false;
   function handleChangeName() {
     showChangeName = !showChangeName;
@@ -295,9 +295,16 @@
       </div>
 
       <Checkbox
-        id="includemap"
+        id="showMapInProfile"
         label="Include map in profile"
         bind:checked={showMapInProfile}
+        compact
+      ></Checkbox>
+
+      <Checkbox
+        id="includecomp"
+        label="Include comparison on map"
+        bind:checked={includecomp}
         compact
       ></Checkbox>
 
