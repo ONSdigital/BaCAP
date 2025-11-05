@@ -25,7 +25,9 @@
 			style,
 			bounds,
 			interactive: false,
-			preserveDrawingBuffer: true,
+			canvasContextAttributes: {
+				preserveDrawingBuffer: true,
+			},
 		});
 
 		map.on("load", () => {

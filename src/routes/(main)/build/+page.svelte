@@ -6,9 +6,10 @@
     Container,
     Button,
     Checkbox,
+    Notice,
     Twisty,
     Checkboxes,
-    Input
+    Input,
   } from "@onsvisual/svelte-components";
   import { isLoading } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
@@ -21,6 +22,8 @@
   import getParents from "$lib/util/get-parents";
   import { onMount } from "svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
+  import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
+
   import {
     getData,
     downloadData,
@@ -32,9 +35,9 @@
     checkForHashSelection,
     groupTopics,
     updateLocalStorage,
-    filterTopics
+    filterTopics,
   } from "$lib/util/build-utils";
-  import { state, buildstate,tables, version } from "$lib/stores/mapstore";
+  import { state, buildstate, tables, version } from "$lib/stores/mapstore";
 
   // Embed-related variables
   let pymParent; // Variable for pym
@@ -50,13 +53,14 @@
   let currentTopics = [];
 
   // UI States
-  let includemap = true;
-  let showMapInProfile = false
+  let showMapInProfile = false;
   let includecomp = false;
   let store;
   let geojson;
   let parents;
   let topics = [];
+  let hideTables = false;
+
   // let uploader; // DOM element for geojson file upload
   // let selectComparison = true;
 
@@ -68,7 +72,7 @@
     showAllDatasets: false,
   };
 
-  let nameChangeInputValue
+  let nameChangeInputValue;
 
   function handleCheckboxChange(event) {
     const { id, checked } = event.detail;
@@ -113,7 +117,7 @@
     name,
     comp,
     data,
-    includemap,
+    showMapInProfile,
     includecomp,
     oa_all,
     lsoa_all
@@ -125,29 +129,35 @@
     let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
 
     $tables = await getData(filterTopicsByCodes(codes), compcds);
-    embedHash = generateEmbedHash(name, comp, includemap, includecomp, oa_all, lsoa_all);
+    embedHash = generateEmbedHash(
+      name,
+      comp,
+      showMapInProfile,
+      includecomp,
+      oa_all,
+      lsoa_all
+    );
     updateEmbedFrame();
   }
 
-  function generateEmbedHash(name, comp, includemap, includecomp, oa_all, lsoa_all) {
-  return `#/?name=${btoa(name)}${
-    comp ? `&comp=${btoa(comp.areanm)}` : ""
-  }&tabs=${btoa(JSON.stringify($tables))}${
-    includemap ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
-  }${
-    includemap && includecomp && comp?.geometry
-      ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
-      : ""
-  }${
-    oa_all ? `&oa=${btoa(JSON.stringify(oa_all))}` : ""
-  }${
-    lsoa_all ? `&lsoa=${btoa(JSON.stringify(lsoa_all))}` : ""
-  }${
-    showMapInProfile ? `&showMap=${showMapInProfile}` : ""
-  }${
-    `&version=${btoa($version)}`
-  }`;
-}
+  function generateEmbedHash(
+    name,
+    comp,
+    showMapInProfile,
+    includecomp,
+  ) {
+    return `#/?name=${btoa(name)}${
+      comp ? `&comp=${btoa(comp.areanm)}` : ""
+    }&tabs=${btoa(JSON.stringify($tables))}${
+      showMapInProfile ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
+    }${
+      showMapInProfile && includecomp && comp?.geometry
+        ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
+        : ""
+    }${
+      showMapInProfile ? `&showMap=${showMapInProfile}` : ""
+    }${`&version=${btoa($version)}`}`;
+  }
 
   function updateEmbedFrame() {
     if (!pymParent) {
@@ -185,7 +195,7 @@
       start: true,
     };
 
-    nameChangeInputValue = $state.name
+    nameChangeInputValue = $state.name;
 
     currentTopics = [topics[0]]; // Default to population topic
   }
@@ -195,26 +205,27 @@
     $state.name,
     $buildstate.comparison,
     currentTopics,
-    includemap,
+    showMapInProfile,
     includecomp,
     store?.properties.oa_all,
     store?.properties.lsoa_all,
     showMapInProfile
   );
-  let showChangeName = false
-    function handleChangeName(){
-    showChangeName = !showChangeName
+
+  let showChangeName = false;
+  function handleChangeName() {
+    showChangeName = !showChangeName;
   }
 
-  function saveNameChange(){
+  function saveNameChange() {
     showChangeName = false;
     $buildstate.name = nameChangeInputValue;
     $state.name = nameChangeInputValue;
     updateLocalStorage(nameChangeInputValue);
   }
 
-  function cancelChangeName(){
-    showChangeName = false
+  function cancelChangeName() {
+    showChangeName = false;
   }
 </script>
 
@@ -233,53 +244,67 @@
         { label: "Edit map", href: `${base}/draw/` },
       ]}
     />
-    
+
     <Container width="wider">
       <h2>Area profile</h2>
     </Container>
     <!-- <Titleblock width="wider" title={$buildstate.name}></Titleblock> -->
-     <Titleblock width="wider" title=""/>
+    <Titleblock width="wider" title="" />
     <Container width="wider">
       {#if showChangeName}
-        <Input bind:value={nameChangeInputValue} hideLabel label="Enter area name"/>
+        <Input
+          bind:value={nameChangeInputValue}
+          hideLabel
+          label="Enter area name"
+        />
         <div style="height:16px;" />
         <Button variant="secondary" on:click={cancelChangeName}>Cancel</Button>
         <Button variant="primary" on:click={saveNameChange}>Save</Button>
       {:else if showChangeName == false}
-        <Button variant="secondary" on:click={handleChangeName}>Change area name</Button>
+        <Button variant="secondary" on:click={handleChangeName}
+          >Change area name</Button
+        >
       {/if}
     </Container>
   </div>
-  
+
   <div class="area-map-container">
     <div class="fade" />
     {#if geojson}
-      <AreaMap name={$state.name} comp={null} {geojson}/>
+      <AreaMap name={$state.name} comp={null} {geojson} />
     {/if}
   </div>
-
 </Theme>
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
-    <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink" style="width:100%">
-      
+    <div
+      class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink"
+      style="width:100%"
+    >
       <div class="ons-u-mb-s" style="width:100%">
-        <p class='font-bold' style="margin-bottom:0">Select comparison area</p>
-        <div >
+        <p class="font-bold" style="margin-bottom:0">Select comparison area</p>
+        <div>
           <Select
-          value={$buildstate.comparison}
-          autoClear={false}
-          isClearable
-          on:select={(e) => ($buildstate.comparison = e.detail)}
-          on:clear={() => ($buildstate.comparison = null)}
-        />
+            value={$buildstate.comparison}
+            autoClear={false}
+            isClearable
+            on:select={(e) => ($buildstate.comparison = e.detail)}
+            on:clear={() => ($buildstate.comparison = null)}
+          />
         </div>
       </div>
 
       <Checkbox
-        id="includemap"
+        id="showMapInProfile"
         label="Include map in profile"
         bind:checked={showMapInProfile}
+        compact
+      ></Checkbox>
+
+      <Checkbox
+        id="includecomp"
+        label="Include comparison on map"
+        bind:checked={includecomp}
         compact
       ></Checkbox>
 
@@ -298,8 +323,8 @@
         >
       </div>
 
-      {#each Object.entries(topicsGrouped).sort() as [topic, items],i}
-        <Twisty title={topic} open={$buildstate.showAllDatasets||i==0}>
+      {#each Object.entries(topicsGrouped).sort() as [topic, items], i}
+        <Twisty title={topic} open={$buildstate.showAllDatasets || i == 0}>
           <Checkboxes on:change={handleCheckboxChange}>
             {#each items as item}
               <Checkbox
@@ -339,6 +364,37 @@
       <div class="ons-u-mb-xl"></div>
     </div>
     <div class="ons-grid__col ons-col-9@m">
+      {#if $version >= 2}
+        <Notice>
+          Census topics and non-Census datasets will primarily use different
+          best-fit shapes to estimate the data to be returned to users.
+        </Notice>
+        {#if !hideTables && store?.properties.oa_all}
+          <div class="ons-u-mt-s ons-u-mb-s">
+            <Twisty title="See the difference in best-fit shapes">
+              <p>
+                The map below shows the best-fit shape, which is the closest
+                available to your chosen shape. The small area data has been
+                added together for your best-fit shape and provides you with an
+                estimated total. Census 2021 topics and non-Census datasets use
+                different small area types. We advise caution when comparing
+                values between Census topics and non-Census datasets because
+                these best-fit shapes will have different boundaries.
+              </p>
+              {#if store.properties.oa_all && store.properties.lsoa_all}
+                <AreaMapComparison
+                  name={$state.name}
+                  comp={null}
+                  {geojson}
+                  oa_all={store.properties.oa_all}
+                  lsoa_all={store.properties.lsoa_all}
+                />
+              {/if}
+            </Twisty>
+          </div>
+        {/if}
+      {/if}
+
       <div id="embed" />
       <hr class="hr-full" />
       <div class="button-container no-margin-left">
@@ -353,11 +409,12 @@
         >
         <Button
           variant="primary"
-          on:click={() => document.getElementById("iframe").contentWindow.print()}
+          on:click={() =>
+            document.getElementById("iframe").contentWindow.print()}
         >
           Print profile
         </Button>
-        <br/>
+        <br />
         {#if embedHash && $buildstate.showEmbed}
           <p style:margin-bottom={0}>Embed code</p>
           <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
@@ -371,12 +428,11 @@
 </Container>
 
 <style>
-
-.button-container {
+  .button-container {
     display: flex;
     flex-wrap: wrap;
     row-gap: 10px; /* Adjust spacing */
-}
+  }
 
   :global(#lmap) {
     filter: invert(0.9);
@@ -416,6 +472,7 @@
 
   :global(div.ons-collapsible__content.ons-js-collapsible-content) {
     border-left: none;
+    padding-left: 0;
   }
 
   .area-map-container {
