@@ -106,7 +106,6 @@ function processNomiswebData(data, table) {
   }
 
 export default async function fetchNomiswebData(table, state, comp = ["K04000001"]) {
-  console.log(table,'table')
   let data = null;
   const tableCodes = Array.isArray(table.tableCode) ? table.tableCode : [table.tableCode];
   comp = Array.isArray(comp) ? comp : [comp];

@@ -30,7 +30,7 @@
 			style,
 			bounds,
 			interactive: true,
-			preserveDrawingBuffer: true,
+			preserveDrawingBuffer: false,
 			maxZoom:12.9,
 			minZoom:6
 		});
