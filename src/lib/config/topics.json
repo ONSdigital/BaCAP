@@ -33,8 +33,8 @@
       "NM_2002_1"
     ],
     "cellCode": "c_age",
-    "dateLabel": 2022,
-    "date": 2022,
+    "dateLabel": 2024,
+    "date": 2024,
     "measures": [
       20100
     ],
@@ -50,14 +50,26 @@
       }
     ],
     "queryExt": "&gender=0",
-    "dateLabelLong": 2022,
+    "dateLabelLong": 2024,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "lowestGeography": "oa",
     "doNotRound": false,
     "census": false,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "validFromVersion":2
+    "validFromVersion":2,
+    "versions":{
+      "2":{
+        "dateLabel": 2022,
+        "date": 2022,
+        "dateLabelLong": 2022
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "households",
@@ -96,8 +108,8 @@
     "cellCode": "sales",
     "chart": "number",
     "measures": 20100,
-    "dateLabel": "Year ending Sept 2023",
-    "date": "2023-09",
+    "dateLabel": "Year ending Sept 2024",
+    "date": "2024-09",
     "unit": "sales",
     "base": "all sales",
     "categories": [
@@ -112,7 +124,7 @@
     "source": "HM Land Registry – Price Paid Transaction Data",
     "doNotRound": true,
     "census": false,
-    "dateLabelLong": "Year ending September 2023",
+    "dateLabelLong": "Year ending September 2024",
     "topic": "Housing",
     "validFromVersion": 2,
     "versions":{
@@ -270,8 +282,8 @@
     "measures": [
       20100
     ],
-    "dateLabel": 2022,
-    "date": 2022,
+    "dateLabel": 2024,
+    "date": 2024,
     "chart": "profile",
     "unit": "%",
     "base": "all people",
@@ -387,12 +399,24 @@
     ],
     "queryExt": "&gender=0",
     "lowestGeography": "oa",
-    "dateLabelLong": 2022,
+    "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2022,
+        "date": 2022,
+        "dateLabelLong": 2022
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "sex",
@@ -438,8 +462,8 @@
     "measures": [
       20100
     ],
-    "dateLabel": 2022,
-    "date": 2022,
+    "dateLabel": 2024,
+    "date": 2024,
     "unit": "%",
     "base": "all people",
     "categories": [
@@ -457,13 +481,25 @@
       }
     ],
     "lowestGeography": "oa",
-    "dateLabelLong": 2022,
+    "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "queryExt": "&c_age=200",
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2022,
+        "date": 2022,
+        "dateLabelLong": 2022
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "births",
@@ -471,7 +507,7 @@
     "desc": "The number of babies born in a year, excluding stillbirths.",
     "tableCode": "NM_206_1",
     "measures": 20100,
-    "dateLabel": 2024,
+    "dateLabel": 2023,
     "date": false,
     "cellCode": "time",
     "chart": "number",
@@ -492,7 +528,19 @@
     "doNotRound": true,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2023,
+        "date": 2023,
+        "dateLabelLong": 2023
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "deaths",
@@ -522,7 +570,19 @@
     "census": false,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2023,
+        "date": 2023,
+        "dateLabelLong": 2023
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "legal_partnership_status",
