@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:preview"
   publish = "build"
   NODE_OPTIONS="--max-old-space-size=4096"
 
