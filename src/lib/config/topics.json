@@ -55,7 +55,7 @@
     "lowestGeography": "oa",
     "doNotRound": false,
     "census": false,
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "Office for National Statistics – Mid-year population estimates",
     "topic": "Demography and migration",
     "validFromVersion":2,
     "versions":{
@@ -402,7 +402,7 @@
     "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "Office for National Statistics – Mid-year population estimates",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -485,7 +485,7 @@
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "queryExt": "&c_age=200",
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "Office for National Statistics – Mid-year population estimates",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -526,7 +526,7 @@
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "doNotRound": true,
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "Office for National Statistics",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -568,7 +568,7 @@
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "dateLabelLong": 2024,
     "census": false,
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "Office for National Statistics",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
