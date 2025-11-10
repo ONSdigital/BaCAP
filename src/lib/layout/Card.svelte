@@ -35,13 +35,12 @@
   <slot />
   <div class="ons-u-mt-s">
     {#if source}
-    <span class="footnote"
-    >Source: {@html source}</span
+    <p class="footnote"
+    >Source: {@html source}</p
   >
     {/if}
-    <br/>
     {#if geography}
-    <span class="footnote">Small area: {@html geographyLookup[geography]}</span>
+      <p class="footnote">Lowest geography: {@html geographyLookup[geography]}</p>
     {/if}
   </div>
 
@@ -81,8 +80,13 @@
   .footnote{
     font-size: 14px;
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.3;
     color:#323132;
+    margin: 0;
+    padding: 0;
+  }
+  .footnote + .footnote {
+    margin-top: 8px;
   }
   .bold{
     font-weight: 700;
