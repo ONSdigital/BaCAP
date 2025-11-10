@@ -19,7 +19,7 @@
     ],
     "lowestGeography": "oa",
     "doNotRound":false,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1,
     "lastValidVersion":1
@@ -33,8 +33,8 @@
       "NM_2002_1"
     ],
     "cellCode": "c_age",
-    "dateLabel": 2022,
-    "date": 2022,
+    "dateLabel": 2024,
+    "date": 2024,
     "measures": [
       20100
     ],
@@ -50,14 +50,26 @@
       }
     ],
     "queryExt": "&gender=0",
-    "dateLabelLong": 2022,
+    "dateLabelLong": 2024,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "lowestGeography": "oa",
     "doNotRound": false,
     "census": false,
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "ONS – Mid-year estimates",
     "topic": "Demography and migration",
-    "validFromVersion":2
+    "validFromVersion":2,
+    "versions":{
+      "2":{
+        "dateLabel": 2022,
+        "date": 2022,
+        "dateLabelLong": 2022
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "households",
@@ -82,7 +94,7 @@
     "doNotRound": false,
     "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
     "census": true,
-    "source": "Office for National Statistics – Census 2021",
+    "source": "ONS – Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -96,8 +108,8 @@
     "cellCode": "sales",
     "chart": "number",
     "measures": 20100,
-    "dateLabel": "Year ending Sept 2023",
-    "date": "2023-09",
+    "dateLabel": "Year ending Sept 2024",
+    "date": "2024-09",
     "unit": "sales",
     "base": "all sales",
     "categories": [
@@ -112,7 +124,7 @@
     "source": "HM Land Registry – Price Paid Transaction Data",
     "doNotRound": true,
     "census": false,
-    "dateLabelLong": "Year ending September 2023",
+    "dateLabelLong": "Year ending September 2024",
     "topic": "Housing",
     "validFromVersion": 2,
     "versions":{
@@ -251,7 +263,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "census": true,
     "validFromVersion": 1,
@@ -270,8 +282,8 @@
     "measures": [
       20100
     ],
-    "dateLabel": 2022,
-    "date": 2022,
+    "dateLabel": 2024,
+    "date": 2024,
     "chart": "profile",
     "unit": "%",
     "base": "all people",
@@ -387,12 +399,24 @@
     ],
     "queryExt": "&gender=0",
     "lowestGeography": "oa",
-    "dateLabelLong": 2022,
+    "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "ONS – Mid-year estimates",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2022,
+        "date": 2022,
+        "dateLabelLong": 2022
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "sex",
@@ -420,7 +444,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "census": true,
     "validFromVersion": 1,
@@ -438,8 +462,8 @@
     "measures": [
       20100
     ],
-    "dateLabel": 2022,
-    "date": 2022,
+    "dateLabel": 2024,
+    "date": 2024,
     "unit": "%",
     "base": "all people",
     "categories": [
@@ -457,13 +481,25 @@
       }
     ],
     "lowestGeography": "oa",
-    "dateLabelLong": 2022,
+    "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "queryExt": "&c_age=200",
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "ONS – Mid-year estimates",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2022,
+        "date": 2022,
+        "dateLabelLong": 2022
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "births",
@@ -481,18 +517,30 @@
       {
         "label": "Live births",
         "cells": [
-          2023
+          2024
         ]
       }
     ],
     "lowestGeography": "lsoa",
-    "dateLabelLong": 2023,
+    "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "doNotRound": true,
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "ONS - Birth registrations",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2023,
+        "date": 2023,
+        "dateLabelLong": 2023
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "deaths",
@@ -501,8 +549,8 @@
     "tableCode": "NM_161_1",
     "cellCode": "measure",
     "measures": 20100,
-    "dateLabel": 2023,
-    "date": 2023,
+    "dateLabel": 2024,
+    "date": 2024,
     "chart": "number",
     "unit": "deaths",
     "base": "all deaths",
@@ -518,11 +566,23 @@
     "lowestGeography": "lsoa",
     "doNotRound": true,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "dateLabelLong": 2023,
+    "dateLabelLong": 2024,
     "census": false,
-    "source": "Office for National Statistics – Mid Year Population Estimates",
+    "source": "ONS - Death registrations",
     "topic": "Demography and migration",
-    "validFromVersion": 2
+    "validFromVersion": 2,
+    "versions":{
+      "2":{
+        "dateLabel": 2023,
+        "date": 2023,
+        "dateLabelLong": 2023
+      },
+      "4":{
+        "dateLabel": 2024,
+        "date": 2024,
+        "dateLabelLong": 2024
+      }
+    }
   },
   {
     "code": "legal_partnership_status",
@@ -572,7 +632,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -611,7 +671,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -657,7 +717,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -709,7 +769,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -759,7 +819,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -799,7 +859,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -851,7 +911,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -970,7 +1030,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
     "validFromVersion": 1
   },
@@ -1015,7 +1075,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
     "validFromVersion": 1
   },
@@ -1093,7 +1153,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
     "validFromVersion": 1
   },
@@ -1147,7 +1207,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Health and wellbeing",
     "validFromVersion": 1
   },
@@ -1183,7 +1243,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Health and wellbeing",
     "validFromVersion": 1
   },
@@ -1231,7 +1291,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Health and wellbeing",
     "validFromVersion": 1
   },
@@ -1283,7 +1343,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
     "validFromVersion": 1
   },
@@ -1332,7 +1392,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
     "validFromVersion": 1
   },
@@ -1369,7 +1429,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Ethnic group, national identity, language and religion",
     "validFromVersion": 1
   },
@@ -1414,7 +1474,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1460,7 +1520,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1504,7 +1564,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1550,7 +1610,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1602,7 +1662,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1652,7 +1712,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1692,7 +1752,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Housing",
     "validFromVersion": 1
   },
@@ -1751,7 +1811,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -1841,7 +1901,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -1884,7 +1944,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -1926,7 +1986,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -2004,7 +2064,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -2082,7 +2142,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -2130,7 +2190,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Economy",
     "validFromVersion": 1
   },
@@ -2184,7 +2244,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Education and skills",
     "validFromVersion": 1
   },
@@ -2218,7 +2278,7 @@
     ],
     "lowestGeography": "oa",
     "census": true,
-    "source": "Office for National Statistics - Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Education and skills",
     "validFromVersion": 1
   }

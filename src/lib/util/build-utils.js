@@ -153,9 +153,9 @@ export const GEOGRAPHY_LEVELS = ["oa", "lsoa", "msoa", "ltla"];
 
 export const geographyLookup = {
   oa: "Output area",
-  lsoa: "Lower layer super output area",
-  msoa: "Middle layer super output area",
-  ltla: "Lower tier local authority",
+  lsoa: "LSOA",
+  msoa: "MSOA",
+  ltla: "LTLA",
 };
 
 export function makeEmbed(embedHash) {
