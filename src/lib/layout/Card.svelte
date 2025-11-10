@@ -40,7 +40,7 @@
   >
     {/if}
     {#if geography}
-      <p class="footnote">Lowest geography: {@html geographyLookup[geography]}</p>
+      <p class="footnote">Small area: {@html geographyLookup[geography]}</p>
     {/if}
   </div>
 

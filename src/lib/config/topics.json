@@ -526,7 +526,7 @@
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "doNotRound": true,
-    "source": "ONS",
+    "source": "ONS - Birth registrations",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -568,7 +568,7 @@
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "dateLabelLong": 2024,
     "census": false,
-    "source": "ONS",
+    "source": "ONS - Death registrations",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
