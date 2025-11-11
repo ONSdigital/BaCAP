@@ -119,7 +119,6 @@ function processNomiswebData(data, table) {
   }
 
 export default async function fetchNomiswebData(table, state, comparison = {"oa":[],"lsoa":[]}) {
-  console.log('fetchNomiswebData',table,comparison, state)
   let data = null;
   const tableCodes = Array.isArray(table.tableCode) ? table.tableCode : [table.tableCode];
   let compCodesForGeographyLevel = Array.isArray(comparison[table.lowestGeography]) ? comparison[table.lowestGeography] : [comparison[table.lowestGeography]]

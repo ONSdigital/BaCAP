@@ -208,11 +208,6 @@
     );
   }
 
-  // $:console.log('buildstate.comparison',$buildstate.comparison)
-  // $:console.log('buildstate.compressed',$buildstate.compressed)
-  $: console.log("buildstate", $buildstate);
-  $: console.log("store", store);
-
   let showChangeName = false;
   function handleChangeName() {
     showChangeName = !showChangeName;
@@ -230,13 +225,11 @@
   }
 
   function handleSelect(e){
-    console.log(e)
     e.detail.codes={"oa":e.detail.oa21cds,"lsoa":e.detail.lsoa21cds}
     $buildstate.comparison=e.detail
   }
 
   function handleClearSelect(){
-    console.log('clear select')
     $buildstate.comparison=null
   }
 </script>

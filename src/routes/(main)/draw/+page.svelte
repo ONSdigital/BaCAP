@@ -79,7 +79,7 @@
 
   onMount(init);
 
-  $:console.log('selected',$selected)
+  // $:console.log('selected',$selected)
 </script>
 
 <div class="draw-page-container">

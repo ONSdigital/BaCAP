@@ -171,16 +171,7 @@ class Centroids {
     let compressed = [];
     all[geo] = codes;//this contains all the area codes for the specified geography
 
-    console.log('geo', geo)
-    console.log(this.data[geo].parents)
-    console.log(codes)
-
-    if(geo=='lsoa'){
-      console.log(this.data[geo].lookup)
-    }
-
     this.data[geo].parents.forEach(p => {
-      // codes.forEach(d => console.log(this.data[geo].lookup[d]))
       all[p.key] = codes.map(area => this.data[geo].lookup[area][p.code]);
     });//for all the parents geography levels, add the parents codes at that level to each area code
     // this means that often codes are repeated
@@ -203,7 +194,6 @@ class Centroids {
         }
       }
     }
-    console.log(compressed, geo, 'compressed')
     return compressed;
   }
 
