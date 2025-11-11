@@ -41,9 +41,22 @@ function makeCells(table) {
 };
 
 function filterCodes(codes, level = "none") {
+  if (!codes || codes.length === 0) {
+    return [];
+  }
+
+  const lowerCodes = ["00", "01", "02"];
+
+  const filterLogic = (c) => {
+    if (!c) {
+      return false; // Skip any null/undefined elements
+    }
+    return lowerCodes.includes(c.slice(1, 3));
+  };
+
   return level === "none" ? codes :
-    level === "lower" ? codes.filter(c => ["00","01", "02"].includes(c.slice(1, 3))) :
-    codes.filter(c => !["00","01", "02"].includes(c.slice(1, 3)));
+    level === "lower" ? codes.filter(filterLogic) :
+    codes.filter(c => !filterLogic(c));
 }
 
 const myCustomAreaFirst = (a, b) => {
@@ -105,17 +118,18 @@ function processNomiswebData(data, table) {
     };
   }
 
-export default async function fetchNomiswebData(table, state, comp = ["K04000001"]) {
+export default async function fetchNomiswebData(table, state, comparison = {"oa":[],"lsoa":[]}) {
+  console.log('fetchNomiswebData',table,comparison, state)
   let data = null;
   const tableCodes = Array.isArray(table.tableCode) ? table.tableCode : [table.tableCode];
-  comp = Array.isArray(comp) ? comp : [comp];
+  let compCodesForGeographyLevel = Array.isArray(comparison[table.lowestGeography]) ? comparison[table.lowestGeography] : [comparison[table.lowestGeography]]
 
   for (const tableCode of tableCodes) {
-    const codes = table.onlyOA ? state.codes : state.compressed;
+    const codes = table.onlyOA ? state.codes[table.lowestGeography] : state.compressed[table.lowestGeography];
     const filter = tableCodes.length === 1 ? "none" : tableCode === tableCodes[0] ? "lower" : "higher";
-    let cds=get(centroids).replaceCodesWithMSOA(codes); //handle new Geographies by breaking down MSOAs
+    let cds = get(centroids).replaceCodesWithMSOA(codes); //handle new Geographies by breaking down MSOAs
     cds = filterCodes(cds, filter);
-    const compcds = filterCodes(comp, filter);
+    const compcds = filterCodes(compCodesForGeographyLevel, filter);
     const url = makeUrl(table, tableCode, cds, compcds);
 
     if(cds.length !== 0 || compcds.length !== 0){

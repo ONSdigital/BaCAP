@@ -11,7 +11,6 @@
     Checkboxes,
     Input,
   } from "@onsvisual/svelte-components";
-  import { isLoading } from "$lib/stores/mapstore";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
   import { base } from "$app/paths";
@@ -37,7 +36,13 @@
     updateLocalStorage,
     filterTopics,
   } from "$lib/util/build-utils";
-  import { state, buildstate, tables, version } from "$lib/stores/mapstore";
+  import {
+    isLoading,
+    state,
+    buildstate,
+    tables,
+    version,
+  } from "$lib/stores/mapstore";
 
   // Embed-related variables
   let pymParent; // Variable for pym
@@ -59,16 +64,17 @@
   let geojson;
   let parents;
   let topics = [];
-  let hideTables = false;
 
   // let uploader; // DOM element for geojson file upload
   // let selectComparison = true;
 
+  // initial $buildstate
   $buildstate = {
     start: false,
     showEmbed: false,
     topics: [],
-    comparison: null,
+    compressed: { oa: [""], lsoa: [""] },
+    comparison: { oa: ["K04000001"], lsoa: ["K04000001"] },
     showAllDatasets: false,
   };
 
@@ -103,7 +109,7 @@
       goto(`${base}/draw/`);
     }
 
-    processStoreData();
+    await processStoreData(store);
     isLoading.set(false);
   }
 
@@ -115,37 +121,27 @@
   async function updateProfile(
     start,
     name,
-    comp,
-    data,
+    comparison,
+    topics,
     showMapInProfile,
-    includecomp,
-    oa_all,
-    lsoa_all
+    includecomp
   ) {
-    if (!start) return;
+    if (!start || !$buildstate.compressed) return;
 
     updateLocalStorage(name);
-    let codes = data.map((d) => d.code);
-    let compcds = comp?.codes ? comp.codes.join(";") : comp?.areacd || "";
+    let codes = topics.map((d) => d.code);
 
-    $tables = await getData(filterTopicsByCodes(codes), compcds);
+    $tables = await getData(filterTopicsByCodes(codes), comparison);
     embedHash = generateEmbedHash(
       name,
-      comp,
+      comparison,
       showMapInProfile,
-      includecomp,
-      oa_all,
-      lsoa_all
+      includecomp
     );
     updateEmbedFrame();
   }
 
-  function generateEmbedHash(
-    name,
-    comp,
-    showMapInProfile,
-    includecomp,
-  ) {
+  function generateEmbedHash(name, comp, showMapInProfile, includecomp) {
     return `#/?name=${btoa(name)}${
       comp ? `&comp=${btoa(comp.areanm)}` : ""
     }&tabs=${btoa(JSON.stringify($tables))}${
@@ -175,12 +171,11 @@
     return topics.filter((t) => codes.includes(t.code));
   }
 
-  async function processStoreData() {
+  async function processStoreData(store) {
     highestLevel = store.properties.highestLevel;
     geojson = simplifyGeo(store.geojson);
     parents = await getParents(store.properties.compressed);
     coverage = parents.coverage;
-
     topics = filterTopics(topicsAll, highestLevel, coverage);
     topicsGrouped = groupTopics(topics);
 
@@ -189,28 +184,34 @@
     $buildstate = {
       ...$buildstate,
       name: $state.name,
-      codes: store.properties.oa_all,
-      compressed: store.properties.compressed,
-      comparison: parents.parents[0],
-      start: true,
+      codes: { oa: store.properties.oa_all, lsoa: store.properties.lsoa_all }, //needs to store oa and lsoa and compressed lists
+      compressed: {
+        oa: store.properties.compressed,
+        lsoa: store.properties.compressedLsoa,
+      },
+      comparison: parents.parents,
     };
 
     nameChangeInputValue = $state.name;
-
+    $buildstate.start = true;
     currentTopics = [topics[0]]; // Default to population topic
   }
 
-  $: updateProfile(
-    $buildstate.start,
-    $state.name,
-    $buildstate.comparison,
-    currentTopics,
-    showMapInProfile,
-    includecomp,
-    store?.properties.oa_all,
-    store?.properties.lsoa_all,
-    showMapInProfile
-  );
+  $: if ($buildstate.start && $buildstate.compressed) {
+    updateProfile(
+      $buildstate.start,
+      $state.name,
+      $buildstate.comparison,
+      currentTopics,
+      showMapInProfile,
+      includecomp
+    );
+  }
+
+  // $:console.log('buildstate.comparison',$buildstate.comparison)
+  // $:console.log('buildstate.compressed',$buildstate.compressed)
+  $: console.log("buildstate", $buildstate);
+  $: console.log("store", store);
 
   let showChangeName = false;
   function handleChangeName() {
@@ -226,6 +227,17 @@
 
   function cancelChangeName() {
     showChangeName = false;
+  }
+
+  function handleSelect(e){
+    console.log(e)
+    e.detail.codes={"oa":e.detail.oa21cds,"lsoa":e.detail.lsoa21cds}
+    $buildstate.comparison=e.detail
+  }
+
+  function handleClearSelect(){
+    console.log('clear select')
+    $buildstate.comparison=null
   }
 </script>
 
@@ -288,11 +300,13 @@
             value={$buildstate.comparison}
             autoClear={false}
             isClearable
-            on:select={(e) => ($buildstate.comparison = e.detail)}
-            on:clear={() => ($buildstate.comparison = null)}
+            on:select={handleSelect}
+            on:clear={handleClearSelect}
           />
         </div>
       </div>
+
+      <hr class="hr-full" />
 
       <Checkbox
         id="showMapInProfile"
@@ -369,7 +383,7 @@
           Census topics and non-Census datasets will primarily use different
           best-fit shapes to estimate the data to be returned to users.
         </Notice>
-        {#if !hideTables && store?.properties.oa_all}
+        {#if store?.properties.oa_all}
           <div class="ons-u-mt-s ons-u-mb-s">
             <Twisty title="See the difference in best-fit shapes">
               <p>

@@ -51,7 +51,7 @@
     const onsbuildString = localStorage.getItem("onsbuild");
     const onsbuild = onsbuildString ? JSON.parse(onsbuildString) : null;
 
-    if (!onsbuild?.properties?.compressedToLsoa) {
+    if (!onsbuild?.properties?.compressedLsoa) {
       localStorage.clear();
     }
 
