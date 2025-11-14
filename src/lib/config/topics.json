@@ -18,7 +18,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "doNotRound":false,
+    "doNotRound":true,
     "source": "Office for National Statistics - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1,
@@ -53,7 +53,7 @@
     "dateLabelLong": 2022,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "lowestGeography": "oa",
-    "doNotRound": false,
+    "doNotRound": true,
     "census": false,
     "source": "Office for National Statistics – Mid Year Population Estimates",
     "topic": "Demography and migration",
@@ -79,7 +79,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "doNotRound": false,
+    "doNotRound": true,
     "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
     "census": true,
     "source": "Office for National Statistics – Census 2021",
