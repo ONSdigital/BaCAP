@@ -18,7 +18,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "doNotRound":true,
+    "doNotRound":false,
     "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1,
