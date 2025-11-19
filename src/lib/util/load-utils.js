@@ -32,7 +32,7 @@ export function handleLocalStorageSelection(storageKey) {
     }
     const bbox = get(centroids).boundsFromGeometry(q.geojson);
     updateMapWithBounds(bbox);
-    updateSelection(q.properties.oa_all, q.properties.compressedToLsoa, q.geojson);
+    updateSelection(q.properties.oa_all, q.properties.compressedLsoa, q.geojson);
   }
   
 export function handleDrawDataSelection() {

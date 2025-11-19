@@ -53,7 +53,7 @@
     "dateLabelLong": 2024,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "lowestGeography": "oa",
-    "doNotRound": false,
+    "doNotRound": true,
     "census": false,
     "source": "ONS – Mid-year estimates",
     "topic": "Demography and migration",
@@ -91,7 +91,7 @@
       }
     ],
     "lowestGeography": "oa",
-    "doNotRound": false,
+    "doNotRound": true,
     "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
     "census": true,
     "source": "ONS – Census 2021",

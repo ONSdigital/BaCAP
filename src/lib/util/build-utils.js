@@ -8,7 +8,7 @@ import topicsAll from "$lib/config/topics.json";
 import getTable from "$lib/util/get-table";
 import { goto } from "$app/navigation";
 import { base } from "$app/paths";
-import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
+import { isDatasetAvailableInVersion, getDatasetForVersion } from "$lib/util/topic-functions";
 
 
 
@@ -27,9 +27,9 @@ export function filterTopics(allTopics, level, coverage) {
 
 export function updateLocalStorage(name) {
   let ls = JSON.parse(localStorage.getItem("onsbuild"));
-  if(ls){
+  if (ls) {
     ls.properties.name = name;
-  localStorage.setItem("onsbuild", JSON.stringify(ls));
+    localStorage.setItem("onsbuild", JSON.stringify(ls));
   } else {
     return;
   }
@@ -37,22 +37,25 @@ export function updateLocalStorage(name) {
 
 let cache = {};// this is the same if the area changes, so need to make a unique cache for each area somehow
 
+export async function getData(topic, comparison) {
+  const compressedSelectionCodes = [...new Set([...get(buildstate).compressed.oa,...get(buildstate).compressed.lsoa])].join("");
+  const comparisonCodes = [...new Set([...(comparison?.codes?.oa ?? []), ...(comparison?.codes?.lsoa ?? [])])].join("");
+  
+  const combinedCodesString = compressedSelectionCodes + comparisonCodes
 
+  cache[combinedCodesString] ||= {}; // Only create a new object if it doesn't exist
+  let cacheForArea = cache[combinedCodesString];
 
-
-export async function getData(data, comp) {
-  let compressedCodes = get(buildstate).compressed.join("") || "default";
-  cache[compressedCodes] ||= {}; // Only create a new object if it doesn't exist
-  let cacheForArea = cache[compressedCodes];
   if (!get(buildstate).start) return [];
 
-  cacheForArea[comp] ||= {};
+  cacheForArea[combinedCodesString] ||= {};
+
   let tables = await Promise.all(
-    data.map(async (d) => {
-      if (!cacheForArea[comp][d.code]) {
-        cacheForArea[comp][d.code] = await getTable(d, get(buildstate), comp);
+    topic.map(async (d) => {
+      if (!cacheForArea[combinedCodesString][d.code]) {
+        cacheForArea[combinedCodesString][d.code] = await getTable(d, get(buildstate), comparison?.codes);
       }
-      return { code: d.code, data: cacheForArea[comp][d.code] };
+      return { code: d.code, data: cacheForArea[combinedCodesString][d.code] };
     })
   );
 
@@ -75,7 +78,7 @@ export async function checkForHashSelection() {
       const info = await getAreaData(code);
       localStorage.setItem("onsbuild", JSON.stringify(info));
       analyticsEvent({ event: "hashSelect", areaCode: code, areaName: info.properties.name });
-      if(info.properties.compressed.length==0){
+      if (info.properties.compressed.length == 0) {
         alert("This area does not cover a population-weighted centroid. Please select a slightly larger area in the drawing area.");
         goto(`${base}/draw/${hash}`);
         return;
@@ -91,12 +94,14 @@ export async function getAreaData(code, options = {}) {
   const res = await fetch(`${cdnbase}/${code.slice(0, 3)}/${code}.json`);
   const data = await res.json();
   const compressed = data.properties.oa21cds;
+  const compressedLsoa = data.properties.lsoa21cds
 
   return {
     geojson: data,
     properties: {
       oa_all: !options?.comparison ? get(centroids).expand(compressed, 'oa') : null,
       compressed,
+      compressedLsoa,
       name: data.properties.hclnm
         ? data.properties.hclnm
         : data.properties.areanm
@@ -127,15 +132,15 @@ export async function downloadData() {
     let len = meta.categories.length;
     for (let i = 0; i < len; i++) {
       csv += `"${meta.label
-      }","${meta.categories[i].label
-      }",${t.code == 'population_mye' ? "NA" : t.data[i].percentage ? t.data[i].value : "NA"
-      },${t.code == 'population_mye' ? "NA" : t.data[len + i].percentage ? t.data[len + i].value : "NA"
-      },"%","${t.data[i].percentage ? t.data[i].count : t.data[i].value
-      }","${t.data[len + i].percentage ? t.data[len + i].count : t.data[len + i].value
-      }","${meta.base.replace(
-        "all ",
-        ""
-      )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.dateLabelLong ? meta.dateLabelLong : "2021"}"\n`;
+        }","${meta.categories[i].label
+        }",${t.code == 'population_mye' ? "NA" : t.data[i].percentage ? t.data[i].value : "NA"
+        },${t.code == 'population_mye' ? "NA" : t.data[len + i].percentage ? t.data[len + i].value : "NA"
+        },"%","${t.data[i].percentage ? t.data[i].count : t.data[i].value
+        }","${t.data[len + i].percentage ? t.data[len + i].count : t.data[len + i].value
+        }","${meta.base.replace(
+          "all ",
+          ""
+        )}","${meta.base}","${meta.source}","${geographyLookup[meta.lowestGeography]}","${meta.dateLabelLong ? meta.dateLabelLong : "2021"}"\n`;
     }
   });
 
@@ -165,7 +170,7 @@ export function makeEmbed(embedHash) {
     <script>var pymParent = new pym.Parent("custom-profile", "${url}", {name: "custom-profile", title: "Embedded area profile"});<\/script>`;
 }
 
-export function savePNG(pymParent){
+export function savePNG(pymParent) {
   pymParent.sendMessage("makePNG", null);
   let opts = get(buildstate).name ? { areaName: get(buildstate).name } : {};
   analyticsEvent({

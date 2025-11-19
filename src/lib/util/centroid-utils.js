@@ -94,6 +94,12 @@ class Centroids {
 
     const filterOutOAs = arr => arr.filter(v => !v.startsWith('E00') && !v.startsWith('W00'));
 
+    function filterOutEandW(arr) {
+      // need to figure out if this needs to do anything
+      return arr
+    }
+
+
     if (Array.isArray(codes)) {
       return codes
         .map(c => {
@@ -115,6 +121,7 @@ class Centroids {
       }
     }
   }
+
 
 
   // get a boundingbox for a list of OA codes
@@ -163,7 +170,6 @@ class Centroids {
     let all = {};
     let compressed = [];
     all[geo] = codes;//this contains all the area codes for the specified geography
-
 
     this.data[geo].parents.forEach(p => {
       all[p.key] = codes.map(area => this.data[geo].lookup[area][p.code]);
@@ -256,8 +262,8 @@ class Centroids {
     const lsoa_all = Array.from(selected['lsoa']);
     // compress the codes
     const compressed = this.compress(oa_all, 'oa');
-    // Filter compressed to strip out OAs
-    const compressedToLsoa = compressed.filter(d => !d.startsWith('E00') && !d.startsWith('W00'));
+    // compress LSOA list
+    const compressedLsoa = this.compress(lsoa_all, 'lsoa')
     const bbox = this.bounds(oa_all, 'oa');
     const highestLevel = this.identifyHighestGeography(this.compress(oa_all, 'oa'))
     var merge = {};
@@ -265,7 +271,7 @@ class Centroids {
       name,
       // bbox,
       compressed,
-      compressedToLsoa,
+      compressedLsoa,
       highestLevel,
       oa_all,
       lsoa_all,

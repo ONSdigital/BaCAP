@@ -27,7 +27,6 @@ export function doSelect(e) {
   } else if (e.detail.type == "postcode") {
     // does this type exist??
     // I don't think this block runs
-
     let center = e.detail.center;
     get(mapObject).flyTo({ center: center, zoom: 14 });
     get(mapObject).once("idle", () => {

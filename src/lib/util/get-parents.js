@@ -16,8 +16,8 @@ export default async function (codes) {
     group: eng && wal ? "" : "Country",
     geometry: geo.geometry,
     bbox: geo.properties.bounds,
-    codes: geo.properties.oa21cds
+    codes: {oa:geo.properties.oa21cds, lsoa:geo.properties.lsoa21cds}
   }
 
-  return { parents: [data], coverage };
+  return { parents: data, coverage };
 }
