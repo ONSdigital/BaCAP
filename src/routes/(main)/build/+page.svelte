@@ -10,6 +10,8 @@
     Twisty,
     Checkboxes,
     Input,
+    Grid,
+    GridCell,
   } from "@onsvisual/svelte-components";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
@@ -405,24 +407,28 @@
 
       <div id="embed" />
       <hr class="hr-full" />
-      <div class="button-container no-margin-left ons-u-mb-s">
-        <Button variant="primary" on:click={showEmbed}
+      <Grid width="full">
+        <GridCell>
+          <Button variant="primary" on:click={showEmbed}
           >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
-        <Button variant="primary" on:click={downloadData}
+        </GridCell>
+        <GridCell><Button variant="primary" on:click={downloadData}
           >Download data (CSV)</Button
-        >
-        <Button variant="primary" on:click={savePNG(pymParent)}
+        ></GridCell>
+        <GridCell> <Button variant="primary" on:click={savePNG(pymParent)}
           >Save as image (PNG)</Button
-        >
-        <Button
+        ></GridCell>
+        <GridCell> <Button
           variant="primary"
           on:click={() =>
             document.getElementById("iframe").contentWindow.print()}
         >
           Print profile
-        </Button>
-        <br />
+        </Button></GridCell>
+      </Grid>
+      
+
         {#if embedHash && $buildstate.showEmbed}
           <p style:margin-bottom={0}>Embed code</p>
           <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
@@ -430,17 +436,12 @@
             >Copy embed code</Button
           >
         {/if}
-      </div>
+      
     </div>
   </div>
 </Container>
 
 <style>
-  .button-container {
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 10px; /* Adjust spacing */
-  }
 
   :global(#lmap) {
     filter: invert(0.9);
