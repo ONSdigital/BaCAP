@@ -3,7 +3,7 @@ import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo
 import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, HelpModal, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
 import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
-import Select, { getPlace } from "$lib/ui/Select.svelte";
+import Select from "$lib/ui/Select.svelte";
 import { base } from "$app/paths";
 import { updateLocalStorage } from "$lib/util/build-utils";
 
@@ -67,8 +67,6 @@ $:updateLocalStorage($state.name)
             Click or tap an area on the map to add a node to the shape. To apply a shape, close it
             by clicking or tapping on the starting node.
           </p>
-          <!-- <Button variant="secondary" on:click={newselect}>Clear shape</Button> -->
-          <!-- <Button variant="primary">Apply shape</Button> -->
         </ToolControl>
         <ToolControl id="circle">
           <p>Select a radius size and click or tap on the map to select an area.</p>
@@ -93,8 +91,7 @@ $:updateLocalStorage($state.name)
           </ButtonGroup>
         </ToolControl>
         <ToolControl id="search">
-          <p>Use the search to select an area to apply it to the map.</p>
-          <Select on:select={doSelect} />
+          <Select label="Use the search to select an area to apply it to the map." id="draw-page-search" on:select={doSelect}/>
         </ToolControl>
         
       </ToolControls>

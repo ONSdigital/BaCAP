@@ -287,14 +287,15 @@
       style="width:100%"
     >
       <div class="ons-u-mb-s" style="width:100%">
-        <p class="font-bold" style="margin-bottom:0">Select comparison area</p>
-        <div>
+        <div class="ons-u-mb-s">
           <Select
+            id="comparison-search"
             value={$buildstate.comparison}
             autoClear={false}
             isClearable
             on:select={handleSelect}
             on:clear={handleClearSelect}
+            label="Select comparison area"
           />
         </div>
       </div>
@@ -307,14 +308,14 @@
         bind:checked={showMapInProfile}
         compact
       ></Checkbox>
-
+      {#if showMapInProfile}
       <Checkbox
         id="includecomp"
         label="Include comparison on map"
         bind:checked={includecomp}
         compact
       ></Checkbox>
-
+      {/if}
       <hr class="hr-full" />
       <div
         style="display: flex;justify-content: space-between;align-items:center;"
