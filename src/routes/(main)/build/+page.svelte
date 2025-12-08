@@ -81,7 +81,10 @@
   let nameChangeInputValue;
 
   function handleCheckboxChange(event) {
-    const { id, checked } = event.detail;
+    const { item } = event.detail;
+
+    const id = item.id;
+    const checked = item.checked;
     const topic = topicsAll.find((t) => t.code === id);
 
     if (!topic) return;
@@ -224,13 +227,13 @@
     showChangeName = false;
   }
 
-  function handleSelect(e){
-    e.detail.codes={"oa":e.detail.oa21cds,"lsoa":e.detail.lsoa21cds}
-    $buildstate.comparison=e.detail
+  function handleSelect(e) {
+    e.detail.codes = { oa: e.detail.oa21cds, lsoa: e.detail.lsoa21cds };
+    $buildstate.comparison = e.detail;
   }
 
-  function handleClearSelect(){
-    $buildstate.comparison=null
+  function handleClearSelect() {
+    $buildstate.comparison = null;
   }
 </script>
 
@@ -309,12 +312,12 @@
         compact
       ></Checkbox>
       {#if showMapInProfile}
-      <Checkbox
-        id="includecomp"
-        label="Include comparison on map"
-        bind:checked={includecomp}
-        compact
-      ></Checkbox>
+        <Checkbox
+          id="includecomp"
+          label="Include comparison on map"
+          bind:checked={includecomp}
+          compact
+        ></Checkbox>
       {/if}
       <hr class="hr-full" />
       <div
@@ -330,21 +333,18 @@
           >{$buildstate.showAllDatasets ? "Hide all" : "Show all"}</button
         >
       </div>
-
       {#each Object.entries(topicsGrouped).sort() as [topic, items], i}
         <Twisty title={topic} open={$buildstate.showAllDatasets || i == 0}>
-          <Checkboxes on:change={handleCheckboxChange}>
-            {#each items as item}
-              <Checkbox
-                id={item.code}
-                label={item.label}
-                value={item.code}
-                compact
-                checked={currentTopics.some((t) => t.code === item.code)}
-                on:change={handleCheckboxChange}
-              ></Checkbox>
-            {/each}
-          </Checkboxes>
+          {#each items as item}
+            <Checkbox
+              id={item.code}
+              label={item.label}
+              value={item.code}
+              compact
+              checked={currentTopics.some((t) => t.code === item.code)}
+              on:change={handleCheckboxChange}
+            ></Checkbox>
+          {/each}
         </Twisty>
         <hr class="hr-full" />
       {/each}

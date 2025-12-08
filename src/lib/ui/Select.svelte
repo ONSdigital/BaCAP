@@ -263,7 +263,7 @@
     });
   });
 </script>
-{@debug options}
+
 {#if options}
   <AccessibleSelect
     {id}
@@ -276,6 +276,7 @@
     {groupKey}
     {loadOptions}
     autoClear={false}
+    showAllValues={!value}
     bind:value
     on:change={handleSelect}
     on:clear={handleClear}
