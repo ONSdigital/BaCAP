@@ -405,7 +405,7 @@
 
       <div id="embed" />
       <hr class="hr-full" />
-      <div class="button-container no-margin-left">
+      <div class="button-container no-margin-left ons-u-mb-s">
         <Button variant="primary" on:click={showEmbed}
           >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
