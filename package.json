@@ -53,6 +53,7 @@
 	"dependencies": {
 		"@turf/difference": "^7.0.0",
 		"@turf/helpers": "^7.0.0",
-		"@turf/union": "^7.0.0"
+		"@turf/union": "^7.0.0",
+		"d3-shape": "^3.2.0"
 	}
 }
