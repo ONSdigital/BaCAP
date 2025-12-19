@@ -32,13 +32,13 @@
     }
 
     p{
-        font-size: 0.8em;
         font-weight: 400;
+        line-height: 1.5;
         margin:0;
     }
 
     .bigger{
-        font-size: 1.2em;
+        font-size: 1.2em !important;
         font-weight: bold;
     }
   </style>

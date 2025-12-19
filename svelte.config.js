@@ -1,6 +1,6 @@
 /** @type {import('@sveltejs/kit').Config} */
 import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 const production = process.env.NODE_ENV === 'production';
 const ons_path = process.env.APP_PATH && process.env.APP_PATH.includes('ons');

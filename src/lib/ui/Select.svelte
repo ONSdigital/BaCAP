@@ -138,95 +138,147 @@
 
 <script>
   import { onMount, createEventDispatcher } from "svelte";
-  import Select from "./SelectInner.svelte";
+  import { AccessibleSelect } from "@onsvisual/svelte-components";
 
   const dispatch = createEventDispatcher();
 
+  export let id = "";
+  export let idKey = "areacd";
+  export let labelKey = "areanm";
+  export let groupKey = "group";
   export let value = null;
-  export let autoClear = true;
   export let placeholder = "Find an area or postcode";
-  export let listMaxHeight = 250;
   export let mode = "search";
-  export let isClearable = false;
+  export let isClearable = true;
+  export let label;
 
   // Data and state for select box
   let items;
-  let filterText;
+  let options;
 
   const startsWithFilter = (str, filter) =>
     str.toLowerCase().startsWith(filter.toLowerCase());
-  const filterSort = (a, b) =>
-    startsWithFilter(a.areanm, filterText) &&
-    startsWithFilter(b.areanm, filterText)
-      ? 0
-      : !startsWithFilter(a.areanm, filterText) &&
-          startsWithFilter(b.areanm, filterText)
-        ? 1
-        : startsWithFilter(a.areanm, filterText) &&
-            !startsWithFilter(b.areanm, filterText)
-          ? -1
-          : 0;
 
-  // Function for select box
-  async function getOptions(filterText) {
+  // Convert getOptions → ONS loadOptions
+  export async function loadOptions(query, populateResults) {
+    const filterText = query;
+
+    // Postcode lookup
     if (filterText.length > 2 && /\d/.test(filterText)) {
-      let res = await fetch(
-        `https://api.postcodes.io/postcodes/${filterText}/autocomplete`,
-      );
-      let json = await res.json();
-      return json.result
-        ? json.result.map((d) => ({
-            areacd: d,
-            areanm: d,
-            group: "",
-            postcode: true,
-          }))
-        : [];
-    } else if (filterText.length > 2) {
-      return items
-        .filter((p) => p.areanm.match(new RegExp(`\\b${filterText}`, "i")))
-        .sort(filterSort);
-    }
-    return [];
-  }
-  async function doSelect(e) {
-    if (e?.detail?.group === "Uploaded area") return;
-    if (e.detail.postcode) {
-      let res = await fetch(
-        `https://api.postcodes.io/postcodes/${e.detail.areacd}`,
-      );
-      let json = await res.json();
-      if (json.result) {
-        let oa = await getOAfromLngLat(
-          json.result.longitude,
-          json.result.latitude,
+      try {
+        const res = await fetch(
+          `https://api.postcodes.io/postcodes/${filterText}/autocomplete`
         );
-        if (oa) dispatch("select", await getPlace(oa, "Output area"));
+        const json = await res.json();
+
+        const results = json.result
+          ? json.result.map((d) => ({
+              id: d,
+              label: d,
+              areacd: d,
+              areanm: d,
+              group: "",
+              postcode: true,
+            }))
+          : [];
+
+        populateResults(results);
+        return;
+      } catch (e) {
+        populateResults([]);
+        return;
       }
-    } else {
-      dispatch("select", await getPlace(e.detail.areacd, e.detail.group));
     }
+
+    // Name search
+    if (filterText.length > 2) {
+      const results = items
+        .filter((p) => p.areanm.match(new RegExp(`\\b${filterText}`, "i")))
+        .sort((a, b) => {
+          const fa = startsWithFilter(a.areanm, filterText);
+          const fb = startsWithFilter(b.areanm, filterText);
+          return fa === fb ? 0 : fa ? -1 : 1;
+        })
+        .map((p) => ({
+          id: p.areacd,
+          label: p.areanm,
+          ...p,
+        }));
+
+      populateResults(results);
+      return;
+    }
+
+    // Too short → empty
+    populateResults([]);
   }
 
-  onMount(async () => (items = await getPlaces()));
+  async function handleSelect(event) {
+    const selected = event.detail;
+
+    if (!selected) return;
+
+    // Ignore “Uploaded area”
+    if (selected.group === "Uploaded area") return;
+
+    // Handle postcode special case
+    if (selected.postcode) {
+      const res = await fetch(
+        `https://api.postcodes.io/postcodes/${selected.areacd}`
+      );
+      const json = await res.json();
+
+      if (json.result) {
+        const oa = await getOAfromLngLat(
+          json.result.longitude,
+          json.result.latitude
+        );
+
+        if (oa) {
+          const place = await getPlace(oa, "Output area");
+          dispatch("select", place);
+        }
+      }
+
+      return;
+    }
+
+    // Standard area selection
+    const place = await getPlace(selected.areacd, selected.group);
+    dispatch("select", place);
+  }
+
+  function handleClear() {
+    dispatch("clear",null); // or `dispatch("clear")` if preferred
+  }
+
+  onMount(() => {
+    getPlaces().then((results) => {
+      items = results;
+      options = results.map((item) => ({
+        id: item[idKey],
+        label: item[labelKey],
+        group: item[groupKey],
+      }));
+    });
+  });
 </script>
 
-{#if items}
-  <Select
-    id="select"
+{#if options}
+  <AccessibleSelect
+    {id}
+    {label}
+    {options}
     {mode}
-    idKey="areacd"
-    labelKey="areanm"
-    groupKey="group"
-    {items}
     {placeholder}
-    {listMaxHeight}
+    clearable={isClearable}
+    {labelKey}
+    {groupKey}
+    {loadOptions}
+    autoClear={false}
+    showAllValues={!value}
     bind:value
-    bind:filterText
-    loadOptions={getOptions}
-    on:select={doSelect}
-    on:clear
-    {isClearable}
-    {autoClear}
+    on:change={handleSelect}
+    on:clear={handleClear}
   />
 {/if}

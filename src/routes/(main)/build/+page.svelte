@@ -10,6 +10,8 @@
     Twisty,
     Checkboxes,
     Input,
+    Grid,
+    GridCell,
   } from "@onsvisual/svelte-components";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
@@ -81,7 +83,10 @@
   let nameChangeInputValue;
 
   function handleCheckboxChange(event) {
-    const { id, checked } = event.detail;
+    const { item } = event.detail;
+
+    const id = item.id;
+    const checked = item.checked;
     const topic = topicsAll.find((t) => t.code === id);
 
     if (!topic) return;
@@ -179,7 +184,7 @@
     topics = filterTopics(topicsAll, highestLevel, coverage);
     topicsGrouped = groupTopics(topics);
 
-    $state.name = store.properties.name || "Selected area";
+    $state.name = store.properties.name || "";
 
     $buildstate = {
       ...$buildstate,
@@ -224,13 +229,13 @@
     showChangeName = false;
   }
 
-  function handleSelect(e){
-    e.detail.codes={"oa":e.detail.oa21cds,"lsoa":e.detail.lsoa21cds}
-    $buildstate.comparison=e.detail
+  function handleSelect(e) {
+    e.detail.codes = { oa: e.detail.oa21cds, lsoa: e.detail.lsoa21cds };
+    $buildstate.comparison = e.detail;
   }
 
-  function handleClearSelect(){
-    $buildstate.comparison=null
+  function handleClearSelect() {
+    $buildstate.comparison = null;
   }
 </script>
 
@@ -250,11 +255,8 @@
       ]}
     />
 
-    <Container width="wider">
-      <h2>Area profile</h2>
-    </Container>
     <!-- <Titleblock width="wider" title={$buildstate.name}></Titleblock> -->
-    <Titleblock width="wider" title="" />
+    <Titleblock cls="build-titleblock" width="wider" title="Area profile{$state.name ? ` for ${$state.name}` : ''}" />
     <Container width="wider">
       {#if showChangeName}
         <Input
@@ -262,11 +264,10 @@
           hideLabel
           label="Enter area name"
         />
-        <div style="height:16px;" />
-        <Button variant="secondary" on:click={cancelChangeName}>Cancel</Button>
-        <Button variant="primary" on:click={saveNameChange}>Save</Button>
+        <Button variant="secondary" small on:click={cancelChangeName}>Cancel</Button>
+        <Button variant="primary" small on:click={saveNameChange}>Save</Button>
       {:else if showChangeName == false}
-        <Button variant="secondary" on:click={handleChangeName}
+        <Button variant="secondary" small on:click={handleChangeName}
           >Change area name</Button
         >
       {/if}
@@ -287,14 +288,15 @@
       style="width:100%"
     >
       <div class="ons-u-mb-s" style="width:100%">
-        <p class="font-bold" style="margin-bottom:0">Select comparison area</p>
-        <div>
+        <div class="ons-u-mb-s">
           <Select
+            id="comparison-search"
             value={$buildstate.comparison}
             autoClear={false}
             isClearable
             on:select={handleSelect}
             on:clear={handleClearSelect}
+            label="Select comparison area"
           />
         </div>
       </div>
@@ -307,14 +309,14 @@
         bind:checked={showMapInProfile}
         compact
       ></Checkbox>
-
-      <Checkbox
-        id="includecomp"
-        label="Include comparison on map"
-        bind:checked={includecomp}
-        compact
-      ></Checkbox>
-
+      {#if showMapInProfile}
+        <Checkbox
+          id="includecomp"
+          label="Include comparison on map"
+          bind:checked={includecomp}
+          compact
+        ></Checkbox>
+      {/if}
       <hr class="hr-full" />
       <div
         style="display: flex;justify-content: space-between;align-items:center;"
@@ -325,25 +327,23 @@
           class="btn-link"
           style="margin-bottom:-4px"
           aria-label="Show all datasets"
+          small
           on:click={handleDatasetsShowAllClick}
           >{$buildstate.showAllDatasets ? "Hide all" : "Show all"}</button
         >
       </div>
-
       {#each Object.entries(topicsGrouped).sort() as [topic, items], i}
         <Twisty title={topic} open={$buildstate.showAllDatasets || i == 0}>
-          <Checkboxes on:change={handleCheckboxChange}>
-            {#each items as item}
-              <Checkbox
-                id={item.code}
-                label={item.label}
-                value={item.code}
-                compact
-                checked={currentTopics.some((t) => t.code === item.code)}
-                on:change={handleCheckboxChange}
-              ></Checkbox>
-            {/each}
-          </Checkboxes>
+          {#each items as item}
+            <Checkbox
+              id={item.code}
+              label={item.label}
+              value={item.code}
+              compact
+              checked={currentTopics.some((t) => t.code === item.code)}
+              on:change={handleCheckboxChange}
+            ></Checkbox>
+          {/each}
         </Twisty>
         <hr class="hr-full" />
       {/each}
@@ -404,42 +404,42 @@
 
       <div id="embed" />
       <hr class="hr-full" />
-      <div class="button-container no-margin-left">
-        <Button variant="primary" on:click={showEmbed}
+      <Grid width="full">
+        <GridCell>
+          <Button variant="primary" small on:click={showEmbed}
           >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
-        <Button variant="primary" on:click={downloadData}
+        </GridCell>
+        <GridCell><Button variant="primary" small on:click={downloadData}
           >Download data (CSV)</Button
-        >
-        <Button variant="primary" on:click={savePNG(pymParent)}
+        ></GridCell>
+        <GridCell> <Button variant="primary" small on:click={savePNG(pymParent)}
           >Save as image (PNG)</Button
-        >
-        <Button
+        ></GridCell>
+        <GridCell> <Button
           variant="primary"
+          small
           on:click={() =>
             document.getElementById("iframe").contentWindow.print()}
         >
           Print profile
-        </Button>
-        <br />
+        </Button></GridCell>
+      </Grid>
+      
+
         {#if embedHash && $buildstate.showEmbed}
           <p style:margin-bottom={0}>Embed code</p>
           <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
-          <Button variant="secondary" on:click={copyEmbed(embedHash)}
+          <Button variant="secondary" small on:click={copyEmbed(embedHash)}
             >Copy embed code</Button
           >
         {/if}
-      </div>
+      
     </div>
   </div>
 </Container>
 
 <style>
-  .button-container {
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 10px; /* Adjust spacing */
-  }
 
   :global(#lmap) {
     filter: invert(0.9);
@@ -484,9 +484,16 @@
 
   .area-map-container {
     position: absolute;
+    display: none;
     top: 0;
-    min-width: 50%;
+    width: 40%;
+    max-width: 440px;
     right: 0;
+  }
+  @media (min-width: 640px) {
+    .area-map-container {
+      display: block;
+    }
   }
 
   .fade {
@@ -498,7 +505,7 @@
       rgba(255, 255, 255, 0),
       var(--background, #f5f5f5)
     );
-    z-index: 1000;
+    z-index: 1;
   }
 
   .header-div {
@@ -507,5 +514,16 @@
 
   textarea {
     width: 100%;
+  }
+
+  :global(.build-titleblock h1) {
+    display: block;
+    font-size: 36px;
+    z-index: 2;
+    width: 60vw;
+    min-width: 350px;
+  }
+  :global(.build-titleblock .ons-hero__details) {
+    padding-bottom: 0;
   }
 </style>

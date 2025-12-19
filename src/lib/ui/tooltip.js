@@ -1,4 +1,5 @@
 import Tooltip from './Tooltip.svelte';
+import { mount } from "svelte";
 
 export default function tooltip(element) {
 	let title;
@@ -14,15 +15,15 @@ export default function tooltip(element) {
 		let y = pos.bottom;
 		let x = (pos.left + pos.right) / 2;
 
-		tooltipComponent = new Tooltip({
-			props: {
-				title: title,
-				x: x,
-				y: y - body.y,
-				width: body.width
-			},
-			target: document.body,
-		});
+		tooltipComponent = mount(Tooltip, {
+        			props: {
+        				title: title,
+        				x: x,
+        				y: y - body.y,
+        				width: body.width
+        			},
+        			target: document.body,
+        		});
 	}
 	function mouseOut() {
 		tooltipComponent.$destroy();

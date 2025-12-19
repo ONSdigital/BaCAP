@@ -105,8 +105,7 @@
     height: calc(100vh - 94px);
     width:100%;
   }
-
-  :global(*) {
+  .draw-page-container :global(*) {
     font-size: 0.875rem;
   }
 </style>
