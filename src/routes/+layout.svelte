@@ -1,6 +1,6 @@
 <script>
-  import "$lib/css/app.css";
   import "@onsvisual/svelte-components/css/main.css";
+  import "$lib/css/app.css";
   import AnalyticsBanner from "$lib/layout/AnalyticsBanner.svelte";
   import ONSHeader from "$lib/layout/ONSHeader.svelte";
   import ONSFooter from "$lib/layout/ONSFooter.svelte";

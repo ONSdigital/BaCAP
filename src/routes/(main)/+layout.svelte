@@ -1,6 +1,4 @@
 <script>
-  import "$lib/css/app.css";
-  import "@onsvisual/svelte-components/css/main.css";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { centroids } from "$lib/stores/mapstore.js";

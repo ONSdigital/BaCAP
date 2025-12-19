@@ -61,8 +61,8 @@
         </p> -->
       </Section>
       <!-- <Section width="wide" background="#f5f5f5"> -->
-      <Cards>
-        <Card title="Step 1 - Select an area">
+      <Cards width="medium" colWidth="wide">
+        <Card title="Step 1 - Select an area" mode="featured">
           <p>There are four ways to select an area:</p>
           <ol>
             <li>Search for an area in the search box.</li>
@@ -76,7 +76,7 @@
           </p>
         </Card>
 
-        <Card title="Step 2 - Build a profile for the area">
+        <Card title="Step 2 - Build a profile for the area" mode="featured">
           <p>
             Once you have selected your area, choose which datasets you want for
             your profile.

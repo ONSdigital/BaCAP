@@ -184,7 +184,7 @@
     topics = filterTopics(topicsAll, highestLevel, coverage);
     topicsGrouped = groupTopics(topics);
 
-    $state.name = store.properties.name || "Selected area";
+    $state.name = store.properties.name || "";
 
     $buildstate = {
       ...$buildstate,
@@ -255,11 +255,8 @@
       ]}
     />
 
-    <Container width="wider">
-      <h2>Area profile</h2>
-    </Container>
     <!-- <Titleblock width="wider" title={$buildstate.name}></Titleblock> -->
-    <Titleblock width="wider" title="" />
+    <Titleblock cls="build-titleblock" width="wider" title="Area profile{$state.name ? ` for ${$state.name}` : ''}" />
     <Container width="wider">
       {#if showChangeName}
         <Input
@@ -267,11 +264,10 @@
           hideLabel
           label="Enter area name"
         />
-        <div style="height:16px;" />
-        <Button variant="secondary" on:click={cancelChangeName}>Cancel</Button>
-        <Button variant="primary" on:click={saveNameChange}>Save</Button>
+        <Button variant="secondary" small on:click={cancelChangeName}>Cancel</Button>
+        <Button variant="primary" small on:click={saveNameChange}>Save</Button>
       {:else if showChangeName == false}
-        <Button variant="secondary" on:click={handleChangeName}
+        <Button variant="secondary" small on:click={handleChangeName}
           >Change area name</Button
         >
       {/if}
@@ -331,6 +327,7 @@
           class="btn-link"
           style="margin-bottom:-4px"
           aria-label="Show all datasets"
+          small
           on:click={handleDatasetsShowAllClick}
           >{$buildstate.showAllDatasets ? "Hide all" : "Show all"}</button
         >
@@ -409,18 +406,19 @@
       <hr class="hr-full" />
       <Grid width="full">
         <GridCell>
-          <Button variant="primary" on:click={showEmbed}
+          <Button variant="primary" small on:click={showEmbed}
           >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
         </GridCell>
-        <GridCell><Button variant="primary" on:click={downloadData}
+        <GridCell><Button variant="primary" small on:click={downloadData}
           >Download data (CSV)</Button
         ></GridCell>
-        <GridCell> <Button variant="primary" on:click={savePNG(pymParent)}
+        <GridCell> <Button variant="primary" small on:click={savePNG(pymParent)}
           >Save as image (PNG)</Button
         ></GridCell>
         <GridCell> <Button
           variant="primary"
+          small
           on:click={() =>
             document.getElementById("iframe").contentWindow.print()}
         >
@@ -432,7 +430,7 @@
         {#if embedHash && $buildstate.showEmbed}
           <p style:margin-bottom={0}>Embed code</p>
           <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
-          <Button variant="secondary" on:click={copyEmbed(embedHash)}
+          <Button variant="secondary" small on:click={copyEmbed(embedHash)}
             >Copy embed code</Button
           >
         {/if}
@@ -486,9 +484,16 @@
 
   .area-map-container {
     position: absolute;
+    display: none;
     top: 0;
-    min-width: 50%;
+    width: 40%;
+    max-width: 440px;
     right: 0;
+  }
+  @media (min-width: 640px) {
+    .area-map-container {
+      display: block;
+    }
   }
 
   .fade {
@@ -500,7 +505,7 @@
       rgba(255, 255, 255, 0),
       var(--background, #f5f5f5)
     );
-    z-index: 1000;
+    z-index: 1;
   }
 
   .header-div {
@@ -509,5 +514,16 @@
 
   textarea {
     width: 100%;
+  }
+
+  :global(.build-titleblock h1) {
+    display: block;
+    font-size: 36px;
+    z-index: 2;
+    width: 60vw;
+    min-width: 350px;
+  }
+  :global(.build-titleblock .ons-hero__details) {
+    padding-bottom: 0;
   }
 </style>
