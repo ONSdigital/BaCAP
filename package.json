@@ -4,8 +4,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"debug": "vite dev --debug",
-		"build": "vite build",
-		"build:prod": "cross-env APP_PATH=ons vite build && node ./scripts/js-fix",
+		"build:preview": "vite build",
+		"build": "cross-env APP_PATH=ons vite build && node ./scripts/js-fix",
 		"buildgit": "vite build && cp -r build docs",
 		"compress-oa-data": "node ./scripts/compress-oa-data",
 		"start": "vite preview",
