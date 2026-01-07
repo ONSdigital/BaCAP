@@ -25,6 +25,7 @@
     constituencies.</label
   >
   <Select
+    id="area-search"
     autoClear={false}
     placeholder="Type an area name or postcode"
     listMaxHeight={130}
