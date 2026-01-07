@@ -142,7 +142,7 @@
 
   const dispatch = createEventDispatcher();
 
-  export let id = "";
+  export let id = "select";
   export let idKey = "areacd";
   export let labelKey = "areanm";
   export let groupKey = "group";
