@@ -14,6 +14,7 @@ export let state;
 export let radius=0.5;
 
 $:updateLocalStorage($state.name)
+$:console.log({radius})
 </script>
 
 <div style="z-index:99;position:relative;pointer-events:none;">
