@@ -1,5 +1,5 @@
 import Tooltip from './Tooltip.svelte';
-import { mount } from "svelte";
+import { mount, unmount } from "svelte";
 
 export default function tooltip(element) {
 	let title;
@@ -26,7 +26,7 @@ export default function tooltip(element) {
         		});
 	}
 	function mouseOut() {
-		tooltipComponent.$destroy();
+		unmount(tooltipComponent);
 		// NOTE: restore the `title` attribute
 		element.setAttribute('title', title);
 	}
@@ -36,7 +36,7 @@ export default function tooltip(element) {
 
 	return {
 		destroy() {
-			if (tooltipComponent) tooltipComponent.$destroy();
+			if (tooltipComponent) unmount(tooltipComponent);
 			element.removeEventListener('mouseover', mouseOver);
 			element.removeEventListener('mouseout', mouseOut);
 		}
