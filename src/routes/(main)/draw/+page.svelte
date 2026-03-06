@@ -78,9 +78,7 @@
   } //endinit
 
   onMount(init);
-  $: console.log("radius", $radiusInKm);
 
-  // $:console.log('selected',$selected)
 </script>
 
 <div class="draw-page-container">
