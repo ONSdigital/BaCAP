@@ -85,7 +85,7 @@
       showMapInProfile = props.showMap;
       compGeojson = props.comppoly;
       population = props.population;
-      tables = props.tabs;
+      tables = props.tabs.map(t => ({...t, data: t.data.filter(d => d.value)}));
       stats = props.stats;
       makeTopicsLookup();
     }
@@ -110,6 +110,8 @@
     pymChild.onMessage("makePNG", makePNG);
     update();
   });
+
+  $: console.log(tables);
 </script>
 
 <svelte:window on:hashchange={update} />

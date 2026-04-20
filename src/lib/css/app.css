@@ -431,3 +431,7 @@ input.input-text:focus {
 label.label-disabled {
   color: #777;
 }
+
+mark {
+	background: var(--highlightColor, lightgrey);
+}

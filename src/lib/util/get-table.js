@@ -5,7 +5,7 @@ import { centroids } from "$lib/stores/mapstore";
 import { get } from 'svelte/store';
 
 function makeUrl(table, tableCode, codes, comp) {
-  let url = `https://www.nomisweb.co.uk/api/v01/dataset/${tableCode}.data.csv?geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
+  let url = `https://www.nomisweb.co.uk/api/v01/dataset/${tableCode}.data.csv?geography=MAKE|MyCustomArea|${codes.join(";")},MAKE|ComparisonArea|${comp.join(";")}&${table.cellCode}=${makeCells(table)}&measures=${table.measures}&select=geography_name,${table.cellCode}_name,obs_value`;
 
   // Check if table.cellCode is not 'date', then add date=latest
   if (table.date) {
