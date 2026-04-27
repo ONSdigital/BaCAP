@@ -1,7 +1,7 @@
 <script>
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import Map from "$lib/charts/Map.svelte";
-  import "$lib/css/maplibre-gl.css";
+  import "maplibre-gl/dist/maplibre-gl.css";
   import { onMount } from "svelte";
   import {
     mapObject,

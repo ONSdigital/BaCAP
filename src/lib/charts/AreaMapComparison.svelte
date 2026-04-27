@@ -1,6 +1,6 @@
 <script>
 	import maplibre from "maplibre-gl";
-	import "$lib/css/maplibre-gl.css";
+	import "maplibre-gl/dist/maplibre-gl.css";
 	import bbox from "@turf/bbox";
 	import { onMount } from "svelte";
 	import { base } from "$app/paths";
