@@ -106,7 +106,7 @@ aside.topics-box select {
   }
 }
 
-nav {
+nav:not(.ons-table-of-contents) {
   position: relative;
   display: flex;
   flex-direction: row;

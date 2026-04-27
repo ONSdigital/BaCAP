@@ -9,8 +9,8 @@
 <style>
     .header-image {
 		position: absolute;
-		top: 0;
-		right:-200px;
+		top: -52px;
+		right:-150px;
         height: 100%;
 	}
 	@media (max-width: 1000px) {

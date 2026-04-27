@@ -101,12 +101,10 @@ async function setConfirmed(type = 'oa') {
         <ToolControl id="search">
           <Select label="Use the search to select an area to apply it to the map." id="draw-page-search" on:select={doSelect}/>
         </ToolControl>
-        
       </ToolControls>
     </Toolbar>
 
     <Toolbar>
- 
       <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
@@ -150,7 +148,6 @@ async function setConfirmed(type = 'oa') {
               {#if confirmed.lsoa}<Icon type="tick" marginLeft/>{/if}
             </div>
           </div>
-          
         </ToolControl>
       </ToolControls>
     </Toolbar>
@@ -166,7 +163,13 @@ async function setConfirmed(type = 'oa') {
     />
 <style>
   p {
-   margin:0;
+   margin: 0;
+   line-height: 1.4;
+   box-sizing: border-box;
+  }
+
+  img {
+    margin-top: 12px;
   }
 
   .clipboard-label {
@@ -184,6 +187,10 @@ async function setConfirmed(type = 'oa') {
 
   :global(#nameinput.ons-input.ons-input--text.ons-input-type__input) {
     width: 100%;
+  }
+
+  :global(.button-group) {
+    margin-top: 8px;
   }
 </style>
 

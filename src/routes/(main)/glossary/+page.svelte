@@ -51,7 +51,7 @@
 <NavSections contentsLabel="Topics" marginTop>
   {#each topics as topic, i}
     <NavSection title={topic.label}>
-      <div>
+      <div class="indicator-item">
         {#each topic.indicators as ind}
           <h3 id={ind.code} class="ons-u-mt-m">{ind.label}</h3>
           {#if ind.descLong}
@@ -70,6 +70,13 @@
 </NavSections>
 
 <style>
+  .indicator-item h3 {
+    font-size: 1em;
+    margin: 1.2em 0 .5em !important;
+  }
+  .indicator-item :global(p), .indicator-item :global(li) {
+    margin-bottom: .5em;
+  }
   .hr-full {
     margin-bottom: .5em;
   }

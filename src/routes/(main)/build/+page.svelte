@@ -245,13 +245,12 @@
     <Breadcrumb
       width="wider"
       links={[
-        { label: "Home", href: "https://www.ons.gov.uk/", refresh: true },
+        { label: "Home", href: "/", refresh: true },
         {
           label: "Build a custom area profile",
           href: `${base}/`,
           refresh: true,
-        },
-        { label: "Edit map", href: `${base}/draw/` },
+        }
       ]}
     />
 
@@ -267,6 +266,9 @@
         <Button variant="secondary" small on:click={cancelChangeName}>Cancel</Button>
         <Button variant="primary" small on:click={saveNameChange}>Save</Button>
       {:else if showChangeName == false}
+        <Button small icon="arrow" iconRotation={180} href={`${base}/draw/`}
+          >Edit area</Button
+        >
         <Button variant="secondary" small on:click={handleChangeName}
           >Change area name</Button
         >
