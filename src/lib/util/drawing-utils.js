@@ -139,16 +139,16 @@ export async function initDraw() {
   });
 
   Draw = new MapboxDraw({
-    draw: ['draw_polygon'],
+    // draw: ['draw_polygon'],
     displayControlsDefault: false,
-    controls: {
-      polygon: false,
-      trash: false,
-    },
-    userProperties: true,
+    // controls: {
+    //   polygon: false,
+    //   trash: false,
+    // },
+    // userProperties: true,
   });
 
-  map.addControl(Draw, 'top-right');
+  map.addControl(Draw);
   map.on('draw.selectionchange', drawPoly);
   Draw.deleteAll();
   async function drawPoly(e) {
@@ -180,6 +180,13 @@ export async function initDraw() {
     cursor();
     if (dt === 'polygon') {
       Draw.changeMode('draw_polygon', {});
+    }
+  });
+
+  map.on('sourcedata', (e) => {
+    if (e?.sourceId === 'mapbox-gl-draw-hot') {
+      console.log(map.getStyle().layers.filter(l => l.source === e.sourceId));
+      console.log(map.getSource(e.sourceId));
     }
   });
 
