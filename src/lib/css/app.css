@@ -57,11 +57,6 @@ button:focus {
   border-color: #666;
 }
 
-h2:not(.ons-details__title) {
-  font-size: 1.3em;
-  margin: 20px 0 5px;
-}
-
 main {
   position: relative;
   display: flex;
