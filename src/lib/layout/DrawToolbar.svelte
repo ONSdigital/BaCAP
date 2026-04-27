@@ -1,6 +1,6 @@
 <script>
-import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, loadGeo, setEraseMode, doSelect, copyOAsToClipboard } from "$lib/config/toolbar"; 
-import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, HelpModal, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
+import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, loadGeo, setEraseMode, doSelect, copyAreasToClipboard } from "$lib/config/toolbar"; 
+import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, Icon, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
 import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
 import Select from "$lib/ui/Select.svelte";
@@ -14,6 +14,14 @@ export let state;
 export let radius=0.5;
 
 $:updateLocalStorage($state.name)
+
+let confirmed = {oa: false, lsoa: false};
+
+async function setConfirmed(type = 'oa') {
+  confirmed[type] = true;
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  confirmed[type] = false;
+}
 </script>
 
 <div style="z-index:99;position:relative;pointer-events:none;">
@@ -113,23 +121,33 @@ $:updateLocalStorage($state.name)
       <ToolbarButton id="getstarted" custom label="Get started">
         <p>Once you are happy with the area shape, you can start choosing from a wide variety of datasets to build your area profile.</p>
         <div slot="custom">
-          <Button disabled={!$selected[$selected.length - 1].oa.size > 0} small on:click={buildProfile}>Build profile</Button>
+          <Button disabled={!$selected[$selected.length - 1].oa.size > 0} icon="arrow" iconPosition="after" small on:click={buildProfile}>Build profile</Button>
         </div>
       </ToolbarButton>
       <ToolControls slot="controls">
         <ToolControl id="download">
-          <div style="width: 250px;">
-            <Input bind:value={$state.name} id="nameinput" label="Name your area"/>
-            <div class='ons-u-mt-xs'>           
-              <Button variant="primary" icon="download" on:click={() => downloadArea($state)}>Download GeoJSON file</Button>
-            </div>
-            <div>
-              <p>You can also copy a list of output area codes.</p>
-              <textarea>{Array.from($selected[$selected.length-1].oa)
-                .map(item => `"${item}"`)
-                .join(', ')}
-              </textarea>
-              <Button variant="secondary" on:click={copyOAsToClipboard}>Copy areas codes</Button>
+          <div id="download-toolbar" style="width: 250px;">
+            <Input bind:value={$state.name} id="nameinput" label="Name your area to download"/>
+            <Button variant="primary" small icon="download" on:click={() => downloadArea($state)}>Download GeoJSON file</Button>
+            <div id="copy-area-codes">
+              <p class="clipboard-label ons-u-fs-r--b">Copy best-fit area codes</p>
+              <!-- <textarea>{Array.from($selected[$selected.length-1].oa)
+                .join(',')}
+              </textarea> -->
+              <Button variant="secondary" small icon="copy" on:click={async () => {
+                const hasCopied = copyAreasToClipboard('oa');
+                if (hasCopied) setConfirmed('oa');
+                }}>Copy Output Area codes</Button>
+              {#if confirmed.oa}<Icon type="tick" marginLeft/>{/if}
+              <br/>
+              <!-- <textarea>{Array.from($selected[$selected.length-1].lsoa)
+                .join(',')}
+              </textarea> -->
+              <Button variant="secondary" small icon="copy" on:click={async () => {
+                const hasCopied = copyAreasToClipboard('lsoa');
+                if (hasCopied) setConfirmed('lsoa');
+                }}>Copy LSOA codes</Button>
+              {#if confirmed.lsoa}<Icon type="tick" marginLeft/>{/if}
             </div>
           </div>
           
@@ -149,6 +167,19 @@ $:updateLocalStorage($state.name)
 <style>
   p {
    margin:0;
+  }
+
+  .clipboard-label {
+    line-height: 1.4;
+    margin: 1em 0;
+  }
+
+  #download-toolbar :global(button) {
+    margin-bottom: 8px;
+  }
+
+  #copy-area-codes :global(.ons-icon) {
+    color: var(--ons-color-success);
   }
 
   :global(#nameinput.ons-input.ons-input--text.ons-input-type__input) {

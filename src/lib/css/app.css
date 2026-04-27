@@ -428,6 +428,10 @@ input.input-text:focus {
   margin-bottom: 3px;
 }
 
+.toolbar-button-wrapper > button {
+  margin: 0;
+}
+
 label.label-disabled {
   color: #777;
 }
