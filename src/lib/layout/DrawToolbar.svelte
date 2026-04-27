@@ -121,7 +121,7 @@ $:updateLocalStorage($state.name)
           <div style="width: 250px;">
             <Input bind:value={$state.name} id="nameinput" label="Name your area"/>
             <div class='ons-u-mt-xs'>           
-              <Button variant="primary" icon="download" on:click={downloadArea($state)}>Download GeoJSON file</Button>
+              <Button variant="primary" icon="download" on:click={() => downloadArea($state)}>Download GeoJSON file</Button>
             </div>
             <div>
               <p>You can also copy a list of output area codes.</p>
