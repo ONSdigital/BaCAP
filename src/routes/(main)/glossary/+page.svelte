@@ -2,67 +2,75 @@
   import topicsAll from "$lib/config/topics.json";
   import { base } from "$app/paths";
   import {
-    Theme,
     Breadcrumb,
-    Container,
+    Icon,
     Titleblock,
+    NavSections,
+    NavSection,
   } from "@onsvisual/svelte-components";
-  import { isDatasetAvailableInVersion,getDatasetForVersion } from "$lib/util/topic-functions";
-  import {version} from "$lib/stores/mapstore.js";
+  import {
+    isDatasetAvailableInVersion,
+    getDatasetForVersion,
+  } from "$lib/util/topic-functions";
+  import { version } from "$lib/stores/mapstore.js";
   import { get } from "svelte/store";
 
-</script>
-
-<Theme theme="light" background="#F5F5F6">
-  <div class="header-div">
-    <Breadcrumb
-      width="wider"
-      links={[
-        { label: "Home", href: "https://www.ons.gov.uk/", refresh: true },
-        {
-          label: "Build a custom area profile",
-          href: `${base}/`,
-          refresh: true,
-        },
-        { label: "Area profile", href: `${base}/build/` },
-      ]}
-    />
-    <Container width="wider">
-      <h2>Datasets</h2>
-    </Container>
-    <Titleblock width="wider" title="Glossary" />
-  </div>
-</Theme>
-<Container width="wider" marginTop>
-  <div class="ons-grid ons-grid-flex">
-    <div class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink">
-      <h3>Topics</h3>
-      {#each topicsAll.filter(d => isDatasetAvailableInVersion(d, get(version))).map(d => getDatasetForVersion(d, get(version))).sort((a, b) => a.label.localeCompare(b.label)) as topic}
-        <!-- <Button href={`${base}/glossary#${topic.code}`}>{topic.label}</Button> -->
-        <div><a class="btn-link" href={`${base}/glossary#${topic.code}`}>{topic.label}</a></div><br/>
-      {/each}
-    </div>
-    <div class="ons-grid__col ons-col-9@m">
-      {#each topicsAll.filter(d => isDatasetAvailableInVersion(d, get(version))).map(d => getDatasetForVersion(d, get(version))).sort((a, b) => a.label.localeCompare(b.label)) as topic}
-        <p id={topic.code} class="bold">{topic.label}</p>
-        {#if topic.descLong}
-            {@html topic.descLong}
-        {:else}
-            <p>{topic.desc}</p>
-        {/if}
-        {#if topic.url}<a class="btn-link" href={`/${topic.url}`} target="_blank">Read more</a>{/if}
-        <hr class="hr-full">
-      {/each}
-    </div>
-  </div>
-</Container>
-<style>
-  .bold {
-    font-weight: bold;
+  function groupTopics(indicators) {
+    const filtered = indicators
+      .filter((d) => isDatasetAvailableInVersion(d, get(version)))
+      .map((d) => getDatasetForVersion(d, get(version)))
+      .sort((a, b) => a.label.localeCompare(b.label));
+    const topics = {};
+    for (const ind of filtered) {
+      if (!topics[ind.topic]) topics[ind.topic] = [];
+      topics[ind.topic].push(ind);
+    }
+    return Object.entries(topics).map((entry) => ({
+      label: entry[0],
+      indicators: entry[1],
+    })).sort((a, b) => a.label.localeCompare(b.label));;
   }
 
-  p.bold{
-    margin-top:16px;
-    margin-bottom: 28px;
+  $: topics = groupTopics(topicsAll);
+</script>
+
+<Breadcrumb
+  theme="grey"
+  links={[
+    { label: "Home", href: "/", refresh: true },
+    {
+      label: "Build a custom area profile",
+      href: `${base}/`,
+      refresh: true,
+    },
+  ]}
+/>
+<Titleblock theme="grey" title="Glossary">
+  <p>A description of all the datasets available within the <a href="{base}/">Build a Custom Area Profile tool</a>.</p>
+</Titleblock>
+<NavSections contentsLabel="Topics" marginTop>
+  {#each topics as topic, i}
+    <NavSection title={topic.label}>
+      <div>
+        {#each topic.indicators as ind}
+          <h3 id={ind.code} class="ons-u-mt-m">{ind.label}</h3>
+          {#if ind.descLong}
+            {@html ind.descLong}
+          {:else}
+            <p>{ind.desc}</p>
+          {/if}
+          {#if ind.url}<a class="btn-link" href={`/${ind.url}`} target="_blank"
+              >Read more <Icon type="chevron" size="s" /></a
+            >{/if}
+        {/each}
+      </div>
+    </NavSection>
+    {#if i !== topics.length - 1}<hr class="hr-full" />{/if}
+  {/each}
+</NavSections>
+
+<style>
+  .hr-full {
+    margin-bottom: .5em;
   }
 </style>
