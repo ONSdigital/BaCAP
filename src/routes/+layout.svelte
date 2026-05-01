@@ -2,12 +2,8 @@
   import "@onsvisual/svelte-components/css/main.css";
   import "$lib/css/app.css";
   import AnalyticsBanner from "$lib/layout/AnalyticsBanner.svelte";
-  import ONSHeader from "$lib/layout/ONSHeader.svelte";
-  import ONSFooter from "$lib/layout/ONSFooter.svelte";
-  // import Title from "$lib/layout/Title.svelte";
-  import { Footer } from "@onsvisual/svelte-components";
+  import { PhaseBanner, Header, Footer } from "@onsvisual/svelte-components";
   import { page } from "$app/stores";
-
 
   // GOOGLE ANALYTICS
   // Settings for page analytics. Values must be shared with <AnalyticsBanner> component
@@ -18,14 +14,13 @@
     contentType: "exploratory",
     outputSeries: "buildacustomareaprofile",
   };
+
+  $: pageWidth = $page.url.pathname.includes("draw") ? "full" : $page.url.pathname.includes("build") ? "wider" : "wide";
 </script>
 
 <svelte:head>
   <title>Build a custom area profile - ONS</title>
-  <meta
-    property="og:title"
-    content="Build a custom area profile - ONS"
-  />
+  <meta property="og:title" content="Build a custom area profile - ONS" />
   <meta property="og:type" content="website" />
   <meta
     property="og:url"
@@ -47,24 +42,18 @@
   />
 </svelte:head>
 {#if $page.url.pathname.includes("embed")}
-  <slot />  
+  <slot />
 {:else}
-  <div class="ons-grid--flex ons-grid--column">
-    {#if !$page.url.pathname.includes("landing")}
-    <div>
-      <AnalyticsBanner {analyticsId} {analyticsProps} />
-    <header>
-      <ONSHeader />
-    </header>
-    </div>
-    {/if}
-    <div class="ons-u-flex-grow">
-      <main id="main">
-          <slot />
-      </main>
-    </div>
-  </div>
+  {#if !$page.url.pathname.includes("landing")}
+    <AnalyticsBanner {analyticsId} {analyticsProps} />
+    <PhaseBanner width={pageWidth} phase="Beta" href="https://consultations.ons.gov.uk/digital-publishing/2ff010d4/consultation/intro/"/>
+    <Header width={pageWidth} compact={$page.url.pathname.includes("draw")} legacy={false} />
+  {/if}
+  <main id="main">
+    <slot />
+  </main>
 {/if}
 
-
-
+{#if !['draw', 'landing', 'embed'].some(term => $page.url.pathname.includes(term))}
+  <Footer width={pageWidth} />
+{/if}

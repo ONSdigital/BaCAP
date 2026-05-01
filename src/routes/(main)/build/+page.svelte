@@ -108,6 +108,7 @@
 
     // resume as normal
     store = JSON.parse(localStorage.getItem("onsbuild"));
+    console.log({store})
 
     if (!store) {
       alert("Warning, no area selected! Redirecting to the drawing page.");
@@ -278,8 +279,8 @@
 
   <div class="area-map-container">
     <div class="fade" />
-    {#if geojson}
-      <AreaMap name={$state.name} comp={null} {geojson} />
+    {#if store}
+      <AreaMap name={$state.name} comp={null} geojson={store.geojson.geometry} />
     {/if}
   </div>
 </Theme>
@@ -390,11 +391,11 @@
                 values between Census topics and non-Census datasets because
                 these best-fit shapes will have different boundaries.
               </p>
-              {#if store.properties.oa_all && store.properties.lsoa_all}
+              {#if store.properties.oa_all && store.properties.lsoa_all && store.geojson}
                 <AreaMapComparison
                   name={$state.name}
                   comp={null}
-                  {geojson}
+                  geojson={store.geojson.geometry}
                   oa_all={store.properties.oa_all}
                   lsoa_all={store.properties.lsoa_all}
                 />
