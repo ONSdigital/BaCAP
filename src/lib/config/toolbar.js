@@ -14,8 +14,9 @@ export function doSelect(e) {
   newselect();
   if (e.detail.type == "place") {
     let bbox = e.detail.bbox;
-    let oa = new Set(get(centroids).expand(e.detail.oa21cds,'oa'));
-    let lsoa = new Set(get(centroids).expand(e.detail.lsoa21cds,'lsoa')); 
+    let isEW = e.detail.areacd === "K04000001";
+    let oa = new Set(get(centroids).expand(isEW ? ["E92000001", "W92000004"] : e.detail.oa21cds,'oa'));
+    let lsoa = new Set(get(centroids).expand(isEW ? ["E92000001", "W92000004"] : e.detail.lsoa21cds,'lsoa')); 
     let geometry = e.detail.geometry;
     let geojson = {type: 'Feature', geometry: geometry}
 
@@ -217,22 +218,22 @@ export function loadGeo(uploader) {
       if (b.type == "FeatureCollection") {
         b = b.features[0];
       } else if (b.type == "Geometry") {
-        b = { type: "Feature", geometry: b };
+        b = { type: "Feature", geometry: b, properties: {} };
       } else if (b.type == "Polygon") {
-        b = { type: "Feature", geometry: b };
+        b = { type: "Feature", geometry: b, properties: {} };
       } else if (b.type == "GeometryCollection") {
-        b= { type: "Feature", geometry: b.geometries[0] };
+        b= { type: "Feature", geometry: b.geometries[0], properties: {} };
       }
 
-      if (b.properties && b.properties.codes) {
-        let bb = b.properties.bbox ? b.properties.bbox : bbox(b);
-        let oa = b.properties.codes;
-        let lsoa = b.properties.codes_compressed_to_lsoa
+      if (b.properties && (b.properties.oa21cds || b.properties.codes_compressed)) {
+        let oa = b.properties.oa21cds || b.properties.codes_compressed;
+        let lsoa = b.properties.lsoa21cds || b.properties.codes_compressed_to_lsoa;
+        let bb = b.properties.bounds || b.properties.bbox || bbox(b);
 
         selected.update((sel) => [
           ...sel,
           {
-            oa: new Set(oa),
+            oa: new Set(get(centroids).expand(oa, "oa")),
             lsoa: new Set(get(centroids).expand(lsoa, "lsoa")),
             geo: b,
           },
