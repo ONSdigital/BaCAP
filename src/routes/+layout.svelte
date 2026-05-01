@@ -47,7 +47,7 @@
   {#if !$page.url.pathname.includes("landing")}
     <AnalyticsBanner {analyticsId} {analyticsProps} />
     <PhaseBanner width={pageWidth} phase="Beta" href="https://consultations.ons.gov.uk/digital-publishing/2ff010d4/consultation/intro/"/>
-    <Header width={pageWidth} compact />
+    <Header width={pageWidth} compact={$page.url.pathname.includes("draw")} legacy={false} />
   {/if}
   <main id="main">
     <slot />
