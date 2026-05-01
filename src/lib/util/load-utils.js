@@ -1,5 +1,5 @@
 import { cdnbase } from "$lib/config/geography";
-import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+import { analyticsEvent } from "@onsvisual/svelte-components";
 import { mapObject, centroids, selected, state, user_geometry } from "$lib/stores/mapstore";
 import { newselect, setDrawData } from "$lib/config/toolbar";
 import { get } from "svelte/store";

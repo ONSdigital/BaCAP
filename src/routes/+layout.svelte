@@ -1,7 +1,7 @@
 <script>
   import "@onsvisual/svelte-components/css/main.css";
   import "$lib/css/app.css";
-  import AnalyticsBanner from "$lib/layout/AnalyticsBanner.svelte";
+  import { AnalyticsBanner } from "@onsvisual/svelte-components"
   import { PhaseBanner, Header, Footer } from "@onsvisual/svelte-components";
   import { page } from "$app/stores";
 

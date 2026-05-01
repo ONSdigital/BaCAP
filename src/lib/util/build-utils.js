@@ -1,7 +1,7 @@
 import { mapObject, centroids, selected, state, version } from "$lib/stores/mapstore";
 import { get } from "svelte/store";
 import { buildstate, tables } from "$lib/stores/mapstore";
-import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+import { analyticsEvent } from "@onsvisual/svelte-components";
 import { download, clip } from "$lib/util/functions";
 import { cdnbase } from "$lib/config/geography";
 import topicsAll from "$lib/config/topics.json";
