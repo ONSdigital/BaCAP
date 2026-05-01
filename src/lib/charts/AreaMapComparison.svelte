@@ -12,8 +12,8 @@
 	export let geojson = null;
 	export let compGeojson = null;
 	export let config = {
-		boundary: { color: "#1f8ab0", lineWidth: 2.5, fillOpacity: 0.2 },
-		comp: { color: "rgba(0,0,0,0.5)", lineWidth: 1.5, fillOpacity: 0.1 },
+		boundary: { color: "#1f8ab0", lineWidth: 2.5, fillOpacity: 0 },
+		comp: { color: "rgba(0,0,0,0.5)", lineWidth: 1.5, fillOpacity: 0 },
 	};
 	export let oa_all=[];
 	export let lsoa_all=[];
@@ -52,10 +52,10 @@
 					paint:{
 						"fill-color":layer.colour,
 						"fill-opacity":0.2,
-						"fill-outline-color": 'rgba(0,0,0,1)'
+						"fill-outline-color": 'rgba(0,0,0,0)'
 					},
 					filter:['in', layer.idKey, ...codes[layer.key]]
-				})
+				}, "town names")
 			}
 
 			for (const key of ["boundary", "comp"]) {
@@ -69,7 +69,7 @@
 						"fill-color": config[key].color,
 						"fill-opacity": config[key].fillOpacity,
 					},
-				});
+				}, "town names");
 				map.addLayer({
 					id: `${key}-line`,
 					type: "line",
@@ -79,7 +79,7 @@
 						"line-color": config[key].color,
 						"line-width": config[key].lineWidth,
 					},
-				});
+				}, "town names");
 			}
 		});
 	});
@@ -128,7 +128,7 @@
 					style:color={item.colour}
 				></div>
 				<span class="legend-text-{item.key}"
-					>{item.key=='oa' ? 'Best-fit shape based on output areas' : "Best-fit shape based on lower super output areas"}</span
+					>{item.key=='oa' ? 'Best-fit shape based on Output Areas' : "Best-fit shape based on LSOAs"}</span
 				>
 			</li>
 		{/each}
@@ -140,7 +140,7 @@
 	#map {
 		margin: 0;
 		padding: 0;
-		height: 300px;
+		height: 400px;
 	}
 	ul.legend-block {
 		list-style-type: none;
