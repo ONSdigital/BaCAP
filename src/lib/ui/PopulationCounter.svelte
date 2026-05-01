@@ -45,6 +45,6 @@
   
   <div class="counter">
     <p>Population selected</p>
-    <p class='bigger'>{roundCount(population).toLocaleString("en-GB")}</p>
+    <p class='bigger'>{population.toLocaleString("en-GB")}</p>
   </div>
   
