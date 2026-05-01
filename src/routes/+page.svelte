@@ -71,7 +71,7 @@
     </p>
   </Card>
 
-  <Card title="Step 2 - Build a profile for the area" mode="featured">
+  <Card title="Step 2 - Build a profile" mode="featured">
     <p>
       Once you have selected your area, choose which datasets you want for your
       profile.
