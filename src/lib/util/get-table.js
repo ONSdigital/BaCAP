@@ -75,7 +75,7 @@ function calcPercent(data, table) {
   let dataNew = JSON.parse(JSON.stringify(data));
   dataNew.forEach(d => {
     d.originalValue = d.value;
-    d.count = table.doNotRound ? d.value : roundCount(d.value);
+    d.count = table.roundCount ? roundCount(d.value) : d.value;
     d.percentage = +((d.value / totals[d.areanm]) * 100).toFixed(1);
     d.value = d.percentage;
   });
@@ -106,7 +106,7 @@ function processNomiswebData(data, table) {
     return data.map(d => {
       const count = d.value;
       // Conditionally handle rounding for specific types
-      const processedCount = table.doNotRound ? count : roundCount(count);
+      const processedCount = table.roundCount ? roundCount(count) : count;
         
       return { 
           ...d,

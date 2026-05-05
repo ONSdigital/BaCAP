@@ -134,6 +134,7 @@ function makeTable(data, meta, name, compName) {
       ...compValue ? {[`${compName} (count)`]: compValue.count} : {},
       [`${name} (%)`]: !isSingle ? value.percentage : null,
       ...compValue ? {[`${compName} (%)`]: !isSingle ? compValue.percentage : null} : {},
+      Unit: isSingle ? meta.unit : meta.base.replace("all ", ""),
       "Base population": meta.base,
       "Source": meta.source,
       "Geography": meta.lowestGeography === "lsoa" ? "LSOA" : "Output Area",
