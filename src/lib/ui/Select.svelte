@@ -151,6 +151,7 @@
   export let mode = "search";
   export let isClearable = true;
   export let label;
+  export let autoFocus = false;
 
   // Data and state for select box
   let items;
@@ -276,6 +277,7 @@
     {groupKey}
     {loadOptions}
     autoClear={false}
+    {autoFocus}
     showAllValues={!value}
     bind:value
     on:change={handleSelect}
