@@ -231,7 +231,10 @@
   }
 
   function handleSelect(e) {
-    e.detail.codes = { oa: e.detail.oa21cds, lsoa: e.detail.lsoa21cds };
+    e.detail.codes = {
+      oa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.oa21cds,
+      lsoa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.lsoa21cds
+    };
     $buildstate.comparison = e.detail;
   }
 
