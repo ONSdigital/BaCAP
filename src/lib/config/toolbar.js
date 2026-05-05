@@ -1,7 +1,7 @@
 import { mapObject,drawType, centroids, selected, user_geometry, isLoading, state, pselect, addMode, buildstate } from "$lib/stores/mapstore";
 import { update, simplifyGeo, geoBlob, clearGeo, changeData } from "$lib/util/drawing-utils";
 import bbox from "@turf/bbox";
-import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+import { analyticsEvent } from "@onsvisual/svelte-components";
 import { get } from "svelte/store";
 import { download, clip } from "$lib/util/functions";
 

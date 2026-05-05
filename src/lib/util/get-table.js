@@ -1,6 +1,6 @@
 import { csvParse, autoType } from 'd3-dsv';
 import { roundCount } from '$lib/util/functions';
-import { analyticsEvent } from '$lib/layout/AnalyticsBanner.svelte';
+import { analyticsEvent } from "@onsvisual/svelte-components";
 import { centroids } from "$lib/stores/mapstore";
 import { get } from 'svelte/store';
 
