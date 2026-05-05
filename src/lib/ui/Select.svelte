@@ -2,7 +2,7 @@
   import { base } from "$app/paths";
   import { cdnbase } from "$lib/config/geography";
   import { csvParse, autoType } from "d3-dsv";
-  import { analyticsEvent } from "$lib/layout/AnalyticsBanner.svelte";
+  import { analyticsEvent } from "@onsvisual/svelte-components";
   import Pbf from "pbf";
   import vt from "@mapbox/vector-tile";
   import tb from "@mapbox/tilebelt";
