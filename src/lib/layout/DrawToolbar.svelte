@@ -99,7 +99,7 @@ async function setConfirmed(type = 'oa') {
           </ButtonGroup>
         </ToolControl>
         <ToolControl id="search">
-          <Select label="Use the search to select an area to apply it to the map." id="draw-page-search" on:select={doSelect} autoClear/>
+          <Select label="Use the search to select an area to apply it to the map." id="draw-page-search" on:select={doSelect} autoFocus={true} autoClear/>
         </ToolControl>
       </ToolControls>
     </Toolbar>
