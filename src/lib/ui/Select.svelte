@@ -279,7 +279,6 @@
     {labelKey}
     {groupKey}
     {loadOptions}
-    autoClear={false}
     {autoFocus}
     showAllValues={!value}
     bind:value
