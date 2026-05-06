@@ -167,7 +167,7 @@
     const filterText = query;
 
     // Postcode lookup
-    if (filterText.length > 2 && /^[a-z]{1,2}\d/i.test(filterText)) {
+    if (/^[a-z]{1,2}\d/i.test(filterText)) {
       if (/^[ew]\d{3}/.test(filterText)) {
         populateResults(makeGSScodes(filterText));
         return;
@@ -198,26 +198,21 @@
     }
 
     // Name search
-    if (filterText.length > 2) {
-      const results = items
-        .filter((p) => p.areanm.match(new RegExp(`\\b${filterText}`, "i")))
-        .sort((a, b) => {
-          const fa = startsWithFilter(a.areanm, filterText);
-          const fb = startsWithFilter(b.areanm, filterText);
-          return fa === fb ? 0 : fa ? -1 : 1;
-        })
-        .map((p) => ({
-          id: p.areacd,
-          label: p.areanm,
-          ...p,
-        }));
+    const results = items
+      .filter((p) => p.areanm.match(new RegExp(`\\b${filterText}`, "i")))
+      .sort((a, b) => {
+        const fa = startsWithFilter(a.areanm, filterText);
+        const fb = startsWithFilter(b.areanm, filterText);
+        return fa === fb ? 0 : fa ? -1 : 1;
+      })
+      .map((p) => ({
+        id: p.areacd,
+        label: p.areanm,
+        ...p,
+      }));
 
-      populateResults(results);
-      return;
-    }
-
-    // Too short → empty
-    populateResults([]);
+    populateResults(results);
+    return;
   }
 
   async function handleSelect(event) {
