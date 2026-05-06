@@ -55,15 +55,7 @@
     data.forEach((d) => {
       let geocd = d.areacd.slice(0, 3);
       let geotype = geotypesLookup[geocd];
-      // Fix for 2025 parliamentary constituencies
-      // if (["E14", "W07"].includes(geocd)) {
-      //   if (
-      //     (geocd === "E14" && +d.areacd.slice(3) > 1062) ||
-      //     (geocd === "W07" && +d.areacd.slice(3) > 80)
-      //   )
-      //     geotype = `Future ${geotype.toLowerCase()}`;
-      //   else geotype = `Current ${geotype.toLowerCase()}`;
-      // }
+
       d.group = d.parentcd
         ? `${geotype} in ${lookup[d.parentcd].areanm}`
         : geotype;
@@ -134,6 +126,16 @@
     }
     return geojson;
   }
+
+  function makeGSScodes(str) {
+    if (str.length < 10 && /^[eknsw]\d+$/i.test(str) && str.toUpperCase().slice(0, 3) in geotypesLookup) {
+      if (str.length === 9) return [str.toUpperCase()].map(cd => ({areacd: cd, areanm: cd}));
+      return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        .slice(str.length < 4 || +str.slice(3) === 0 ? 1 : 0)
+        .map(d => `${str.toUpperCase().padEnd(8, "0")}${d}`)
+        .map(cd => ({areacd: cd, areanm: cd}));
+    } else return [];
+  }
 </script>
 
 <script>
@@ -150,6 +152,7 @@
   export let placeholder = "Find an area or postcode";
   export let mode = "search";
   export let isClearable = true;
+  export let autoClear = false;
   export let label;
 
   // Data and state for select box
@@ -164,7 +167,11 @@
     const filterText = query;
 
     // Postcode lookup
-    if (filterText.length > 2 && /\d/.test(filterText)) {
+    if (filterText.length > 2 && /^[a-z]{1,2}\d/i.test(filterText)) {
+      if (/^[ew]\d{3}/.test(filterText)) {
+        populateResults(makeGSScodes(filterText));
+        return;
+      }
       try {
         const res = await fetch(
           `https://api.postcodes.io/postcodes/${filterText}/autocomplete`
@@ -180,12 +187,12 @@
               group: "",
               postcode: true,
             }))
-          : [];
+          : makeGSScodes(filterText);
 
         populateResults(results);
         return;
       } catch (e) {
-        populateResults([]);
+        populateResults(makeGSScodes(filterText));
         return;
       }
     }
@@ -272,10 +279,10 @@
     {mode}
     {placeholder}
     clearable={isClearable}
+    {autoClear}
     {labelKey}
     {groupKey}
     {loadOptions}
-    autoClear={false}
     showAllValues={!value}
     bind:value
     on:change={handleSelect}
