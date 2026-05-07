@@ -43,13 +43,15 @@ export function doSelect(e) {
   setDrawData();
 }
 
-export async function copyAreasToClipboard(type = 'oa') {
-  const latest = get(selected).at(-1);
-  const oas = Array.from(latest[type])
-    .join(',');
+export async function copyAreasToClipboard(codes) {
+  // const latest = get(selected).at(-1);
+  // const oas = Array.from(latest[type])
+  //   .join(',');
+
+  const string = [...codes].join(',')
 
   try {
-    await navigator.clipboard.writeText(oas);
+    await navigator.clipboard.writeText(string);
     console.log('Areas copied to clipboard!'); // Optional success message
     return true;
   } catch {

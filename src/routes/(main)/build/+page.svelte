@@ -12,6 +12,7 @@
     Input,
     Grid,
     GridCell,
+    Icon
   } from "@onsvisual/svelte-components";
   import ONSloader from "$lib/ui/ONSloader.svelte";
   import { goto } from "$app/navigation";
@@ -24,13 +25,14 @@
   import { onMount } from "svelte";
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
+  import { download } from "$lib/util/functions";
+  import { copyAreasToClipboard } from "$lib/config/toolbar"
 
   import {
     getData,
     downloadData,
     makeEmbed,
     copyEmbed,
-    showEmbed,
     handleDatasetsShowAllClick,
     savePNG,
     checkForHashSelection,
@@ -74,6 +76,7 @@
   $buildstate = {
     start: false,
     showEmbed: false,
+    showDownloadOptions: false,
     topics: [],
     compressed: { oa: [""], lsoa: [""] },
     comparison: { oa: ["K04000001"], lsoa: ["K04000001"] },
@@ -134,7 +137,7 @@
   ) {
     if (!start || !$buildstate.compressed) return;
 
-    updateLocalStorage(name);
+    updateLocalStorage(store);
     let codes = topics.map((d) => d.code);
 
     $tables = await getData(filterTopicsByCodes(codes), comparison);
@@ -223,7 +226,8 @@
     showChangeName = false;
     $buildstate.name = nameChangeInputValue;
     $state.name = nameChangeInputValue;
-    updateLocalStorage(nameChangeInputValue);
+    store.properties.name = nameChangeInputValue;
+    updateLocalStorage(store);
   }
 
   function cancelChangeName() {
@@ -241,6 +245,26 @@
   function handleClearSelect() {
     $buildstate.comparison = null;
   }
+
+  function downloadBuildGeoJSON() {
+    if (!store?.geojson) return;
+
+    const fileName = `${store.properties?.name ? store.properties.name.replaceAll(" ", "_") : "custom_area"}.geojson`;
+    const blob = new Blob([JSON.stringify(store.geojson)], {
+      type: "application/json",
+    });
+
+    download(blob, fileName);
+  }
+
+  let confirmed = {oa: false, lsoa: false};
+
+async function setConfirmed(type = 'oa') {
+  confirmed[type] = true;
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  confirmed[type] = false;
+}
+
 </script>
 
 <ONSloader isLoading={$isLoading} />
@@ -408,37 +432,92 @@
         {/if}
       {/if}
 
-      <div id="embed" />
+      <div id="embed"/>
       <hr class="hr-full" />
-      <Grid width="full">
-        <GridCell>
-          <Button variant="primary" small on:click={showEmbed}
+      <div class='button-group'>
+          <Button variant="primary" small icon='chevron' iconRotation={$buildstate.showEmbed ? 90 : 0} 
+          on:click={() => {
+            $buildstate.showEmbed = !$buildstate.showEmbed
+            $buildstate.showDownloadOptions = false
+          }}
           >{$buildstate.showEmbed ? "Hide" : "Show"} embed code</Button
         >
-        </GridCell>
-        <GridCell><Button variant="primary" small on:click={downloadData}
-          >Download data (CSV)</Button
-        ></GridCell>
-        <GridCell> <Button variant="primary" small on:click={savePNG(pymParent)}
-          >Save as image (PNG)</Button
-        ></GridCell>
-        <GridCell> <Button
+        <Button variant="primary" small icon='chevron' iconRotation={$buildstate.showDownloadOptions ? 90 : 0} 
+        on:click={() => {
+          $buildstate.showDownloadOptions = !$buildstate.showDownloadOptions
+          $buildstate.showEmbed = false
+        }}
+        >{$buildstate.showDownloadOptions ? "Hide" : "Show"} download options</Button
+        >
+        <Button
           variant="primary"
           small
+          icon='print'
           on:click={() =>
             document.getElementById("iframe").contentWindow.print()}
         >
           Print profile
-        </Button></GridCell>
-      </Grid>
+        </Button>
+
+    </div>
       
 
         {#if embedHash && $buildstate.showEmbed}
-          <p style:margin-bottom={0}>Embed code</p>
-          <textarea rows="4" readonly>{makeEmbed(embedHash)}</textarea>
-          <Button variant="secondary" small on:click={copyEmbed(embedHash)}
+        <div class='ons-field button-group'>
+          <label class='ons-label' for='embed-textarea'>Embed code</label>
+          <textarea rows="4" readonly class="ons-input ons-input--textarea" id='embed-textarea' >{makeEmbed(embedHash)}</textarea>
+          <Button variant="secondary" small icon='copy' 
+          on:click={() => {
+            copyEmbed(embedHash)
+            setConfirmed("embed")
+            }}
             >Copy embed code</Button
           >
+          {#if confirmed.embed}
+          <Icon type="tick" marginLeft/>{/if}
+          </div>
+        {/if}
+
+        {#if $buildstate.showDownloadOptions}
+        <div class="ons-field button-group">
+          <p class='ons-label'>Download profile</p>
+         <Button variant="primary" small icon='download' on:click={downloadData}
+          >Download data (CSV)</Button>
+        <Button variant="primary" small icon='download' on:click={() => savePNG(pymParent)}
+          >Download image (PNG)</Button>
+        <Button
+          variant="primary"
+          small
+          icon='download'
+          on:click={downloadBuildGeoJSON}
+        >
+          Download geography (GeoJSON)
+        </Button>
+
+       
+        <label class='ons-label' for='oa-textarea'>Output Area codes</label>
+        <textarea rows="2" readonly id='oa-textarea' class="ons-input ons-input--textarea" >{store.properties.oa_all.join(",")}</textarea>
+
+         <Button variant="secondary" small icon="copy" on:click={async () => {
+                const hasCopied = copyAreasToClipboard(store.properties.oa_all);
+                if (hasCopied) setConfirmed('oa');
+                }}>
+                Copy Output Area codes
+          </Button>
+              {#if confirmed.oa}
+          <Icon type="tick" marginLeft/>{/if}
+   
+          <label class='ons-label' for='lsoa-textarea'>LSOA codes</label>
+        <textarea rows="2" readonly id='lsoa-textarea' class="ons-input ons-input--textarea" >{store.properties.lsoa_all.join(",")}</textarea>
+          <Button variant="secondary" small icon="copy" on:click={async () => {
+                const hasCopied = copyAreasToClipboard(store.properties.lsoa_all);
+                if (hasCopied) setConfirmed('lsoa');
+                }}>
+                Copy LSOA codes
+          </Button>
+              {#if confirmed.lsoa}
+          <Icon type="tick" marginLeft/>{/if}
+          </div>
         {/if}
       
     </div>
@@ -476,7 +555,7 @@
     margin-top: 1rem;
     margin-bottom: 1rem;
     border: 0;
-    border-top: 2px solid #707071;
+    border-top: 1px solid #707071;
   }
 
   .dataset {
@@ -532,4 +611,16 @@
   :global(.build-titleblock .ons-hero__details) {
     padding-bottom: 0;
   }
+
+  .ons-field > :global(.ons-icon) {
+    color: var(--ons-color-success);
+  }
+
+   .ons-label {
+    margin: 1em 0 0.25em;
+   }
+
+   .button-group :global(.ons-btn) {
+      margin: 0 2px 8px 0;
+   }
 </style>

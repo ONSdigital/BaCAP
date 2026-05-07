@@ -11,8 +11,10 @@ export function download(blob, filename) {
   document.body.removeChild(a);
 }
 
-export function clip(str, msg) {
-  navigator.clipboard.writeText(str).then(() => alert(msg));
+export function clip(str, msg=null) {
+  navigator.clipboard.writeText(str).then(() => {
+    if (msg) alert(msg)
+  });
 }
 
 export function capitalise(str) {

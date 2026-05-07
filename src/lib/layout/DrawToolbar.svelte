@@ -22,6 +22,9 @@ async function setConfirmed(type = 'oa') {
   await new Promise((resolve) => setTimeout(resolve, 3000));
   confirmed[type] = false;
 }
+
+console.log({$state})
+console.log({$selected})
 </script>
 
 <div style="z-index:99;position:relative;pointer-events:none;">
@@ -133,7 +136,7 @@ async function setConfirmed(type = 'oa') {
                 .join(',')}
               </textarea> -->
               <Button variant="secondary" small icon="copy" on:click={async () => {
-                const hasCopied = copyAreasToClipboard('oa');
+                const hasCopied = copyAreasToClipboard($selected[$selected.length-1].oa);
                 if (hasCopied) setConfirmed('oa');
                 }}>Copy Output Area codes</Button>
               {#if confirmed.oa}<Icon type="tick" marginLeft/>{/if}
@@ -142,7 +145,7 @@ async function setConfirmed(type = 'oa') {
                 .join(',')}
               </textarea> -->
               <Button variant="secondary" small icon="copy" on:click={async () => {
-                const hasCopied = copyAreasToClipboard('lsoa');
+                const hasCopied = copyAreasToClipboard($selected[$selected.length-1].lsoa);
                 if (hasCopied) setConfirmed('lsoa');
                 }}>Copy LSOA codes</Button>
               {#if confirmed.lsoa}<Icon type="tick" marginLeft/>{/if}
