@@ -150,7 +150,7 @@
                 value={tab.data[0].count}
                 unit={topicsLookup[tab.code].unit}
                 prefix={topicsLookup[tab.code].prefix}
-                rounded={topicsLookup[tab.code]?.doNotRound
+                rounded={!topicsLookup[tab.code]?.roundCount
                   ? null
                   : tab.data[0].count > 1000
                     ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`
@@ -166,7 +166,7 @@
                 description={comp
                   ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
                   : ""}
-                rounded={topicsLookup[tab.code]?.doNotRound
+                rounded={!topicsLookup[tab.code]?.roundCount
                   ? null
                   : tab.data[0].count > 1000
                     ? `Rounded to the nearest 100 ${topicsLookup[tab.code].unit}`

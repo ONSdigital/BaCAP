@@ -2189,6 +2189,40 @@
     "validFromVersion": 1
   },
   {
+    "code": "claimant_count",
+    "label": "Claimant count",
+    "desc": "The number of people claiming Jobseeker's Allowance or claiming Universal Credit and seeking employment.",
+    "tableCode": "NM_162_1",
+    "measures": 20100,
+    "dateLabel": "Mar 2026",
+    "date": "2026-03",
+    "cellCode": "measure",
+    "chart": "number",
+    "unit": "people",
+    "base": "all people aged 16+",
+    "categories": [
+      {
+        "label": "Claimant count",
+        "cells": [1]
+      }
+    ],
+    "queryExt": "&gender=0&age=0",
+    "lowestGeography": "lsoa",
+    "dateLabelLong": "March 2026",
+    "census": false,
+    "url": "employmentandlabourmarket/peopleinwork/employmentandemployeetypes/methodologies/claimantcountqmi",
+    "source": "ONS",
+    "topic": "Economy",
+    "validFromVersion": 4,
+    "versions":{
+      "4":{
+        "dateLabel": "Mar 2026",
+        "date": "2026-03",
+        "dateLabelLong": "March 2026"
+      }
+    }
+  },
+  {
     "code": "highest_qualification",
     "label": "Highest level of qualification",
     "desc": "The highest level of qualification a person has reported.",
