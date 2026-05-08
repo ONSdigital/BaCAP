@@ -26,11 +26,11 @@ export function filterTopics(allTopics, level, coverage) {
     );
 }
 
-export function updateLocalStorage(name) {
-  let ls = JSON.parse(localStorage.getItem("onsbuild"));
-  if (ls) {
-    ls.properties.name = name;
-    localStorage.setItem("onsbuild", JSON.stringify(ls));
+export function updateLocalStorage(store) {
+  // let ls = JSON.parse(localStorage.getItem("onsbuild"));
+  if (store) {
+    // ls.properties.name = name;
+    localStorage.setItem("onsbuild", JSON.stringify(store));
   } else {
     return;
   }
@@ -203,23 +203,24 @@ export function savePNG(pymParent) {
 }
 
 export function copyEmbed(embedHash) {
-  clip(makeEmbed(embedHash), "Copied embed code to clipboard");
+  clip(makeEmbed(embedHash));
   let opts = get(buildstate).name ? { areaName: get(buildstate).name } : {};
   analyticsEvent({ event: "embed", ...opts });
 }
 
-export function showEmbed() {
-  buildstate.update((s) => ({ ...s, showEmbed: !s.showEmbed }));
+// export function showEmbed() {
 
-  setTimeout(() => {
-    const el = document.querySelector("textarea");
-    if (!el) return;
+  // buildstate.update((s) => ({ ...s, showEmbed: !s.showEmbed }));
 
-    el.scrollIntoView({
-      behavior: "smooth",
-    });
-  });
-}
+  // setTimeout(() => {
+  //   const el = document.querySelector("textarea");
+  //   if (!el) return;
+
+  //   el.scrollIntoView({
+  //     behavior: "smooth",
+  //   });
+  // });
+// }
 
 // Creates a lowest available geography filter function for use in a filter chain
 export function geographyFilter(selectedGeography) {
