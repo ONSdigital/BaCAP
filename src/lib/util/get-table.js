@@ -158,6 +158,7 @@ export default async function fetchNomiswebData(table, state, comparison = {"oa"
     });
 
     data = processNomiswebData(data, table).sort(myCustomAreaFirst);
+    console.log({data})
     return data || [];
 }
 

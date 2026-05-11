@@ -2191,19 +2191,19 @@
   {
     "code": "claimant_count",
     "label": "Claimant count",
-    "desc": "The number of people claiming Jobseeker's Allowance or claiming Universal Credit and seeking employment.",
+    "desc": "Percentage of people aged 16 to 64 who are claiming unemployment-related benefits.",
     "tableCode": "NM_162_1",
     "measures": 20100,
     "dateLabel": "Mar 2026",
     "date": "2026-03",
     "cellCode": "measure",
     "chart": "number",
-    "unit": "people",
-    "base": "all people aged 16+",
+    "unit": "%",
+    "base": "people aged 16 to 64",
     "categories": [
       {
         "label": "Claimant count",
-        "cells": [1]
+        "cells": [2]
       }
     ],
     "queryExt": "&gender=0&age=0",

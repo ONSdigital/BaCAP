@@ -85,7 +85,7 @@
       showMapInProfile = props.showMap;
       compGeojson = props.comppoly;
       population = props.population;
-      tables = props.tabs.map(t => ({...t, data: t.data.filter(d => d.value)}));
+      tables = props.tabs.map(t => ({...t, data: t.data.filter(d => d.value >= 0)}));
       stats = props.stats;
       makeTopicsLookup();
     }
@@ -143,13 +143,15 @@
         >
           <!-- use new version -->
           {#if topicsLookup[tab.code]?.chart === "number"}
+          {@const isPercentage = topicsLookup[tab.code].unit==='%'}
             {#if tab.data.length < 1}
               <p>No data available</p>
             {:else if tab.data.length < 2}
               <BigNumber
                 value={tab.data[0].count}
-                unit={topicsLookup[tab.code].unit}
+                unit={isPercentage ? `of ${topicsLookup[tab.code].base}` : topicsLookup[tab.code].unit}
                 prefix={topicsLookup[tab.code].prefix}
+                suffix={isPercentage ? '%' : null}
                 rounded={!topicsLookup[tab.code]?.roundCount
                   ? null
                   : tab.data[0].count > 1000
@@ -161,11 +163,14 @@
             {:else}
               <BigNumber
                 value={tab.data[0].count}
-                unit={topicsLookup[tab.code].unit}
+                unit={isPercentage ? `of ${topicsLookup[tab.code].base}` : topicsLookup[tab.code].unit}
                 prefix={topicsLookup[tab.code].prefix}
-                description={comp
-                  ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
-                  : ""}
+                suffix={isPercentage ? '%' : null}
+                description={comp && isPercentage
+                  ? `<mark>${tab.data[1].count.toFixed(1)}%</mark> in ${comp}`
+                  : comp 
+                    ? `<mark>${tab.data[1].count.toLocaleString("en-GB")}</mark> ${topicsLookup[tab.code].unit} in ${comp}`
+                    : ""}
                 rounded={!topicsLookup[tab.code]?.roundCount
                   ? null
                   : tab.data[0].count > 1000

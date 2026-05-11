@@ -4,7 +4,7 @@
 	export let suffix = "";
 	export let unit = null;
 	export let description = null;
-	export let format = (d) => d.toLocaleString("en-GB");
+	export let format = suffix === '%' ? (d) => d.toFixed(1) : (d) => d.toLocaleString("en-GB");
 	export let highlightColor = "lightgrey";
 	export let rounded = "";
 </script>
