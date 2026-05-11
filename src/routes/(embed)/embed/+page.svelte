@@ -85,7 +85,7 @@
       showMapInProfile = props.showMap;
       compGeojson = props.comppoly;
       population = props.population;
-      tables = props.tabs.map(t => ({...t, data: t.data.filter(d => d.value)}));
+      tables = props.tabs.map(t => ({...t, data: t.data.filter(d => d.value >= 0)}));
       stats = props.stats;
       makeTopicsLookup();
     }
