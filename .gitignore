@@ -4,4 +4,4 @@
 /.svelte-kit/
 /package/
 /temp/
-/package-lock.json
+# /package-lock.json
