@@ -2,6 +2,8 @@
 [![DOI](https://zenodo.org/badge/504045615.svg)](https://zenodo.org/badge/latestdoi/504045615)
 # BaCAP (Build a Custom Area Profile)
 
+***Note: This v1-legacy branch is being maintained to retain a preview of the older version of this app.***
+
 ## Demo
 https://stately-salamander-b9768e.netlify.app/
 
