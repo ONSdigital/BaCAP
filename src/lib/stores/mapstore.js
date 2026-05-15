@@ -6,50 +6,50 @@ export const centroids = writable();
 export const drawType = writable(undefined); // drawing tool type
 export const selected = writable([{ oa: new Set(), geo:{type: 'Feature',geometry: {type: 'Polygon',coordinates: [],}} }]); // which layers contain data e.g. ['centroids']
 export const mapsource = derived(centroids, ($centroids) => ({
-    area: {
-        type: 'vector',
-        maxzoom: 12, // IMPORTANT: This is the maximum zoom the tiles are available for, so they can over-zoom
-        minzoom: 6, // IMPORTANT: This is the minimum zoom available
-        tiles: [boundaries.url],
-        promoteId
-    },
-    points: {
-        type: 'geojson',
-        data: $centroids.geojson
-    },
+    // area: {
+    //     type: 'vector',
+    //     maxzoom: 12, // IMPORTANT: This is the maximum zoom the tiles are available for, so they can over-zoom
+    //     minzoom: 6, // IMPORTANT: This is the minimum zoom available
+    //     tiles: [boundaries.url],
+    //     promoteId
+    // },
+    // points: {
+    //     type: 'geojson',
+    //     data: $centroids.geojson
+    // },
 })); // source dictionary
 export const maplayer = readable([
     // stuff for OA
-    {
-        id: 'bounds',
-        source: 'area',
-        'source-layer': boundaries.layer,
-        type: 'fill',
-        paint: {
-            'fill-color': 'transparent',
-            'fill-opacity': 1
-        },
-    },
-    {
-        id: 'bounds-line',
-        source: 'area',
-        'source-layer': boundaries.layer,
-        type: 'line',
-        paint: {
-            'line-color': 'transparent',
-            'line-width': ['case', ['==', ['feature-state', 'hovered'], true], 2, 0.3]
-        },
-    },
-    {
-        id: 'cpt',
-        source: 'points',
-        type: 'circle',
-        minzoom: 10,
-        paint: {
-            'circle-radius': 1,
-            'circle-color': 'coral'
-        }
-    }
+    // {
+    //     id: 'bounds',
+    //     source: 'area',
+    //     'source-layer': boundaries.layer,
+    //     type: 'fill',
+    //     paint: {
+    //         'fill-color': 'transparent',
+    //         'fill-opacity': 1
+    //     },
+    // },
+    // {
+    //     id: 'bounds-line',
+    //     source: 'area',
+    //     'source-layer': boundaries.layer,
+    //     type: 'line',
+    //     paint: {
+    //         'line-color': 'transparent',
+    //         'line-width': ['case', ['==', ['feature-state', 'hovered'], true], 2, 0.3]
+    //     },
+    // },
+    // {
+    //     id: 'cpt',
+    //     source: 'points',
+    //     type: 'circle',
+    //     minzoom: 10,
+    //     paint: {
+    //         'circle-radius': 1,
+    //         'circle-color': 'coral'
+    //     }
+    // }
 ]); // layer list
 export const mapObject = writable(undefined); // the mapbox 'map' object
 export let addMode = writable(true);
