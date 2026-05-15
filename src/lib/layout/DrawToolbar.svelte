@@ -4,6 +4,7 @@ import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolCont
 import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
 import Select from "$lib/ui/Select.svelte";
+import SliderCombo from "$lib/ui/SliderCombo.svelte";
 import { base } from "$app/paths";
 import { updateLocalStorage } from "$lib/util/build-utils";
 
@@ -27,7 +28,7 @@ console.log({$state})
 console.log({$selected})
 </script>
 
-<div style="z-index:99;position:relative;pointer-events:none;">
+<div id="toolbar" style="z-index:99;position:relative;pointer-events:none;">
   <ToolbarsContainer bind:this={container}>
     <Toolbar>
       <ToolbarButton id="move" icon="move" label="Move and Pan" on:click={setPanMode} sticky>
@@ -81,25 +82,11 @@ console.log({$selected})
         </ToolControl>
         <ToolControl id="circle">
           <p>Select a radius size and click or tap on the map to select an area.</p>
-          <ButtonGroup visuallyHideLegend legend="Select a radius size" bind:value="{radius}">
-            <ButtonGroupItem value={0.5} label="0.5km"/>
-            <ButtonGroupItem value={1} label="1km"/>
-            <ButtonGroupItem value={2} label="2km"/>
-            <ButtonGroupItem value={5} label="5km"/>
-            <ButtonGroupItem value={8} label="8km"/>
-            <ButtonGroupItem value={10} label="10km"/>
-          </ButtonGroup>
+          <SliderCombo min={0.1} max={20} step={0.1} bind:value={radius}/>
         </ToolControl>
         <ToolControl id="erase">
           <p>Select a radius size and click or tap on the map to remove an area.</p>
-          <ButtonGroup visuallyHideLegend legend="Select a radius size" bind:value="{radius}">
-            <ButtonGroupItem value={0.5} label="0.5km"/>
-            <ButtonGroupItem value={1} label="1km"/>
-            <ButtonGroupItem value={2} label="2km"/>
-            <ButtonGroupItem value={5} label="5km"/>
-            <ButtonGroupItem value={8} label="8km"/>
-            <ButtonGroupItem value={10} label="10km"/>
-          </ButtonGroup>
+          <SliderCombo min={0.1} max={20} step={0.1} bind:value={radius}/>
         </ToolControl>
         <ToolControl id="search">
           <Select label="Use the search to select an area to apply it to the map." id="draw-page-search" on:select={doSelect} autoFocus={true} autoClear/>
@@ -195,5 +182,8 @@ console.log({$selected})
   :global(.button-group) {
     margin-top: 8px;
   }
+#toolbar :global(.ons-js-input-abbr) {
+  height: 40px;
+}
 </style>
 
