@@ -5,6 +5,7 @@ import { get } from "svelte/store";
 import { mapObject, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
 import Select from "$lib/ui/Select.svelte";
+import SliderCombo from "$lib/ui/SliderCombo.svelte";
 import { base } from "$app/paths";
 import { updateLocalStorage } from "$lib/util/build-utils";
 import { update } from "$lib/util/drawing-utils";
@@ -43,7 +44,7 @@ console.log({$state})
 console.log({$selected})
 </script>
 
-<div style="z-index:99;position:relative;pointer-events:none;">
+<div id="toolbar" style="z-index:99;position:relative;pointer-events:none;">
   <ToolbarsContainer bind:this={container}>
     <Toolbar>
       <ToolbarButton id="move" icon="move" label="Move and Pan" on:click={setPanMode} sticky>
@@ -97,43 +98,34 @@ console.log({$selected})
         </ToolControl>
         <ToolControl id="circle">
           <p>Select a radius size and click or tap on the map to select an area.</p>
-          <ButtonGroup visuallyHideLegend legend="Select a radius size" bind:value="{radius}">
-            <ButtonGroupItem value={0.5} label="0.5km"/>
-            <ButtonGroupItem value={1} label="1km"/>
-            <ButtonGroupItem value={2} label="2km"/>
-            <ButtonGroupItem value={5} label="5km"/>
-            <ButtonGroupItem value={8} label="8km"/>
-            <ButtonGroupItem value={10} label="10km"/>
-          </ButtonGroup>
+          <SliderCombo min={0.1} max={20} step={0.1} bind:value={radius}/>
         </ToolControl>
         <ToolControl id="erase">
           <p>Select a radius size and click or tap on the map to remove an area.</p>
-          <ButtonGroup visuallyHideLegend legend="Select a radius size" bind:value="{radius}">
-            <ButtonGroupItem value={0.5} label="0.5km"/>
-            <ButtonGroupItem value={1} label="1km"/>
-            <ButtonGroupItem value={2} label="2km"/>
-            <ButtonGroupItem value={5} label="5km"/>
-            <ButtonGroupItem value={8} label="8km"/>
-            <ButtonGroupItem value={10} label="10km"/>
-          </ButtonGroup>
+          <SliderCombo min={0.1} max={20} step={0.1} bind:value={radius}/>
         </ToolControl>
         <ToolControl id="search">
-        <Select on:select={e => selectedArea = e} label="Use the search to select an area to apply it to the map." id="draw-page-search" autoFocus={true}/>
-        <div id="search-inputs">
-           <Button on:click={() => doSelect(selectedArea)} small>Select area</Button>
-          {#if $selected[$selected.length - 1]?.oa?.size > 0}
-            <Button on:click={() => addToSelection(selectedArea)} small variant='secondary'>Add to current selection</Button>
-          {/if}
-          </div>
+          <form id="search-form" on:submit|preventDefault={() => doSelect(selectedArea)}> 
+            <Select on:select={(e) => {
+              selectedArea = e;
+              document?.getElementById?.('search-inputs')?.firstElementChild?.focus?.();
+            }} label="Use the search to select an area to apply it to the map." id="draw-page-search" autoFocus={true}/>
+            <div id="search-inputs">
+              <Button type="submit" small>Select area</Button>
+              {#if $selected[$selected.length - 1]?.oa?.size > 0}
+                <Button on:click={() => addToSelection(selectedArea)} small variant='secondary'>Add to current selection</Button>
+              {/if}
+            </div>
+          </form>
         </ToolControl>
       </ToolControls>
     </Toolbar>
 
     <Toolbar>
-      <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
+      <ToolbarButton id="download" icon="download" label="Download selected area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
-      <ToolbarButton id="upload" icon="upload" label="Upload a geometry" on:click={uploader.click()}>
+      <ToolbarButton id="upload" icon="upload" label="Upload a GeoJSON" on:click={() => uploader.click()}>
         <p>To automatically select a defined custom area, you can upload a GeoJSON file that had been saved previously.</p>
       </ToolbarButton>
       <ToolbarDivider />
@@ -221,5 +213,8 @@ console.log({$selected})
   :global(.button-group) {
     margin-top: 8px;
   }
+#toolbar :global(.ons-js-input-abbr) {
+  height: 40px;
+}
 </style>
 

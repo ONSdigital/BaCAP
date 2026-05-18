@@ -166,7 +166,7 @@ export async function initDraw() {
 
   map.doubleClickZoom.enable();
   // on move events
-  map.on('mousemove', 'bounds', function move(e) {
+  map.on('mousemove', function move(e) {
     // console.log (e.lngLat, get (drawType));
 
     if (get(drawType) == 'radius') circleFast(false, e.lngLat);
@@ -202,8 +202,8 @@ export async function initDraw() {
         break;
     }
   }
-  map.on('click', 'bounds', boundClick); //mouse
-  map.on('touchstart', 'bounds', boundClick); //touch
+  map.on('click', boundClick); //mouse
+  map.on('touchstart', boundClick); //touch
 
   // let hovered;
 

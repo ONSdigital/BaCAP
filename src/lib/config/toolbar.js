@@ -25,20 +25,8 @@ export function doSelect(e) {
     changeData("userGeo", geometry);
     get(mapObject).fitBounds(bbox, { padding: 40 });
     state.name = e.detail.areanm;
-  } else if (e.detail.type == "postcode") {
-    // does this type exist??
-    // I don't think this block runs
-    let center = e.detail.center;
-    get(mapObject).flyTo({ center: center, zoom: 14 });
-    get(mapObject).once("idle", () => {
-      let coords = get(mapObject).project(center);
-      let features = get(mapObject).queryRenderedFeatures([coords.x, coords.y], {
-        layers: ["bounds"],
-      });
-      // add in lsoas and geo???
-      var oa = new Set(features.map((f) => f.properties.oa));
-      selected.update(s=>[...s,{oa}])
-    });
+  } else {
+    console.log("Couldn't select area.")
   }
   setDrawData();
 }
@@ -75,16 +63,6 @@ export function recolour(){
   pselect.set(totalPopulation);
 
   if (!items.oa || !items.oa.size) return;
-
-    // This makes the OA layer coloured in when selecting an area
-    // if ($mapObject.getLayer("bounds"))
-    //   $mapObject.setPaintProperty("bounds", "fill-color", [
-    //     "match",
-    //     ["get", "areacd"],
-    //     ["literal", ...items.oa],
-    //     "rgba(32, 96, 149, 0.4)",
-    //     "transparent",
-    //   ]);
 
     if (get(mapObject)) {
       changeData("userGeo", items.geo);

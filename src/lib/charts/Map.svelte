@@ -32,11 +32,10 @@
     document.querySelector("#mapcontainer div canvas").style.cursor = "wait";
 
     // scale bar
-    // $mapObject.addControl(
-    //   new mapboxgl.ScaleControl({
-    //     position: "bottom-left",
-    //   }),
-    // );
+    $mapObject.addControl(
+      new maplibregl.ScaleControl(),
+      "bottom-right"
+    );
 
     // navigation
     // $mapObject.addControl(new mapboxgl.NavigationControl(), "bottom-right");
