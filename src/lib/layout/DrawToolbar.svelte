@@ -98,7 +98,7 @@ console.log({$selected})
       <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
-      <ToolbarButton id="upload" icon="upload" label="Upload a geometry" on:click={uploader.click()}>
+      <ToolbarButton id="upload" icon="upload" label="Upload a geometry" on:click={() => uploader.click()}>
         <p>To automatically select a defined custom area, you can upload a GeoJSON file that had been saved previously.</p>
       </ToolbarButton>
       <ToolbarDivider />

@@ -39,6 +39,7 @@
     groupTopics,
     updateLocalStorage,
     filterTopics,
+    loadGeo,
   } from "$lib/util/build-utils";
   import {
     isLoading,
@@ -62,14 +63,13 @@
   let currentTopics = [];
 
   // UI States
-  let showMapInProfile = false;
+  let showMapInProfile = true;
   let includecomp = false;
   let store;
   let geojson;
   let parents;
   let topics = [];
-
-  // let uploader; // DOM element for geojson file upload
+  let uploader; // DOM element for geojson file upload
   // let selectComparison = true;
 
   // initial $buildstate
@@ -298,7 +298,7 @@ async function setConfirmed(type = 'oa') {
           >Edit area</Button
         >
         <Button variant="secondary" small on:click={handleChangeName}
-          >Change area name</Button
+          >{$state.name ? 'Change' : 'Set'} area name</Button
         >
       {/if}
     </Container>
@@ -318,7 +318,7 @@ async function setConfirmed(type = 'oa') {
       style="width:100%"
     >
       <div class="ons-u-mb-s" style="width:100%">
-        <div class="ons-u-mb-s">
+        <div class="ons-u-mb-2xs">
           <Select
             id="comparison-search"
             value={$buildstate.comparison}
@@ -329,24 +329,36 @@ async function setConfirmed(type = 'oa') {
             label="Select comparison area"
           />
         </div>
+        <div>
+          <input
+            type="file"
+            accept=".geojson,.json"
+            style:display="none"
+            bind:this={uploader}
+            on:input={async () => {
+              const geo = await loadGeo(uploader);
+              if (geo) handleSelect({detail: geo});
+            }}
+          />
+          <div class="upload-button">Or <Button variant="secondary" icon="upload" small on:click={() => uploader.click()}>Upload saved area</Button></div>
+        </div>
       </div>
 
       <hr class="hr-full" />
 
       <Checkbox
         id="showMapInProfile"
-        label="Include map in profile"
+        label="Include location map"
         bind:checked={showMapInProfile}
         compact
       ></Checkbox>
-      {#if showMapInProfile}
-        <Checkbox
-          id="includecomp"
-          label="Include comparison on map"
-          bind:checked={includecomp}
-          compact
-        ></Checkbox>
-      {/if}
+      <Checkbox
+        id="includecomp"
+        label="Show comparison area"
+        bind:checked={includecomp}
+        compact
+        disabled={!showMapInProfile}
+      ></Checkbox>
       <hr class="hr-full" />
       <div
         style="display: flex;justify-content: space-between;align-items:center;"
@@ -622,5 +634,12 @@ async function setConfirmed(type = 'oa') {
 
    .button-group :global(.ons-btn) {
       margin: 0 2px 8px 0;
+   }
+
+   .upload-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
    }
 </style>
