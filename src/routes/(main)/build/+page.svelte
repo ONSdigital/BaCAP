@@ -157,7 +157,7 @@
       showMapInProfile ? `&poly=${btoa(JSON.stringify(geojson))}` : ""
     }${
       showMapInProfile && includecomp && comp?.geometry
-        ? `&comppoly=${btoa(JSON.stringify(simplifyGeo(comp.geometry)))}`
+        ? `&comppoly=${btoa(JSON.stringify((comp.geometry)))}`
         : ""
     }${
       showMapInProfile ? `&showMap=${showMapInProfile}` : ""
@@ -239,7 +239,9 @@
       oa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.oa21cds,
       lsoa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.lsoa21cds
     };
-    $buildstate.comparison = e.detail;
+    const geo = e.detail
+    geo.geometry = simplifyGeo(geo.geometry)
+    $buildstate.comparison = geo;
   }
 
   function handleClearSelect() {

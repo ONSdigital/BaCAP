@@ -1,14 +1,17 @@
 <script>
 import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, loadGeo, setEraseMode, doSelect, copyAreasToClipboard } from "$lib/config/toolbar"; 
 import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, Icon, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
-import { mapObject,drawType, centroids, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
+import { get } from "svelte/store";
+import { mapObject, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
 import Select from "$lib/ui/Select.svelte";
 import { base } from "$app/paths";
 import { updateLocalStorage } from "$lib/util/build-utils";
+import { update } from "$lib/util/drawing-utils";
+import bbox from "@turf/bbox";
 
 let container;
-
+let selectedArea = null;
 let uploader
 export let state;
 export let radius=0.5;
@@ -21,6 +24,19 @@ async function setConfirmed(type = 'oa') {
   confirmed[type] = true;
   await new Promise((resolve) => setTimeout(resolve, 3000));
   confirmed[type] = false;
+}
+
+async function addToSelection(selectedArea){
+  if (!selectedArea?.detail?.geometry) return;
+
+  await update({ type: 'Feature', geometry: selectedArea.detail.geometry, properties: {} });
+
+  const newGeo = get(user_geometry);
+
+  if ($mapObject && newGeo) {
+    const bb = bbox(newGeo);
+    $mapObject.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 40 });
+  }
 }
 
 console.log({$state})
@@ -102,7 +118,13 @@ console.log({$selected})
           </ButtonGroup>
         </ToolControl>
         <ToolControl id="search">
-          <Select label="Use the search to select an area to apply it to the map." id="draw-page-search" on:select={doSelect} autoFocus={true} autoClear/>
+        <Select on:select={e => selectedArea = e} label="Use the search to select an area to apply it to the map." id="draw-page-search" autoFocus={true}/>
+        <div id="search-inputs">
+           <Button on:click={() => doSelect(selectedArea)} small>Select area</Button>
+          {#if $selected[$selected.length - 1]?.oa?.size > 0}
+            <Button on:click={() => addToSelection(selectedArea)} small variant='secondary'>Add to current selection</Button>
+          {/if}
+          </div>
         </ToolControl>
       </ToolControls>
     </Toolbar>
@@ -182,6 +204,10 @@ console.log({$selected})
 
   #download-toolbar :global(button) {
     margin-bottom: 8px;
+  }
+
+  #search-inputs :global(button) {
+    margin-top: 10px;
   }
 
   #copy-area-codes :global(.ons-icon) {
