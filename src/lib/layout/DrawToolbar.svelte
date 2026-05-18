@@ -105,22 +105,27 @@ console.log({$selected})
           <SliderCombo min={0.1} max={20} step={0.1} bind:value={radius}/>
         </ToolControl>
         <ToolControl id="search">
-        <Select on:select={e => selectedArea = e} label="Use the search to select an area to apply it to the map." id="draw-page-search" autoFocus={true}/>
-        <div id="search-inputs">
-           <Button on:click={() => doSelect(selectedArea)} small>Select area</Button>
-          {#if $selected[$selected.length - 1]?.oa?.size > 0}
-            <Button on:click={() => addToSelection(selectedArea)} small variant='secondary'>Add to current selection</Button>
-          {/if}
-          </div>
+          <form id="search-form" on:submit|preventDefault={() => doSelect(selectedArea)}> 
+            <Select on:select={(e) => {
+              selectedArea = e;
+              document?.getElementById?.('search-inputs')?.firstElementChild?.focus?.();
+            }} label="Use the search to select an area to apply it to the map." id="draw-page-search" autoFocus={true}/>
+            <div id="search-inputs">
+              <Button type="submit" small>Select area</Button>
+              {#if $selected[$selected.length - 1]?.oa?.size > 0}
+                <Button on:click={() => addToSelection(selectedArea)} small variant='secondary'>Add to current selection</Button>
+              {/if}
+            </div>
+          </form>
         </ToolControl>
       </ToolControls>
     </Toolbar>
 
     <Toolbar>
-      <ToolbarButton id="download" icon="download" label="Download area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
+      <ToolbarButton id="download" icon="download" label="Download selected area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
-      <ToolbarButton id="upload" icon="upload" label="Upload a geometry" on:click={() => uploader.click()}>
+      <ToolbarButton id="upload" icon="upload" label="Upload a GeoJSON" on:click={() => uploader.click()}>
         <p>To automatically select a defined custom area, you can upload a GeoJSON file that had been saved previously.</p>
       </ToolbarButton>
       <ToolbarDivider />
