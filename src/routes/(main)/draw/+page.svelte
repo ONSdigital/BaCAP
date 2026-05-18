@@ -45,14 +45,16 @@
     const drawData = drawDataString ? JSON.parse(drawDataString) : null;
 
     if (!drawData?.lsoa) {
-      localStorage.clear();
+        localStorage.removeItem('draw_data');
+        localStorage.removeItem('onsbuild');
     }
 
     const onsbuildString = localStorage.getItem("onsbuild");
     const onsbuild = onsbuildString ? JSON.parse(onsbuildString) : null;
 
     if (!onsbuild?.properties?.compressedLsoa) {
-      localStorage.clear();
+        localStorage.removeItem('draw_data');
+        localStorage.removeItem('onsbuild');
     }
 
     $mapObject.on("load", async () => {
