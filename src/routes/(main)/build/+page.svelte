@@ -23,6 +23,7 @@
   import { simplifyGeo } from "$lib/util/drawing-utils";
   import getParents from "$lib/util/get-parents";
   import { onMount } from "svelte";
+  import bbox from "@turf/bbox";
   import AreaMap from "$lib/charts/AreaMap.svelte";
   import AreaMapComparison from "$lib/charts/AreaMapComparison.svelte";
   import { download } from "$lib/util/functions";
@@ -249,8 +250,22 @@
   function downloadBuildGeoJSON() {
     if (!store?.geojson) return;
 
-    const fileName = `${store.properties?.name ? store.properties.name.replaceAll(" ", "_") : "custom_area"}.geojson`;
-    const blob = new Blob([JSON.stringify(store.geojson)], {
+    const name = store.properties?.name || "Custom area";
+    const fileName = `${name.replaceAll(" ", "_")}.geojson`;
+
+    const geojson = {
+      type: "Feature",
+      properties: {
+        name,
+        bbox: bbox(store.geojson),
+        codes: store.properties.oa_all,
+        codes_compressed: store.properties.compressed,
+        codes_compressed_to_lsoa: store.properties.compressedLsoa
+      },
+      geometry: store.geojson.geometry
+    };
+    console.log({store, geojson})
+    const blob = new Blob([JSON.stringify(geojson)], {
       type: "application/json",
     });
 
@@ -314,7 +329,7 @@ async function setConfirmed(type = 'oa') {
 <Container width="wider" marginTop>
   <div class="ons-grid ons-grid-flex">
     <div
-      class="ons-grid__col ons-col-3@m ons-u-flex-no-shrink"
+      class="ons-grid__col ons-col-3@l ons-col-4@m ons-u-flex-no-shrink select-panel"
       style="width:100%"
     >
       <div class="ons-u-mb-s" style="width:100%">
@@ -348,7 +363,7 @@ async function setConfirmed(type = 'oa') {
 
       <Checkbox
         id="showMapInProfile"
-        label="Include location map"
+        label="Show map in profile"
         bind:checked={showMapInProfile}
         compact
       ></Checkbox>
@@ -412,7 +427,7 @@ async function setConfirmed(type = 'oa') {
       </p>
       <div class="ons-u-mb-xl"></div>
     </div>
-    <div class="ons-grid__col ons-col-9@m">
+    <div class="ons-grid__col ons-col-9@l ons-col-8@m">
       {#if $version >= 2}
         <Notice>
           Census topics and non-Census datasets will primarily use different
