@@ -16,6 +16,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import circle from '@turf/circle';
 import turfSimplify from '@turf/simplify';
 import buffer from '@turf/buffer';
+import turfArea from '@turf/area';
 // import turfBBOX from '@turf/bbox';
 // import turfInPolygon from '@turf/boolean-point-in-polygon';
 import { dissolve } from '$lib/util/bundled/mapshaper';
@@ -223,16 +224,20 @@ export async function initDraw() {
   // map.on('mousemove', 'bounds', boundHover); //hover
 }
 
-export function simplifyGeo(geometry, maxLength = 3000) {
+export function simplifyGeo(geometry, maxLength = 5000) {
   // Simplifies a geojson geometry
-  let simple;
-  let length = maxLength;
+  let simple = buffer(geometry, 0).geometry; // Fix invalid geometries
+  let length = JSON.stringify(simple).length;
   let precision = 5;
 
-  const _geometry = buffer(geometry, 0).geometry; // Fix invalid geometries
-
   while (length >= maxLength && precision >= 2) {
-    simple = turfSimplify(_geometry, {
+    
+    if (simple.type === "MultiPolygon") {
+    const area = turfArea(simple)
+    simple.coordinates = simple.coordinates.filter(d => turfArea({type: 'Polygon', coordinates: d}) > area * Math.min(Math.pow(10, -precision), 0.01))
+  }
+
+    simple = turfSimplify(simple, {
       highQuality: true,
       tolerance: Math.pow(10, -precision),
     });
