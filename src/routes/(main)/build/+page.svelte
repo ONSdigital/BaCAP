@@ -115,7 +115,7 @@
     console.log({store})
 
     if (!store) {
-      alert("Warning, no area selected! Redirecting to the drawing page.");
+      alert("No area selected! Redirecting to the drawing page...");
       goto(`${base}/draw/`);
     }
 
@@ -237,11 +237,11 @@
 
   function handleSelect(e) {
     e.detail.codes = {
-      oa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.oa21cds,
-      lsoa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.lsoa21cds
+      oa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.oa21cds || [],
+      lsoa: e.detail.areacd === "K04000001" ? ["E92000001", "W92000004"] : e.detail.lsoa21cds || []
     };
     const geo = e.detail
-    geo.geometry = simplifyGeo(geo.geometry)
+    geo.geometry = simplifyGeo(geo.geometry);
     $buildstate.comparison = geo;
   }
 

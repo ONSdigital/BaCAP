@@ -40,8 +40,9 @@ async function addToSelection(selectedArea){
   }
 }
 
-console.log({$state})
-console.log({$selected})
+$: console.log({$state})
+$: console.log({$selected})
+
 </script>
 
 <div id="toolbar" style="z-index:99;position:relative;pointer-events:none;">
@@ -112,7 +113,7 @@ console.log({$selected})
             }} label="Use the search to select an area to apply it to the map." id="draw-page-search" autoFocus={true}/>
             <div id="search-inputs">
               <Button type="submit" small>Select area</Button>
-              {#if $selected[$selected.length - 1]?.oa?.size > 0}
+              {#if $selected[$selected.length - 1]?.geo?.geometry?.coordinates?.length}
                 <Button on:click={() => addToSelection(selectedArea)} small variant='secondary'>Add to current selection</Button>
               {/if}
             </div>
