@@ -136,7 +136,7 @@ export async function getAreaData(code, options = {}) {
         : data.properties.areanm
           ? data.properties.areanm
           : code,
-      highestLevel: get(centroids).identifyHighestGeography(compressed),
+      highestLevel: compressedLsoa.length ? "lsoa" : compressed.length ? "oa" : null,
     },
   };
 }
