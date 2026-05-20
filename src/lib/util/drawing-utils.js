@@ -175,7 +175,7 @@ export async function initDraw() {
   // clear coordinates each time we change
   drawType.subscribe(dt => {
     coordinates = [];
-    addMode.set(true);
+    // addMode.set(true);
     circleFast((clear = get(drawType) != 'radius'));
     Draw.deleteAll();
     cursor();

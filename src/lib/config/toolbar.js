@@ -15,8 +15,8 @@ export function doSelect(e) {
   if (e.detail.type == "place") {
     let bbox = e.detail.bbox;
     let isEW = e.detail.areacd === "K04000001";
-    let oa = new Set(get(centroids).expand(isEW ? ["E92000001", "W92000004"] : e.detail.oa21cds,'oa'));
-    let lsoa = new Set(get(centroids).expand(isEW ? ["E92000001", "W92000004"] : e.detail.lsoa21cds,'lsoa')); 
+    let oa = new Set(get(centroids).expand(isEW ? ["E92000001", "W92000004"] : e.detail.oa21cds || [],'oa'));
+    let lsoa = new Set(get(centroids).expand(isEW ? ["E92000001", "W92000004"] : e.detail.lsoa21cds || [],'lsoa')); 
     let geometry = e.detail.geometry;
     let geojson = {type: 'Feature', geometry: geometry}
 
@@ -282,18 +282,17 @@ export const newselect = function () {
 
   export function setDrawMode(){
     drawType.set('polygon');
-    addMode.set(true)
+    // addMode.set(true)
   }
 
   export function setRadiusMode(){
     drawType.set('radius');
-    addMode.set(true)
+    // addMode.set(true)
 
   }
 
-  export function setEraseMode(){
-    drawType.set('radius');
-    addMode.set(false)
+  export function setEraseMode(mode = true){
+    addMode.set(mode);
   }
 
 

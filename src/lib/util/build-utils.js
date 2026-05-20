@@ -105,7 +105,7 @@ export async function checkForHashSelection() {
       });
       if (info.properties.compressed.length == 0) {
         alert(
-          "This area does not cover a population-weighted centroid. Please select a slightly larger area in the drawing area.",
+          "This area is too small to provide best-fit data! Redirecting to the drawing page...",
         );
         goto(`${base}/draw/${hash}`);
         return;
@@ -120,8 +120,8 @@ export async function checkForHashSelection() {
 export async function getAreaData(code, options = {}) {
   const res = await fetch(`${cdnbase}/${code.slice(0, 3)}/${code}.json`);
   const data = await res.json();
-  const compressed = data.properties.oa21cds;
-  const compressedLsoa = data.properties.lsoa21cds;
+  const compressed = data.properties.oa21cds || [];
+  const compressedLsoa = data.properties.lsoa21cds || [];
 
   return {
     geojson: data,
@@ -136,7 +136,7 @@ export async function getAreaData(code, options = {}) {
         : data.properties.areanm
           ? data.properties.areanm
           : code,
-      highestLevel: get(centroids).identifyHighestGeography(compressed),
+      highestLevel: compressedLsoa.length ? "lsoa" : compressed.length ? "oa" : null,
     },
   };
 }

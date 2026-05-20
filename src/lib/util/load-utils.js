@@ -48,19 +48,18 @@ export function handleDrawDataSelection() {
   
   function updateSelectionWithData(data) {
 
-    if (!data.properties || !Array.isArray(data.properties.oa21cds)) {
+    if (
+      !data.properties
+      // || !Array.isArray(data.properties.oa21cds)
+    ) {
       console.error("Invalid data format: oa21cds is missing or not an array.");
       return;
     }
 
     let oaSet, lsoaSet;
     try {
-      oaSet = new Set(get(centroids).expand(data.properties.oa21cds,"oa"));
-      lsoaSet = new Set(
-        get(centroids).expand(
-          data.properties.oa21cds.filter(code => !code.startsWith("e00") && !code.startsWith("w00")),"lsoa"
-        )
-      );
+      oaSet = new Set(get(centroids).expand(data.properties.oa21cds || [],"oa"));
+      lsoaSet = new Set(get(centroids).expand(data.properties.lsoa21cds || [],"lsoa"));
     } catch (error) {
       console.error("Error expanding centroids:", error);
       return;
