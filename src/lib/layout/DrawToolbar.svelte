@@ -40,10 +40,6 @@ async function addToSelection(selectedArea){
   }
 }
 
-$: console.log({$state})
-$: console.log({$selected})
-$: console.log({$addMode})
-
 </script>
 
 <div id="toolbar" style="z-index:99;position:relative;pointer-events:none;">
