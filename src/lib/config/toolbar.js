@@ -282,18 +282,17 @@ export const newselect = function () {
 
   export function setDrawMode(){
     drawType.set('polygon');
-    addMode.set(true)
+    // addMode.set(true)
   }
 
   export function setRadiusMode(){
     drawType.set('radius');
-    addMode.set(true)
+    // addMode.set(true)
 
   }
 
-  export function setEraseMode(){
-    drawType.set('radius');
-    addMode.set(false)
+  export function setEraseMode(mode = true){
+    addMode.set(mode);
   }
 
 

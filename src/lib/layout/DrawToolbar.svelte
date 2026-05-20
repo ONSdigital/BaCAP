@@ -2,7 +2,7 @@
 import { setDrawMode,setPanMode, setRadiusMode, zoomIn, zoomOut, newselect, undo, buildProfile, downloadArea, loadGeo, setEraseMode, doSelect, copyAreasToClipboard } from "$lib/config/toolbar"; 
 import { Input, ToolbarsContainer,Toolbar,ToolbarButton, ToolbarDivider,ToolControls,ToolControl, Icon, Button, ButtonGroup,ButtonGroupItem } from "@onsvisual/svelte-components";
 import { get } from "svelte/store";
-import { mapObject, selected,currentMapZoom, user_geometry } from "$lib/stores/mapstore";
+import { mapObject, selected,currentMapZoom, user_geometry, addMode } from "$lib/stores/mapstore";
 import { minzoom, maxzoom } from "$lib/config/geography";
 import Select from "$lib/ui/Select.svelte";
 import SliderCombo from "$lib/ui/SliderCombo.svelte";
@@ -13,7 +13,7 @@ import bbox from "@turf/bbox";
 
 let container;
 let selectedArea = null;
-let uploader
+let uploader;
 export let state;
 export let radius=0.5;
 
@@ -42,6 +42,7 @@ async function addToSelection(selectedArea){
 
 $: console.log({$state})
 $: console.log({$selected})
+$: console.log({$addMode})
 
 </script>
 
@@ -60,8 +61,10 @@ $: console.log({$selected})
         <p>Select a circular area on the map. Choose your radius size before clicking on the map to select.</p>
       </ToolbarButton>
 
-      <ToolbarButton id="erase" icon="erase" label="Erase a circle" hasAriaControls on:click={setEraseMode} sticky>
-        <p>Deselect part of your highlighted area shape. Select how large an area you wish to remove and click on the map.</p>
+      <ToolbarDivider />
+
+      <ToolbarButton id="erase" icon="erase" label="{$addMode ? "Enable" : "Disable"} erase mode" selected={!$addMode} on:click={() => $addMode = !$addMode} hasAriaControls toggle>
+        <p>Toggle erase mode. In erase mode, if you draw a polygon or radius, it will be removed from your selection instead of added.</p>
       </ToolbarButton>
 
       <ToolbarDivider />
@@ -126,7 +129,7 @@ $: console.log({$selected})
       <ToolbarButton id="download" icon="download" label="Download selected area" disabled={!$selected[$selected.length - 1].oa.size > 0}>
         <p>You can save a selected area as a GeoJSON file, which you can use at a later time  or share with another person to upload and reselect that area.</p>
       </ToolbarButton>
-      <ToolbarButton id="upload" icon="upload" label="Upload a GeoJSON" on:click={() => uploader.click()}>
+      <ToolbarButton id="upload" icon="upload" label="Upload a GeoJSON boundary" on:click={() => uploader.click()}>
         <p>To automatically select a defined custom area, you can upload a GeoJSON file that had been saved previously.</p>
       </ToolbarButton>
       <ToolbarDivider />
