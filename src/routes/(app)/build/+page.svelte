@@ -15,6 +15,8 @@
 	let { data } = $props();
 
 	let appState = $state(getContext("appState")());
+	let { activeArea, comparisonArea, history } = appState;
+
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
 
@@ -22,21 +24,19 @@
 	let selectedTopics = $state([]);
 	let tables = $derived(
 		await Promise.all(
-			selectedTopics.map((d) =>
-				getData(topicsLookup[d.id], appState.activeArea, appState.comparisonArea)
-			)
+			selectedTopics.map((d) => getData(topicsLookup[d.id], $activeArea, $comparisonArea))
 		)
 	);
 
 	onMount(() => {
-		if (!appState?.history?.[0]?.geometry) goto(resolve("/draw"));
-		appState.activeArea = {
+		if (!$history?.[0]?.geometry) goto(resolve("/draw"));
+		$activeArea = {
 			type: "Feature",
-			geometry: appState.history[0].geometry,
+			geometry: $history[0].geometry,
 			properties: {
-				name: appState.activeArea?.properties?.name || null,
-				oa21cds: centroids.compress(appState.history[0].oa),
-				lsoa21cds: centroids.compress(appState.history[0].lsoa)
+				name: $activeArea?.properties?.name || null,
+				oa21cds: centroids.compress($history[0].oa),
+				lsoa21cds: centroids.compress($history[0].lsoa)
 			}
 		};
 	});
