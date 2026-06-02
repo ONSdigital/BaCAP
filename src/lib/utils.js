@@ -56,14 +56,22 @@ export function sleep(ms = 0) {
 	return new Promise((resolve) => setInterval(() => resolve(), ms));
 }
 
-export async function getAppState() {
-	let val = await get("appState");
-	if (val) return structuredClone(val);
-
-	return structuredClone(initialState);
+export function round(num, precision = 0) {
+	const multiplier = Math.pow(10, precision);
+	return Math.round(num * multiplier) / multiplier;
 }
 
-export async function syncAppState(val) {
-	console.log("syncing appState");
-	await set("appState", val);
+// Recursive function to round numbers in a multi-array (used to round coordinates)
+export function roundAll(arr, decimals) {
+	let newarr = [];
+	arr.forEach((d) => {
+		if (typeof d == "number") {
+			newarr.push(round(d, decimals));
+		} else if (Array.isArray(d)) {
+			newarr.push(roundAll(d, decimals));
+		} else {
+			newarr.push(d);
+		}
+	});
+	return newarr;
 }

@@ -8,7 +8,7 @@ export const initialState = {
 	comparisonArea: null,
 	savedAreas: [],
 	history: [{ geometry: null, oa: new Set(), lsoa: new Set() }],
-	tables: []
+	selectedTopics: []
 };
 
 // GEOGRAPHY CONFIG

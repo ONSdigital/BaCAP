@@ -55,13 +55,22 @@ function makeRowParser(table) {
 		date: d.DATE_NAME,
 		category: getCategory(d),
 		measure: d.MEASURES_NAME,
-		value: d.OBS_VALUE
+		value: +d.OBS_VALUE
 	});
+}
+
+function rowSorter(a, b) {
+	return (
+		b.areanm.localeCompare(a.areanm, "en-GB") ||
+		a.date - b.date ||
+		a.category.localeCompare(b.category, "en-GB") ||
+		a.measure.localeCompare(b.measure, "en-GB")
+	);
 }
 
 function parseData(table, csvString) {
 	const rowParser = makeRowParser(table);
-	return csvParse(csvString, rowParser);
+	return csvParse(csvString, rowParser).sort(rowSorter);
 }
 
 const maxCacheSize = 1000; // Number of cached URLs stored in local IndexedDB
@@ -90,12 +99,12 @@ export default async function getData(table, activeArea, comparisonArea) {
 	const url = makeUrl(table, activeArea.properties[geo], comparisonArea?.properties?.[geo]);
 
 	let data = await getCache(url);
-	if (data) return parseData(table, data);
+	if (data) return { meta: table, data: parseData(table, data) };
 
 	try {
 		data = await (await fetch(url)).text();
 		setCache(url, data);
-		return parseData(table, data);
+		return { meta: table, data: parseData(table, data) };
 	} catch (err) {
 		// May throw error if Nomis is unavailable
 		console.warn(err);

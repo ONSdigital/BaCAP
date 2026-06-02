@@ -2,7 +2,7 @@
 	import { onMount, setContext } from "svelte";
 	import { page } from "$app/state";
 	import { Header, Main, Footer } from "@onsvisual/svelte-components";
-	import { getAreasList, getOAdata, getLSOAcentroids, syncAppState } from "$lib/utils.js";
+	import { getAreasList, getOAdata, getLSOAcentroids } from "$lib/utils.js";
 	import getAppState from "$lib/app-state.svelte.js";
 	import Centroids from "$lib/centroids.js";
 
