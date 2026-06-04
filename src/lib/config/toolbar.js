@@ -254,6 +254,7 @@ export const newselect = function () {
         user_geometry.set(blank_geo)
         pselect.set(0);
         state.name = "";
+        addMode.set(true);
         if(get(selected).at(-1).oa.size == 0) return; // don't add a new blank selection if the last one is already blank
         selected.update(s=>[...s,{ oa: new Set(), lsoa: new Set(), geo: blank_geo }]);
       };

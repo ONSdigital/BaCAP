@@ -69,6 +69,7 @@
         handleDrawDataSelection();
       }
 
+      $addMode = true;
       // Keep track of map zoom level
       $currentMapZoom = $mapObject.getZoom();
       $mapObject.on("moveend", () => ($currentMapZoom = $mapObject.getZoom()));
