@@ -1,13 +1,13 @@
 [
 	{
-		"slug": "births",
+		"key": "births",
 		"label": "Live births",
 		"topic": "Demography and migration",
 		"summary": "The number of babies born in a year, excluding stillbirths.",
 		"chart": "number",
 		"tableCode": "NM_206_1",
 		"cellCode": null,
-		"measures": [20100],
+		"measures": [{ "label": "Value", "cell": 20100 }],
 		"categories": [{ "label": "Live births" }],
 		"dates": [2024],
 		"unit": "live births",
@@ -17,14 +17,14 @@
 		"qmi": "peoplepopulationandcommunity/birthsdeathsandmarriages/livebirths/methodologies/birthsqmi"
 	},
 	{
-		"slug": "births-timeseries",
+		"key": "births-timeseries",
 		"label": "Live births timeseries",
 		"topic": "Demography and migration",
 		"summary": "The number of babies born in a year, excluding stillbirths.",
 		"chart": "line",
 		"tableCode": "NM_206_1",
 		"cellCode": null,
-		"measures": [20100],
+		"measures": [{ "label": "Value", "cell": 20100 }],
 		"categories": [{ "label": "Live births" }],
 		"dates": [2023, 2024],
 		"unit": "live births",
@@ -34,7 +34,7 @@
 		"qmi": "peoplepopulationandcommunity/birthsdeathsandmarriages/livebirths/methodologies/birthsqmi"
 	},
 	{
-		"slug": "energy-efficiency",
+		"key": "energy-efficiency",
 		"label": "Energy efficiency of housing",
 		"topic": "Housing",
 		"summary": "The proportion of residential properties by Energy Performance Certificates (EPCs) band rating.",
@@ -43,7 +43,10 @@
 		"chart": "bar",
 		"tableCode": "NM_2401_1",
 		"cellCode": "energy_efficiency_8",
-		"measures": [20100, 20301],
+		"measures": [
+			{ "label": "Percent", "cell": 20301 },
+			{ "label": "Value", "cell": 20100 }
+		],
 		"categories": [
 			{
 				"label": "Band A",

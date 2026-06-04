@@ -2,6 +2,7 @@
 	import { resolve } from "$app/paths";
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
 	import MapboxDraw from "@mapbox/mapbox-gl-draw";
+	import maplibre from "maplibre-gl";
 	import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 	import circle from "@turf/circle";
 	import Polygon from "$lib/polygon.svelte.js";
@@ -16,7 +17,7 @@
 	MapboxDraw.constants.classes.ATTRIBUTION = "maplibregl-ctrl-attrib";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
-	let { history } = appState;
+	let { history, activeArea } = appState;
 	let map = $state();
 	let draw = $state();
 	let polygon = $state.raw($history[0] ? new Polygon($history[0].geometry) : new Polygon());
@@ -32,7 +33,7 @@
 	}
 
 	export async function applyShape(feature, mode = drawState.eraseMode ? "subtract" : "add") {
-		const _feature = feature.geojson ? parseGeoJSON(feature.geojson) : feature;
+		const _feature = feature.geojson ? parseGeoJSON(feature.geojson, centroids) : feature;
 
 		const oa = _feature?.properties?.oa21cds
 			? centroids.expand(_feature.properties.oa21cds, "oa")
@@ -50,6 +51,10 @@
 		} else {
 			polygon = new Polygon(_feature);
 			codes = { oa, lsoa };
+		}
+
+		if (mode === "replace") {
+			$activeArea = _feature;
 		}
 
 		draw.deleteAll();
@@ -84,6 +89,7 @@
 
 	export function clearDraw() {
 		$history = [{ oa: new Set(), lsoa: new Set(), geometry: null }];
+		$activeArea = { properties: {} };
 		console.log($history);
 		applyHistory($history[0]);
 	}
@@ -93,6 +99,7 @@
 			displayControlsDefault: false
 		});
 		map.addControl(draw, "bottom-left");
+		map.addControl(new maplibre.ScaleControl(), "bottom-right");
 
 		map.on("draw.create", (e) => {
 			const feature = e.features[0];
@@ -117,6 +124,7 @@
 	});
 
 	$inspect({ codes });
+	$inspect({ $activeArea });
 </script>
 
 <div id="map-container">

@@ -1,6 +1,9 @@
 import { csvParse } from "d3-dsv";
 import { get, set, update } from "idb-keyval";
 
+const maxRequestLength = 15_700;
+const maxResponseCells = 25_000;
+
 function makeCells(categories) {
 	return categories
 		.map((cat) =>
@@ -18,12 +21,12 @@ function makeUrl(table, activeCds, comparisonCds) {
 		],
 		date: table.dates,
 		...(table.cellCode ? { [table.cellCode]: makeCells(table.categories) } : {}),
-		measures: table.measures,
+		measures: table.measures.map((d) => d.cell),
 		select: [
 			"geography_name",
 			"date_name",
 			...(table.cellCode ? [table.cellCode] : []),
-			"measures_name",
+			"measures",
 			"obs_value"
 		],
 		...(table.miscParams || {})
@@ -46,15 +49,16 @@ function makeCategoryLookup(categories) {
 }
 
 function makeRowParser(table) {
-	const lookup = table.categories[0].cells ? makeCategoryLookup(table.categories) : null;
-	const getCategory = lookup
-		? (d) => lookup[d[table.cellCode.toUpperCase()]]
+	const categoryLookup = table.categories[0].cells ? makeCategoryLookup(table.categories) : null;
+	const measureLookup = Object.fromEntries(table.measures.map((d) => [d.cell, d.label]));
+	const getCategory = categoryLookup
+		? (d) => categoryLookup[d[table.cellCode.toUpperCase()]]
 		: () => table.categories[0].label;
 	return (d) => ({
 		areanm: d.GEOGRAPHY_NAME,
 		date: d.DATE_NAME,
 		category: getCategory(d),
-		measure: d.MEASURES_NAME,
+		measure: measureLookup[d.MEASURES],
 		value: +d.OBS_VALUE
 	});
 }
@@ -93,10 +97,44 @@ async function getCache(key) {
 	return cache?.get?.(key);
 }
 
+function checkRequestValidity(table, activeCds, comparisonCds, url) {
+	console.log(
+		"dimensions",
+		activeCds.size,
+		comparisonCds.size,
+		table.categories.length,
+		table.dates.length,
+		table.measures.length
+	);
+	const length = url.length;
+	if (length > maxRequestLength) {
+		console.log({ length });
+		throw Error(`Request URL longer than ${maxRequestLength.toLocaleString()} character limit`);
+	}
+	const cells =
+		(activeCds.size + comparisonCds.size) *
+		table.categories.length *
+		table.dates.length *
+		table.measures.length;
+	if (cells > maxResponseCells) {
+		console.log({ cells });
+		throw Error(`Request is for more than ${maxResponseCells.toLocaleString()} cell limit`);
+	}
+	console.log({ length, cells });
+}
+
 export default async function getData(table, activeArea, comparisonArea) {
 	if (!table || !activeArea) return null;
 	const geo = `${table.geography}cds`;
-	const url = makeUrl(table, activeArea.properties[geo], comparisonArea?.properties?.[geo]);
+	const activeCds = activeArea.properties[geo];
+	const comparisonCds = comparisonArea?.properties?.[geo];
+	const url = makeUrl(table, activeCds, comparisonCds);
+	try {
+		checkRequestValidity(table, activeCds, comparisonCds || new Set(), url);
+	} catch (err) {
+		console.warn(err);
+		// return null;
+	}
 
 	let data = await getCache(url);
 	if (data) return { meta: table, data: parseData(table, data) };

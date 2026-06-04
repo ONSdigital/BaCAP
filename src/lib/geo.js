@@ -36,14 +36,16 @@ export function parseGeoJSON(geojson, centroids) {
 	const properties = {
 		name: props.name || props.areanm || props.areacd,
 		// Convert codes to Set here?
-		oa21cds:
+		oa21cds: new Set(
 			props.oa21cds ||
-			props.codes_compressed ||
-			centroids.compress(centroids.inPolygon(geometry, "oa")),
-		lsoa21cds:
+				props.codes_compressed ||
+				centroids.compress(centroids.inPolygon(geometry, "oa"))
+		),
+		lsoa21cds: new Set(
 			props.lsoa21cds ||
-			props.codes_compressed_to_lsoa ||
-			centroids.compress(centroids.inPolygon(geometry, "lsoa"))
+				props.codes_compressed_to_lsoa ||
+				centroids.compress(centroids.inPolygon(geometry, "lsoa"))
+		)
 	};
 
 	return { type: "Feature", geometry, properties };

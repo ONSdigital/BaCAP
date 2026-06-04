@@ -1,17 +1,13 @@
 <script>
 	import { resolve } from "$app/paths";
-	import {
-		Header,
-		Hero,
-		Button,
-		Section,
-		Grid,
-		Card,
-		Footer
-	} from "@onsvisual/svelte-components";
+	import { Hero, Button, Section, Grid, Card, List, Li } from "@onsvisual/svelte-components";
 </script>
 
-<Hero theme="blue" title="Build a custom area profile" lede="Do some cool stuff with your data.">
+<Hero
+	theme="blue"
+	title="Build a custom area profile"
+	lede="Create your own profile for local areas with data for England and Wales"
+>
 	<div>
 		<Button variant="ghost" icon="arrow" iconPosition="after" href={resolve("/draw")}
 			>Get started</Button
@@ -19,15 +15,62 @@
 	</div>
 </Hero>
 
-<Section marginTop={true}>
-	<p>Some introductory text.</p>
+<Section title="How to use this tool" marginTop={true}>
+	<p>There are two steps to build your custom area profile.</p>
 </Section>
 
 <Grid width="wide" colWidth="wide">
-	<Card title="Draw" href={resolve("/draw")} mode="featured" baseline>
-		Some text about draw mode.
+	<Card title="Step 1 - Select an area" mode="featured" baseline>
+		<p>There are three ways to select an area:</p>
+		<List mode="number">
+			<Li>Search for an area in the search box.</Li>
+			<Li>Draw your own area on the map.</Li>
+			<Li>Upload an area boundary.</Li>
+		</List>
+		<p>Once you have finished selecting an area, click on the “Build profile” button.</p>
 	</Card>
-	<Card title="Build" href={resolve("/build")} mode="featured" baseline>
-		Some text about build mode.
+	<Card title="Step 2 - Build a profile" mode="featured" baseline>
+		<p>Once you have selected your area, you can choose datasets to build a profile.</p>
+		<p>
+			Your profile includes a comparison area &mdash; by default a parent area &mdash; which
+			you can change or remove.
+		</p>
+		<p>When finished, you can download the charts and data from your profile.</p>
 	</Card>
 </Grid>
+
+<Section title="Which datasets are available?">
+	<p>
+		This tool includes a variety of datasets that can be aggregated from small area data at an
+		LSOA or Output Area level.
+	</p>
+	<p>
+		You can find a description of all available datasets on the
+		<a href={resolve("/glossary")}>glossary page</a>.
+	</p>
+</Section>
+
+<Section title="How does this tool produce these figures?">
+	<p>The tool takes your chosen shape and compares it to your selected datasets.</p>
+	<p>
+		It produces a best-fit shape, which is the closest available to your chosen shape. It adds
+		up the small area data for your best-fit shape and returns it as an estimated total.
+	</p>
+	<p>Census 2021 topics and non-Census datasets use different small area types.</p>
+	<p>
+		Census 2021 topics use Output Areas (OAs) whereas non-Census datasets primarily use larger
+		Lower layer Super Output Areas (LSOAs).
+	</p>
+	<p>
+		We advise caution when comparing values between Census topics and non-Census datasets
+		because these best-fit shapes will have different boundaries.
+	</p>
+</Section>
+
+<Section title="Share your feedback">
+	<p>
+		We value your feedback on this service. If you would like to get in touch, please email <a
+			href="mailto:explore.local.statistics@ons.gov.uk">explore.local.statistics@ons.gov.uk</a
+		>.
+	</p>
+</Section>
