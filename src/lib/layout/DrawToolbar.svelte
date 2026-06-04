@@ -30,6 +30,7 @@ async function setConfirmed(type = 'oa') {
 async function addToSelection(selectedArea){
   if (!selectedArea?.detail?.geometry) return;
 
+  $addMode = true;
   await update({ type: 'Feature', geometry: selectedArea.detail.geometry, properties: {} });
 
   const newGeo = get(user_geometry);
