@@ -45,7 +45,7 @@
   <slot />
 {:else}
   {#if !$page.url.pathname.includes("landing")}
-    <AnalyticsBanner {analyticsId} {analyticsProps} width={pageWidth}/>
+    <AnalyticsBanner {analyticsId} {analyticsProps} {page} width={pageWidth}/>
     <PhaseBanner width={pageWidth} phase="Beta" href="https://consultations.ons.gov.uk/digital-publishing/2ff010d4/consultation/intro/"/>
     <Header width={pageWidth} compact={$page.url.pathname.includes("draw")} legacy={false} />
   {/if}
