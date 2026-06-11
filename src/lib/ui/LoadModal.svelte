@@ -1,11 +1,18 @@
 <script>
 	import { Tabs, Tab, Input, Button, Checkbox } from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
-	import { uploadAreas, downloadArea, featureCollection, parseGeoJSON } from "$lib/geo.svelte.js";
+	import {
+		uploadAreas,
+		downloadArea,
+		featureCollection,
+		parseGeoJSON,
+		getCodeKey
+	} from "$lib/geo.svelte.js";
 
 	let {
 		activeArea = $bindable(),
 		savedAreas = $bindable(),
+		savedAreasLastId = $bindable(),
 		centroids,
 		updateSelection = () => null
 	} = $props();
@@ -22,7 +29,7 @@
 	let editId = $state();
 	let editArea = $derived({ ...($savedAreas[editId] || {}) });
 
-	let filterText = $state();
+	let filterText = $state("");
 	let regex = $derived(new RegExp(`\\b${filterText}`, "i"));
 	let areas = $derived(Object.values($savedAreas));
 	let groups = $derived(Array.from(new Set(areas.map((d) => d.properties.group))));
@@ -46,11 +53,24 @@
 		loadedAreas = { status: null };
 	}
 
+	function findMatchId(area) {
+		const id = area.id;
+		const keys = Object.keys(area.properties);
+		const code = area.properties[getCodeKey(keys)];
+		return $savedAreas[id]
+			? id
+			: Object.values($savedAreas).find((d) => d.properties.areacd === code)?.id || null;
+	}
+
 	function saveNewArea(area) {
-		const id =
-			area.id && overwriteAreas ? area.id : Math.max(...[0, ...Object.keys($savedAreas)]) + 1;
+		let id = overwriteAreas ? findMatchId(area) : null;
+		if (!id) {
+			$savedAreasLastId += 1;
+			id = $savedAreasLastId;
+		}
 		const parsedArea = parseGeoJSON(area, centroids);
 		parsedArea.id = id;
+		if (!parsedArea.properties.group) parsedArea.properties.group = "Uploaded areas";
 		$savedAreas[id] = parsedArea;
 		// $savedAreas = $savedAreas;
 	}
@@ -96,6 +116,7 @@
 						<thead>
 							<tr>
 								<th>Name</th>
+								<th>Code</th>
 								<th>Group</th>
 								<th class="align-right"><span class="ons-u-vh">Options</span></th>
 							</tr>
@@ -110,10 +131,27 @@
 										: "none"}
 								>
 									{#if editId === area.id}
-										<td><input bind:value={editArea.properties.areanm} /></td>
-										<td><input bind:value={editArea.properties.group} /></td>
+										<td
+											><input
+												class="ons-input ons-input--text ons-input-type__input ons-input--w-20"
+												bind:value={editArea.properties.areanm}
+											/></td
+										>
+										<td
+											><input
+												class="ons-input ons-input--text ons-input-type__input ons-input--w-6"
+												bind:value={editArea.properties.areacd}
+											/></td
+										>
+										<td
+											><input
+												class="ons-input ons-input--text ons-input-type__input ons-input--w-10"
+												bind:value={editArea.properties.group}
+											/></td
+										>
 									{:else}
 										<td>{area.properties.areanm}</td>
+										<td>{area.properties.areacd}</td>
 										<td>{area.properties.group}</td>
 									{/if}
 									<td>
@@ -212,14 +250,22 @@
 				oninput={async () => (loadedAreas = await uploadAreas(uploader))}
 			/>
 			{#if loadedAreas.status === "single"}
+				{@const area = loadedAreas.areas[0]}
 				<p>Uploaded file includes one valid area.</p>
 				<Input
+					cls="ons-u-mb-2xs"
 					label="Edit area name"
-					value={loadedAreas.areas[0].properties[loadedAreas.nameKey]}
+					value={area.properties[loadedAreas.nameKey]}
 				/>
-				<Checkbox label="Overwrite existing" bind:checked={overwriteAreas} compact />
-				<Button small on:click={() => loadNewArea(loadedAreas.areas[0])}>Add to map</Button>
-				<Button variant="secondary" small>Add to saved areas</Button>
+				<Checkbox
+					label="Overwrite existing on save"
+					bind:checked={overwriteAreas}
+					compact
+				/>
+				<Button small on:click={() => loadNewArea(area)}>Select on map</Button>
+				<Button variant="secondary" icon="save" on:click={() => saveNewArea(area)} small
+					>Add to saved areas</Button
+				>
 				<Button variant="secondary" icon="cross" small on:click={closeFile}
 					>Close file</Button
 				>
@@ -251,7 +297,7 @@
 										><Button
 											variant="secondary"
 											on:click={() => loadNewArea(area)}
-											small>Add to map</Button
+											small>Select on map</Button
 										></td
 									>
 								</tr>

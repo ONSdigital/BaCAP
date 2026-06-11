@@ -32,7 +32,7 @@ export function getProperties(geojson) {
 			: null;
 }
 
-function getNameKey(keys) {
+export function getNameKey(keys) {
 	const prefs = ["areanm", "name", "areacd"];
 	for (const pref of prefs) {
 		const match = keys.find((key) => key.toLowerCase() === pref);
@@ -41,7 +41,7 @@ function getNameKey(keys) {
 	return null;
 }
 
-function getCodeKey(keys) {
+export function getCodeKey(keys) {
 	const prefs = ["areacd", "code"];
 	for (const pref of prefs) {
 		const match = keys.find((key) => key.toLowerCase() === pref);
@@ -117,7 +117,7 @@ export function makeSavedArea(activeArea, current, centroids, id = null) {
 	const area = $state.snapshot(activeArea);
 	if (id) area.id = id;
 	area.geometry = current.geometry;
-	if (!area.properties.group) area.properties.group = "Custom Areas";
+	if (!area.properties.group) area.properties.group = "Custom areas";
 	area.properties.oa21cds = centroids.compress(current.oa);
 	area.properties.lsoa21cds = centroids.compress(current.lsoa);
 	return area;

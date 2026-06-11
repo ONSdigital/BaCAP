@@ -115,7 +115,7 @@
 <style>
 	.ons-modal-simple {
 		position: relative;
-		width: 760px;
+		width: 800px;
 		max-width: calc(100% - 2rem);
 		overflow: visible;
 		border: 0;

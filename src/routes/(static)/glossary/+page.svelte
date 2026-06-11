@@ -1,12 +1,9 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Breadcrumb, Icon, Hero, NavSections, NavSection } from "@onsvisual/svelte-components";
+	import { slugify } from "$lib/utils.js";
 
 	let { data } = $props();
-
-	function slugify(string) {
-		return string.toLowerCase().replaceAll(" ", "-");
-	}
 
 	function parseText(string) {
 		return string.split("\n\n");
@@ -52,7 +49,7 @@
 					{#each parseText(ind.description || ind.summary) as para}
 						<p>{para}</p>
 					{/each}
-					{#if ind.qmi}<a class="btn-link" href={`/${ind.qmi}`} target="_blank"
+					{#if ind.url}<a class="btn-link" href={`/${ind.url}`} target="_blank"
 							>Read more <Icon type="chevron" size="s" /></a
 						>{/if}
 				{/each}

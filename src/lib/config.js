@@ -9,6 +9,7 @@ export const initialState = {
 	},
 	comparisonArea: null,
 	savedAreas: {},
+	savedAreasLastId: 0,
 	history: [{ geometry: null, oa: new Set(), lsoa: new Set() }],
 	selectedTopics: []
 };

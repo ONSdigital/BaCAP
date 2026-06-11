@@ -56,6 +56,10 @@ export function sleep(ms = 0) {
 	return new Promise((resolve) => setInterval(() => resolve(), ms));
 }
 
+export function slugify(str) {
+	return str.toLowerCase().replaceAll(" ", "-");
+}
+
 export function round(num, precision = 0) {
 	const multiplier = Math.pow(10, precision);
 	return Math.round(num * multiplier) / multiplier;

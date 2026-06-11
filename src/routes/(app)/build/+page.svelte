@@ -7,11 +7,14 @@
 		Hero,
 		Grid,
 		GridCell,
+		Accordion,
+		AccordionItem,
 		Checkboxes,
 		Checkbox
 	} from "@onsvisual/svelte-components";
 	import pym from "pym.js";
 	import { geoUrl } from "$lib/config.js";
+	import { slugify } from "$lib/utils.js";
 	import { parseGeoJSON, simplifyGeo } from "$lib/geo.svelte.js";
 	import getData from "$lib/get-data.js";
 
@@ -69,6 +72,20 @@
 		if (pymParent) pymParent.iframe.contentWindow.location.hash = embedHash;
 		console.log({ pymParent, embedHash });
 	});
+
+	function groupTopics(topics) {
+		const groups = {};
+		for (const topic of topics) {
+			if (!groups[topic.topic])
+				groups[topic.topic] = {
+					key: slugify(topic.topic),
+					label: topic.topic,
+					children: []
+				};
+			groups[topic.topic].children.push(topic);
+		}
+		return Object.values(groups);
+	}
 
 	function updateTopics(item) {
 		const ids = data.topics.map((d) => d.key);
@@ -133,18 +150,24 @@
 />
 <Grid width="wide" colWidth="narrow" marginTop>
 	<GridCell>
-		<Checkboxes label="Topics">
-			{#each data.topics as topic}
-				<Checkbox
-					id={topic.key}
-					label={topic.label}
-					checked={$selectedTopics.includes(topic.key)}
-					groupName="topics"
-					on:change={(e) => updateTopics(e?.detail?.item)}
-					compact
-				/>
+		<Accordion>
+			{#each groupTopics(data.topics, buildState.coverage) as group, i (group.key)}
+				<AccordionItem title={group.label} open={i === 0}>
+					<Checkboxes>
+						{#each group.children as topic}
+							<Checkbox
+								id={topic.key}
+								label={topic.label}
+								checked={$selectedTopics.includes(topic.key)}
+								groupName="topics"
+								on:change={(e) => updateTopics(e?.detail?.item)}
+								compact
+							/>
+						{/each}
+					</Checkboxes>
+				</AccordionItem>
 			{/each}
-		</Checkboxes>
+		</Accordion>
 	</GridCell>
 	<GridCell colspan={3}>
 		<h3>Profile</h3>

@@ -22,7 +22,7 @@
 		runAction = () => null
 	} = $props();
 
-	let { history, activeArea, savedAreas } = appState;
+	let { history, activeArea, savedAreas, savedAreasLastId } = appState;
 	let selectedArea = $state.raw(null);
 
 	$inspect({ selectedArea });
@@ -199,6 +199,7 @@
 					<LoadModal
 						bind:activeArea
 						bind:savedAreas
+						bind:savedAreasLastId
 						{centroids}
 						updateSelection={(area) => {
 							runAction("applyShape", [area, "replace"]);

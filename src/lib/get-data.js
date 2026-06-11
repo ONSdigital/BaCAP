@@ -26,6 +26,7 @@ function makeUrl(table, activeCds, comparisonCds) {
 			"geography_name",
 			"date_name",
 			...(table.cellCode ? [table.cellCode] : []),
+			...(table.cellCode ? [`${table.cellCode}_name`] : []),
 			"measures",
 			"obs_value"
 		],
@@ -42,7 +43,8 @@ function makeUrl(table, activeCds, comparisonCds) {
 function makeCategoryLookup(categories) {
 	const lookup = {};
 	for (const cat of categories) {
-		if (cat.cells.length > 1) lookup[cat.label] = cat.label;
+		// NOTE: Nomis removes colons from custom field names
+		if (cat.cells.length > 1) lookup[cat.label.replaceAll(":", "")] = cat.label;
 		else lookup[cat.cells[0]] = cat.label;
 	}
 	return lookup;
@@ -51,8 +53,10 @@ function makeCategoryLookup(categories) {
 function makeRowParser(table) {
 	const categoryLookup = table.categories[0].cells ? makeCategoryLookup(table.categories) : null;
 	const measureLookup = Object.fromEntries(table.measures.map((d) => [d.cell, d.label]));
+	const categoryCol = table.cellCode?.toUpperCase?.();
+	const categoryNameCol = categoryCol + "_NAME";
 	const getCategory = categoryLookup
-		? (d) => categoryLookup[d[table.cellCode.toUpperCase()]]
+		? (d) => categoryLookup[d[categoryCol]] || categoryLookup[d[categoryNameCol]]
 		: () => table.categories[0].label;
 	return (d) => ({
 		areanm: d.GEOGRAPHY_NAME,
@@ -137,6 +141,7 @@ export default async function getData(table, activeArea, comparisonArea) {
 	}
 
 	let data = await getCache(url);
+	console.log({ url, meta: table, data });
 	if (data) return { meta: table, data: parseData(table, data) };
 
 	try {
