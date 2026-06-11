@@ -6,7 +6,7 @@
 		"summary": "Mid-year estimate of the total number of people.",
 		"description": null,
 		"chart": "number",
-		"tableCode": ["NM_2014_1", "NM_2002_1"],
+		"tableCode": "NM_2014_1",
 		"cellCode": "c_age",
 		"measures": [{ "label": "Value", "cell": 20100 }],
 		"categories": [{ "label": "Population", "cells": [200] }],
@@ -45,7 +45,7 @@
 		"summary": "Five year age bands based on mid-year population estimates.",
 		"description": null,
 		"chart": "profile",
-		"tableCode": ["NM_2014_1", "NM_2002_1"],
+		"tableCode": "NM_2014_1",
 		"cellCode": "c_age",
 		"measures": [{ "label": "Value", "cell": 20100 }],
 		"categories": [
@@ -84,7 +84,7 @@
 		"summary": "Mid-year estimate of the proportion of females and males.",
 		"description": null,
 		"chart": "bar",
-		"tableCode": ["NM_2014_1", "NM_2002_1"],
+		"tableCode": "NM_2014_1",
 		"cellCode": "gender",
 		"measures": [{ "label": "Value", "cell": 20100 }],
 		"categories": [

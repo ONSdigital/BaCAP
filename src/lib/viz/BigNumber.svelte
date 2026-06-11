@@ -9,13 +9,13 @@
 	} = $props();
 </script>
 
-<div class="num-big">{prefix || ""}{format(data[0].value)}{suffix || ""}</div>
+<div class="num-big">{prefix || ""}{format(data?.[0]?.value)}{suffix || ""}</div>
 {#if unit}
 	<div class="num-suffix">{unit}</div>
 {/if}
-{#if data[1]}
+{#if data?.[1]?.value}
 	<div class="num-desc" style:--highlightColor={highlightColor}>
-		<mark>{data[1].value}</mark> in {data[1].areanm}
+		<mark>{format(data[1].value)}</mark> in {data[1].areanm}
 	</div>
 {/if}
 
