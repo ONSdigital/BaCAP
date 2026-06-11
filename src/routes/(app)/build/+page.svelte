@@ -12,7 +12,7 @@
 	} from "@onsvisual/svelte-components";
 	import pym from "pym.js";
 	import { geoUrl } from "$lib/config.js";
-	import { parseGeoJSON, simplifyGeo } from "$lib/geo.js";
+	import { parseGeoJSON, simplifyGeo } from "$lib/geo.svelte.js";
 	import getData from "$lib/get-data.js";
 
 	let { data } = $props();
@@ -46,8 +46,8 @@
 	);
 	let embedHash = $derived.by(() => {
 		const areas = [
-			$activeArea?.properties?.name,
-			...($comparisonArea ? [$comparisonArea.properties?.name] : [])
+			$activeArea?.properties?.areanm,
+			...($comparisonArea ? [$comparisonArea.properties?.areanm] : [])
 		];
 		const polygons = [
 			...(buildState.includeAreaMap ? [areaPolygon] : []),
@@ -80,15 +80,10 @@
 	onMount(async () => {
 		if (!$history?.[0]?.geometry) goto(resolve("/draw"));
 		// Refresh active area
-		$activeArea = {
-			type: "Feature",
-			geometry: $history[0].geometry,
-			properties: {
-				name: $activeArea?.properties?.name || null,
-				oa21cds: centroids.compress($history[0].oa),
-				lsoa21cds: centroids.compress($history[0].lsoa)
-			}
-		};
+		$activeArea.geometry = $history[0].geometry;
+		$activeArea.properties.oa21cds = centroids.compress($history[0].oa);
+		$activeArea.properties.lsoa21cds = centroids.compress($history[0].lsoa);
+		$activeArea = $activeArea;
 
 		// Refresh comparison area
 		const compcd = centroids.commonParent({
@@ -132,7 +127,9 @@
 />
 <Hero
 	theme="grey"
-	title="Area profile{$activeArea?.properties?.name ? ` for ${$activeArea.properties.name}` : ''}"
+	title="Area profile{$activeArea?.properties?.areanm
+		? ` for ${$activeArea.properties.areanm}`
+		: ''}"
 />
 <Grid width="wide" colWidth="narrow" marginTop>
 	<GridCell>

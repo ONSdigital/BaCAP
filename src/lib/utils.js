@@ -1,5 +1,5 @@
 import { resolve } from "$app/paths";
-import { get, set, update } from "idb-keyval";
+import { get, set, update } from "./db.js";
 import { decompressData } from "compress-csv-to-json";
 import { initialState, geotypesLookup } from "./config.js";
 
@@ -89,11 +89,22 @@ export function groupData(data, key) {
 		}
 		dataIndexed[d[key]].values.push(d);
 	}
+	return Object.values(dataIndexed);
+}
 
-	let dataGrouped = [];
-	keys.forEach((key) => {
-		dataGrouped.push(dataIndexed[key]);
-	});
+export function download(blob, filename) {
+	let url = window.URL || window.webkitURL || window;
+	let link = url.createObjectURL(blob);
+	let a = document.createElement("a");
 
-	return dataGrouped;
+	a.download = filename;
+	a.href = link;
+	document.body.appendChild(a);
+
+	a.click();
+	document.body.removeChild(a);
+}
+
+export async function clip(str) {
+	return await navigator.clipboard.writeText(str);
 }

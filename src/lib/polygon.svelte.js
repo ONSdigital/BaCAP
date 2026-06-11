@@ -1,15 +1,7 @@
 import bbox from "@turf/bbox";
 import union from "@turf/union";
 import difference from "@turf/difference";
-import { getGeometry } from "./geo.js";
-
-function makeFeature(geometry) {
-	return { type: "Feature", geometry, properties: {} };
-}
-
-function featureCollection(geometries) {
-	return { type: "FeatureCollection", features: geometries.map((d) => makeFeature(d)) };
-}
+import { getGeometry, feature, featureCollection } from "./geo.svelte.js";
 
 export default class Polygon {
 	geometry = $state(null);
@@ -27,7 +19,7 @@ export default class Polygon {
 	add(geojson) {
 		console.log("add", geojson);
 		const geometry = this.geometry
-			? getGeometry(union(featureCollection([this.geometry, getGeometry(geojson)])))
+			? getGeometry(union(featureCollection([this, feature(getGeometry(geojson))])))
 			: getGeometry(geojson);
 		geometry.bbox = bbox(geometry);
 		this.geometry = geometry;
@@ -36,7 +28,7 @@ export default class Polygon {
 		console.log("subtract", geojson);
 		if (!this.geometry) return;
 		const geometry = getGeometry(
-			difference(featureCollection([this.geometry, getGeometry(geojson)]))
+			difference(featureCollection([this, feature(getGeometry(geojson))]))
 		);
 		if (!geometry) this.geometry = null;
 		geometry.bbox = bbox(geometry);

@@ -3,10 +3,13 @@ export const appVersion = 1;
 export const initialState = {
 	appVersion,
 	activeArea: {
+		type: "Feature",
+		id: null,
+		geometry: null,
 		properties: {}
 	},
 	comparisonArea: null,
-	savedAreas: [],
+	savedAreas: {},
 	history: [{ geometry: null, oa: new Set(), lsoa: new Set() }],
 	selectedTopics: []
 };

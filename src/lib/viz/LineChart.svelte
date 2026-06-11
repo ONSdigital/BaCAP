@@ -21,14 +21,12 @@
 			}
 			indexed[d[zKey]][d.date] = d.value;
 		}
-		const _data = [];
 		for (let key in indexed) {
 			for (const val of xDomain) {
 				indexed[key][`${val}_change`] = indexed[key][val] / indexed[key][xDomain[0]];
 			}
-			_data.push(indexed[key]);
 		}
-		return _data;
+		return Object.values(indexed);
 	}
 	function makeYDomain(data) {
 		let min;

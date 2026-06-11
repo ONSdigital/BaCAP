@@ -7,7 +7,7 @@
 	import circle from "@turf/circle";
 	import Polygon from "$lib/polygon.svelte.js";
 	import { sleep } from "$lib/utils.js";
-	import { parseGeoJSON } from "$lib/geo.js";
+	import { parseGeoJSON } from "$lib/geo.svelte.js";
 
 	// Set mapbox-gl-draw constants to accommodate maplibre
 	MapboxDraw.constants.classes.CANVAS = "maplibregl-canvas";
@@ -89,7 +89,7 @@
 
 	export function clearDraw() {
 		$history = [{ oa: new Set(), lsoa: new Set(), geometry: null }];
-		$activeArea = { properties: {} };
+		$activeArea = { type: "Feature", id: null, geometry: null, properties: {} };
 		console.log($history);
 		applyHistory($history[0]);
 	}

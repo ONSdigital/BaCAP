@@ -1,5 +1,5 @@
 import { csvParse } from "d3-dsv";
-import { get, set, update } from "idb-keyval";
+import { get, set, update } from "./db.js";
 
 const maxRequestLength = 15_700;
 const maxResponseCells = 25_000;

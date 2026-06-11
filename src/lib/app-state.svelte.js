@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { get, set } from "idb-keyval";
+import { get, set } from "./db.js";
 import { initialState } from "./config.js";
 
 function syncState(key, val) {

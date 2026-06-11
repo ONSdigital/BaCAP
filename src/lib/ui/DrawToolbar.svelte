@@ -11,6 +11,8 @@
 	} from "@onsvisual/svelte-components";
 	import SliderCombo from "./SliderCombo.svelte";
 	import AreaSearch from "./AreaSearch.svelte";
+	import LoadModal from "./LoadModal.svelte";
+	import SaveModal from "./SaveModal.svelte";
 
 	let {
 		appState = $bindable(),
@@ -20,7 +22,7 @@
 		runAction = () => null
 	} = $props();
 
-	let { history } = appState;
+	let { history, activeArea, savedAreas } = appState;
 	let selectedArea = $state.raw(null);
 
 	$inspect({ selectedArea });
@@ -156,6 +158,7 @@
 							if (selectedArea) {
 								runAction("applyShape", [selectedArea, "replace"]);
 								runAction("fitPolygon");
+								selectedArea = null;
 							}
 						}}
 					>
@@ -168,6 +171,7 @@
 										if (selectedArea) {
 											runAction("applyShape", [selectedArea, "add"]);
 											runAction("fitPolygon");
+											selectedArea = null;
 										}
 									}}
 									small
@@ -181,13 +185,27 @@
 		</Toolbar>
 
 		<Toolbar>
-			<ToolbarButton id="download" icon="download" label="Download selected area">
+			<ToolbarButton id="download" icon="download" label="Save current area" custom>
+				<div slot="custom">
+					<SaveModal bind:activeArea bind:savedAreas {history} {centroids} />
+				</div>
 				<p>
 					You can save a selected area as a GeoJSON file, which you can use at a later
 					time or share with another person to upload and reselect that area.
 				</p>
 			</ToolbarButton>
-			<ToolbarButton id="upload" icon="upload" label="Upload a GeoJSON boundary">
+			<ToolbarButton id="upload" icon="upload" label="Load a saved area" custom>
+				<div slot="custom">
+					<LoadModal
+						bind:activeArea
+						bind:savedAreas
+						{centroids}
+						updateSelection={(area) => {
+							runAction("applyShape", [area, "replace"]);
+							runAction("fitPolygon");
+						}}
+					/>
+				</div>
 				<p>
 					To automatically select a defined custom area, you can upload a GeoJSON file
 					that had been saved previously.
@@ -204,16 +222,15 @@
 					variety of datasets to build your area profile.
 				</p>
 				<div slot="custom">
-					<Button icon="arrow" iconPosition="after" href={resolve("/build")} small
-						>Build profile</Button
+					<Button
+						icon="arrow"
+						iconPosition="after"
+						href={resolve("/build")}
+						disabled={$history.length < 2}
+						small>Build profile</Button
 					>
 				</div>
 			</ToolbarButton>
-			<ToolControls slot="controls">
-				<ToolControl id="download">
-					<p>Download tools</p>
-				</ToolControl>
-			</ToolControls>
 		</Toolbar>
 	</ToolbarsContainer>
 </div>
@@ -230,8 +247,6 @@
 		align-items: stretch !important;
 	}
 	#search-inputs {
-		display: flex;
-		flex-direction: row;
 		margin-top: 6px;
 	}
 </style>

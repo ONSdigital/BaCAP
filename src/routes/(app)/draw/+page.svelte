@@ -1,6 +1,7 @@
 <script>
+	import { resolve } from "$app/paths";
 	import { getContext } from "svelte";
-	import { Container } from "@onsvisual/svelte-components";
+	import { Container, Breadcrumb } from "@onsvisual/svelte-components";
 	import DrawToolbar from "$lib/ui/DrawToolbar.svelte";
 	import DrawMap from "$lib/ui/DrawMap.svelte";
 	import DrawCounter from "$lib/ui/DrawCounter.svelte";
@@ -20,10 +21,14 @@
 </script>
 
 <Container id="draw-container" width="full" height="calc(100vh - 52px)">
+	<div class="breadcrumb-container">
+		<Breadcrumb links={[{ label: "Build a custom area profile", href: resolve("/") }]} />
+	</div>
 	<DrawToolbar
 		bind:appState
 		bind:drawState
 		{areasList}
+		{centroids}
 		runAction={(action, args = []) => drawMap?.[action]?.(...args)}
 	/>
 	<DrawMap bind:this={drawMap} bind:appState {drawState} {centroids} />
@@ -33,5 +38,10 @@
 <style>
 	:global(#draw-container) {
 		position: relative;
+	}
+	.breadcrumb-container {
+		position: absolute;
+		bottom: 100%;
+		right: 0;
 	}
 </style>

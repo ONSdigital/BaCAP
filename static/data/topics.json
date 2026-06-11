@@ -82,6 +82,6 @@
 		"base": "all assessed properties",
 		"geography": "lsoa21",
 		"census": false,
-		"source": "ONS analysis of EPCs"
+		"source": "ONS analysis of EPC data"
 	}
 ]

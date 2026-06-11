@@ -153,6 +153,7 @@
 	{groupKey}
 	mode="search"
 	label="Find an area to add to the map"
+	placeholder="Type a place name or postcode"
 	on:change={handleChange}
 	autoClear={false}
 />
