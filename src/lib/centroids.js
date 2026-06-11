@@ -48,6 +48,7 @@ export default class Centroids {
 		return this.#data;
 	}
 	compress(cds) {
+		// Compresses to the highest parent area codes that have all their children present
 		const orphans = [];
 		let current = [...cds];
 		while (current.length > 0) {
@@ -71,25 +72,34 @@ export default class Centroids {
 		return new Set(orphans);
 	}
 	expand(cds, level = "oa") {
-		const childFn =
-			level === "lsoa"
-				? (cd) => (cd.slice(1, 3) === "01" ? [cd] : [...(this.#data.children[cd] || [cd])])
-				: (cd) => [...(this.#data.children[cd] || [cd])];
-		const expanded = [...cds].map(childFn).flat();
-		if (expanded.length === cds.length) return new Set(cds);
-		return this.expand(expanded, level);
+		// Expands compressed codes to a full list of OA or LSOA codes
+		const match = level === "lsoa" ? "01" : "00";
+		const expanded = [];
+		let current = [...cds];
+		while (current.length > 0) {
+			const next = [];
+			for (const cd of current) {
+				if (cd.slice(1, 3) === match) expanded.push(cd);
+				else next.push(...this.#data.children[cd]);
+			}
+			current = next;
+		}
+		return new Set(expanded);
 	}
 	inPolygon(polygon, level = "oa") {
+		// Returns the area codes of the centroids within a GeoJSON polygon
 		const features = this.#data[level].features.filter((ft) => inPolygon(ft, polygon));
 		return new Set(features.map((ft) => ft.properties.areacd));
 	}
 	population(cds) {
+		// Gets the total population of the selected OAs
 		if (cds.size === 0) return 0;
 		return Array.from(cds)
 			.map((cd) => this.#data.lookup[cd].properties.population)
 			.reduce((a, b) => a + b, 0);
 	}
 	commonParent(cds = { raw: null, compressed: null }) {
+		// Finds the closest parent area that a selection sits fully within
 		let raw = cds.raw;
 		let compressed = cds.compressed;
 		if (!raw && !compressed) return null;
@@ -102,9 +112,10 @@ export default class Centroids {
 		while (unique.size > 1) {
 			unique = new Set([...unique].map((cd) => this.#data.parents[cd]).filter((cd) => cd));
 		}
-		return unique.values().next().value || 0;
+		return unique.values().next().value || null;
 	}
 	isValidCode(cd, level = "oa") {
+		// Checks if a code exists in the full heirarchy
 		return this.#data.parents[cd] && (level === "oa" || !this.#data.lookup[cd]);
 	}
 }
