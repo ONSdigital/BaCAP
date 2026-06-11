@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { get, set } from "./db.js";
-import { initialState } from "./config.js";
+import { initialState, appVersion } from "./config.js";
 
 function syncState(key, val) {
 	console.log(`Syncing state: ${key}`, val);
@@ -21,6 +21,11 @@ function syncedStore(key, initialValue = null) {
 }
 
 export default async function getAppState() {
+	const version = get("appVersion");
+	if (version !== appVersion) {
+		// Do something here if current app version doesn't match store
+		set("appVersion", appVersion);
+	}
 	const keys = Object.keys(initialState);
 	const storedState = await Promise.all(keys.map((key) => get(key)));
 	const appState = Object.fromEntries(

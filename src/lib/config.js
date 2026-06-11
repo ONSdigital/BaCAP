@@ -1,7 +1,6 @@
 // APP STATE CONFIG
 export const appVersion = 1;
 export const initialState = {
-	appVersion,
 	activeArea: {
 		type: "Feature",
 		id: null,
