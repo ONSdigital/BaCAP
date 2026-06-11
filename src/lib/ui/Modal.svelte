@@ -8,7 +8,8 @@
 		icon = null,
 		children,
 		onOpen = () => null,
-		onClose = () => null
+		onConfirm = () => null,
+		onCancel = () => null
 	} = $props();
 
 	let id = $derived(title.toLowerCase().replaceAll(" ", "-"));
@@ -56,9 +57,19 @@
 		analyticsEvent(eventData);
 	}
 
-	export function closeDialog() {
+	export function openDialog() {
+		dialog.showModal();
+		onOpen();
+	}
+
+	export function confirmDialog() {
 		dialog.close();
-		onClose();
+		onConfirm();
+	}
+
+	export function cancelDialog() {
+		dialog.close();
+		onCancel();
 	}
 </script>
 

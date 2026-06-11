@@ -11,7 +11,12 @@
 		centroids
 	} = $props();
 
+	let modal = $state();
 	let showSuccess = $state({ oa: false, lsoa: false });
+
+	export function openModal() {
+		modal?.openDialog?.();
+	}
 
 	function updateAreaName(e) {
 		const name = e?.detail?.value;
@@ -41,6 +46,7 @@
 </script>
 
 <Modal
+	bind:this={modal}
 	title="Save current area"
 	label="Save current area"
 	hideLabel

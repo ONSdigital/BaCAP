@@ -28,17 +28,21 @@
 	let groups = $derived(Array.from(new Set(areas.map((d) => d.properties.group))));
 	let activeGroups = $derived([...groups]);
 
+	export function openModal() {
+		modal?.openDialog?.();
+	}
+
 	function loadSavedArea(area) {
 		$activeArea = $state.snapshot(area);
 		updateSelection($activeArea);
-		modal.closeDialog();
+		modal.confirmDialog();
 		loadedAreas = { status: null };
 	}
 
 	function loadNewArea(area) {
 		$activeArea = parseGeoJSON(area, centroids);
 		updateSelection($activeArea);
-		modal.closeDialog();
+		modal.confirmDialog();
 		loadedAreas = { status: null };
 	}
 
