@@ -1,12 +1,18 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Hero, Button, Section, Grid, Card, List, Li } from "@onsvisual/svelte-components";
+
+	let headerBackground = $state(
+		`var(--ons-color-branded) right -80px top / auto 100% no-repeat url("${resolve("/img/og.png")}")`
+	);
 </script>
 
 <Hero
 	theme="blue"
+	cls="page-banner"
 	title="Build a custom area profile"
 	lede="Create your own profile for local areas with data for England and Wales"
+	background={headerBackground}
 >
 	<div>
 		<Button variant="ghost" icon="arrow" iconPosition="after" href={resolve("/draw")}
@@ -74,3 +80,11 @@
 		>.
 	</p>
 </Section>
+
+<style>
+	@media (max-width: 768px) {
+		:global(.ons-svelte-theme-wrapper:has(.page-banner)) {
+			background-image: none !important;
+		}
+	}
+</style>
