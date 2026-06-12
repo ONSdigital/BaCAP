@@ -25,6 +25,9 @@
 	let { history, activeArea, savedAreas, savedAreasLastId } = appState;
 	let selectedArea = $state.raw(null);
 
+	let loadModal = $state();
+	let saveModal = $state();
+
 	$inspect({ selectedArea });
 </script>
 
@@ -187,7 +190,17 @@
 		<Toolbar>
 			<ToolbarButton id="download" icon="download" label="Save current area" custom>
 				<div slot="custom">
-					<SaveModal bind:activeArea bind:savedAreas {history} {centroids} />
+					<SaveModal
+						bind:activeArea
+						bind:savedAreas
+						bind:modal={saveModal}
+						{history}
+						{centroids}
+						switchModals={() => {
+							saveModal.cancelDialog();
+							loadModal.openDialog();
+						}}
+					/>
 				</div>
 				<p>
 					You can save a selected area as a GeoJSON file, which you can use at a later
@@ -200,10 +213,15 @@
 						bind:activeArea
 						bind:savedAreas
 						bind:savedAreasLastId
+						bind:modal={loadModal}
 						{centroids}
 						updateSelection={(area) => {
 							runAction("applyShape", [area, "replace"]);
 							runAction("fitPolygon");
+						}}
+						switchModals={() => {
+							loadModal.cancelDialog();
+							saveModal.openDialog();
 						}}
 					/>
 				</div>

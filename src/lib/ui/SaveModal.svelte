@@ -8,15 +8,12 @@
 		activeArea = $bindable(),
 		savedAreas = $bindable(),
 		history = $bindable(),
-		centroids
+		modal = $bindable(),
+		centroids,
+		switchModals = () => null
 	} = $props();
 
-	let modal = $state();
 	let showSuccess = $state({ oa: false, lsoa: false });
-
-	export function openModal() {
-		modal?.openDialog?.();
-	}
 
 	function updateAreaName(e) {
 		const name = e?.detail?.value;
@@ -58,8 +55,9 @@
 	<Tabs>
 		<Tab title="Save area">
 			<p>
-				Give your area a name and then download it or save it for later (<a href="#0"
-					>view saved areas</a
+				Give your area a name and then download it or save it for later (<a
+					href="#saved-areas"
+					onclick={switchModals}>view saved areas</a
 				>).
 			</p>
 			<Input

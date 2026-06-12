@@ -80,7 +80,7 @@
 			</Card>
 		{/each}
 	</Grid>
-	{JSON.stringify(tables)}
+	<!-- {JSON.stringify(tables)} -->
 </Embed>
 
 <style>

@@ -13,11 +13,11 @@
 		activeArea = $bindable(),
 		savedAreas = $bindable(),
 		savedAreasLastId = $bindable(),
+		modal = $bindable(),
 		centroids,
-		updateSelection = () => null
+		updateSelection = () => null,
+		switchModals = () => null
 	} = $props();
-
-	let modal = $state();
 
 	let uploader = $state();
 	let loadedAreas = $state({ status: null });
@@ -34,10 +34,6 @@
 	let areas = $derived(Object.values($savedAreas));
 	let groups = $derived(Array.from(new Set(areas.map((d) => d.properties.group))));
 	let activeGroups = $derived([...groups]);
-
-	export function openModal() {
-		modal?.openDialog?.();
-	}
 
 	function loadSavedArea(area) {
 		$activeArea = $state.snapshot(area);
@@ -104,10 +100,104 @@
 	onCancel={() => null}
 >
 	<Tabs>
+		<Tab title="Upload areas">
+			<input
+				type="file"
+				accept=".geojson,.json"
+				style:display="none"
+				bind:this={uploader}
+				oninput={async () => (loadedAreas = await uploadAreas(uploader))}
+			/>
+			{#if loadedAreas.status === "single"}
+				{@const area = loadedAreas.areas[0]}
+				<p>Uploaded file includes one valid area.</p>
+				<Input
+					cls="ons-u-mb-2xs"
+					label="Edit area name"
+					value={area.properties[loadedAreas.nameKey]}
+				/>
+				<Checkbox
+					label="Overwrite existing on save"
+					bind:checked={overwriteAreas}
+					compact
+				/>
+				<Button small on:click={() => loadNewArea(area)}>Select on map</Button>
+				<Button variant="secondary" icon="save" on:click={() => saveNewArea(area)} small
+					>Add to saved areas</Button
+				>
+				<Button variant="secondary" icon="cross" small on:click={closeFile}
+					>Close file</Button
+				>
+			{:else if loadedAreas.status === "multi"}
+				<p>
+					Uploaded file includes {loadedAreas.areas.length.toLocaleString("en-GB")} valid areas.
+				</p>
+				<div class="saved-areas-container">
+					<table class="saved-areas">
+						<thead>
+							<tr>
+								<th style:padding-left="34px">Area name</th>
+								<th>Area code</th>
+								<th><span class="ons-u-vh">Options</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each loadedAreas.areas as area, i}
+								<tr>
+									<td
+										><Checkbox
+											label={area.properties?.[loadedAreas.nameKey] || ""}
+											bind:checked={loadedAreas.selected[i]}
+											compact
+										/></td
+									>
+									<td>{area.properties?.[loadedAreas.codeKey] || ""}</td>
+									<td class="align-right"
+										><Button
+											variant="secondary"
+											on:click={() => loadNewArea(area)}
+											small>Select on map</Button
+										></td
+									>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+				<Checkbox
+					label="Select all areas"
+					bind:checked={selectAll}
+					on:change={toggleSelectAll}
+					compact
+				/>
+				<Checkbox label="Overwrite duplicate areas" bind:checked={overwriteAreas} compact />
+				<Button variant="primary" icon="save" small on:click={saveSelectedNewAreas}
+					>Save selected areas</Button
+				>
+				<Button variant="secondary" icon="cross" small on:click={closeFile}
+					>Close file</Button
+				>
+			{:else if loadedAreas.status === "invalid"}
+				<p>Uploaded file did not contain valid Polygon or MultiPolygon features.</p>
+				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
+					>Upload a GeoJSON file</Button
+				>
+			{:else}
+				<p>
+					Upload a file previously saved from this tool, or any other valid GeoJSON file
+					that contains one or more area polygons. You can also select from <a
+						href="#saved-areas">previously saved areas</a
+					>.
+				</p>
+				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
+					>Upload a GeoJSON file</Button
+				>
+			{/if}
+		</Tab>
 		<Tab title="Saved areas">
 			{#if areas.length > 0}
 				<Input
-					label="Filter by name"
+					label="Filter areas by name"
 					placeholder="Type an area name"
 					bind:value={filterText}
 				/>
@@ -239,98 +329,6 @@
 						href="#upload-areas">upload an area</a
 					> or save the areas you select on the map.
 				</p>
-			{/if}
-		</Tab>
-		<Tab title="Upload areas">
-			<input
-				type="file"
-				accept=".geojson,.json"
-				style:display="none"
-				bind:this={uploader}
-				oninput={async () => (loadedAreas = await uploadAreas(uploader))}
-			/>
-			{#if loadedAreas.status === "single"}
-				{@const area = loadedAreas.areas[0]}
-				<p>Uploaded file includes one valid area.</p>
-				<Input
-					cls="ons-u-mb-2xs"
-					label="Edit area name"
-					value={area.properties[loadedAreas.nameKey]}
-				/>
-				<Checkbox
-					label="Overwrite existing on save"
-					bind:checked={overwriteAreas}
-					compact
-				/>
-				<Button small on:click={() => loadNewArea(area)}>Select on map</Button>
-				<Button variant="secondary" icon="save" on:click={() => saveNewArea(area)} small
-					>Add to saved areas</Button
-				>
-				<Button variant="secondary" icon="cross" small on:click={closeFile}
-					>Close file</Button
-				>
-			{:else if loadedAreas.status === "multi"}
-				<p>
-					Uploaded file includes {loadedAreas.areas.length.toLocaleString("en-GB")} valid areas.
-				</p>
-				<div class="saved-areas-container">
-					<table class="saved-areas">
-						<thead>
-							<tr>
-								<th style:padding-left="34px">Area name</th>
-								<th>Area code</th>
-								<th><span class="ons-u-vh">Options</span></th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each loadedAreas.areas as area, i}
-								<tr>
-									<td
-										><Checkbox
-											label={area.properties?.[loadedAreas.nameKey] || ""}
-											bind:checked={loadedAreas.selected[i]}
-											compact
-										/></td
-									>
-									<td>{area.properties?.[loadedAreas.codeKey] || ""}</td>
-									<td class="align-right"
-										><Button
-											variant="secondary"
-											on:click={() => loadNewArea(area)}
-											small>Select on map</Button
-										></td
-									>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-				<Checkbox
-					label="Select all areas"
-					bind:checked={selectAll}
-					on:change={toggleSelectAll}
-					compact
-				/>
-				<Checkbox label="Overwrite duplicate areas" bind:checked={overwriteAreas} compact />
-				<Button variant="primary" icon="save" small on:click={saveSelectedNewAreas}
-					>Save selected areas</Button
-				>
-				<Button variant="secondary" icon="cross" small on:click={closeFile}
-					>Close file</Button
-				>
-			{:else if loadedAreas.status === "invalid"}
-				<p>Uploaded file did not contain valid Polygon or MultiPolygon features.</p>
-				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
-					>Upload a GeoJSON file</Button
-				>
-			{:else}
-				<p>
-					Upload a file previously saved from this tool, or any other valid GeoJSON file
-					that contains one or more area polygons.
-				</p>
-				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
-					>Upload a GeoJSON file</Button
-				>
 			{/if}
 		</Tab>
 	</Tabs>
