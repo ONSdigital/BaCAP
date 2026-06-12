@@ -57,6 +57,9 @@
 <svelte:window onhashchange={update} />
 
 <Embed id="embed" bind:pymChild>
+	{#if embedData?.areas?.[0]}
+		<h1>{embedData.areas[0]}</h1>
+	{/if}
 	<Grid cls="data-cards">
 		{#if embedData?.polygons?.[0]}
 			<Card title="Area map" mode="featured" baseline>

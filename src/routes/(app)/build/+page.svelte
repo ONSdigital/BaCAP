@@ -54,7 +54,9 @@
 		];
 		const polygons = [
 			...(buildState.includeAreaMap ? [areaPolygon] : []),
-			...(compPolygon && buildState.includeCompMap ? [compPolygon] : [])
+			...(compPolygon && buildState.includeAreaMap && buildState.includeCompMap
+				? [compPolygon]
+				: [])
 		];
 		const dataTables = tables.map((t) => ({
 			key: t.meta.key,
@@ -150,6 +152,19 @@
 />
 <Grid width="wide" colWidth="narrow" marginTop>
 	<GridCell>
+		<Checkboxes cls="ons-u-mb-l">
+			<Checkbox
+				label="Show map in profile"
+				bind:checked={buildState.includeAreaMap}
+				compact
+			/>
+			<Checkbox
+				label="Show comparison area"
+				bind:checked={buildState.includeCompMap}
+				disabled={!buildState.includeAreaMap}
+				compact
+			/>
+		</Checkboxes>
 		<Accordion>
 			{#each groupTopics(data.topics, buildState.coverage) as group, i (group.key)}
 				<AccordionItem title={group.label} open={i === 0}>
@@ -170,8 +185,14 @@
 		</Accordion>
 	</GridCell>
 	<GridCell colspan={3}>
-		<h3>Profile</h3>
-		<p>Hash length {embedHash.length}</p>
+		<h3>Profile <small>(hash length {embedHash.length})</small></h3>
+
 		<div id="embed"></div>
 	</GridCell>
 </Grid>
+
+<style>
+	small {
+		font-weight: normal;
+	}
+</style>
