@@ -5,6 +5,7 @@
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";
 	import LineChart from "$lib/viz/LineChart.svelte";
+	import ProfileChart from "$lib/viz/ProfileChart.svelte";
 
 	let { data } = $props();
 
@@ -43,13 +44,14 @@
 	}
 
 	let topicsLookup = $derived(Object.fromEntries(data.topics.map((d) => [d.key, d])));
+	let embedHash = $state("");
 	let embedData = $state();
 	let pymChild = $state();
 	let tables = $derived(expandTables(topicsLookup, embedData));
 
 	function update() {
-		const hash = document.location.hash.slice(1);
-		if (hash.length) embedData = JSON.parse(atob(hash));
+		embedHash = document.location.hash.slice(1);
+		if (embedHash.length) embedData = JSON.parse(atob(embedHash));
 	}
 	onMount(update);
 </script>
@@ -58,9 +60,9 @@
 
 <Embed id="embed" bind:pymChild>
 	{#if embedData?.areas?.[0]}
-		<h1>{embedData.areas[0]}</h1>
+		<h1>{embedData.areas[0]} <small>(hash length {embedHash.length})</small></h1>
 	{/if}
-	<Grid cls="data-cards">
+	<Grid cls="data-cards" colWidth="medium">
 		{#if embedData?.polygons?.[0]}
 			<Card title="Area map" mode="featured" baseline>
 				<AreaMap polygons={embedData.polygons} />
@@ -73,6 +75,8 @@
 					<BigNumber data={tab.data} unit={tab.meta.unit} />
 				{:else if tab.meta.chart === "line"}
 					<LineChart data={tab.data} />
+				{:else if tab.meta.chart === "profile"}
+					<ProfileChart data={tab.data} />
 				{:else}
 					<BarChart data={tab.data} />
 				{/if}
@@ -101,5 +105,9 @@
 	}
 	.card-footnote + .card-footnote {
 		margin-top: 0;
+	}
+	small {
+		font-size: 1rem;
+		font-weight: normal;
 	}
 </style>

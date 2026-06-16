@@ -82,14 +82,12 @@ export function roundAll(arr, decimals) {
 
 export function groupData(data, key) {
 	let dataIndexed = {};
-	let keys = [];
 	for (const d of data) {
 		if (!dataIndexed[d[key]]) {
 			dataIndexed[d[key]] = {
 				label: d[key],
 				values: []
 			};
-			keys.push(d[key]);
 		}
 		dataIndexed[d[key]].values.push(d);
 	}

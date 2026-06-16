@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Icon, ToolbarIcon, analyticsEvent } from "@onsvisual/svelte-components";
+	import { Icon, ToolbarIcon, Button, analyticsEvent } from "@onsvisual/svelte-components";
 
 	let {
 		title,
 		label,
 		hideLabel = false,
 		icon = null,
+		buttonStyle = "menu",
 		children,
 		onOpen = () => null,
 		onConfirm = () => null,
@@ -73,23 +74,39 @@
 	}
 </script>
 
-<button
-	type="button"
-	aria-label={label}
-	class="toolbar-button"
-	onclick={() => {
-		onOpen();
-		dialog.showModal();
-		setBodyOverflow("hidden");
-		modalAnalyticsEvent("open");
-	}}
->
-	{#if icon}
-		<ToolbarIcon type={icon} /><span class="ons-u-vh">{label}</span>
-	{:else}
+{#if buttonStyle === "menu"}
+	<button
+		type="button"
+		aria-label={label}
+		class="toolbar-button"
+		onclick={() => {
+			onOpen();
+			dialog.showModal();
+			setBodyOverflow("hidden");
+			modalAnalyticsEvent("open");
+		}}
+	>
+		{#if icon}
+			<ToolbarIcon type={icon} /><span class="ons-u-vh">{label}</span>
+		{:else}
+			{label}
+		{/if}
+	</button>
+{:else}
+	<Button
+		{icon}
+		{hideLabel}
+		on:click={() => {
+			onOpen();
+			dialog.showModal();
+			setBodyOverflow("hidden");
+			modalAnalyticsEvent("open");
+		}}
+		small
+	>
 		{label}
-	{/if}
-</button>
+	</Button>
+{/if}
 
 <dialog
 	class="ons-modal-simple"

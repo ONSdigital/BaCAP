@@ -1,12 +1,22 @@
 <script>
 	import { resolve } from "$app/paths";
-	import { Hero, Button, Section, Grid, Card, List, Li } from "@onsvisual/svelte-components";
+	import {
+		Breadcrumb,
+		Hero,
+		Button,
+		Section,
+		Grid,
+		Card,
+		List,
+		Li
+	} from "@onsvisual/svelte-components";
 
 	let headerBackground = $state(
-		`var(--ons-color-branded) right -80px top / auto 100% no-repeat url("${resolve("/img/og.png")}")`
+		`var(--ons-color-branded) right -80px top / auto 90% no-repeat url("${resolve("/img/og.png")}")`
 	);
 </script>
 
+<Breadcrumb theme="blue" links={[{ label: "Home", href: "/" }]} />
 <Hero
 	theme="blue"
 	cls="page-banner"
@@ -82,7 +92,12 @@
 </Section>
 
 <style>
-	@media (max-width: 768px) {
+	:global(.ons-svelte-theme-wrapper) {
+		overflow: visible;
+		margin-top: -52px;
+		padding-top: 52px;
+	}
+	@media (max-width: 800px) {
 		:global(.ons-svelte-theme-wrapper:has(.page-banner)) {
 			background-image: none !important;
 		}

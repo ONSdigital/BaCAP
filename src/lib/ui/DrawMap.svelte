@@ -1,20 +1,13 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
-	import MapboxDraw from "@mapbox/mapbox-gl-draw";
+	import MaplibreDraw from "$lib/maplibre-draw.js";
 	import maplibre from "maplibre-gl";
 	import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 	import circle from "@turf/circle";
 	import Polygon from "$lib/polygon.svelte.js";
 	import { sleep } from "$lib/utils.js";
 	import { parseGeoJSON } from "$lib/geo.svelte.js";
-
-	// Set mapbox-gl-draw constants to accommodate maplibre
-	MapboxDraw.constants.classes.CANVAS = "maplibregl-canvas";
-	MapboxDraw.constants.classes.CONTROL_BASE = "maplibregl-ctrl";
-	MapboxDraw.constants.classes.CONTROL_PREFIX = "maplibregl-ctrl-";
-	MapboxDraw.constants.classes.CONTROL_GROUP = "maplibregl-ctrl-group";
-	MapboxDraw.constants.classes.ATTRIBUTION = "maplibregl-ctrl-attrib";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
 	let { history, activeArea } = appState;
@@ -57,9 +50,9 @@
 			$activeArea = _feature;
 		}
 
-		draw.deleteAll();
+		draw?.deleteAll?.();
 		await sleep();
-		draw.changeMode(getDrawMode(drawState.drawMode), {});
+		draw?.changeMode?.(getDrawMode(drawState.drawMode), {});
 
 		$history = [{ ...codes, geometry: polygon.geometry }, ...$history].slice(0, 10);
 	}
@@ -95,7 +88,7 @@
 	}
 
 	function initDraw() {
-		draw = new MapboxDraw({
+		draw = new MaplibreDraw({
 			displayControlsDefault: false
 		});
 		map.addControl(draw, "bottom-left");

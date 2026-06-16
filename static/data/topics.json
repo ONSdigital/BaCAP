@@ -15,7 +15,7 @@
 		"unit": "people",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS mid-year estimates",
 		"url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
 		"census": false
 	},
@@ -47,7 +47,10 @@
 		"chart": "profile",
 		"tableCode": "NM_2014_1",
 		"cellCode": "c_age",
-		"measures": [{ "label": "Value", "cell": 20100 }],
+		"measures": [
+			{ "label": "Value", "cell": 20100 },
+			{ "label": "Percent", "cell": 20301 }
+		],
 		"categories": [
 			{ "label": "Aged 0 to 4", "cells": [1] },
 			{ "label": "Aged 5 to 9", "cells": [3] },
@@ -73,7 +76,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS mid-year estimates",
 		"url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
 		"census": false
 	},
@@ -83,10 +86,13 @@
 		"topic": "Demography and migration",
 		"summary": "Mid-year estimate of the proportion of females and males.",
 		"description": null,
-		"chart": "bar",
+		"chart": "profile",
 		"tableCode": "NM_2014_1",
 		"cellCode": "gender",
-		"measures": [{ "label": "Value", "cell": 20100 }],
+		"measures": [
+			{ "label": "Value", "cell": 20100 },
+			{ "label": "Percent", "cell": 20301 }
+		],
 		"categories": [
 			{ "label": "Female", "cells": [2] },
 			{ "label": "Male", "cells": [1] }
@@ -96,7 +102,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS mid-year estimates",
 		"url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
 		"census": false
 	},

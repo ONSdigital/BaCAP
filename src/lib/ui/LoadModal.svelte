@@ -1,6 +1,7 @@
 <script>
 	import { Tabs, Tab, Input, Button, Checkbox } from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
+	import AreaSearch from "./AreaSearch.svelte";
 	import {
 		uploadAreas,
 		downloadArea,
@@ -14,7 +15,9 @@
 		savedAreas = $bindable(),
 		savedAreasLastId = $bindable(),
 		modal = $bindable(),
+		areasList = null,
 		centroids,
+		mode = "draw",
 		updateSelection = () => null,
 		switchModals = () => null
 	} = $props();
@@ -25,6 +28,8 @@
 		loadedAreas.selected ? loadedAreas.selected.every((d) => d === true) : false
 	);
 	let overwriteAreas = $state(false);
+
+	let selectedArea = $state();
 
 	let editId = $state();
 	let editArea = $derived({ ...($savedAreas[editId] || {}) });
@@ -93,6 +98,7 @@
 	bind:this={modal}
 	title="Load a saved area"
 	label="Load a saved area"
+	buttonStyle={mode === "draw" ? "menu" : "primary"}
 	hideLabel
 	icon="upload"
 	onOpen={() => null}
@@ -100,6 +106,16 @@
 	onCancel={() => null}
 >
 	<Tabs>
+		{#if mode === "build" && areasList}
+			<Tab title="Find an area">
+				<p>
+					Find pre-defined areas including local authorities, wards, parishes,
+					parliamentary constituencies and build-up areas.
+				</p>
+				<AreaSearch bind:value={selectedArea} options={areasList} {centroids} />
+				<Button disabled={!selectedArea}>Select area</Button>
+			</Tab>
+		{/if}
 		<Tab title="Upload areas">
 			<input
 				type="file"

@@ -1,5 +1,6 @@
 <script>
 	import { resolve } from "$app/paths";
+	import { afterNavigate } from "$app/navigation";
 	import { getContext } from "svelte";
 	import { Container, Breadcrumb } from "@onsvisual/svelte-components";
 	import DrawToolbar from "$lib/ui/DrawToolbar.svelte";
@@ -14,10 +15,18 @@
 	let drawMap = $state();
 
 	let appState = $state(getContext("appState")());
-	let { history } = appState;
+	let { history, activeArea } = appState;
 
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
+
+	afterNavigate(async () => {
+		if (!($activeArea?.geometry && $activeArea?.properties?.oa21cds)) return;
+
+		// Update drawn area if active area exists (may have been loaded on /build page)
+		// drawMap?.clearDraw?.();
+		drawMap?.applyShape?.($activeArea, "replace");
+	});
 </script>
 
 <Container id="draw-container" width="full" height="calc(100vh - 52px)">

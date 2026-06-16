@@ -7,7 +7,7 @@
 
 	let {
 		options = [],
-		value = $bindable(null),
+		value = $bindable(),
 		idKey = "id",
 		labelKey = "label",
 		groupKey = "group"

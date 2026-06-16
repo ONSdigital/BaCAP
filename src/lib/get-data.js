@@ -67,17 +67,20 @@ function makeRowParser(table) {
 	});
 }
 
-function rowSorter(a, b) {
-	return (
+function makeRowSorter(table) {
+	const catLookup = Object.fromEntries(table.categories.map((d, i) => [d.label, i]));
+	// Forces categories to match the order in the metadata
+	const catSorter = (a, b) => catLookup[a] - catLookup[b];
+	return (a, b) =>
 		b.areanm.localeCompare(a.areanm, "en-GB") ||
 		a.date - b.date ||
-		a.category.localeCompare(b.category, "en-GB") ||
-		a.measure.localeCompare(b.measure, "en-GB")
-	);
+		catSorter(a.category, b.category) ||
+		a.measure.localeCompare(b.measure, "en-GB");
 }
 
 function parseData(table, csvString) {
 	const rowParser = makeRowParser(table);
+	const rowSorter = makeRowSorter(table);
 	return csvParse(csvString, rowParser).sort(rowSorter);
 }
 
@@ -141,7 +144,7 @@ export default async function getData(table, activeArea, comparisonArea) {
 	}
 
 	let data = await getCache(url);
-	console.log({ url, meta: table, data });
+	console.log("cached", data);
 	if (data) return { meta: table, data: parseData(table, data) };
 
 	try {

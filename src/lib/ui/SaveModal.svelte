@@ -10,6 +10,7 @@
 		history = $bindable(),
 		modal = $bindable(),
 		centroids,
+		mode = "draw",
 		switchModals = () => null
 	} = $props();
 
@@ -46,6 +47,7 @@
 	bind:this={modal}
 	title="Save current area"
 	label="Save current area"
+	buttonStyle={mode === "draw" ? "menu" : "primary"}
 	hideLabel
 	icon="download"
 	onOpen={() => null}

@@ -41,11 +41,11 @@
 		{/if}
 	</Main>
 {:else}
-	<Header />
-	<Main>
+	<Header width="wider" />
+	<Main width="wider">
 		{#if mounted}
 			{@render children()}
 		{/if}
 	</Main>
-	<Footer />
+	<Footer width="wider" />
 {/if}
