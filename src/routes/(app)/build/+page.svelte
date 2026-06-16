@@ -14,7 +14,8 @@
 		Checkboxes,
 		Checkbox,
 		Input,
-		Button
+		Button,
+		Icon
 	} from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import BestFitMap from "$lib/viz/BestFitMap.svelte";
@@ -167,7 +168,7 @@
 </Hero>
 <Grid width="wider" colWidth="medium" marginTop>
 	<GridCell>
-		<p class="ons-u-fs-m ons-u-mb-3xs">Select areas</p>
+		<h2 class="ons-u-fs-m ons-u-mb-3xs">Select areas</h2>
 		<div class="area-selections">
 			<div class="input-group">
 				<Input
@@ -215,7 +216,7 @@
 			/>
 		</div>
 		<!-- <div class="selections-divider"></div> -->
-		<p class="ons-u-fs-m ons-u-mb-3xs">Select datasets</p>
+		<h2 class="ons-u-fs-m ons-u-mb-3xs">Select datasets</h2>
 		<Accordion>
 			{#each groupTopics(data.topics, buildState.coverage) as group, i (group.key)}
 				<AccordionItem title={group.label} open={i === 0}>
@@ -260,6 +261,14 @@
 		</Details>
 		<hr class="ons-u-mt-m ons-u-mb-m" />
 		<div id="embed"></div>
+		<h2 class="ons-u-fs-m ons-u-mb-3xs">Use and share this profile</h2>
+		<p>
+			<Icon type="download" />Download profile as <a href="#0">CSV</a>, <a href="#0">PNG</a>
+			or <a href="#0">GeoJSON</a> |
+			<Icon type="copy" /><a href="#0">Copy area codes</a> |
+			<Icon type="code" /><a href="#0">Get embed code</a> |
+			<Icon type="print" /><a href="#0">Print</a>
+		</p>
 	</GridCell>
 </Grid>
 

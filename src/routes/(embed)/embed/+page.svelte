@@ -82,7 +82,7 @@
 				{/if}
 				<div class="card-footnote">Source: {tab.meta.source}</div>
 				<div class="card-footnote">
-					Small area: {tab.meta.geography.startsWith("lsoa") ? "LSOA" : "Output Area"}
+					Best-fit: {tab.meta.geography.startsWith("lsoa") ? "LSOA" : "Output Area"}
 				</div>
 			</Card>
 		{/each}

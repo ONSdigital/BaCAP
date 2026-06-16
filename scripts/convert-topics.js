@@ -30,7 +30,7 @@ for (const topic of topics_raw) {
 			unit: topic.unit,
 			base: topic.base,
 			geography: topic.lowestGeography + "21",
-			source: "ONS analysis of EPC data",
+			source: topic.source,
 			url: topic.url || null,
 			census: topic.census || false
 		});

@@ -144,7 +144,6 @@ export default async function getData(table, activeArea, comparisonArea) {
 	}
 
 	let data = await getCache(url);
-	console.log("cached", data);
 	if (data) return { meta: table, data: parseData(table, data) };
 
 	try {

@@ -34,7 +34,7 @@
 		"unit": "households",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
 		"census": true
 	},
@@ -121,7 +121,7 @@
 		"unit": "live births",
 		"base": "all live births",
 		"geography": "lsoa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Birth registrations",
 		"url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
 		"census": false
 	},
@@ -160,7 +160,7 @@
 		"unit": "deaths",
 		"base": "all deaths",
 		"geography": "lsoa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Death registrations",
 		"url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
 		"census": false
 	},
@@ -191,7 +191,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/maritalandcivilpartnershipstatus",
 		"census": true
 	},
@@ -216,7 +216,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/internationalmigrationvariablescensus2021/countryofbirth",
 		"census": true
 	},
@@ -242,7 +242,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/internationalmigrationvariablescensus2021/passportsheld",
 		"census": true
 	},
@@ -270,7 +270,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/internationalmigrationvariablescensus2021/lengthofresidenceintheuk",
 		"census": true
 	},
@@ -297,7 +297,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
 		"census": true
 	},
@@ -323,7 +323,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdcomposition",
 		"census": true
 	},
@@ -351,7 +351,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householddeprivation",
 		"census": true
 	},
@@ -379,7 +379,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over in employment",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/traveltoworkvariablescensus2021/distancetravelledtowork",
 		"census": true
 	},
@@ -413,7 +413,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over in employment",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/traveltoworkvariablescensus2021/methodoftraveltoworkplace",
 		"census": true
 	},
@@ -439,7 +439,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/economicactivitystatus",
 		"census": true
 	},
@@ -465,7 +465,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over not in employment",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/employmenthistory",
 		"census": true
 	},
@@ -497,7 +497,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over in employment",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/occupationcurrent",
 		"census": true
 	},
@@ -535,7 +535,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/nationalstatisticssocio-economicclassificationns-sec",
 		"census": true
 	},
@@ -562,7 +562,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over in employment",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/labourmarketvariablescensus2021/hoursworked",
 		"census": true
 	},
@@ -582,7 +582,7 @@
 		"unit": "%",
 		"base": "people aged 16 to 64",
 		"geography": "lsoa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS analysis of DWP data",
 		"url": "employmentandlabourmarket/peopleinwork/employmentandemployeetypes/methodologies/claimantcountqmi",
 		"census": false
 	},
@@ -610,7 +610,7 @@
 		"unit": "%",
 		"base": "people aged 16 years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/educationvariablescensus2021/highestlevelofqualification",
 		"census": true
 	},
@@ -635,7 +635,7 @@
 		"unit": "%",
 		"base": "people aged five years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/educationvariablescensus2021/schoolchildorfull-timestudentindicator",
 		"census": true
 	},
@@ -663,7 +663,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/ethnicgroup",
 		"census": true
 	},
@@ -689,7 +689,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/nationalidentity",
 		"census": true
 	},
@@ -721,7 +721,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/religion",
 		"census": true
 	},
@@ -749,7 +749,7 @@
 		"unit": "%",
 		"base": "people aged three years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/proficiencyinenglishlanguage",
 		"census": true
 	},
@@ -776,7 +776,7 @@
 		"base": "people aged three years and over",
 		"geography": "oa21",
 		"coverage": ["W"],
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/welshlanguageskills",
 		"census": true
 	},
@@ -802,7 +802,7 @@
 		"base": "people aged three years and over",
 		"geography": "oa21",
 		"coverage": ["W"],
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/ethnicgroupnationalidentitylanguageandreligionvariablescensus2021/welshspeakingability",
 		"census": true
 	},
@@ -830,7 +830,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/healthdisabilityandunpaidcarevariablescensus2021/generalhealth",
 		"census": true
 	},
@@ -855,7 +855,7 @@
 		"unit": "%",
 		"base": "all people",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/healthdisabilityandunpaidcarevariablescensus2021/disability",
 		"census": true
 	},
@@ -882,7 +882,7 @@
 		"unit": "%",
 		"base": "people aged five years and over",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/healthdisabilityandunpaidcarevariablescensus2021/provisionofunpaidcare",
 		"census": true
 	},
@@ -901,7 +901,7 @@
 		"unit": "sales",
 		"base": "all sales",
 		"geography": "lsoa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS analysis of Land Registry data",
 		"url": "peoplepopulationandcommunity/housing/methodologies/housepricestatisticsforsmallareasqmi",
 		"census": false
 	},
@@ -957,7 +957,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/accommodationtype",
 		"census": true
 	},
@@ -984,7 +984,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/numberofcarsorvans",
 		"census": true
 	},
@@ -1009,7 +1009,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/typeofcentralheatinginhousehold",
 		"census": true
 	},
@@ -1036,7 +1036,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/numberofbedrooms",
 		"census": true
 	},
@@ -1064,7 +1064,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/occupancyratingforbedrooms",
 		"census": true
 	},
@@ -1091,7 +1091,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/tenureofhousehold",
 		"census": true
 	},
@@ -1117,7 +1117,7 @@
 		"unit": "%",
 		"base": "all households",
 		"geography": "oa21",
-		"source": "ONS analysis of EPC data",
+		"source": "ONS - Census 2021",
 		"url": "census/census2021dictionary/variablesbytopic/housingvariablescensus2021/secondaddressindicator",
 		"census": true
 	}
