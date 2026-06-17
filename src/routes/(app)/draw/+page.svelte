@@ -1,8 +1,10 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { afterNavigate } from "$app/navigation";
-	import { getContext } from "svelte";
+	import { onMount, getContext } from "svelte";
 	import { Container, Breadcrumb } from "@onsvisual/svelte-components";
+	import { geoUrl } from "$lib/config.js";
+	import { isValidAreaCode, parseGeoJSON } from "$lib/geo.svelte.js";
 	import DrawToolbar from "$lib/ui/DrawToolbar.svelte";
 	import DrawMap from "$lib/ui/DrawMap.svelte";
 	import DrawCounter from "$lib/ui/DrawCounter.svelte";
@@ -26,6 +28,21 @@
 		// Update drawn area if active area exists (may have been loaded on /build page)
 		// drawMap?.clearDraw?.();
 		drawMap?.applyShape?.($activeArea, "replace");
+	});
+
+	onMount(async () => {
+		const code = (window.location.hash || "").slice(1);
+		if (isValidAreaCode(code)) {
+			const url = `${geoUrl}/${code.slice(0, 3)}/${code}.json`;
+			try {
+				const data = await (await fetch(url)).json();
+				$activeArea = parseGeoJSON(data, centroids);
+				window.history.replaceState(null, null, " ");
+				drawMap?.applyShape?.($activeArea, "replace");
+			} catch (err) {
+				console.warn(err);
+			}
+		}
 	});
 </script>
 

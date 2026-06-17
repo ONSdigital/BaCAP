@@ -25,7 +25,13 @@
 	import { geoUrl } from "$lib/config.js";
 	import { slugify, downloadData, clip } from "$lib/utils.js";
 	import { makeEmbedHash, makeEmbedCode } from "$lib/data-utils.js";
-	import { parseGeoJSON, simplifyGeo, downloadArea, makeFilename } from "$lib/geo.svelte.js";
+	import {
+		parseGeoJSON,
+		simplifyGeo,
+		downloadArea,
+		makeFilename,
+		isValidAreaCode
+	} from "$lib/geo.svelte.js";
 	import getData from "$lib/get-data.js";
 
 	let { data } = $props();
@@ -97,18 +103,32 @@
 		confirmed[type] = false;
 	}
 
-	afterNavigate(async () => {
-		if (!$history?.[0]?.geometry) goto(resolve("/draw"));
+	onMount(async () => {
+		// if (!$history?.[0]?.geometry) goto(resolve("/draw"));
 
-		// Refresh active area
-		$activeArea.geometry = $history[0].geometry;
-		$activeArea.properties.oa21cds = centroids.compress($history[0].oa);
-		$activeArea.properties.lsoa21cds = centroids.compress($history[0].lsoa);
-		$activeArea = $activeArea;
+		const code = (window.location.hash || "").slice(1);
+		if (isValidAreaCode(code)) {
+			// Load area if the URL has a GSS code in its hash
+			const url = `${geoUrl}/${code.slice(0, 3)}/${code}.json`;
+			try {
+				const data = await (await fetch(url)).json();
+				$activeArea = parseGeoJSON(data, centroids);
+				console.log("history", window.history);
+				window.history.replaceState(null, null, " ");
+			} catch (err) {
+				console.warn(err);
+			}
+		} else {
+			// Otherwise refresh active area
+			$activeArea.geometry = $history[0].geometry;
+			$activeArea.properties.oa21cds = centroids.compress($history[0].oa);
+			$activeArea.properties.lsoa21cds = centroids.compress($history[0].lsoa);
+			$activeArea = $activeArea;
+		}
 
 		// Refresh comparison area
 		const compcd = centroids.commonParent({
-			raw: $history[0].oa,
+			raw: centroids.expand($activeArea.properties.oa21cds),
 			compresed: $activeArea.properties.oa21cds
 		});
 		buildState.coverage = compcd[0] === "K" ? new Set(["E", "W"]) : new Set([compcd[0]]);
@@ -120,9 +140,7 @@
 			console.warn(err);
 			$comparisonArea = null;
 		}
-	});
 
-	onMount(() => {
 		// Initialise embed iframe
 		if (!pymParent) {
 			pymParent = new pym.Parent("embed", resolve(`/embed#${embedHash || ""}`), {

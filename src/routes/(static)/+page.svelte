@@ -68,8 +68,11 @@
 
 <Section title="How does this tool produce these figures?">
 	<p>
-		When you select an area, a "best-fit" is calculated to relate it to the underlying small
-		area geographies that most accurately represent it.
+		When you select an area, the tool chooses the underlying small area geographies that most
+		accurately represent it using a <a
+			href="https://geoportal.statistics.gov.uk/datasets/f0aac7ccbfd04cda9eb03e353c613faa/about"
+			target="_blank">best-fit approach</a
+		>.
 	</p>
 	<p>
 		When you select a dataset, the data for the best-fit areas is added up (or "aggregated") to

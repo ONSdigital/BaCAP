@@ -176,3 +176,7 @@ export function makeFilename(activeArea, extension = null) {
 	const ext = extension ? `.${extension}` : "";
 	return slugify(name) + ext;
 }
+
+export function isValidAreaCode(code) {
+	return !!code.match(/^[EKNSW]\d{8}$/);
+}
