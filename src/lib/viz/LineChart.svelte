@@ -1,5 +1,5 @@
 <script>
-	import { scaleLinear } from "d3-scale";
+	import { scaleLinear, scalePoint } from "d3-scale";
 
 	let {
 		data,
@@ -9,7 +9,8 @@
 		height = 120,
 		lineWidth = 2,
 		base = null,
-		formatTick = (tick) => `${tick - 1 > 0 ? "+" : ""}${Math.round((tick - 1) * 100)}`
+		format = (d) => `${d - 1 > 0 ? "+" : ""}${Math.round((d - 1) * 100)}`,
+		dateFormat = (d) => d
 	} = $props();
 
 	function transformData(data, xDomain) {
@@ -40,10 +41,6 @@
 		});
 		return [min, max];
 	}
-	function makePath(d) {
-		let series = xDomain.map((x) => ({ x: +x, y: d[yKey(x)] }));
-		return "M" + series.map((d) => `${xScale(d.x)} ${yScale(d.y)}`).join("L");
-	}
 	function yPos(y2, y1) {
 		const buffer = 14;
 		if (y2 < y1 - buffer || y2 > y1 + buffer) return y2;
@@ -54,16 +51,18 @@
 	let xDomain = $derived(
 		[...new Set(data.map((d) => d[xKey]).sort((a, b) => a - b))].sort((a, b) => a - b)
 	);
-	let xVal = $derived(xDomain[1]);
+	let xVal = $derived(xDomain[xDomain.length - 1]);
 	let _data = $derived(transformData(data, xDomain));
 	let yDomain = $derived(makeYDomain(_data));
 	let zDomain = $derived(_data.map((d) => d[zKey]).filter((v, i, a) => a.indexOf(v) === i));
-	let xScale = $derived(
-		scaleLinear()
-			.domain([+xDomain[0], +xDomain[xDomain.length - 1]])
-			.range([0, 100])
-	);
+	let xScale = $derived(scalePoint().domain(xDomain).range([0, 100]));
 	let yScale = $derived(scaleLinear().domain([yDomain[0], yDomain[1]]).range([100, 0]));
+	let makePath = $derived((d) => {
+		let series = xDomain.map((x) => ({ x, y: d[yKey(x)] }));
+		return "M" + series.map((d) => `${xScale(d.x)} ${yScale(d.y)}`).join("L");
+	});
+
+	$inspect({ xDomain, _data });
 </script>
 
 <ul class="legend-block">
@@ -110,21 +109,21 @@
 			style:left="{xScale(xVal)}%"
 			style:top="{yPos(yScale(_data[1][yKey(xVal)]), yScale(_data[0][yKey(xVal)]))}%"
 		>
-			{formatTick(_data[1][yKey(xVal)])}%
+			{format(_data[1][yKey(xVal)])}%
 		</div>
 		<div
 			class="point-text bold"
 			style:left="{xScale(xVal)}%"
 			style:top="{yScale(_data[0][yKey(xVal)])}%"
 		>
-			{formatTick(_data[0][yKey(xVal)])}%
+			{format(_data[0][yKey(xVal)])}%
 		</div>
 	{/if}
 </div>
 
 <div class="x-scale" style:height="1rem">
-	<div style:left="0">{xDomain[0]}</div>
-	<div style:right="0">{xDomain[xDomain.length - 1]}</div>
+	<div style:left="0">{dateFormat(xDomain[0])}</div>
+	<div style:right="0">{dateFormat(xDomain[xDomain.length - 1])}</div>
 </div>
 
 {#if base}

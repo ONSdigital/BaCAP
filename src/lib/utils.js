@@ -4,6 +4,7 @@ import { get, set, update } from "./db.js";
 import { decompressData } from "compress-csv-to-json";
 import { initialState, geotypesLookup } from "./config.js";
 import { getName, makeFilename } from "./geo.svelte.js";
+import { makeDateFormatter } from "./data-utils.js";
 
 async function loadCompressedData(key, path, fn) {
 	const val = await get(key);
@@ -115,6 +116,7 @@ export async function clip(str) {
 
 function formatTable(table, name, compName) {
 	const nameLookup = { MyCustomArea: name, ComparisonArea: compName };
+	const dateFormat = makeDateFormatter(table.meta.dateFormat);
 	const rows = {};
 
 	for (const d of table.data) {
@@ -132,7 +134,7 @@ function formatTable(table, name, compName) {
 				"Base population": table.meta.base,
 				Source: table.meta.source,
 				Geography: table.meta.geography === "lsoa21" ? "LSOA" : "Output Area",
-				"Time period": d.date
+				"Time period": dateFormat(d.date)
 			};
 		const col = `${nameLookup[d.areanm]} (${d.measure === "Value" ? "count" : "%"})`;
 		rows[rowId][col] = d.value;

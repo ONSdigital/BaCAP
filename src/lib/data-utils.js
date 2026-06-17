@@ -35,3 +35,15 @@ export function makeEmbedCode(embedHash) {
 <script src="https://cdn.ons.gov.uk/vendor/pym/1.3.2/pym.min.js"><\/script>
 <script>const pymParent = new pym.Parent("custom-profile", "${url}", {name: "custom-profile", title: "Embedded area profile"});<\/script>`;
 }
+
+const monthFormat = { month: "short", year: "numeric" };
+
+export function makeDateFormatter(format) {
+	return format === "month"
+		? (d) => new Date(d.padEnd(10, "-01")).toLocaleDateString("en-GB", monthFormat)
+		: format === "year-ending"
+			? (d) =>
+					"Year ending " +
+					new Date(d.padEnd(10, "-01")).toLocaleDateString("en-GB", monthFormat)
+			: (d) => d;
+}

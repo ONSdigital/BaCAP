@@ -116,13 +116,22 @@
 					Find pre-defined areas including local authorities, wards, parishes,
 					parliamentary constituencies and build-up areas.
 				</p>
-				<AreaSearch
-					bind:value={selectedArea}
-					options={areasList}
-					label="Find an area"
-					{centroids}
-				/>
-				<Button cls="ons-u-mt-2xs" disabled={!selectedArea}>Select area</Button>
+				<form
+					onsubmit={(e) => {
+						e.preventDefault();
+						loadNewArea(selectedArea.geojson);
+					}}
+				>
+					<AreaSearch
+						bind:value={selectedArea}
+						options={areasList}
+						label="Find an area"
+						{centroids}
+					/>
+					<Button type="submit" cls="ons-u-mt-2xs" disabled={!selectedArea}
+						>Select area</Button
+					>
+				</form>
 			</Tab>
 		{/if}
 		<Tab title="Upload areas">

@@ -24,7 +24,7 @@ function makeUrl(table, activeCds, comparisonCds) {
 		measures: table.measures.map((d) => d.cell),
 		select: [
 			"geography_name",
-			"date_name",
+			"date",
 			...(table.cellCode ? [table.cellCode] : []),
 			...(table.cellCode ? [`${table.cellCode}_name`] : []),
 			"measures",
@@ -60,7 +60,7 @@ function makeRowParser(table) {
 		: () => table.categories[0].label;
 	return (d) => ({
 		areanm: d.GEOGRAPHY_NAME,
-		date: d.DATE_NAME,
+		date: d.DATE,
 		category: getCategory(d),
 		measure: measureLookup[d.MEASURES],
 		value: +d.OBS_VALUE

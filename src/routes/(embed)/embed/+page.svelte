@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import { Embed, Grid, Card } from "@onsvisual/svelte-components";
 	import { snapdom } from "@zumer/snapdom";
+	import { makeDateFormatter } from "$lib/data-utils.js";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";
@@ -83,12 +84,13 @@
 			</Card>
 		{/if}
 		{#each tables as tab}
+			{@const dateFormat = makeDateFormatter(tab.meta.dateFormat)}
 			<Card title={tab.meta.label} mode="featured" baseline>
-				<div class="card-subtitle">{tab.range.join(" to ")}</div>
+				<div class="card-subtitle">{tab.range.map((d) => dateFormat(d)).join(" to ")}</div>
 				{#if tab.meta.chart === "number"}
 					<BigNumber data={tab.data} unit={tab.meta.unit} />
 				{:else if tab.meta.chart === "line"}
-					<LineChart data={tab.data} />
+					<LineChart data={tab.data} {dateFormat} />
 				{:else if tab.meta.chart === "profile"}
 					<ProfileChart data={tab.data} />
 				{:else}
