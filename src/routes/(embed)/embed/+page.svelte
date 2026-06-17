@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { Embed, Grid, Card } from "@onsvisual/svelte-components";
+	import { snapdom } from "@zumer/snapdom";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";
@@ -46,8 +47,21 @@
 	let topicsLookup = $derived(Object.fromEntries(data.topics.map((d) => [d.key, d])));
 	let embedHash = $state("");
 	let embedData = $state();
-	let pymChild = $state();
 	let tables = $derived(expandTables(topicsLookup, embedData));
+
+	async function downloadPNG() {
+		const result = await snapdom(document.body, { embedFonts: true });
+		await result.download({
+			format: "png",
+			filename: `${(embedData?.areas?.[0] || "Custom area").replaceAll(" ", "_")}.png`
+		});
+	}
+
+	function init(e) {
+		const { pymChild } = e.detail;
+		pymChild.onMessage("png", downloadPNG);
+		pymChild.onMessage("print", () => window.print());
+	}
 
 	function update() {
 		embedHash = document.location.hash.slice(1);
@@ -58,7 +72,7 @@
 
 <svelte:window onhashchange={update} />
 
-<Embed id="embed" bind:pymChild>
+<Embed id="embed" on:load={init}>
 	{#if embedData?.areas?.[0]}
 		<h1>{embedData.areas[0]} <small>(hash length {embedHash.length})</small></h1>
 	{/if}

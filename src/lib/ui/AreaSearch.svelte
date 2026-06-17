@@ -10,7 +10,9 @@
 		value = $bindable(),
 		idKey = "id",
 		labelKey = "label",
-		groupKey = "group"
+		groupKey = "group",
+		label = "Find an area to add to the map",
+		placeholder = "Type a place name or postcode"
 	} = $props();
 
 	const startsWithFilter = (str, filter) => str.toLowerCase().startsWith(filter.toLowerCase());
@@ -152,8 +154,8 @@
 	{loadOptions}
 	{groupKey}
 	mode="search"
-	label="Find an area to add to the map"
-	placeholder="Type a place name or postcode"
+	{label}
+	{placeholder}
 	on:change={handleChange}
 	autoClear={false}
 />

@@ -61,25 +61,24 @@
 		LSOA or Output Area level.
 	</p>
 	<p>
-		You can find a description of all available datasets on the
+		You can find information on all available datasets on the
 		<a href={resolve("/glossary")}>glossary page</a>.
 	</p>
 </Section>
 
 <Section title="How does this tool produce these figures?">
-	<p>The tool takes your chosen shape and compares it to your selected datasets.</p>
 	<p>
-		It produces a best-fit shape, which is the closest available to your chosen shape. It adds
-		up the small area data for your best-fit shape and returns it as an estimated total.
-	</p>
-	<p>Census 2021 topics and non-Census datasets use different small area types.</p>
-	<p>
-		Census 2021 topics use Output Areas (OAs) whereas non-Census datasets primarily use larger
-		Lower layer Super Output Areas (LSOAs).
+		When you select an area, a "best-fit" is calculated to relate it to the underlying small
+		area geographies that most accurately represent it.
 	</p>
 	<p>
-		We advise caution when comparing values between Census topics and non-Census datasets
-		because these best-fit shapes will have different boundaries.
+		When you select a dataset, the data for the best-fit areas is added up (or "aggregated") to
+		give you numbers that best represent the area you selected.
+	</p>
+	<p>
+		Whilst most datasets in this tool are available down to the smallest Output Area (or OA)
+		level, some datasets are only available down to an LSOA level. We advise caution when
+		comparing values between between Output Area and LSOA datasets.
 	</p>
 </Section>
 

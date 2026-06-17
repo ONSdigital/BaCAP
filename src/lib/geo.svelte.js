@@ -2,7 +2,7 @@ import bbox from "@turf/bbox";
 import simplify from "@turf/simplify";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
-import { roundAll, download } from "$lib/utils.js";
+import { roundAll, download, slugify } from "$lib/utils.js";
 
 export function feature(geometry, properties = {}) {
 	return { type: "Feature", geometry, properties };
@@ -165,4 +165,14 @@ export function uploadAreas(uploader) {
 		};
 		reader.readAsText(file);
 	});
+}
+
+export function getName(activeArea, fallback = "Custom Area") {
+	return activeArea?.properties?.areanm || fallback;
+}
+
+export function makeFilename(activeArea, extension = null) {
+	const name = getName(activeArea);
+	const ext = extension ? `.${extension}` : "";
+	return slugify(name) + ext;
 }

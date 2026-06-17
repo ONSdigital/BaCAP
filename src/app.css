@@ -2,3 +2,6 @@
 .ons-btn + .ons-btn {
 	margin-left: 0;
 }
+.tooltip {
+	z-index: 1;
+}

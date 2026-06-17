@@ -15,14 +15,17 @@
 		Checkbox,
 		Input,
 		Button,
-		Icon
+		Tooltip,
+		Icon,
+		Textarea
 	} from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import BestFitMap from "$lib/viz/BestFitMap.svelte";
 	import pym from "pym.js";
 	import { geoUrl } from "$lib/config.js";
-	import { slugify } from "$lib/utils.js";
-	import { parseGeoJSON, simplifyGeo } from "$lib/geo.svelte.js";
+	import { slugify, downloadData, clip } from "$lib/utils.js";
+	import { makeEmbedHash, makeEmbedCode } from "$lib/data-utils.js";
+	import { parseGeoJSON, simplifyGeo, downloadArea, makeFilename } from "$lib/geo.svelte.js";
 	import getData from "$lib/get-data.js";
 
 	let { data } = $props();
@@ -42,6 +45,10 @@
 
 	let pymParent = $state(); // Binding for responsive embed iframe
 
+	let showEmbed = $state(false);
+	let showCodes = $state(false);
+	let confirmed = $state({ oa: false, lsoa: false, embed: false });
+
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
 
@@ -55,29 +62,9 @@
 				)
 			: []
 	);
-	let embedHash = $derived.by(() => {
-		const areas = [
-			$activeArea?.properties?.areanm,
-			...($comparisonArea ? [$comparisonArea.properties?.areanm] : [])
-		];
-		const polygons = [
-			...(buildState.includeAreaMap ? [areaPolygon] : []),
-			...(compPolygon && buildState.includeAreaMap && buildState.includeCompMap
-				? [compPolygon]
-				: [])
-		];
-		const dataTables = tables.map((t) => ({
-			key: t.meta.key,
-			data: t.data
-				.filter(t.meta.measures.length > 1 ? (d) => d.measure === "Percent" : () => true)
-				.map((d) => d.value),
-			range:
-				t.meta.dates.length === 1
-					? t.meta.dates
-					: [t.meta.dates[0], t.meta.dates[t.meta.dates.length - 1]]
-		}));
-		return btoa(JSON.stringify({ areas, tables: dataTables, polygons }));
-	});
+	let embedHash = $derived(
+		makeEmbedHash(tables, buildState, $activeArea, $comparisonArea, areaPolygon, compPolygon)
+	);
 	$effect(() => {
 		if (pymParent) pymParent.iframe.contentWindow.location.hash = embedHash;
 		console.log({ pymParent, embedHash });
@@ -102,6 +89,12 @@
 		if (item.checked)
 			$selectedTopics = ids.filter((id) => $selectedTopics.includes(id) || id === item.id);
 		else $selectedTopics = $selectedTopics.filter((id) => id !== item.id);
+	}
+
+	async function setConfirmed(type = "oa") {
+		confirmed[type] = true;
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+		confirmed[type] = false;
 	}
 
 	afterNavigate(async () => {
@@ -177,15 +170,17 @@
 					width="100%"
 					bind:value={$activeArea.properties.areanm}
 				/>
-				<LoadModal
-					bind:activeArea
-					bind:savedAreas
-					bind:savedAreasLastId
-					{areasList}
-					{centroids}
-					mode="build"
-					updateSelection={(area) => console.log({ area })}
-				/>
+				<Tooltip text="Load an area">
+					<LoadModal
+						bind:activeArea
+						bind:savedAreas
+						bind:savedAreasLastId
+						{areasList}
+						{centroids}
+						mode="build"
+						updateSelection={(area) => console.log({ area })}
+					/>
+				</Tooltip>
 			</div>
 			<Checkbox
 				label="Show map in profile"
@@ -198,15 +193,17 @@
 					value={$comparisonArea?.properties?.areanm}
 					readonly
 				/>
-				<LoadModal
-					bind:activeArea={comparisonArea}
-					bind:savedAreas
-					bind:savedAreasLastId
-					{areasList}
-					{centroids}
-					mode="build"
-					updateSelection={(area) => console.log({ area })}
-				/>
+				<Tooltip text="Load an area">
+					<LoadModal
+						bind:activeArea={comparisonArea}
+						bind:savedAreas
+						bind:savedAreasLastId
+						{areasList}
+						{centroids}
+						mode="build"
+						updateSelection={(area) => console.log({ area })}
+					/>
+				</Tooltip>
 			</div>
 			<Checkbox
 				label="Include on map"
@@ -241,10 +238,7 @@
 			>The data presented here is aggregated on a best-fit basis, so may not precisely
 			represent the selected geographic boundary.</Notice
 		>
-		<Details
-			title="What does my best-fit area selection look like?"
-			cls="ons-u-mt-s ons-u-mb-s"
-		>
+		<Details title="Show actual best-fit boundaries" cls="ons-u-mt-s ons-u-mb-s">
 			<p>
 				Some datasets are aggregated from Output Areas &mdash; the smallest statistical
 				geography &mdash; whereas others are based on larger LSOAs. The map below compares
@@ -252,8 +246,8 @@
 				available in the datasets.
 			</p>
 			<p>
-				Since these boundaries can vary, we advise caution in comparing values from datasets
-				based on Output Areas with those based on LSOAs.
+				If the two best-fit boundaries do not match, we advise caution in comparing values
+				from datasets based on Output Areas with those based on LSOAs.
 			</p>
 			{#if $activeArea?.properties?.oa21cds}
 				<BestFitMap {activeArea} {centroids} />
@@ -262,13 +256,116 @@
 		<hr class="ons-u-mt-m ons-u-mb-m" />
 		<div id="embed"></div>
 		<h2 class="ons-u-fs-m ons-u-mb-3xs">Use and share this profile</h2>
-		<p>
-			<Icon type="download" />Download profile as <a href="#0">CSV</a>, <a href="#0">PNG</a>
-			or <a href="#0">GeoJSON</a> |
-			<Icon type="copy" /><a href="#0">Copy area codes</a> |
-			<Icon type="code" /><a href="#0">Get embed code</a> |
-			<Icon type="print" /><a href="#0">Print</a>
-		</p>
+		<ul class="profile-actions">
+			<li>
+				<Icon type="download" /> Download profile as
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						downloadData(tables, $activeArea, $comparisonArea);
+					}}>CSV</a
+				>,
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						pymParent?.sendMessage?.("png");
+					}}>PNG</a
+				>
+				or
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						downloadArea($activeArea, makeFilename($activeArea, "geojson"));
+					}}>GeoJSON</a
+				>
+			</li>
+			<li>
+				<Icon type="code" />
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						showCodes = false;
+						showEmbed = !showEmbed;
+					}}>{showEmbed ? "Hide embed code" : "Get embed code"}</a
+				>
+			</li>
+			<li>
+				<Icon type="copy" />
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						showEmbed = false;
+						showCodes = !showCodes;
+					}}>{showCodes ? "Hide area codes" : "Copy area codes"}</a
+				>
+			</li>
+			<li>
+				<Icon type="print" />
+				<a
+					href="#0"
+					onclick={(e) => {
+						e.preventDefault();
+						pymParent?.sendMessage?.("print");
+					}}>Print profile</a
+				>
+			</li>
+		</ul>
+		{#if showEmbed}
+			{@const embedCode = makeEmbedCode(embedHash)}
+			<div class="profile-actions-tray">
+				<Textarea rows={4} label="Embed code" value={embedCode} readonly />
+				<Button
+					icon="copy"
+					on:click={() => {
+						clip(embedCode);
+						setConfirmed("embed");
+					}}
+					small>Copy embed code</Button
+				>
+				{#if confirmed.embed}<Icon type="tick" marginLeft />{/if}
+			</div>
+		{/if}
+		{#if showCodes}
+			{@const oaCodes = [
+				...centroids.expand($activeArea?.properties?.oa21cds || [], "oa")
+			].join(",")}
+			{@const lsoaCodes = [
+				...centroids.expand($activeArea?.properties?.lsoa21cds || [], "lsoa")
+			].join(",")}
+			<div class="profile-actions-tray">
+				<Textarea
+					rows={2}
+					width="100%"
+					label="Output Area codes"
+					value={oaCodes}
+					readonly
+				/>
+				<Button
+					icon="copy"
+					on:click={() => {
+						clip(oaCodes);
+						setConfirmed("oa");
+					}}
+					small>Copy Output Area codes</Button
+				>
+				{#if confirmed.oa}<Icon type="tick" marginLeft />{/if}
+				<Textarea rows={2} width="100%" label="LSOA codes" value={lsoaCodes} readonly />
+				<Button
+					icon="copy"
+					on:click={() => {
+						clip(lsoaCodes);
+						setConfirmed("lsoa");
+					}}
+					small>Copy LSOA codes</Button
+				>
+				{#if confirmed.lsoa}<Icon type="tick" marginLeft />{/if}
+			</div>
+		{/if}
 	</GridCell>
 </Grid>
 
@@ -302,5 +399,22 @@
 		border-bottom: 1px solid var(--ons-color-borders);
 		padding-bottom: 1em;
 		margin-bottom: 1em;
+	}
+	ul.profile-actions {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+	ul.profile-actions > li {
+		display: inline-block;
+		padding: 0;
+		margin-right: 12px;
+	}
+	.profile-actions-tray :global(.ons-btn) {
+		margin: 4px 0 1em;
+	}
+	.profile-actions-tray > :global(.ons-icon) {
+		color: var(--ons-color-success);
+		margin-top: 10px;
 	}
 </style>

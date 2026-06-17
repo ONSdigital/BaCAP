@@ -1,5 +1,5 @@
 <script>
-	import { Tabs, Tab, Input, Button, Checkbox } from "@onsvisual/svelte-components";
+	import { Tabs, Tab, Input, Button, Checkbox, Tooltip } from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
 	import AreaSearch from "./AreaSearch.svelte";
 	import {
@@ -92,6 +92,10 @@
 		if (selectAll) loadedAreas.selected = loadedAreas.selected.map(() => true);
 		else loadedAreas.selected = loadedAreas.selected.map(() => false);
 	}
+
+	function getTooltipPos(areas, i) {
+		return areas.length > 1 && i === areas.length - 1 ? "top" : "bottom";
+	}
 </script>
 
 <Modal
@@ -112,8 +116,13 @@
 					Find pre-defined areas including local authorities, wards, parishes,
 					parliamentary constituencies and build-up areas.
 				</p>
-				<AreaSearch bind:value={selectedArea} options={areasList} {centroids} />
-				<Button disabled={!selectedArea}>Select area</Button>
+				<AreaSearch
+					bind:value={selectedArea}
+					options={areasList}
+					label="Find an area"
+					{centroids}
+				/>
+				<Button cls="ons-u-mt-2xs" disabled={!selectedArea}>Select area</Button>
 			</Tab>
 		{/if}
 		<Tab title="Upload areas">
@@ -228,7 +237,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							{#each areas as area (area.id)}
+							{#each areas as area, i (area.id)}
 								<tr
 									style:display={(!filterText ||
 										regex.test(area.properties.areanm)) &&
@@ -268,53 +277,75 @@
 												on:click={() => loadSavedArea(area)}>Select</Button
 											>
 											{#if editId === area.id}
+												<Tooltip
+													text="Confirm changes"
+													position={getTooltipPos(areas, i)}
+												>
+													<Button
+														variant="primary"
+														icon="tick"
+														small
+														hideLabel
+														on:click={() => {
+															$savedAreas[editId] = { ...editArea };
+															$savedAreas = $savedAreas;
+															editId = null;
+														}}>Confirm changes</Button
+													>
+												</Tooltip>
+												<Tooltip
+													text="Cancel"
+													position={getTooltipPos(areas, i)}
+												>
+													<Button
+														variant="secondary"
+														icon="cross"
+														small
+														hideLabel
+														on:click={() => (editId = null)}
+														>Cancel changes</Button
+													>
+												</Tooltip>
+											{:else}
+												<Tooltip
+													text="Edit area"
+													position={getTooltipPos(areas, i)}
+												>
+													<Button
+														variant="secondary"
+														icon="edit"
+														small
+														hideLabel
+														on:click={() => (editId = area.id)}
+														>Edit area</Button
+													>
+												</Tooltip>
+												<Tooltip
+													text="Download area"
+													position={getTooltipPos(areas, i)}
+												>
+													<Button
+														variant="secondary"
+														icon="download"
+														small
+														hideLabel
+														on:click={() => downloadArea(area)}
+														>Download area</Button
+													>
+												</Tooltip>
+											{/if}
+											<Tooltip text="Delete area" position="left">
 												<Button
-													variant="primary"
-													icon="tick"
+													variant="secondary"
+													icon="delete"
 													small
 													hideLabel
 													on:click={() => {
-														$savedAreas[editId] = { ...editArea };
+														delete $savedAreas[area.id];
 														$savedAreas = $savedAreas;
-														editId = null;
-													}}>Confirm changes</Button
+													}}>Delete area</Button
 												>
-												<Button
-													variant="secondary"
-													icon="cross"
-													small
-													hideLabel
-													on:click={() => (editId = null)}
-													>Cancel changes</Button
-												>
-											{:else}
-												<Button
-													variant="secondary"
-													icon="edit"
-													small
-													hideLabel
-													on:click={() => (editId = area.id)}
-													>Edit area</Button
-												>
-												<Button
-													variant="secondary"
-													icon="download"
-													small
-													hideLabel
-													on:click={() => downloadArea(area)}
-													>Download area</Button
-												>
-											{/if}
-											<Button
-												variant="secondary"
-												icon="delete"
-												small
-												hideLabel
-												on:click={() => {
-													delete $savedAreas[area.id];
-													$savedAreas = $savedAreas;
-												}}>Delete area</Button
-											>
+											</Tooltip>
 										</div>
 									</td>
 								</tr>
