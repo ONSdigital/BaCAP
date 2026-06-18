@@ -9,7 +9,8 @@
 		Card,
 		List,
 		Li,
-		Notice
+		Notice,
+		Icon
 	} from "@onsvisual/svelte-components";
 
 	let headerBackground = $state(
@@ -66,13 +67,15 @@
 	</p>
 </Section>
 
-<Section title="How does this tool produce these figures?">
+<Section title="How does this tool produce its figures?">
 	<p>
 		When you select an area, the tool chooses the underlying small area geographies that most
 		accurately represent it using a <a
 			href="https://geoportal.statistics.gov.uk/datasets/f0aac7ccbfd04cda9eb03e353c613faa/about"
-			target="_blank">best-fit methodology</a
-		>.
+			target="_blank"
+			>best-fit methodology<span class="ons-u-vh"> (opens in a new tab)</span></a
+		>
+		<Icon type="external" />..
 	</p>
 	<p>
 		When you select a dataset, the data for the best-fit areas is added up (or "aggregated") to
