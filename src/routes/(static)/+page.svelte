@@ -24,8 +24,8 @@
 	theme="lightblue"
 	cls="page-banner"
 	title="Start your custom data journey"
-	lede="Draw your own town, village or neighbourhood and choose from {data.topics
-		.length} datasets covering England and Wales"
+	lede="Define your own geographic area and choose from {data.topics
+		.length} datasets covering England and Wales down to a neighbourhood level"
 	background={headerBackground}
 >
 	<div>
@@ -95,7 +95,8 @@
 			background-image: none !important;
 		}
 	}
-	:global(.ons-section__text) {
+	:global(.ons-section__text),
+	:global(.ons-hero__title-container) {
 		max-width: 800px;
 	}
 </style>

@@ -23,11 +23,7 @@
 </script>
 
 <Hero theme="grey" title="Data glossary" width="wider">
-	<p>
-		A description of all the datasets available within the <a href={resolve("/")}
-			>Build a Custom Area Profile tool</a
-		>.
-	</p>
+	<p>Information on all the datasets available within this tool.</p>
 </Hero>
 <NavSections contentsLabel="Topics" width="wider" marginTop>
 	{#each topics as topic, i}
