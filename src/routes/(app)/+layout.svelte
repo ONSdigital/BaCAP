@@ -1,7 +1,7 @@
 <script>
 	import { onMount, setContext } from "svelte";
 	import { page } from "$app/state";
-	import { Header, Main, Footer } from "@onsvisual/svelte-components";
+	import { PhaseBanner, Header, Main, Footer } from "@onsvisual/svelte-components";
 	import { getAreasList, getOAdata, getLSOAcentroids } from "$lib/utils.js";
 	import getAppState from "$lib/app-state.svelte.js";
 	import Centroids from "$lib/centroids.js";
@@ -13,6 +13,7 @@
 	let areasList = $state.raw();
 	let centroids = $state.raw();
 	let route = $derived(page.route?.id || "");
+	let width = $derived(route.includes("draw") ? "full" : "wider");
 
 	setContext("appState", () => appState);
 	setContext("areasList", () => areasList);
@@ -33,19 +34,13 @@
 	// $effect(() => syncAppState($state.snapshot(appState)));
 </script>
 
-{#if route.includes("draw")}
-	<Header width="full" compact />
-	<Main>
-		{#if mounted}
-			{@render children()}
-		{/if}
-	</Main>
-{:else}
-	<Header width="wider" />
-	<Main width="wider">
-		{#if mounted}
-			{@render children()}
-		{/if}
-	</Main>
-	<Footer width="wider" />
+<PhaseBanner {width} phase="Prototype" />
+<Header {width} compact={width === "full"} />
+<Main>
+	{#if mounted}
+		{@render children()}
+	{/if}
+</Main>
+{#if width !== "full"}
+	<Footer {width} />
 {/if}
