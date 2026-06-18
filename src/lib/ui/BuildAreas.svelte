@@ -4,10 +4,10 @@
 
 	let {
 		buildState = $bindable(),
-		activeArea,
-		comparisonArea,
-		savedAreas,
-		savedAreasLastId,
+		activeArea = $bindable(),
+		comparisonArea = $bindable(),
+		savedAreas = $bindable(),
+		savedAreasLastId = $bindable(),
 		areasList,
 		centroids
 	} = $props();

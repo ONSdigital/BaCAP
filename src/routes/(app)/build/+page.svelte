@@ -89,11 +89,11 @@
 <Grid width="wider" colWidth="medium" marginTop>
 	<GridCell>
 		<BuildAreas
-			{buildState}
-			{activeArea}
-			{comparisonArea}
-			{savedAreas}
-			{savedAreasLastId}
+			bind:buildState
+			bind:activeArea
+			bind:comparisonArea
+			bind:savedAreas
+			bind:savedAreasLastId
 			{areasList}
 			{centroids}
 		/>
