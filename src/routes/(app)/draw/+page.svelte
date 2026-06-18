@@ -46,7 +46,7 @@
 	});
 </script>
 
-<Container id="draw-container" width="full" height="calc(100vh - 52px)">
+<Container id="draw-container" width="full" height="calc(100vh - 97px)">
 	<div class="breadcrumb-container">
 		<Breadcrumb links={[{ label: "Build a custom area profile", href: resolve("/") }]} />
 	</div>
