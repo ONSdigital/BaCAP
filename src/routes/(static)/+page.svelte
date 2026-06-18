@@ -1,7 +1,6 @@
 <script>
 	import { resolve } from "$app/paths";
 	import {
-		Breadcrumb,
 		Hero,
 		Button,
 		Section,
@@ -13,53 +12,47 @@
 		Icon
 	} from "@onsvisual/svelte-components";
 
+	let { data } = $props();
+
 	let headerBackground = $state(
-		`var(--ons-color-branded) right -80px top / auto 90% no-repeat url("${resolve("/img/og.png")}")`
+		`var(--ons-color-hero-bg) right -60px top / auto 100% no-repeat url("${resolve("/img/banner-image.svg")}")`
 	);
 </script>
 
-<Breadcrumb theme="blue" links={[{ label: "Home", href: "/" }]} />
 <Hero
-	theme="blue"
+	width="wider"
+	theme="lightblue"
 	cls="page-banner"
-	title="Build a custom area profile"
-	lede="Create your own profile for local areas with data for England and Wales"
+	title="Start your custom data journey"
+	lede="Draw your own town, village or neighbourhood and choose from {data.topics
+		.length} datasets covering England and Wales"
 	background={headerBackground}
 >
 	<div>
-		<Button variant="ghost" icon="arrow" iconPosition="after" href={resolve("/draw")}
-			>Get started</Button
-		>
+		<Button icon="arrow" iconPosition="after" href={resolve("/draw")}>Get started</Button>
 	</div>
 </Hero>
 
-<Section title="How to use this tool" marginTop={true}>
-	<p>There are two parts to the Build a custom area profile tool:</p>
-</Section>
-
-<Grid width="wide" colWidth="wide">
-	<Card title="1. Select an area" href={resolve("/draw")} mode="featured">
+<Grid width="wider" colWidth="wide" marginTop>
+	<Card title="Draw an area" href={resolve("/draw")} mode="featured">
 		<p>There are three ways to select an area:</p>
 		<List mode="number">
 			<Li>Search for an area in the search box.</Li>
 			<Li>Draw your own area on the map.</Li>
 			<Li>Upload an area boundary.</Li>
 		</List>
-		<p>Once you have finished selecting an area, click on the “Build profile” button.</p>
 	</Card>
-	<Card title="2. Build a profile" href={resolve("/build")} mode="featured">
-		<p>For a selected area, you can choose datasets to build a profile.</p>
-		<p>
-			Your profile includes a comparison area &mdash; by default a parent area &mdash; which
-			you can change or remove.
-		</p>
-		<p>
-			When finished, you can download the data, charts and geography data from your profile.
-		</p>
+	<Card title="Build a profile" href={resolve("/build")} mode="featured">
+		<p>Choose datasets to build a profile for your selected area.</p>
+		<p>When finished, you can download the data, charts and geography data.</p>
+	</Card>
+	<Card title="Download datasets" href={resolve("/download")} mode="featured">
+		<p>A flexible way to explore and download datasets.</p>
+		<p>Select multiple areas at once and download datasets for your own use.</p>
 	</Card>
 </Grid>
 
-<Section title="Which datasets are available?">
+<Section width="wider" title="Which datasets are available?">
 	<p>
 		This tool includes a variety of datasets aggregated from small area data. You can find
 		information on all available datasets on the
@@ -67,7 +60,7 @@
 	</p>
 </Section>
 
-<Section title="How does this tool produce its figures?">
+<Section width="wider" title="How does this tool produce its figures?">
 	<p>
 		When you select an area, the tool chooses the underlying small area geographies that most
 		accurately represent it using a <a
@@ -88,7 +81,7 @@
 	</Notice>
 </Section>
 
-<Section title="Share your feedback">
+<Section width="wider" title="Share your feedback">
 	<p>
 		We value your feedback on this service. If you would like to get in touch, please email <a
 			href="mailto:explore.local.statistics@ons.gov.uk">explore.local.statistics@ons.gov.uk</a
@@ -97,14 +90,12 @@
 </Section>
 
 <style>
-	:global(.ons-svelte-theme-wrapper) {
-		overflow: visible;
-		margin-top: -52px;
-		padding-top: 52px;
-	}
 	@media (max-width: 800px) {
 		:global(.ons-svelte-theme-wrapper:has(.page-banner)) {
 			background-image: none !important;
 		}
+	}
+	:global(.ons-section__text) {
+		max-width: 800px;
 	}
 </style>

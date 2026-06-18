@@ -71,21 +71,6 @@
 	});
 </script>
 
-<Breadcrumb
-	width="wider"
-	theme="grey"
-	links={[
-		{ label: "Home", href: "/" },
-		{ label: "Build a custom area profile", href: resolve("/") }
-	]}
-/>
-<Hero width="wider" theme="grey" title="Build your area profile">
-	<div>
-		<Button icon="arrow" iconRotation={180} href={resolve("/draw")} small
-			>Edit selected area</Button
-		>
-	</div>
-</Hero>
 <Grid width="wider" colWidth="medium" marginTop>
 	<GridCell>
 		<BuildAreas

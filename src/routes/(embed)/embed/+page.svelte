@@ -75,7 +75,10 @@
 
 <Embed id="embed" on:load={init}>
 	{#if embedData?.areas?.[0]}
-		<h1>{embedData.areas[0]} <small>(hash length {embedHash.length})</small></h1>
+		<h1>
+			{embedData.areas[0]}
+			<!-- <small>(hash length {embedHash.length})</small> -->
+		</h1>
 	{/if}
 	<Grid cls="data-cards" colWidth="medium">
 		{#if embedData?.polygons?.[0]}

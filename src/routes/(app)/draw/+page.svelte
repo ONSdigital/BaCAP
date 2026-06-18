@@ -1,13 +1,14 @@
 <script>
-	import { resolve } from "$app/paths";
 	import { afterNavigate } from "$app/navigation";
 	import { onMount, getContext } from "svelte";
-	import { Container, Breadcrumb } from "@onsvisual/svelte-components";
+	import { Container, Section, Button } from "@onsvisual/svelte-components";
 	import { geoUrl } from "$lib/config.js";
 	import { isValidAreaCode, parseGeoJSON } from "$lib/geo.svelte.js";
 	import DrawToolbar from "$lib/ui/DrawToolbar.svelte";
 	import DrawMap from "$lib/ui/DrawMap.svelte";
 	import DrawCounter from "$lib/ui/DrawCounter.svelte";
+
+	let el = $state();
 
 	let drawState = $state({
 		drawMode: "simple_select",
@@ -46,28 +47,34 @@
 	});
 </script>
 
-<Container id="draw-container" width="full" height="calc(100vh - 97px)">
-	<div class="breadcrumb-container">
-		<Breadcrumb links={[{ label: "Build a custom area profile", href: resolve("/") }]} />
+<Section width="wider" marginBottom={false}>
+	<Button
+		cls="ons-u-mt-s ons-u-mb-s"
+		variant="secondary"
+		icon="expand"
+		small
+		on:click={() => {
+			el.requestFullscreen();
+		}}>Enter full screen map</Button
+	>
+</Section>
+<Container width="wider" marginBottom>
+	<div id="draw-container" bind:this={el}>
+		<DrawToolbar
+			bind:appState
+			bind:drawState
+			{areasList}
+			{centroids}
+			runAction={(action, args = []) => drawMap?.[action]?.(...args)}
+		/>
+		<DrawMap bind:this={drawMap} bind:appState {drawState} {centroids} />
+		<DrawCounter population={centroids.population($history?.[0]?.oa || new Set())} />
 	</div>
-	<DrawToolbar
-		bind:appState
-		bind:drawState
-		{areasList}
-		{centroids}
-		runAction={(action, args = []) => drawMap?.[action]?.(...args)}
-	/>
-	<DrawMap bind:this={drawMap} bind:appState {drawState} {centroids} />
-	<DrawCounter population={centroids.population($history?.[0]?.oa || new Set())} />
 </Container>
 
 <style>
-	:global(#draw-container) {
+	#draw-container {
 		position: relative;
-	}
-	.breadcrumb-container {
-		position: absolute;
-		bottom: 100%;
-		right: 0;
+		height: 600px;
 	}
 </style>

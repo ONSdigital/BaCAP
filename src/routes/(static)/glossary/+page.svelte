@@ -1,6 +1,6 @@
 <script>
 	import { resolve } from "$app/paths";
-	import { Breadcrumb, Icon, Hero, NavSections, NavSection } from "@onsvisual/svelte-components";
+	import { Icon, Hero, NavSections, NavSection } from "@onsvisual/svelte-components";
 	import { slugify } from "$lib/utils.js";
 
 	let { data } = $props();
@@ -22,25 +22,14 @@
 	const topics = $derived(groupTopics(data.topics));
 </script>
 
-<Breadcrumb
-	theme="grey"
-	links={[
-		{ label: "Home", href: "/", refresh: true },
-		{
-			label: "Build a custom area profile",
-			href: resolve("/"),
-			refresh: true
-		}
-	]}
-/>
-<Hero theme="grey" title="Glossary">
+<Hero theme="grey" title="Data glossary" width="wider">
 	<p>
 		A description of all the datasets available within the <a href={resolve("/")}
 			>Build a Custom Area Profile tool</a
 		>.
 	</p>
 </Hero>
-<NavSections contentsLabel="Topics" marginTop>
+<NavSections contentsLabel="Topics" width="wider" marginTop>
 	{#each topics as topic, i}
 		<NavSection title={topic.label} id={topic.slug}>
 			<div class="indicator-item">
