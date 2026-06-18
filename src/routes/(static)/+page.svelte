@@ -8,7 +8,8 @@
 		Grid,
 		Card,
 		List,
-		Li
+		Li,
+		Notice
 	} from "@onsvisual/svelte-components";
 
 	let headerBackground = $state(
@@ -32,11 +33,11 @@
 </Hero>
 
 <Section title="How to use this tool" marginTop={true}>
-	<p>There are two steps to build your custom area profile.</p>
+	<p>There are two parts to the Build a custom area profile tool:</p>
 </Section>
 
 <Grid width="wide" colWidth="wide">
-	<Card title="Step 1 - Select an area" mode="featured" baseline>
+	<Card title="1. Select an area" href={resolve("/draw")} mode="featured">
 		<p>There are three ways to select an area:</p>
 		<List mode="number">
 			<Li>Search for an area in the search box.</Li>
@@ -45,23 +46,22 @@
 		</List>
 		<p>Once you have finished selecting an area, click on the “Build profile” button.</p>
 	</Card>
-	<Card title="Step 2 - Build a profile" mode="featured" baseline>
-		<p>Once you have selected your area, you can choose datasets to build a profile.</p>
+	<Card title="2. Build a profile" href={resolve("/build")} mode="featured">
+		<p>For a selected area, you can choose datasets to build a profile.</p>
 		<p>
 			Your profile includes a comparison area &mdash; by default a parent area &mdash; which
 			you can change or remove.
 		</p>
-		<p>When finished, you can download the charts and data from your profile.</p>
+		<p>
+			When finished, you can download the data, charts and geography data from your profile.
+		</p>
 	</Card>
 </Grid>
 
 <Section title="Which datasets are available?">
 	<p>
-		This tool includes a variety of datasets that can be aggregated from small area data at an
-		LSOA or Output Area level.
-	</p>
-	<p>
-		You can find information on all available datasets on the
+		This tool includes a variety of datasets aggregated from small area data. You can find
+		information on all available datasets on the
 		<a href={resolve("/glossary")}>glossary page</a>.
 	</p>
 </Section>
@@ -71,18 +71,18 @@
 		When you select an area, the tool chooses the underlying small area geographies that most
 		accurately represent it using a <a
 			href="https://geoportal.statistics.gov.uk/datasets/f0aac7ccbfd04cda9eb03e353c613faa/about"
-			target="_blank">best-fit approach</a
+			target="_blank">best-fit methodology</a
 		>.
 	</p>
 	<p>
 		When you select a dataset, the data for the best-fit areas is added up (or "aggregated") to
 		give you numbers that best represent the area you selected.
 	</p>
-	<p>
+	<Notice>
 		Whilst most datasets in this tool are available down to the smallest Output Area (or OA)
 		level, some datasets are only available down to an LSOA level. We advise caution when
 		comparing values between between Output Area and LSOA datasets.
-	</p>
+	</Notice>
 </Section>
 
 <Section title="Share your feedback">

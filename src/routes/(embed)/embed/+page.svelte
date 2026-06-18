@@ -79,13 +79,13 @@
 	{/if}
 	<Grid cls="data-cards" colWidth="medium">
 		{#if embedData?.polygons?.[0]}
-			<Card title="Area map" mode="featured" baseline>
+			<Card title="Area map" mode="featured">
 				<AreaMap polygons={embedData.polygons} />
 			</Card>
 		{/if}
 		{#each tables as tab}
 			{@const dateFormat = makeDateFormatter(tab.meta.dateFormat)}
-			<Card title={tab.meta.label} mode="featured" baseline>
+			<Card title={tab.meta.label} mode="featured">
 				<div class="card-subtitle">{tab.range.map((d) => dateFormat(d)).join(" to ")}</div>
 				{#if tab.meta.chart === "number"}
 					<BigNumber data={tab.data} unit={tab.meta.unit} />
