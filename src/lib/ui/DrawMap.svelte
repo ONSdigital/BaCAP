@@ -10,7 +10,7 @@
 	import { parseGeoJSON } from "$lib/geo.svelte.js";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
-	let { history, activeArea } = appState;
+	let { history, activeArea, lastActivePage } = appState;
 	let map = $state();
 	let draw = $state();
 	let polygon = $state.raw($history[0] ? new Polygon($history[0].geometry) : new Polygon());
@@ -26,6 +26,7 @@
 	}
 
 	export async function applyShape(feature, mode = drawState.eraseMode ? "subtract" : "add") {
+		$lastActivePage = "draw";
 		const _feature = feature.geojson ? parseGeoJSON(feature.geojson, centroids) : feature;
 
 		const oa = _feature?.properties?.oa21cds
@@ -58,7 +59,7 @@
 	}
 
 	function applyHistory(state) {
-		console.log(state);
+		$lastActivePage = "draw";
 		polygon = new Polygon(state.geometry);
 		codes = { oa: new Set([...state.oa]), lsoa: new Set([...state.lsoa]) };
 	}

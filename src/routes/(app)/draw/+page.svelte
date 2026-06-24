@@ -1,14 +1,12 @@
 <script>
 	import { afterNavigate } from "$app/navigation";
 	import { onMount, getContext } from "svelte";
-	import { Container, Section, Button } from "@onsvisual/svelte-components";
+	import { Container, Button } from "@onsvisual/svelte-components";
 	import { geoUrl } from "$lib/config.js";
 	import { isValidAreaCode, parseGeoJSON } from "$lib/geo.svelte.js";
 	import DrawToolbar from "$lib/ui/DrawToolbar.svelte";
 	import DrawMap from "$lib/ui/DrawMap.svelte";
 	import DrawCounter from "$lib/ui/DrawCounter.svelte";
-
-	let el = $state();
 
 	let drawState = $state({
 		drawMode: "simple_select",
@@ -18,17 +16,23 @@
 	let drawMap = $state();
 
 	let appState = $state(getContext("appState")());
-	let { history, activeArea } = appState;
+	let { history, activeArea, lastActivePage } = appState;
+
+	const getFullscreen = getContext("getFullscreen");
+	const setFullscreen = getContext("setFullscreen");
+	let width = $derived(getFullscreen() ? "full" : "wider");
 
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
 
 	afterNavigate(async () => {
-		if (!($activeArea?.geometry && $activeArea?.properties?.oa21cds)) return;
-
-		// Update drawn area if active area exists (may have been loaded on /build page)
-		// drawMap?.clearDraw?.();
-		drawMap?.applyShape?.($activeArea, "replace");
+		// Update drawn area if selection was changed on "build" page
+		if (
+			$lastActivePage === "build" &&
+			$activeArea?.geometry &&
+			$activeArea?.properties?.oa21cds
+		)
+			drawMap?.applyShape?.($activeArea, "replace");
 	});
 
 	onMount(async () => {
@@ -47,19 +51,21 @@
 	});
 </script>
 
-<Section width="wider" marginBottom={false}>
+<Container cls="pos-relative" {width} marginBottom={!getFullscreen()}>
 	<Button
-		cls="ons-u-mt-s ons-u-mb-s"
-		variant="secondary"
-		icon="expand"
+		cls="ons-u-mt-s ons-u-mb-s {getFullscreen() ? 'pos-compact' : 'pos-expanded'}"
+		variant="ghost"
+		icon="chevron"
+		iconRotation={getFullscreen() ? 90 : -90}
+		iconPosition="after"
 		small
 		on:click={() => {
-			el.requestFullscreen();
-		}}>Enter full screen map</Button
+			setFullscreen(!getFullscreen());
+		}}>{getFullscreen() ? "Shrink map" : "Expand map"}</Button
 	>
-</Section>
-<Container width="wider" marginBottom>
-	<div id="draw-container" bind:this={el}>
+</Container>
+<Container {width} marginBottom>
+	<div id="draw-container">
 		<DrawToolbar
 			bind:appState
 			bind:drawState
@@ -75,6 +81,19 @@
 <style>
 	#draw-container {
 		position: relative;
-		height: 600px;
+		height: calc(100vh - 108px);
+	}
+	:global(.pos-relative) {
+		position: relative;
+	}
+	:global(.ons-btn.pos-compact) {
+		position: absolute;
+		top: -3.5em !important;
+		right: 1em;
+	}
+	:global(.ons-btn.pos-expanded) {
+		position: absolute;
+		top: -5.5em !important;
+		right: 1em;
 	}
 </style>

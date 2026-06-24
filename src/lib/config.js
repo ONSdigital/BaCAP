@@ -11,6 +11,7 @@ export const initialState = {
 	savedAreas: {},
 	savedAreasLastId: 0,
 	history: [{ geometry: null, oa: new Set(), lsoa: new Set() }],
+	lastActivePage: null,
 	selectedTopics: []
 };
 

@@ -8,6 +8,7 @@
 		comparisonArea = $bindable(),
 		savedAreas = $bindable(),
 		savedAreasLastId = $bindable(),
+		lastActivePage = $bindable(),
 		areasList,
 		centroids
 	} = $props();
@@ -30,7 +31,7 @@
 				{areasList}
 				{centroids}
 				mode="build"
-				updateSelection={(area) => console.log({ area })}
+				updateSelection={() => ($lastActivePage = "build")}
 			/>
 		</Tooltip>
 	</div>
@@ -45,7 +46,7 @@
 				{areasList}
 				{centroids}
 				mode="build"
-				updateSelection={(area) => console.log({ area })}
+				updateSelection={() => ($lastActivePage = "build")}
 			/>
 		</Tooltip>
 	</div>

@@ -3,7 +3,16 @@
 	import "../app.css";
 	import { page } from "$app/state";
 	import { resolve } from "$app/paths";
+	import { beforeNavigate } from "$app/navigation";
+	import { setContext } from "svelte";
 	import { PhaseBanner, Header, Main, Footer } from "@onsvisual/svelte-components";
+
+	let fullscreen = $state(false);
+	let width = $derived(fullscreen ? "full" : "wider");
+
+	setContext("getFullscreen", () => fullscreen);
+	setContext("setFullscreen", (bool) => (fullscreen = bool || false));
+	beforeNavigate(() => (fullscreen = false));
 
 	let { children } = $props();
 </script>
@@ -19,22 +28,33 @@
 {#if page?.route?.id?.includes?.("embed")}
 	{@render children()}
 {:else}
-	<PhaseBanner width="wider" phase="Prototype" />
-	{#key page.url}
+	{#if !fullscreen}<PhaseBanner {width} phase="Prototype" />{/if}
+	{#key [page.url, fullscreen]}
 		<Header
-			width="wider"
+			cls={fullscreen ? "header-fullscreen" : null}
+			{width}
 			title="Build a custom area profile"
-			navLinks={[
-				{ label: "Home", href: resolve("/") },
-				{ label: "Draw an area", href: resolve("/draw") },
-				{ label: "Build a profile", href: resolve("/build") },
-				{ label: "Download datasets", href: resolve("/download") },
-				{ label: "Data glossary", href: resolve("/glossary") }
-			]}
+			compact={fullscreen}
+			navLinks={fullscreen
+				? null
+				: [
+						{ label: "Home", href: resolve("/") },
+						{ label: "Draw an area", href: resolve("/draw") },
+						{ label: "Build a profile", href: resolve("/build") },
+						{ label: "Download datasets", href: resolve("/download") },
+						{ label: "Data glossary", href: resolve("/glossary") }
+					]}
 		/>
 	{/key}
 	<Main>
 		{@render children()}
 	</Main>
-	<Footer width="wider" />
+	{#if !fullscreen}<Footer {width} />{/if}
 {/if}
+
+<style>
+	:global(.header-fullscreen .ons-header__title) {
+		margin: 0;
+		font-size: 1.65rem;
+	}
+</style>

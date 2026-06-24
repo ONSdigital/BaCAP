@@ -1,7 +1,6 @@
 <script>
-	import { resolve } from "$app/paths";
 	import { onMount, getContext } from "svelte";
-	import { Breadcrumb, Hero, Grid, GridCell, Button, Notice } from "@onsvisual/svelte-components";
+	import { Grid, GridCell, Button, Notice } from "@onsvisual/svelte-components";
 	import BuildAreas from "$lib/ui/BuildAreas.svelte";
 	import BuildTopics from "$lib/ui/BuildTopics.svelte";
 	import BuildProfile from "$lib/ui/BuildProfile.svelte";
@@ -16,8 +15,15 @@
 		includeCompMap: false
 	});
 	let appState = $state(getContext("appState")());
-	let { activeArea, comparisonArea, history, selectedTopics, savedAreas, savedAreasLastId } =
-		appState;
+	let {
+		activeArea,
+		comparisonArea,
+		history,
+		lastActivePage,
+		selectedTopics,
+		savedAreas,
+		savedAreasLastId
+	} = appState;
 
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
@@ -38,8 +44,8 @@
 			} catch (err) {
 				console.warn(err);
 			}
-		} else if ($history[0].geometry) {
-			// Refresh area if there is a draw history
+		} else if ($lastActivePage === "draw" && $history[0].geometry) {
+			// Refresh area if draw page was updated last
 			$activeArea.geometry = $history[0].geometry;
 			$activeArea.properties.oa21cds = centroids.compress($history[0].oa);
 			$activeArea.properties.lsoa21cds = centroids.compress($history[0].lsoa);
@@ -48,7 +54,7 @@
 		}
 
 		if (refreshedArea) {
-			// Refresh comparison area
+			// Refresh comparison area if area updated
 			const compcd = $activeArea.properties?.oa21cds
 				? centroids.commonParent({
 						raw: centroids.expand($activeArea.properties.oa21cds),
@@ -79,6 +85,7 @@
 			bind:comparisonArea
 			bind:savedAreas
 			bind:savedAreasLastId
+			bind:lastActivePage
 			{areasList}
 			{centroids}
 		/>
