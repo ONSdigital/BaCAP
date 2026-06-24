@@ -27,7 +27,10 @@
 		$activeArea?.properties?.oa21cds
 			? await Promise.all(
 					$selectedTopics.map((id) =>
-						getData(topicsLookup[id], $activeArea, $comparisonArea)
+						getData(
+							topicsLookup[id],
+							[$activeArea, $comparisonArea].filter((d) => d)
+						)
 					)
 				)
 			: []
@@ -35,6 +38,7 @@
 	let embedHash = $derived(
 		makeEmbedHash(tables, buildState, $activeArea, $comparisonArea, areaPolygon, compPolygon)
 	);
+	$inspect({ tables });
 	$effect(() => {
 		if (pymParent) pymParent.iframe.contentWindow.location.hash = embedHash;
 		console.log({ pymParent, embedHash });

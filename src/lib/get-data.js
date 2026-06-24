@@ -12,13 +12,15 @@ function makeCells(categories) {
 		.join(",");
 }
 
-function makeUrl(table, activeCds, comparisonCds) {
+function makeUrl(table, areas) {
 	const base = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?`;
+	const geo = `${table.geography}cds`;
+
 	const params = {
-		geography: [
-			`MAKE|MyCustomArea|${[...activeCds].join(";")}`,
-			...(comparisonCds ? [`MAKE|ComparisonArea|${[...comparisonCds].join(";")}`] : [])
-		],
+		geography: areas.map(
+			(d, i) =>
+				`MAKE|${encodeURIComponent(d?.properties?.areanm || `Custom Area ${i}`)}|${[...d?.properties?.[geo]].join(";")}`
+		),
 		date: table.dates,
 		...(table.cellCode ? { [table.cellCode]: makeCells(table.categories) } : {}),
 		measures: table.measures.map((d) => d.cell),
@@ -67,20 +69,25 @@ function makeRowParser(table) {
 	});
 }
 
-function makeRowSorter(table) {
+function makeRowSorter(table, areas) {
+	// Force categories and areas to match the requested order
 	const catLookup = Object.fromEntries(table.categories.map((d, i) => [d.label, i]));
-	// Forces categories to match the order in the metadata
 	const catSorter = (a, b) => catLookup[a] - catLookup[b];
+	const areaLookup = Object.fromEntries(
+		areas.map((d, i) => [d?.properties?.areanm || `Custom Areas ${i}`, i])
+	);
+	const areaSorter = (a, b) => areaLookup[a] - areaLookup[b];
+
 	return (a, b) =>
-		b.areanm.localeCompare(a.areanm, "en-GB") ||
+		areaSorter(a.areanm, b.areanm) ||
 		a.date - b.date ||
 		catSorter(a.category, b.category) ||
 		a.measure.localeCompare(b.measure, "en-GB");
 }
 
-function parseData(table, csvString) {
+function parseData(table, areas, csvString) {
 	const rowParser = makeRowParser(table);
-	const rowSorter = makeRowSorter(table);
+	const rowSorter = makeRowSorter(table, areas);
 	return csvParse(csvString, rowParser).sort(rowSorter);
 }
 
@@ -104,16 +111,18 @@ async function getCache(key) {
 	return cache?.get?.(key);
 }
 
-function checkRequestValidity(table, activeCds, comparisonCds, url) {
-	console.log(
-		"dimensions",
-		activeCds.size,
-		comparisonCds.size,
-		table.categories.length,
-		table.dates.length,
-		table.measures.length
-	);
+function checkRequestValidity(table, areas, url) {
 	const length = url.length;
+	const geo = `${table.geography}cds`;
+	const allCodes = areas.map((d) => d?.properties?.[geo] || []).flat();
+	console.log("Request size", {
+		url: length,
+		geography: allCodes.length,
+		categories: table.categories.length,
+		dates: table.dates.length,
+		measures: table.measures.length
+	});
+
 	if (length > maxRequestLength) {
 		console.log({ length });
 		throw Error(`Request URL longer than ${maxRequestLength.toLocaleString()} character limit`);
@@ -130,26 +139,23 @@ function checkRequestValidity(table, activeCds, comparisonCds, url) {
 	console.log({ length, cells });
 }
 
-export default async function getData(table, activeArea, comparisonArea) {
-	if (!table || !activeArea) return null;
-	const geo = `${table.geography}cds`;
-	const activeCds = activeArea.properties[geo];
-	const comparisonCds = comparisonArea?.properties?.[geo];
-	const url = makeUrl(table, activeCds, comparisonCds);
+export default async function getData(table, areas) {
+	if (!table || !areas[0]) return null;
+	const url = makeUrl(table, areas);
 	try {
-		checkRequestValidity(table, activeCds, comparisonCds || new Set(), url);
+		checkRequestValidity(table, areas, url);
 	} catch (err) {
 		console.warn(err);
 		// return null;
 	}
 
 	let data = await getCache(url);
-	if (data) return { meta: table, data: parseData(table, data) };
+	if (data) return { meta: table, data: parseData(table, areas, data) };
 
 	try {
 		data = await (await fetch(url)).text();
 		setCache(url, data);
-		return { meta: table, data: parseData(table, data) };
+		return { meta: table, data: parseData(table, areas, data) };
 	} catch (err) {
 		// May throw error if Nomis is unavailable
 		console.warn(err);

@@ -48,25 +48,19 @@
 			bounds: $activeArea?.geometry?.bbox
 		}}
 		options={{ fitBoundsOptions }}
-		interactive={false}
+		controls={true}
 	>
 		{#each layers as l}
 			<MapSource id={l.key} type="vector" url={l.url} layer="boundaries" promoteId={l.idKey}>
 				<MapLayer
 					id="{l.key}-line"
 					type="fill"
-					highlight
-					highlighted={codes[l.key]}
 					paint={{
-						"fill-color": [
-							"case",
-							["!=", ["feature-state", "highlighted"], null],
-							l.color,
-							"rgba(0,0,0,0)"
-						],
+						"fill-color": l.color,
 						"fill-opacity": 0.2,
 						"fill-outline-color": "rgba(0,0,0,0)"
 					}}
+					filter={["in", l.idKey, ...codes[l.key]]}
 				/>
 			</MapSource>
 		{/each}
