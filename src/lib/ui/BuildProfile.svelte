@@ -65,7 +65,7 @@
 </script>
 
 <Notice mode="warning"
-	>The data presented here is aggregated on a best-fit basis, so may not precisely represent the
+	>The data provided here is aggregated on a best-fit basis, so may not precisely represent the
 	selected geographic boundary.</Notice
 >
 <Details title="Show actual best-fit boundaries" cls="ons-u-mt-s ons-u-mb-s">

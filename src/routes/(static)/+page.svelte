@@ -23,8 +23,8 @@
 	width="wider"
 	theme="lightblue"
 	cls="page-banner"
-	title="Start your custom data journey"
-	lede="Define your own geographic area and choose from {data.topics
+	title="A flexible way to get local data"
+	lede="Define your own geographic area and explore {data.topics
 		.length} datasets covering England and Wales down to a neighbourhood level"
 	background={headerBackground}
 >
@@ -48,7 +48,7 @@
 	</Card>
 	<Card title="Download datasets" href={resolve("/download")} mode="featured">
 		<p>A flexible way to explore and download datasets.</p>
-		<p>Select multiple areas at once and download datasets for your own use.</p>
+		<p>Select multiple custom areas and download datasets for your own use.</p>
 	</Card>
 </Grid>
 
@@ -77,7 +77,7 @@
 	<Notice>
 		Whilst most datasets in this tool are available down to the smallest Output Area (or OA)
 		level, some datasets are only available down to an LSOA level. We advise caution when
-		comparing values between between Output Area and LSOA datasets.
+		comparing values between between OA and LSOA datasets.
 	</Notice>
 </Section>
 
