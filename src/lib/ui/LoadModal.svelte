@@ -126,7 +126,6 @@
 						bind:value={selectedArea}
 						options={areasList}
 						label="Find an area"
-						{centroids}
 					/>
 					<Button type="submit" cls="ons-u-mt-2xs" disabled={!selectedArea}
 						>Select area</Button
@@ -219,13 +218,19 @@
 			{:else}
 				<p>
 					Upload a file previously saved from this tool, or any other valid GeoJSON file
-					that contains one or more area polygons. You can also select from <a
+					that contains one or more area polygons.* You can also select from <a
 						href="#saved-areas">previously saved areas</a
 					>.
 				</p>
 				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
 					>Upload a GeoJSON file</Button
 				>
+				<div>
+					<small
+						>*GeoJSON files must be saved using the WGS 84 (longitude/latitude)
+						coordinate reference system.</small
+					>
+				</div>
 			{/if}
 		</Tab>
 		<Tab title="Saved areas">

@@ -10,7 +10,8 @@
 	let { data } = $props();
 
 	let buildState = $state({
-		coverage: new Set(),
+		coverage: new Set(["E", "W"]),
+		geography: "oa",
 		includeAreaMap: true,
 		includeCompMap: false
 	});
@@ -27,6 +28,15 @@
 
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
+
+	function setGeoState(area) {
+		if (!area) return;
+		buildState.geography = area.properties.lsoa21cds.size ? "lsoa" : "oa";
+		console.log(area.properties.lsoa21cds, buildState.geography);
+		buildState.coverage = new Set(
+			[...area.properties[`${buildState.geography}21cds`]].map((cd) => cd[0])
+		);
+	}
 
 	onMount(async () => {
 		let refreshedArea = false;
@@ -54,6 +64,8 @@
 		}
 
 		if (refreshedArea) {
+			setGeoState($activeArea);
+
 			// Refresh comparison area if area updated
 			const compcd = $activeArea.properties?.oa21cds
 				? centroids.commonParent({
@@ -63,7 +75,6 @@
 				: null;
 
 			if (compcd) {
-				buildState.coverage = new Set(compcd[0] === "K" ? ["E", "W"] : [compcd[0]]);
 				try {
 					const url = `${geoUrl}/${compcd.slice(0, 3)}/${compcd}.json`;
 					const data = await (await fetch(url)).json();
@@ -88,6 +99,7 @@
 			bind:lastActivePage
 			{areasList}
 			{centroids}
+			updateActiveArea={(area) => setGeoState(area)}
 		/>
 		<BuildTopics {buildState} topics={data.topics} bind:selectedTopics />
 	</GridCell>

@@ -10,7 +10,8 @@
 		savedAreasLastId = $bindable(),
 		lastActivePage = $bindable(),
 		areasList,
-		centroids
+		centroids,
+		updateActiveArea = () => null
 	} = $props();
 </script>
 
@@ -31,7 +32,10 @@
 				{areasList}
 				{centroids}
 				mode="build"
-				updateSelection={() => ($lastActivePage = "build")}
+				updateSelection={(area) => {
+					$lastActivePage = "build";
+					updateActiveArea(area);
+				}}
 			/>
 		</Tooltip>
 	</div>

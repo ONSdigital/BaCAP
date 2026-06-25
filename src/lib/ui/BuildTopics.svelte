@@ -11,9 +11,17 @@
 
 	let { buildState, topics, selectedTopics = $bindable() } = $props();
 
-	function groupTopics(topics) {
+	function filterTopics(topics, geography, coverage) {
+		return topics.filter(
+			(d) =>
+				(!d.coverage || (d.coverage && d.coverage.every((c) => coverage.has(c)))) &&
+				(d.geography === "oa21" || geography === "lsoa")
+		);
+	}
+	function groupTopics(topics, geography, coverage) {
 		const groups = {};
-		for (const topic of topics) {
+		const filteredTopics = filterTopics(topics, geography, coverage);
+		for (const topic of filteredTopics) {
 			if (!groups[topic.topic])
 				groups[topic.topic] = {
 					key: slugify(topic.topic),
@@ -25,6 +33,8 @@
 		return Object.values(groups);
 	}
 
+	let groupedTopics = $derived(groupTopics(topics, buildState.geography, buildState.coverage));
+
 	function updateTopics(item) {
 		const ids = topics.map((d) => d.key);
 		if (item.checked)
@@ -34,24 +44,26 @@
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select datasets</h2>
-<Accordion>
-	{#each groupTopics(topics, buildState.coverage) as group, i (group.key)}
-		<AccordionItem title={group.label} open={i === 0}>
-			<Checkboxes>
-				{#each group.children as topic}
-					<Checkbox
-						id={topic.key}
-						label={topic.label}
-						checked={$selectedTopics.includes(topic.key)}
-						groupName="topics"
-						on:change={(e) => updateTopics(e?.detail?.item)}
-						compact
-					/>
-				{/each}
-			</Checkboxes>
-		</AccordionItem>
-	{/each}
-</Accordion>
+{#key groupedTopics}
+	<Accordion>
+		{#each groupedTopics as group, i (group.key)}
+			<AccordionItem title={group.label} open={i === 0}>
+				<Checkboxes>
+					{#each group.children as topic}
+						<Checkbox
+							id={topic.key}
+							label={topic.label}
+							checked={$selectedTopics.includes(topic.key)}
+							groupName="topics"
+							on:change={(e) => updateTopics(e?.detail?.item)}
+							compact
+						/>
+					{/each}
+				</Checkboxes>
+			</AccordionItem>
+		{/each}
+	</Accordion>
+{/key}
 <hr class="section-divider ons-u-mt-no ons-u-mb-l" />
 <h2 class="ons-u-fs-m">About these datasets</h2>
 <p>

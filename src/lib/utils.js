@@ -32,6 +32,17 @@ export async function getAreasList() {
 	return data;
 }
 
+export async function getBestFits() {
+	const key = "bestFits";
+	const val = await get(key);
+	if (val) return val;
+
+	const path = "/data/bestfit-lookup.json";
+	const data = await (await fetch(resolve(path))).json();
+	await set(key, data);
+	return data;
+}
+
 export async function getOAdata() {
 	const fn = (d, i) => ({
 		oa21cd: d[0][i],

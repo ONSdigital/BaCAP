@@ -12,7 +12,9 @@
 		labelKey = "label",
 		groupKey = "group",
 		label = "Find an area to add to the map",
-		placeholder = "Type a place name or postcode"
+		placeholder = "Type a place name or postcode",
+		geoTypes = new Set(Object.keys(geotypesLookup)),
+		postcodeTypes = new Set(["E00", "W00"])
 	} = $props();
 
 	const startsWithFilter = (str, filter) => str.toLowerCase().startsWith(filter.toLowerCase());
@@ -37,7 +39,7 @@
 		if (
 			str.length < 10 &&
 			/^[eknsw]\d+$/i.test(str) &&
-			str.toUpperCase().slice(0, 3) in geotypesLookup
+			geoTypes.has(str.toUpperCase().slice(0, 3))
 		) {
 			if (str.length === 9)
 				return [str.toUpperCase()].map((cd) => ({ [idKey]: cd, [labelKey]: cd }));
@@ -123,7 +125,10 @@
 				const geojson = await (await fetch(url)).json();
 				const point = { type: "Point", coordinates: [obj.lng, obj.lat] };
 				const match = geojson.features.find(
-					(f) => f.properties.areacd.slice(1, 3) === "00" && inPolygon(point, f)
+					(f) =>
+						!f.properties.end &&
+						postcodeTypes.has(f.properties.areacd.slice(0, 3)) &&
+						inPolygon(point, f)
 				);
 				areacd = match?.properties?.areacd;
 			} catch (err) {

@@ -165,7 +165,7 @@
 							}
 						}}
 					>
-						<AreaSearch bind:value={selectedArea} options={areasList} {centroids} />
+						<AreaSearch bind:value={selectedArea} options={areasList} />
 						<div id="search-inputs">
 							<Button type="submit" small>Select area</Button>
 							{#if $history.length > 1}

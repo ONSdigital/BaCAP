@@ -1,13 +1,12 @@
 <script>
-	import { resolve } from "$app/paths";
+	import markdownit from "markdown-it";
 	import { Icon, Hero, NavSections, NavSection } from "@onsvisual/svelte-components";
 	import { slugify } from "$lib/utils.js";
 
 	let { data } = $props();
 
-	function parseText(string) {
-		return string.split("\n\n");
-	}
+	const md = markdownit();
+	const parseText = (str) => md.render(str);
 
 	function groupTopics(indicators) {
 		const topics = {};
@@ -23,7 +22,9 @@
 </script>
 
 <Hero theme="grey" title="Data glossary" width="wider">
-	<p>Information on all the datasets available within this tool.</p>
+	<p>
+		Information on the datasets available within <strong>Build a custom area profile</strong>.
+	</p>
 </Hero>
 <NavSections contentsLabel="Topics" width="wider" marginTop>
 	{#each topics as topic, i}
@@ -31,12 +32,14 @@
 			<div class="indicator-item">
 				{#each topic.children as ind}
 					<h3 id={ind.key} class="ons-u-mt-m">{ind.label}</h3>
-					{#each parseText(ind.description || ind.summary) as para}
-						<p>{para}</p>
-					{/each}
-					{#if ind.url}<a class="btn-link" href={`/${ind.url}`} target="_blank"
-							>Read more <Icon type="chevron" size="s" /></a
-						>{/if}
+					{@html parseText(ind.description || ind.summary)}
+					{#if ind.url}<a
+							class="btn-link"
+							href={`https://www.ons.gov.uk/${ind.url}`}
+							target="_blank"
+							>Read more<span class="ons-u-vh"> (opens in a new tab)</span></a
+						>
+						<Icon type="external" />{/if}
 				{/each}
 			</div>
 		</NavSection>

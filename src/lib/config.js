@@ -22,35 +22,59 @@ export const postcodesUrl =
 export const lookupUrl = `https://ons-dp-prod-cdn.s3.eu-west-2.amazonaws.com/maptiles/area-lookup/v1`;
 
 export const geotypes = [
-	{ keys: ["E00", "W00"], label: "Output area" },
-	{ keys: ["E01", "W01"], label: "LSOA" },
-	{ keys: ["E02", "W02"], label: "MSOA" },
-	{ keys: ["E04"], label: "Census merged parish" },
-	{ keys: ["W04"], label: "Census merged community" },
-	{ keys: ["E05", "W05"], label: "Ward" },
-	{ keys: ["E06", "W06"], label: "Unitary authority" },
-	{ keys: ["E07"], label: "Non-metropolitan borough" },
-	{ keys: ["E08"], label: "Metropolitan borough" },
-	{ keys: ["E09"], label: "London borough" },
-	{ keys: ["E10"], label: "County" },
-	{ keys: ["E11"], label: "Metropolitan county" },
-	{ keys: ["E47"], label: "Combined authority" },
-	{ keys: ["E12"], label: "Region" },
-	{ keys: ["E92", "W92"], label: "Country" },
-	{ keys: ["K04"], label: "" },
-	{ keys: ["E14", "W07"], label: "Parliamentary constituency" },
-	{ keys: ["W09"], label: "Senedd constituency" },
-	{ keys: ["W10"], label: "Senedd electoral region" },
-	{ keys: ["E30", "K01", "W22"], label: "2011 Travel to work area" },
+	{ codes: ["E00", "W00"], label: "Output area" },
+	{ codes: ["E01", "W01"], label: "LSOA" },
+	{ codes: ["E02", "W02"], label: "MSOA" },
+	{ codes: ["E04"], label: "Census merged parish" },
+	{ codes: ["W04"], label: "Census merged community" },
+	{ codes: ["E05", "W05"], label: "Ward" },
+	{ codes: ["E06", "W06"], label: "Unitary authority" },
+	{ codes: ["E07"], label: "Non-metropolitan borough" },
+	{ codes: ["E08"], label: "Metropolitan borough" },
+	{ codes: ["E09"], label: "London borough" },
+	{ codes: ["E10"], label: "County" },
+	{ codes: ["E11"], label: "Metropolitan county" },
+	{ codes: ["E47"], label: "Combined authority" },
+	{ codes: ["E12"], label: "Region" },
+	{ codes: ["E92", "W92"], label: "Country" },
+	{ codes: ["K04"], label: "" },
+	{ codes: ["E14", "W07"], label: "Parliamentary constituency" },
+	{ codes: ["W09"], label: "Senedd constituency" },
+	{ codes: ["W10"], label: "Senedd electoral region" },
+	{ codes: ["E30", "K01", "W22"], label: "2011 Travel to work area" },
 	{
-		keys: ["E34", "K05", "W37", "E63", "K08", "W45"],
+		codes: ["E34", "K05", "W37", "E63", "K08", "W45"],
 		label: "Built-up area"
 	},
-	{ keys: ["E35", "K06", "W38"], label: "Built-up area, sub-division" }
+	{ codes: ["E35", "K06", "W38"], label: "Built-up area, sub-division" }
 ];
 export const geotypesLookup = (() => {
 	let lookup = {};
-	geotypes.forEach((g) => g.keys.forEach((k) => (lookup[k] = g.label)));
+	geotypes.forEach((d) => d.codes.forEach((cd) => (lookup[cd] = d.label)));
+	return lookup;
+})();
+export const geogroups = [
+	{ key: "msoa", codes: ["E02", "W02"], label: "MSOA" },
+	{ key: "par", codes: ["E04", "W04"], label: "Parish/community" },
+	{ key: "wd", codes: ["E05", "W05"], label: "Ward" },
+	{
+		key: "utla",
+		codes: ["E06", "E08", "E09", "E10", "W06"],
+		label: "Upper-tier/unitary authority"
+	},
+	{
+		key: "ltla",
+		codes: ["E06", "E07", "E08", "E09", "W06"],
+		label: "Lower-tier/unitary authority"
+	},
+	{ key: "cauth", codes: ["E47"], label: "Combined authority" },
+	{ key: "rgn", codes: ["E12"], label: "Region" },
+	{ key: "ctry", codes: ["E92", "W92"], label: "Country" },
+	{ key: "wpc", codes: ["E14", "W07"], label: "Parliamentary constituency" }
+];
+export const geogroupsLookup = (() => {
+	let lookup = {};
+	geogroups.forEach((d) => d.codes.forEach((cd) => (lookup[cd] = d)));
 	return lookup;
 })();
 
