@@ -12,15 +12,10 @@ function makeCells(categories) {
 		.join(",");
 }
 
-function makeUrl(table, areas) {
+function makeUrlFn(table) {
 	const base = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?`;
-	const geo = `${table.geography}cds`;
 
 	const params = {
-		geography: areas.map(
-			(d, i) =>
-				`MAKE|${encodeURIComponent(d?.properties?.areanm || `Custom Area ${i}`)}|${[...d?.properties?.[geo]].join(";")}`
-		),
 		date: table.dates,
 		...(table.cellCode ? { [table.cellCode]: makeCells(table.categories) } : {}),
 		measures: table.measures.map((d) => d.cell),
@@ -34,12 +29,62 @@ function makeUrl(table, areas) {
 		],
 		...(table.miscParams || {})
 	};
-	return (
+	const url =
 		base +
 		Object.entries(params)
 			.map((p) => `${p[0]}=${[p[1]].flat().join(",")}`)
-			.join("&")
+			.join("&") +
+		"&geography=";
+	return { make: (areas) => url + areas.join(","), length: url.length };
+}
+
+function getMaxAreaCodes(table) {
+	const maxGeoDimSize = Math.floor(
+		maxResponseCells / (table.categories.length * table.dates.length * table.measures.length)
 	);
+	console.log({ maxGeoDimSize });
+	return maxGeoDimSize;
+}
+
+function makeGeo(area, codes, i) {
+	const areacd = area?.properties?.areacd || null;
+	if (codes[0] === areacd) return areacd;
+	const areanm = area?.properties?.areanm || `Custom area ${i}`;
+	return `MAKE|${areanm}|${codes.join(";")}`;
+}
+
+function makeUrls(table, areas) {
+	const urlFn = makeUrlFn(table);
+	const geoKey = `${table.geography}cds`;
+	const maxAreaCodes = getMaxAreaCodes(table);
+
+	let codesLength = 0;
+	let geosLength = 0;
+	let geos = [];
+	const urls = [];
+
+	for (let i = 0; i < areas.length; i++) {
+		const area = areas[i];
+		const codes = [...(area?.properties?.[geoKey] || [])];
+		if (!codes.length) continue; // Skip geographies too small for a best-fit
+
+		const geo = makeGeo(area, codes, i);
+		if (
+			codesLength + codes.length > maxAreaCodes ||
+			urlFn.length + geosLength + geo.length >= maxRequestLength
+		) {
+			urls.push(urlFn.make(geos));
+			codesLength = 0;
+			geosLength = 0;
+			geos = [];
+		}
+		geos.push(geo);
+		codesLength += codes.length;
+		geosLength += geo.length + 1;
+	}
+	if (geos.length) urls.push(urlFn.make(geos));
+	console.log({ urls });
+	return urls;
 }
 
 function makeCategoryLookup(categories) {
@@ -111,54 +156,26 @@ async function getCache(key) {
 	return cache?.get?.(key);
 }
 
-function checkRequestValidity(table, areas, url) {
-	const length = url.length;
-	const geo = `${table.geography}cds`;
-	const allCodes = areas.map((d) => d?.properties?.[geo] || []).flat();
-	console.log("Request size", {
-		url: length,
-		geography: allCodes.length,
-		categories: table.categories.length,
-		dates: table.dates.length,
-		measures: table.measures.length
-	});
-
-	if (length > maxRequestLength) {
-		console.log({ length });
-		throw Error(`Request URL longer than ${maxRequestLength.toLocaleString()} character limit`);
-	}
-	const cells =
-		(activeCds.size + comparisonCds.size) *
-		table.categories.length *
-		table.dates.length *
-		table.measures.length;
-	if (cells > maxResponseCells) {
-		console.log({ cells });
-		throw Error(`Request is for more than ${maxResponseCells.toLocaleString()} cell limit`);
-	}
-	console.log({ length, cells });
-}
-
 export default async function getData(table, areas) {
 	if (!table || !areas[0]) return null;
-	const url = makeUrl(table, areas);
-	try {
-		checkRequestValidity(table, areas, url);
-	} catch (err) {
-		console.warn(err);
-		// return null;
-	}
 
-	let data = await getCache(url);
-	if (data) return { meta: table, data: parseData(table, areas, data) };
+	const data = [];
+	const urls = makeUrls(table, areas);
 
-	try {
-		data = await (await fetch(url)).text();
-		setCache(url, data);
-		return { meta: table, data: parseData(table, areas, data) };
-	} catch (err) {
-		// May throw error if Nomis is unavailable
-		console.warn(err);
-		return null;
+	for (const url of urls) {
+		const raw = await getCache(url);
+		if (raw) data.push(...parseData(table, areas, raw));
+		else {
+			try {
+				const raw = await (await fetch(url)).text();
+				setCache(url, raw);
+				data.push(...parseData(table, areas, raw));
+			} catch (err) {
+				// Handle error if Nomis is unavailable
+				console.warn(err);
+				return { message: "Could not load data" };
+			}
+		}
 	}
+	return { meta: table, data };
 }

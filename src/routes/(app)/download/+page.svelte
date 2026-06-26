@@ -15,7 +15,9 @@
 		Divider,
 		Details,
 		Table,
-		Icon
+		Icon,
+		List,
+		Li
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import { geogroupsLookup } from "$lib/config.js";
@@ -62,7 +64,7 @@
 				? Object.values($savedAreas).filter(
 						(d) => d?.properties?.group === selectedAreaGroup.label
 					)
-				: [];
+				: null;
 		return selectedChildType?.codes
 			? selectedParentArea.properties.children
 					.filter((d) => selectedChildType.codes.includes(d.areacd.slice(0, 3)))
@@ -74,7 +76,7 @@
 							properties: { ...d, oa21cds: fits[0], lsoa21cds: fits[fits.length - 1] }
 						};
 					})
-			: [];
+			: null;
 	}
 
 	const selectionTypes = [
@@ -106,10 +108,9 @@
 			selectedChildType
 		)
 	);
-	$inspect({ selectedAreas });
 
 	let activeTopic = $state.raw();
-	let selectedTopic = $state.raw();
+	let selectedTopic = $derived(!!selectedAreas && null); // Gets reset when new areas selected
 
 	let selectedData = $derived(
 		selectedTopic && selectedAreas?.length ? await getData(selectedTopic, selectedAreas) : null
@@ -191,14 +192,14 @@
 {#if selectedAreas?.length}
 	<Container {width}>
 		<Details title="View {selectedAreas.length} selected areas">
-			<ul>
+			<List>
 				{#each selectedAreas as area, i}
-					<li>
-						{area.properties.areanm || `Custom Area ${i}`}
+					<Li>
+						<strong>{area.properties.areanm || `Custom Area ${i}`}</strong>
 						{#if area.properties.areacd}({area.properties.areacd}){/if}
-					</li>
+					</Li>
 				{/each}
-			</ul>
+			</List>
 		</Details>
 	</Container>
 	<Divider {width} />
@@ -210,6 +211,7 @@
 			>.
 		</p>
 		<form
+			id="select-dataset"
 			class="input-group"
 			onsubmit={(e) => {
 				e.preventDefault();
