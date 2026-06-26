@@ -994,7 +994,7 @@
 		"tableCode": "NM_2402_1",
 		"cellCode": "sales",
 		"measures": [{ "label": "Value", "cell": 20100 }],
-		"categories": [{ "label": "Count of sales", "cells": [0] }],
+		"categories": [{ "label": "Number of sales", "cells": [0] }],
 		"dates": ["2024-09"],
 		"unit": "sales",
 		"dateFormat": "year-ending",

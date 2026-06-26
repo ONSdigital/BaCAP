@@ -20,6 +20,7 @@
 		Li
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
+	import { downloadDataset } from "$lib/utils.js";
 	import { geogroupsLookup } from "$lib/config.js";
 	import getData from "$lib/get-data.js";
 
@@ -137,17 +138,25 @@
 	</Card>
 	{#if selectionType?.id === "saved"}
 		<Card title="2. Select area group">
-			<Radios
-				id="area-group"
-				items={areaGroups}
-				bind:value={selectedAreaGroup}
-				title="Select area group"
-				hideTitle
-				compact
-			/>
-			<p class="ons-u-mt-s">
-				<Button variant="secondary" icon="edit" small>Edit saved areas</Button>
-			</p>
+			{#if areaGroups.length}
+				<Radios
+					id="area-group"
+					items={areaGroups}
+					bind:value={selectedAreaGroup}
+					title="Select area group"
+					hideTitle
+					compact
+				/>
+				<p class="ons-u-mt-s">
+					<Button variant="secondary" icon="edit" small>Edit saved areas</Button>
+				</p>
+			{:else}
+				<p>
+					You don't currently have any saved areas. Try the <a href={resolve("/draw")}
+						>draw an area</a
+					> tool or choose "areas within a larger area" to select pre-defined areas.
+				</p>
+			{/if}
 		</Card>
 	{:else}
 		<Card title="2. Select a parent area">
@@ -238,7 +247,15 @@
 			{#key selectedData}
 				<Table data={selectedData.data} {columns} sortable />
 			{/key}
-			<Button icon="download">Download as CSV</Button>
+			<Button
+				icon="download"
+				on:click={() =>
+					downloadDataset(
+						selectedData.meta,
+						selectedData.data,
+						columns.map((d) => d.label)
+					)}>Download as CSV</Button
+			>
 		</Section>
 	{/if}
 {/if}
