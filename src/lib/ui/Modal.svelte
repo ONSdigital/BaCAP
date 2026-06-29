@@ -33,10 +33,10 @@
 		el.addEventListener("pointerup", (event) => {
 			const rect = el.getBoundingClientRect();
 			const isInDialog =
-				rect.top < event.clientY &&
-				rect.left < event.clientX &&
-				event.clientY < rect.top + rect.height &&
-				event.clientX < rect.left + rect.width;
+				event.clientY > rect.top &&
+				event.clientX > rect.left &&
+				// event.clientY < rect.bottom &&
+				event.clientX < rect.right;
 			if (!isInDialog) {
 				el.close();
 				onCancel();
