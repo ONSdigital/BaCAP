@@ -104,7 +104,7 @@
 	label="Load a saved area"
 	buttonStyle={mode === "draw" ? "menu" : "primary"}
 	hideLabel
-	icon="upload"
+	icon={mode === "draw" ? "upload" : "edit"}
 	onOpen={() => null}
 	onConfirm={() => null}
 	onCancel={() => null}
@@ -291,10 +291,7 @@
 												on:click={() => loadSavedArea(area)}>Select</Button
 											>
 											{#if editId === area.id}
-												<Tooltip
-													text="Confirm changes"
-													position={getTooltipPos(areas, i)}
-												>
+												<Tooltip text="Confirm changes">
 													<Button
 														variant="primary"
 														icon="tick"
@@ -307,10 +304,7 @@
 														}}>Confirm changes</Button
 													>
 												</Tooltip>
-												<Tooltip
-													text="Cancel"
-													position={getTooltipPos(areas, i)}
-												>
+												<Tooltip text="Cancel">
 													<Button
 														variant="secondary"
 														icon="cross"
@@ -321,10 +315,7 @@
 													>
 												</Tooltip>
 											{:else}
-												<Tooltip
-													text="Edit area"
-													position={getTooltipPos(areas, i)}
-												>
+												<Tooltip text="Edit area">
 													<Button
 														variant="secondary"
 														icon="edit"
@@ -334,10 +325,7 @@
 														>Edit area</Button
 													>
 												</Tooltip>
-												<Tooltip
-													text="Download area"
-													position={getTooltipPos(areas, i)}
-												>
+												<Tooltip text="Download area">
 													<Button
 														variant="secondary"
 														icon="download"
@@ -348,7 +336,7 @@
 													>
 												</Tooltip>
 											{/if}
-											<Tooltip text="Delete area" position="left">
+											<Tooltip text="Delete area">
 												<Button
 													variant="secondary"
 													icon="delete"

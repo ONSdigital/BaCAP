@@ -20,7 +20,7 @@
 	"devDependencies": {
 		"@mapbox/mapbox-gl-draw": "^1.4.3",
 		"@mapbox/tilebelt": "^2.0.3",
-		"@onsvisual/svelte-components": "^1.1.50",
+		"@onsvisual/svelte-components": "^1.1.51",
 		"@onsvisual/svelte-maps": "^1.2.28",
 		"@sveltejs/adapter-static": "^3.0.0",
 		"@sveltejs/kit": "^2.60.1",
