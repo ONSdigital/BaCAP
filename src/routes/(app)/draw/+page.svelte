@@ -53,10 +53,11 @@
 
 <Container cls="pos-relative" {width} marginBottom={!getFullscreen()}>
 	<Button
-		cls="ons-u-mt-s ons-u-mb-s {getFullscreen() ? 'pos-compact' : 'pos-expanded'}"
+		cls="ons-u-mt-s ons-u-mb-s ons-u-d-no@xs@l {getFullscreen()
+			? 'pos-compact'
+			: 'pos-expanded'}"
 		variant="ghost"
-		icon="chevron"
-		iconRotation={getFullscreen() ? 90 : -90}
+		icon={getFullscreen() ? "shrink" : "expand"}
 		iconPosition="after"
 		small
 		on:click={() => {
