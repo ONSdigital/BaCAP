@@ -57,20 +57,20 @@ export const geogroups = [
 	{ key: "msoa", codes: ["E02", "W02"], label: "MSOA" },
 	{ key: "par", codes: ["E04", "W04"], label: "Parish/community" },
 	{ key: "wd", codes: ["E05", "W05"], label: "Ward" },
-	{
-		key: "utla",
-		codes: ["E06", "E08", "E09", "E10", "W06"],
-		label: "Upper-tier/unitary authority"
-	},
+	{ key: "wpc", codes: ["E14", "W07"], label: "Parliamentary constituency" },
 	{
 		key: "ltla",
 		codes: ["E06", "E07", "E08", "E09", "W06"],
 		label: "Lower-tier/unitary authority"
 	},
+	{
+		key: "utla",
+		codes: ["E06", "E08", "E09", "E10", "W06"],
+		label: "Upper-tier/unitary authority"
+	},
 	{ key: "cauth", codes: ["E47"], label: "Combined authority" },
 	{ key: "rgn", codes: ["E12"], label: "Region" },
-	{ key: "ctry", codes: ["E92", "W92"], label: "Country" },
-	{ key: "wpc", codes: ["E14", "W07"], label: "Parliamentary constituency" }
+	{ key: "ctry", codes: ["E92", "W92"], label: "Country" }
 ];
 export const geogroupsLookup = (() => {
 	let lookup = {};

@@ -11,7 +11,7 @@
 		"deploy": "gh-pages -d build -t",
 		"data:compress": "node ./scripts/compress-data.js",
 		"data:convert": "node ./scripts/convert-topics.js",
-		"data:lookups": "node ./scripts/make-oa-lookups.js",
+		"data:lookups": "node ./scripts/make-oa-lookups.js && node ./scripts/make-rgn-cauth-children.js",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. .",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},

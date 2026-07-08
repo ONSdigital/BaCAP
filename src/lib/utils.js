@@ -6,12 +6,12 @@ import { initialState, geotypesLookup } from "./config.js";
 import { getName, makeFilename } from "./geo.svelte.js";
 import { makeDateFormatter } from "./data-utils.js";
 
-async function loadCompressedData(key, path, fn) {
+async function loadData(key, path, decompressFn = null) {
 	const val = await get(key);
 	if (val) return val;
 
 	const rawData = await (await fetch(resolve(path))).json();
-	const data = decompressData(rawData, fn);
+	const data = decompressFn ? decompressData(rawData, decompressFn) : rawData;
 	await set(key, data);
 	return data;
 }
@@ -22,7 +22,7 @@ export async function getAreasList() {
 		areanm: d[1][i],
 		parentcd: d[2][i]
 	});
-	const data = await loadCompressedData("areasList", "/data/places-list.json", fn);
+	const data = await loadData("areasList", "/data/places-list.json", fn);
 	const lookup = Object.fromEntries(data.map((d) => [d.areacd, d]));
 	for (const d of data) {
 		const type = geotypesLookup[d.areacd.slice(0, 3)] || null;
@@ -34,13 +34,14 @@ export async function getAreasList() {
 
 export async function getBestFits() {
 	const key = "bestFits";
-	const val = await get(key);
-	if (val) return val;
-
 	const path = "/data/bestfit-lookup.json";
-	const data = await (await fetch(resolve(path))).json();
-	await set(key, data);
-	return data;
+	return await loadData(key, path);
+}
+
+export async function getChildLookup() {
+	const key = "childLookup";
+	const path = "/data/rgn-cauth-children.json";
+	return await loadData(key, path);
 }
 
 export async function getOAdata() {
@@ -54,7 +55,7 @@ export async function getOAdata() {
 		lat: d[6][i],
 		population: d[7][i]
 	});
-	return await loadCompressedData("oaData", "/data/oa21-data.json", fn);
+	return await loadData("oaData", "/data/oa21-data.json", fn);
 }
 
 export async function getLSOAcentroids() {
@@ -63,7 +64,7 @@ export async function getLSOAcentroids() {
 		lng: d[1][i],
 		lat: d[2][i]
 	});
-	return await loadCompressedData("lsoaCentroids", "/data/lsoa21-centroids.json", fn);
+	return await loadData("lsoaCentroids", "/data/lsoa21-centroids.json", fn);
 }
 
 export function sleep(ms = 0) {

@@ -21,7 +21,7 @@
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import { downloadDataset } from "$lib/utils.js";
-	import { geogroupsLookup } from "$lib/config.js";
+	import { geogroups } from "$lib/config.js";
 	import getData from "$lib/get-data.js";
 
 	const width = "wider";
@@ -41,18 +41,40 @@
 	const ltlaTypes = new Set(["E06", "E07", "E08", "E09", "W06"]);
 	const parentAreaTypes = new Set([...ltlaTypes, "E10", "E12", "E47", "E92", "W92"]);
 	const areasList = getContext("areasList")();
+	const areasLookup = Object.fromEntries(areasList.map((d) => [d.areacd, d]));
+	const childLookup = getContext("childLookup")();
 	const filteredAreasList = areasList.filter((d) => parentAreaTypes.has(d.areacd.slice(0, 3)));
 
 	function getChildTypes(area) {
-		return (area.properties.child_typecds || [])
-			.map((cd) => {
-				const grp = geogroupsLookup[cd];
-				return grp ? { id: grp.key, label: grp.label, codes: grp.codes } : null;
-			})
-			.filter((d, i, arr) => d && arr.findIndex((_d) => _d?.id === d.id) === i);
+		return [...geogroups]
+			.reverse()
+			.filter((grp) =>
+				grp.codes.some((cd) =>
+					(["E12", "E47"].includes(area.properties.areacd.slice(0, 3))
+						? [...area.properties.child_typecds, "E07"]
+						: area.properties.child_typecds || []
+					).includes(cd)
+				)
+			)
+			.map((grp) => ({ id: grp.key, label: grp.label, codes: grp.codes }));
 	}
 
 	const bestFits = getContext("bestFits")();
+
+	function getAllChildren(props) {
+		if (childLookup[props.areacd]) {
+			const children = [...props.children];
+			const cds = new Set(children.map((d) => d.areacd));
+			for (const cd of childLookup[props.areacd]) {
+				if (!cds.has(cd)) {
+					cds.add(cd);
+					children.push(areasLookup[cd]);
+				}
+			}
+			return children;
+		}
+		return props.children;
+	}
 
 	function makeSelectedAreas(
 		selectionType,
@@ -67,7 +89,7 @@
 					)
 				: null;
 		return selectedChildType?.codes
-			? selectedParentArea.properties.children
+			? getAllChildren(selectedParentArea.properties)
 					.filter((d) => selectedChildType.codes.includes(d.areacd.slice(0, 3)))
 					.map((d) => {
 						const fits = bestFits[d.areacd] || [[d.areacd]];
@@ -201,7 +223,7 @@
 {#if selectedAreas?.length}
 	<Container {width}>
 		<Details title="View {selectedAreas.length} selected areas">
-			<List>
+			<List mode="dash">
 				{#each selectedAreas as area, i}
 					<Li>
 						<strong>{area.properties.areanm || `Custom Area ${i}`}</strong>
