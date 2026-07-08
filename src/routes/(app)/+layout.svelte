@@ -26,14 +26,20 @@
 	setContext("centroids", () => centroids);
 
 	async function init() {
-		appState = await getAppState();
-		areasList = await getAreasList();
-		bestFits = await getBestFits();
-		childLookup = await getChildLookup();
+		const data = await Promise.all([
+			getAppState(),
+			getAreasList(),
+			getBestFits(),
+			getChildLookup(),
+			getOAdata(),
+			getLSOAcentroids()
+		]);
 
-		const oaData = await getOAdata();
-		const lsoaData = await getLSOAcentroids();
-		centroids = new Centroids(oaData, lsoaData);
+		appState = data[0];
+		areasList = data[1];
+		bestFits = data[2];
+		childLookup = data[3];
+		centroids = new Centroids(data[4], data[5]);
 
 		mounted = true;
 	}
