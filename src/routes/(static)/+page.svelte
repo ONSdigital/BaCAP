@@ -58,6 +58,15 @@
 		information on all available datasets on the
 		<a href={resolve("/glossary")}>glossary page</a>.
 	</p>
+	<p>
+		If you only need data for standard areas down to local authority level, a wider range of
+		topics can also be found on <a
+			href="https://www.ons.gov.uk/explore-local-statistics/"
+			target="_blank"
+			>Explore Local Statistics<span class="ons-u-vh"> (opens in a new tab)</span></a
+		>
+		<Icon type="external" />.
+	</p>
 </Section>
 
 <Section width="wider" title="How does this tool produce its figures?">
