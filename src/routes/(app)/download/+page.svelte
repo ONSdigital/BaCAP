@@ -20,7 +20,7 @@
 		Li
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
-	import { downloadDataset } from "$lib/utils.js";
+	import { downloadDatasetCSV, downloadDatasetXLSX } from "$lib/utils.js";
 	import { geogroups, measures } from "$lib/config.js";
 	import getData from "$lib/get-data.js";
 	import { pivotDataOnMeasures } from "$lib/data-utils.js";
@@ -273,12 +273,13 @@
 			{/key}
 			<Button
 				icon="download"
-				on:click={() =>
-					downloadDataset(
-						selectedData.meta,
-						pivotedData,
-						columns.map((d) => d.label)
-					)}>Download as CSV</Button
+				on:click={() => downloadDatasetXLSX(selectedData.meta, pivotedData, columns)}
+				>Download as XLSX</Button
+			>
+			<Button
+				icon="download"
+				on:click={() => downloadDatasetCSV(selectedData.meta, selectedData.data)}
+				>Download as CSV</Button
 			>
 		</Section>
 	{/if}
