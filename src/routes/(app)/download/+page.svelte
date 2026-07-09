@@ -21,16 +21,16 @@
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import { downloadDataset } from "$lib/utils.js";
-	import { geogroups } from "$lib/config.js";
+	import { geogroups, measures } from "$lib/config.js";
 	import getData from "$lib/get-data.js";
+	import { pivotDataOnMeasures } from "$lib/data-utils.js";
 
 	const width = "wider";
 	const columns = [
 		{ key: "areanm", label: "Area name" },
-		{ key: "date", label: "Time period" },
 		{ key: "category", label: "Category" },
-		{ key: "measure", label: "Measure" },
-		{ key: "value", label: "Value", numeric: true }
+		{ key: "date", label: "Time period" },
+		...measures.map((d) => ({ key: d.label.toLowerCase(), label: d.label, numeric: true }))
 	];
 
 	let { data } = $props();
@@ -138,6 +138,7 @@
 	let selectedData = $derived(
 		selectedTopic && selectedAreas?.length ? await getData(selectedTopic, selectedAreas) : null
 	);
+	$inspect({ selectedData });
 </script>
 
 <Hero
@@ -254,6 +255,7 @@
 		</form>
 	</Container>
 	{#if selectedData}
+		{@const pivotedData = pivotDataOnMeasures(selectedData.data)}
 		<Section {width} title={selectedData.meta.label}>
 			<p>
 				{selectedData.meta.summary}
@@ -267,14 +269,14 @@
 				match other data sources.</Notice
 			>
 			{#key selectedData}
-				<Table data={selectedData.data} {columns} sortable />
+				<Table data={pivotedData} {columns} sortable />
 			{/key}
 			<Button
 				icon="download"
 				on:click={() =>
 					downloadDataset(
 						selectedData.meta,
-						selectedData.data,
+						pivotedData,
 						columns.map((d) => d.label)
 					)}>Download as CSV</Button
 			>

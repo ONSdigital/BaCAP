@@ -1,3 +1,5 @@
+import { measures } from "./config.js";
+
 export function makeEmbedHash(
 	tables,
 	buildState,
@@ -46,4 +48,21 @@ export function makeDateFormatter(format) {
 					"Year ending " +
 					new Date(d.padEnd(10, "-01")).toLocaleDateString("en-GB", monthFormat)
 			: (d) => d;
+}
+
+export function pivotDataOnMeasures(data) {
+	const rows = {};
+	for (const d of data) {
+		const rowId = `${d.areanm}_${d.category}_${d.date}`;
+		if (!rows[rowId])
+			rows[rowId] = {
+				areanm: d.areanm,
+				category: d.category,
+				date: d.date,
+				...Object.fromEntries(measures.map((m) => [m.label.toLowerCase(), null]))
+			};
+		const col = d.measure.toLowerCase();
+		rows[rowId][col] = d.value;
+	}
+	return Object.values(rows);
 }

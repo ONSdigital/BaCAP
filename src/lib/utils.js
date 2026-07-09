@@ -132,23 +132,23 @@ function formatTable(table, name, compName) {
 	const rows = {};
 
 	for (const d of table.data) {
-		const rowId = `${d.date}_${d.category}`;
+		const rowId = `${d.category}_${d.date}`;
 		if (!rows[rowId])
 			rows[rowId] = {
 				Variable: table.meta.label,
 				Category: d.category,
+				"Time period": dateFormat(d.date),
 				[`${name} (count)`]: null,
-				...(compName ? { [`${compName} (count)`]: null } : {}),
+				...(compName ? { [`${compName} (value)`]: null } : {}),
 				[`${name} (%)`]: null,
 				...(compName ? { [`${compName} (%)`]: null } : {}),
 				Unit:
 					table.meta.unit === "%" ? table.meta.base.replace("all ", "") : table.meta.unit,
 				"Base population": table.meta.base,
 				Source: table.meta.source,
-				Geography: table.meta.geography === "lsoa21" ? "LSOA" : "Output Area",
-				"Time period": dateFormat(d.date)
+				Geography: table.meta.geography === "lsoa21" ? "LSOA" : "Output Area"
 			};
-		const col = `${nameLookup[d.areanm]} (${d.measure === "Value" ? "count" : "%"})`;
+		const col = `${nameLookup[d.areanm] || d.areanm} (${d.measure === "Value" ? "value" : "%"})`;
 		rows[rowId][col] = d.value;
 	}
 

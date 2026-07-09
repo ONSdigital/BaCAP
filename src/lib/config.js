@@ -15,6 +15,12 @@ export const initialState = {
 	selectedTopics: []
 };
 
+// DATA CONFIG
+export const measures = [
+	{ label: "Value", cell: 20100 },
+	{ label: "Percent", cell: 20301 }
+];
+
 // GEOGRAPHY CONFIG
 export const geoUrl = "https://ons-dp-prod-cdn.s3.eu-west-2.amazonaws.com/maptiles/ap-geos/v4";
 export const postcodesUrl =
