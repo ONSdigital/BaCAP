@@ -22,7 +22,7 @@
 	},
 	{
 		"key": "population_timeseries",
-		"label": "Population timeseries",
+		"label": "Population time series",
 		"topic": "Demography and migration",
 		"summary": "Mid-year estimate of the total number of people.",
 		"description": null,
@@ -155,7 +155,7 @@
 	},
 	{
 		"key": "births-timeseries",
-		"label": "Live births timeseries",
+		"label": "Live births time series",
 		"topic": "Demography and migration",
 		"summary": "The number of babies born in a year, excluding stillbirths.",
 		"description": null,
@@ -196,7 +196,7 @@
 	},
 	{
 		"key": "deaths_timeseries",
-		"label": "Deaths timeseries",
+		"label": "Deaths time series",
 		"topic": "Demography and migration",
 		"summary": "The number of people who died in a year, from all causes.",
 		"description": null,
@@ -654,7 +654,7 @@
 	},
 	{
 		"key": "claimant_count_timeseries",
-		"label": "Claimant count timeseries",
+		"label": "Claimant count time series",
 		"topic": "Economy",
 		"summary": "Percentage of people aged 16 to 64 who are claiming unemployment-related benefits.",
 		"description": null,
@@ -1006,7 +1006,7 @@
 	},
 	{
 		"key": "residential_sales_timeseries",
-		"label": "Residential property sales timeseries",
+		"label": "Residential property sales time series",
 		"topic": "Housing",
 		"summary": "Number of residential property sales in England and Wales.",
 		"description": "The statistics in this dataset report the count of all dwellings sold and registered in the 12 months to September each year. They are calculated using open data from the HM Land Registry, a source of comprehensive record level administrative data on property transactions.",
