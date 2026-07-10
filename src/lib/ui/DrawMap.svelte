@@ -10,7 +10,7 @@
 	import { parseGeoJSON } from "$lib/geo.svelte.js";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
-	let { history, activeArea, lastActivePage } = appState;
+	let { history, rehistory, activeArea, lastActivePage } = appState;
 	let map = $state();
 	let draw = $state();
 	let polygon = $state.raw($history[0] ? new Polygon($history[0].geometry) : new Polygon());
@@ -56,6 +56,7 @@
 		draw?.changeMode?.(getDrawMode(drawState.drawMode), {});
 
 		$history = [{ ...codes, geometry: polygon.geometry }, ...$history].slice(0, 10);
+		$rehistory = [];
 	}
 
 	function applyHistory(state) {
@@ -75,16 +76,25 @@
 	export function undoDraw() {
 		if ($history.length > 1) {
 			console.log("undoing", $history.length);
+			$rehistory = [$history[0], ...$rehistory];
 			$history = $history.slice(1);
-			console.log($history);
+			applyHistory($history[0]);
+		}
+	}
+
+	export function redoDraw() {
+		if ($rehistory.length) {
+			console.log("redoing", $rehistory.length);
+			$history = [$rehistory[0], ...$history];
+			$rehistory = $rehistory.slice(1);
 			applyHistory($history[0]);
 		}
 	}
 
 	export function clearDraw() {
 		$history = [{ oa: new Set(), lsoa: new Set(), geometry: null }];
+		$rehistory = [];
 		$activeArea = { type: "Feature", id: null, geometry: null, properties: {} };
-		console.log($history);
 		applyHistory($history[0]);
 	}
 

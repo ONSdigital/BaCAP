@@ -22,7 +22,7 @@
 		runAction = () => null
 	} = $props();
 
-	let { history, activeArea, savedAreas, savedAreasLastId } = appState;
+	let { history, rehistory, activeArea, savedAreas, savedAreasLastId } = appState;
 	let selectedArea = $state.raw(null);
 
 	let loadModal = $state();
@@ -109,6 +109,16 @@
 				transient
 			>
 				<p>Undo your last action.</p>
+			</ToolbarButton>
+			<ToolbarButton
+				id="redo"
+				icon="redo"
+				label="Redo next step"
+				disabled={$rehistory.length < 1}
+				on:click={() => runAction("redoDraw")}
+				transient
+			>
+				<p>Redo your next action.</p>
 			</ToolbarButton>
 
 			<ToolbarDivider />
