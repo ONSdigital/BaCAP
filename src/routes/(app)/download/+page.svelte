@@ -278,7 +278,7 @@
 			>
 			<Button
 				icon="download"
-				on:click={() => downloadDatasetCSV(selectedData.meta, selectedData.data)}
+				on:click={() => downloadDatasetCSV(selectedData.meta, pivotedData, columns)}
 				>Download as CSV</Button
 			>
 		</Section>

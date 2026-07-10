@@ -1,7 +1,9 @@
 <script>
 	import { onMount, setContext } from "svelte";
 	import Spinner from "$lib/ui/Spinner.svelte";
+	import { appVersion } from "$lib/config.js";
 	import {
+		getStoredAppVersion,
 		getAreasList,
 		getBestFits,
 		getChildLookup,
@@ -27,13 +29,16 @@
 	setContext("centroids", () => centroids);
 
 	async function init() {
+		const storedAppVersion = await getStoredAppVersion();
+		const isNewVersion = appVersion !== storedAppVersion;
+
 		const data = await Promise.all([
 			getAppState(),
-			getAreasList(),
-			getBestFits(),
-			getChildLookup(),
-			getOAdata(),
-			getLSOAcentroids()
+			getAreasList(isNewVersion),
+			getBestFits(isNewVersion),
+			getChildLookup(isNewVersion),
+			getOAdata(isNewVersion),
+			getLSOAcentroids(isNewVersion)
 		]);
 
 		appState = data[0];

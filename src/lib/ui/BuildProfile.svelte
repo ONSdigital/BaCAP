@@ -4,7 +4,7 @@
 	import pym from "pym.js";
 	import { Notice, Details, Button, Icon, Textarea } from "@onsvisual/svelte-components";
 	import BestFitMap from "$lib/viz/BestFitMap.svelte";
-	import { downloadData, clip } from "$lib/utils.js";
+	import { downloadProfileXLSX, downloadProfileCSV, clip } from "$lib/utils.js";
 	import { makeEmbedHash, makeEmbedCode } from "$lib/data-utils.js";
 	import { simplifyGeo, downloadArea, makeFilename } from "$lib/geo.svelte.js";
 	import getData from "$lib/get-data.js";
@@ -96,7 +96,14 @@
 			href="#0"
 			onclick={(e) => {
 				e.preventDefault();
-				downloadData(tables, $activeArea, $comparisonArea);
+				downloadProfileXLSX(tables, $activeArea, $comparisonArea);
+			}}>XLSX</a
+		>,
+		<a
+			href="#0"
+			onclick={(e) => {
+				e.preventDefault();
+				downloadProfileCSV(tables, $activeArea, $comparisonArea);
 			}}>CSV</a
 		>,
 		<a
