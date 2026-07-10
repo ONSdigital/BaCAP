@@ -1,5 +1,6 @@
 <script>
 	import { onMount, setContext } from "svelte";
+	import Spinner from "$lib/ui/Spinner.svelte";
 	import {
 		getAreasList,
 		getBestFits,
@@ -48,4 +49,6 @@
 
 {#if mounted}
 	{@render children()}
+{:else}
+	<Spinner />
 {/if}
