@@ -49,7 +49,7 @@ function getMaxAreaCodes(table) {
 function makeGeo(area, codes, i) {
 	const areacd = area?.properties?.areacd || null;
 	if (codes[0] === areacd) return areacd;
-	const areanm = area?.properties?.areanm || `Custom area ${i}`;
+	const areanm = area?.properties?.areanm || `Custom Area ${i}`;
 	return `MAKE|${areanm}|${codes.join(";")}`;
 }
 
@@ -119,7 +119,7 @@ function makeRowSorter(table, areas) {
 	const catLookup = Object.fromEntries(table.categories.map((d, i) => [d.label, i]));
 	const catSorter = (a, b) => catLookup[a] - catLookup[b];
 	const areaLookup = Object.fromEntries(
-		areas.map((d, i) => [d?.properties?.areanm || `Custom Areas ${i}`, i])
+		areas.map((d, i) => [d?.properties?.areanm || `Custom Area ${i}`, i])
 	);
 	const areaSorter = (a, b) => areaLookup[a] - areaLookup[b];
 
