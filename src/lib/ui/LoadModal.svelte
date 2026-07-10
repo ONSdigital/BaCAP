@@ -285,11 +285,6 @@
 									{/if}
 									<td>
 										<div class="area-buttons">
-											<Button
-												variant="primary"
-												small
-												on:click={() => loadSavedArea(area)}>Select</Button
-											>
 											{#if editId === area.id}
 												<Tooltip text="Confirm changes">
 													<Button
@@ -348,6 +343,11 @@
 													}}>Delete area</Button
 												>
 											</Tooltip>
+											<Button
+												variant="primary"
+												small
+												on:click={() => loadSavedArea(area)}>Select</Button
+											>
 										</div>
 									</td>
 								</tr>

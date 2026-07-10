@@ -61,9 +61,11 @@
 
 	const bestFits = getContext("bestFits")();
 
-	function getAllChildren(props) {
+	function getAllChildren(props, includeParent = false) {
+		console.log({ props, includeParent });
+
+		const children = includeParent ? [props, ...props.children] : props.children;
 		if (childLookup[props.areacd]) {
-			const children = [...props.children];
 			const cds = new Set(children.map((d) => d.areacd));
 			for (const cd of childLookup[props.areacd]) {
 				if (!cds.has(cd)) {
@@ -73,14 +75,15 @@
 			}
 			return children;
 		}
-		return props.children;
+		return children;
 	}
 
 	function makeSelectedAreas(
 		selectionType,
 		selectedAreaGroup,
 		selectedParentArea,
-		selectedChildType
+		selectedChildType,
+		includeParent
 	) {
 		if (selectionType?.id === "saved")
 			return selectedAreaGroup?.label
@@ -89,14 +92,23 @@
 					)
 				: null;
 		return selectedChildType?.codes
-			? getAllChildren(selectedParentArea.properties)
-					.filter((d) => selectedChildType.codes.includes(d.areacd.slice(0, 3)))
+			? getAllChildren(selectedParentArea.properties, includeParent)
+					.filter(
+						(d) =>
+							selectedChildType.codes.includes(d.areacd.slice(0, 3)) ||
+							d.areacd === selectedParentArea.properties.areacd
+					)
 					.map((d) => {
 						const fits = bestFits[d.areacd] || [[d.areacd]];
 						return {
 							type: "Feature",
 							geometry: null,
-							properties: { ...d, oa21cds: fits[0], lsoa21cds: fits[fits.length - 1] }
+							properties: {
+								...d,
+								areanm: d.areanm || d.areacd,
+								oa21cds: fits[0],
+								lsoa21cds: fits[fits.length - 1]
+							}
 						};
 					})
 			: null;
@@ -117,7 +129,7 @@
 	let selectedAreaGroup = $derived(areaGroups[0]);
 	let activeParentArea = $state.raw();
 	let selectedParentArea = $state.raw();
-	let includeParent = $state(true);
+	let includeParent = $state(false);
 	let childTypes = $derived(
 		selectedParentArea?.geojson ? getChildTypes(selectedParentArea.geojson) : []
 	);
@@ -128,7 +140,8 @@
 			selectionType,
 			selectedAreaGroup,
 			selectedParentArea?.geojson,
-			selectedChildType
+			selectedChildType,
+			includeParent
 		)
 	);
 
@@ -149,7 +162,7 @@
 />
 
 <Grid {width} colWidth="wide" marginTop>
-	<Card title="1. Choose selection type">
+	<Card title="1. Choose selection type" cls="ons-text-indent">
 		<Radios
 			id="selection-type"
 			items={selectionTypes}
@@ -160,7 +173,7 @@
 		/>
 	</Card>
 	{#if selectionType?.id === "saved"}
-		<Card title="2. Select area group">
+		<Card title="2. Select area group" cls="ons-text-indent">
 			{#if areaGroups.length}
 				<Radios
 					id="area-group"
@@ -170,9 +183,10 @@
 					hideTitle
 					compact
 				/>
-				<p class="ons-u-mt-s">
+				<div class="ons-u-mt-s">
 					<Button variant="secondary" icon="edit" small>Edit saved areas</Button>
-				</p>
+					<p class="ons-u-mt-xs"><a href={resolve("/draw")} small>Draw a new area</a></p>
+				</div>
 			{:else}
 				<p>
 					You don't currently have any saved areas. Try the <a href={resolve("/draw")}
@@ -182,7 +196,7 @@
 			{/if}
 		</Card>
 	{:else}
-		<Card title="2. Select a parent area">
+		<Card title="2. Select a parent area" cls="ons-text-indent">
 			<form
 				class="input-group"
 				onsubmit={(e) => {
@@ -202,7 +216,7 @@
 			</form>
 		</Card>
 		{#if childTypes?.length}
-			<Card title="3. Select child area type">
+			<Card title="3. Select child area type" cls="ons-text-indent">
 				<Radios
 					id="area-group"
 					items={childTypes}
@@ -222,6 +236,7 @@
 	{/if}
 </Grid>
 {#if selectedAreas?.length}
+	<Divider {width} />
 	<Container {width}>
 		<Details title="View {selectedAreas.length} selected areas">
 			<List mode="dash">
@@ -236,23 +251,27 @@
 	</Container>
 	<Divider {width} />
 	<Container {width} marginBottom>
-		<h3>{selectionType?.id === "saved" ? "3" : "4"}. Select a dataset</h3>
-		<p>
-			Find out more about the available datasets in the <a href={resolve("/glossary")}
-				>data glossary</a
-			>.
-		</p>
-		<form
-			id="select-dataset"
-			class="input-group"
-			onsubmit={(e) => {
-				e.preventDefault();
-				selectedTopic = activeTopic;
-			}}
-		>
-			<Select bind:value={activeTopic} options={data.topics} groupKey="topic" />
-			<Button type="submit" small>Select dataset</Button>
-		</form>
+		<div class="ons-text-indent">
+			<h2 class="ons-u-fs-m">
+				{selectionType?.id === "saved" ? "3" : "4"}. Select a dataset
+			</h2>
+			<p>
+				Find out more about the available datasets in the <a href={resolve("/glossary")}
+					>data glossary</a
+				>.
+			</p>
+			<form
+				id="select-dataset"
+				class="input-group"
+				onsubmit={(e) => {
+					e.preventDefault();
+					selectedTopic = activeTopic;
+				}}
+			>
+				<Select bind:value={activeTopic} options={data.topics} groupKey="topic" />
+				<Button type="submit" small>Select dataset</Button>
+			</form>
+		</div>
 	</Container>
 	{#if selectedData}
 		{@const pivotedData = pivotDataOnMeasures(selectedData.data)}
