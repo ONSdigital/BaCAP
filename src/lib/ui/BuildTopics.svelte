@@ -7,6 +7,7 @@
 		Checkbox,
 		Icon
 	} from "@onsvisual/svelte-components";
+	import { initialState } from "$lib/config.js";
 	import { slugify } from "$lib/utils.js";
 
 	let { buildState, topics, selectedTopics = $bindable() } = $props();
@@ -46,6 +47,15 @@
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select datasets</h2>
 {#key groupedTopics}
 	<Accordion>
+		<div class="clear-toggle">
+			<a
+				href="#0"
+				onclick={(e) => {
+					e.preventDefault();
+					$selectedTopics = [...initialState.selectedTopics];
+				}}>Clear all</a
+			>
+		</div>
 		{#each groupedTopics as group, i (group.key)}
 			<AccordionItem title={group.label} open={i === 0}>
 				<Checkboxes>
@@ -92,3 +102,16 @@
 	>
 	<Icon type="external" />.
 </p>
+
+<style>
+	.clear-toggle {
+		position: relative;
+		top: 0;
+		right: 0;
+	}
+	.clear-toggle > a {
+		position: absolute;
+		bottom: calc(100% + 4px);
+		right: 0;
+	}
+</style>
