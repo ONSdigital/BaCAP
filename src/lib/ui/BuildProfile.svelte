@@ -132,6 +132,18 @@
 		>
 	</li>
 	<li>
+		<Icon type="print" />
+		<a
+			href="#0"
+			onclick={(e) => {
+				e.preventDefault();
+				pymParent?.sendMessage?.("print");
+			}}>Print profile</a
+		>
+	</li>
+</ul>
+<ul class="profile-actions">
+	<li>
 		<Icon type="code" />
 		<a
 			href="#0"
@@ -151,16 +163,6 @@
 				showEmbed = false;
 				showCodes = !showCodes;
 			}}>{showCodes ? "Hide area codes" : "Copy area codes"}</a
-		>
-	</li>
-	<li>
-		<Icon type="print" />
-		<a
-			href="#0"
-			onclick={(e) => {
-				e.preventDefault();
-				pymParent?.sendMessage?.("print");
-			}}>Print profile</a
 		>
 	</li>
 </ul>
@@ -217,7 +219,7 @@
 	ul.profile-actions > li {
 		display: inline-block;
 		padding: 0;
-		margin-right: 12px;
+		margin-right: 16px;
 	}
 	.profile-actions-tray :global(.ons-btn) {
 		margin: 4px 0 1em;
