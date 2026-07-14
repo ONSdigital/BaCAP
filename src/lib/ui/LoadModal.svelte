@@ -104,7 +104,7 @@
 	label="Load a saved area"
 	buttonStyle={mode === "draw" ? "menu" : "primary"}
 	hideLabel
-	icon={mode === "draw" ? "upload" : "edit"}
+	icon="upload"
 	onOpen={() => null}
 	onConfirm={() => null}
 	onCancel={() => null}

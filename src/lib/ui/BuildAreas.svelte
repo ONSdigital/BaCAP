@@ -1,5 +1,5 @@
 <script>
-	import { Checkbox, Input, Tooltip } from "@onsvisual/svelte-components";
+	import { Checkbox, Input, Button, Tooltip } from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 
 	let {
@@ -13,17 +13,52 @@
 		centroids,
 		updateActiveArea = () => null
 	} = $props();
+
+	let editName = $state(false);
+	let activeName = $derived(
+		!$activeArea.geometry ? null : $activeArea?.properties?.areanm || "Unnamed Area"
+	);
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select areas</h2>
 <div class="area-selections">
 	<div class="input-group">
-		<Input
-			label="Primary area"
-			placeholder="Name your area"
-			width="100%"
-			bind:value={$activeArea.properties.areanm}
-		/>
+		{#if editName}
+			<Input
+				label="Primary area"
+				placeholder="Name your area"
+				width="100%"
+				bind:value={activeName}
+			/>
+			<Tooltip text="Confirm">
+				<Button
+					variant="secondary"
+					icon="tick"
+					hideLabel
+					small
+					on:click={() => {
+						$activeArea.properties.areanm = activeName;
+						editName = false;
+					}}>Confirm</Button
+				>
+			</Tooltip>
+		{:else}
+			<div class="ons-field">
+				<p class="ons-label">Primary area</p>
+				<div class="ons-input">{activeName}</div>
+			</div>
+			{#if $activeArea.geometry}
+				<Tooltip text="Edit area name">
+					<Button
+						variant="secondary"
+						icon="edit"
+						hideLabel
+						small
+						on:click={() => (editName = true)}>Edit area name</Button
+					>
+				</Tooltip>
+			{/if}
+		{/if}
 		<Tooltip text="Load an area">
 			<LoadModal
 				bind:activeArea
@@ -41,7 +76,21 @@
 	</div>
 	<Checkbox label="Show map in profile" bind:checked={buildState.includeAreaMap} compact />
 	<div class="input-group">
-		<Input label="Comparison area" value={$comparisonArea?.properties?.areanm} readonly />
+		<div class="ons-field">
+			<p class="ons-label">Comparison area</p>
+			<div class="ons-input">{$comparisonArea?.properties?.areanm}</div>
+		</div>
+		{#if $comparisonArea}
+			<Tooltip text="Unselect area">
+				<Button
+					variant="secondary"
+					icon="cross"
+					hideLabel
+					small
+					on:click={() => ($comparisonArea = null)}>Confirm</Button
+				>
+			</Tooltip>
+		{/if}
 		<Tooltip text="Load an area">
 			<LoadModal
 				bind:activeArea={comparisonArea}
@@ -69,6 +118,8 @@
 		margin-bottom: 1em;
 	}
 	.input-group {
+		position: relative;
+		z-index: 2;
 		display: flex;
 		flex-direction: row;
 		align-items: flex-end;
