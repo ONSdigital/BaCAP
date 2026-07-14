@@ -89,7 +89,7 @@
 </script>
 
 <Grid width="wider" colWidth="medium" marginTop>
-	<GridCell>
+	<GridCell cls="ons-col-6@m ons-col-4@l ons-col-3@xl">
 		<BuildAreas
 			bind:buildState
 			bind:activeArea
@@ -103,7 +103,7 @@
 		/>
 		<BuildTopics {buildState} topics={data.topics} bind:selectedTopics />
 	</GridCell>
-	<GridCell colspan={3}>
+	<GridCell cls="ons-col-8@l ons-col-9@xl">
 		{#if $activeArea.geometry}
 			<BuildProfile
 				{buildState}
