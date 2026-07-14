@@ -26,12 +26,21 @@
 	let tables = $derived(
 		$activeArea?.properties?.oa21cds
 			? await Promise.all(
-					$selectedTopics.map((id) =>
-						getData(
-							topicsLookup[id],
-							[$activeArea, $comparisonArea].filter((d) => d)
+					$selectedTopics
+						.map((key) => topicsLookup[key])
+						.filter(
+							(t) =>
+								(!t.coverage ||
+									(t.coverage &&
+										t.coverage.every((c) => buildState.coverage.has(c)))) &&
+								(t.geography === "oa21" || buildState.geography === "lsoa")
 						)
-					)
+						.map((t) =>
+							getData(
+								t,
+								[$activeArea, $comparisonArea].filter((d) => d)
+							)
+						)
 				)
 			: []
 	);
