@@ -80,7 +80,7 @@
 			<!-- <small>(hash length {embedHash.length})</small> -->
 		</h1>
 	{/if}
-	<Grid cls="data-cards" colWidth="medium">
+	<Grid cls="data-cards" width="medium" colWidth="narrow">
 		{#if embedData?.polygons?.[0]}
 			<Card title="Area map" mode="featured">
 				<AreaMap polygons={embedData.polygons} />
