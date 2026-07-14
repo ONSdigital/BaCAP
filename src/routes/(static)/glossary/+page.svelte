@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from "$app/paths";
 	import markdownit from "markdown-it";
 	import { Icon, Hero, NavSections, NavSection } from "@onsvisual/svelte-components";
 	import { slugify } from "$lib/utils.js";
@@ -23,7 +24,10 @@
 
 <Hero theme="grey" title="Data glossary" width="wider">
 	<p>
-		Information on the datasets available within <strong>Build a custom area profile</strong>.
+		Information about the datasets available on the <a href={resolve("/build")}
+			>Build a profile</a
+		>
+		and <a href={resolve("/download")}>Download datasets</a> pages.
 	</p>
 </Hero>
 <NavSections contentsLabel="Topics" width="wider" marginTop>

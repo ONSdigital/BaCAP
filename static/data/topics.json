@@ -60,7 +60,7 @@
 		"base": "all households",
 		"geography": "oa21",
 		"source": "ONS - Census 2021",
-		"url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
+		"url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/maximisingthequalityofcensus2021populationestimates",
 		"census": true
 	},
 	{
