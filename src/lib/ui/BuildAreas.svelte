@@ -15,37 +15,37 @@
 	} = $props();
 
 	let editName = $state(false);
-	let activeName = $derived(
-		!$activeArea.geometry ? null : $activeArea?.properties?.areanm || "Unnamed Area"
-	);
+	let activeName = $derived($activeArea?.properties?.areanm);
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select areas</h2>
 <div class="area-selections">
 	<div class="input-group">
 		{#if editName}
-			<Input
-				label="Primary area"
-				placeholder="Name your area"
-				width="100%"
-				bind:value={activeName}
-			/>
-			<Tooltip text="Confirm">
-				<Button
-					variant="secondary"
-					icon="tick"
-					hideLabel
-					small
-					on:click={() => {
-						$activeArea.properties.areanm = activeName;
-						editName = false;
-					}}>Confirm</Button
-				>
-			</Tooltip>
+			<form
+				onsubmit={(e) => {
+					e.preventDefault();
+					$activeArea.properties.areanm = activeName;
+					editName = false;
+				}}
+				style:display="contents"
+			>
+				<Input
+					label="Primary area"
+					placeholder="Name your area"
+					width="100%"
+					bind:value={activeName}
+				/>
+				<Tooltip text="Confirm">
+					<Button type="submit" variant="secondary" icon="tick" hideLabel small
+						>Confirm</Button
+					>
+				</Tooltip>
+			</form>
 		{:else}
 			<div class="ons-field">
 				<p class="ons-label">Primary area</p>
-				<div class="ons-input">{activeName}</div>
+				<div class="ons-input">{activeName || "Unnamed Area"}</div>
 			</div>
 			{#if $activeArea.geometry}
 				<Tooltip text="Edit area name">
