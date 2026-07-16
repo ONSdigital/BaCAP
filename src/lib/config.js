@@ -13,7 +13,7 @@ export const initialState = {
 	history: [{ geometry: null, oa: new Set(), lsoa: new Set() }],
 	rehistory: [],
 	lastActivePage: null,
-	selectedTopics: ["population"]
+	selectedTopics: []
 };
 
 // DATA CONFIG
