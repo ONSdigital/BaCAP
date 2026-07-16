@@ -34,10 +34,10 @@
 		}
 		return { _data: Object.values(indexed), yDomain };
 	}
-	function yDodge(y1, y2, h = height, buffer = 18) {
+	function yDodge(y1, y2 = null, h = height, buffer = 24) {
 		// Make sure the labels don't overlap or go outside of the vertical chart area
 		const diff = Math.abs(y2 - y1);
-		if (diff > buffer) return [y1, y2];
+		if (!y2 || diff > buffer) return [y1, y2];
 		let ys =
 			y1 < y2
 				? [y1 - (buffer - diff) / 2, y2 + (buffer - diff) / 2]
@@ -96,26 +96,26 @@
 				/>
 			{/each}
 		</svg>
-		<div
-			class="point point-black"
-			style:left="{xScale(xVal)}%"
-			style:top="{yScale(_data[1][yKey(xVal)])}px"
-		></div>
-		<div
-			class="point"
-			style:left="{xScale(xVal)}%"
-			style:top="{yScale(_data[0][yKey(xVal)])}px"
-		></div>
+		{#each [..._data].reverse() as d, i}
+			<div
+				class="point"
+				class:point-black={i === 0}
+				style:left="100%"
+				style:top="{yScale(d[yKey(xVal)])}px"
+			></div>
+		{/each}
 	</div>
 	{#if xVal != xDomain[0]}
-		{@const [y1, y2] = yDodge(yScale(_data[0][yKey(xVal)]), yScale(_data[1][yKey(xVal)]))}
+		{@const coords = yDodge(..._data.map((d) => yScale(d[yKey(xVal)])))}
 		<div class="label-group">
-			<div class="point-label bold" style:transform="translateY(calc({y1}px - 50%))">
-				{format(_data[0][yKey(xVal)])}%
-			</div>
-			<div class="point-label brackets" style:transform="translateY(calc({y2}px - 150%))">
-				{format(_data[1][yKey(xVal)])}%
-			</div>
+			{#each coords.filter((d) => d) as coord, i}
+				<div
+					class="point-label {i === 0 ? 'bold' : 'brackets'}"
+					style:transform="translateY(calc({coord}px - {i === 0 ? 50 : 100}%))"
+				>
+					{format(_data[i][yKey(xVal)])}%
+				</div>
+			{/each}
 		</div>
 	{/if}
 </div>
