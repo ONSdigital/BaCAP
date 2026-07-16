@@ -64,8 +64,6 @@
 		}
 
 		if (refreshedArea) {
-			setGeoState($activeArea);
-
 			// Refresh comparison area if area updated
 			const compcd = $activeArea.properties?.oa21cds
 				? centroids.commonParent({
@@ -85,6 +83,8 @@
 				}
 			}
 		}
+
+		setGeoState($activeArea);
 	});
 </script>
 
