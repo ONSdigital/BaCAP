@@ -1,5 +1,6 @@
 <script>
 	import { scaleLinear, scalePoint } from "d3-scale";
+	import { ascending } from "$lib/data-utils.js";
 
 	let {
 		data,
@@ -15,6 +16,7 @@
 
 	function transformData(data, xDomain) {
 		const indexed = {};
+		const yDomain = [Infinity, -Infinity];
 		for (const d of data) {
 			if (!indexed[d[zKey]]) {
 				indexed[d[zKey]] = {};
@@ -23,46 +25,42 @@
 			indexed[d[zKey]][d.date] = d.value;
 		}
 		for (let key in indexed) {
-			for (const val of xDomain) {
-				indexed[key][`${val}_change`] = indexed[key][val] / indexed[key][xDomain[0]];
+			for (const xVal of xDomain) {
+				const yVal = indexed[key][xVal] / indexed[key][xDomain[0]];
+				indexed[key][`${xVal}_change`] = yVal;
+				if (yVal < yDomain[0]) yDomain[0] = yVal;
+				if (yVal > yDomain[1]) yDomain[1] = yVal;
 			}
 		}
-		return Object.values(indexed);
+		return { _data: Object.values(indexed), yDomain };
 	}
-	function makeYDomain(data) {
-		let min;
-		let max;
-		data.forEach((d) => {
-			xDomain.forEach((x) => {
-				let val = d[yKey(x)];
-				if (!min || val < min) min = val;
-				if (!max || val > max) max = val;
-			});
-		});
-		return [min, max];
-	}
-	function yPos(y2, y1) {
-		const buffer = 14;
-		if (y2 < y1 - buffer || y2 > y1 + buffer) return y2;
-		else if (y2 < y1) return y1 - buffer;
-		else return y1 + buffer;
+	function yDodge(y1, y2, h = height, buffer = 18) {
+		// Make sure the labels don't overlap or go outside of the vertical chart area
+		const diff = Math.abs(y2 - y1);
+		if (diff > buffer) return [y1, y2];
+		let ys =
+			y1 < y2
+				? [y1 - (buffer - diff) / 2, y2 + (buffer - diff) / 2]
+				: [y1 + (buffer - diff) / 2, y2 - (buffer - diff) / 2];
+		const min = Math.min(...ys);
+		const max = Math.max(...ys);
+		if (min < 0) return ys.map((y) => y - min);
+		if (max > h) return ys.map((y) => y + h - max);
+		return ys;
 	}
 
-	let xDomain = $derived(
-		[...new Set(data.map((d) => d[xKey]).sort((a, b) => a - b))].sort((a, b) => a - b)
-	);
+	let xDomain = $derived([...new Set(data.map((d) => d[xKey]))].sort(ascending));
 	let xVal = $derived(xDomain[xDomain.length - 1]);
-	let _data = $derived(transformData(data, xDomain));
-	let yDomain = $derived(makeYDomain(_data));
-	let zDomain = $derived(_data.map((d) => d[zKey]).filter((v, i, a) => a.indexOf(v) === i));
+	let { _data, yDomain } = $derived(transformData(data, xDomain));
+	let zDomain = $derived([...new Set(_data.map((d) => d[zKey]))]);
 	let xScale = $derived(scalePoint().domain(xDomain).range([0, 100]));
-	let yScale = $derived(scaleLinear().domain([yDomain[0], yDomain[1]]).range([100, 0]));
+	let yScale = $derived(scaleLinear().domain([yDomain[0], yDomain[1]]).range([height, 0]));
 	let makePath = $derived((d) => {
 		let series = xDomain.map((x) => ({ x, y: d[yKey(x)] }));
 		return "M" + series.map((d) => `${xScale(d.x)} ${yScale(d.y)}`).join("L");
 	});
 
-	$inspect({ xDomain, _data });
+	$inspect({ data });
 </script>
 
 <ul class="legend-block">
@@ -81,49 +79,45 @@
 	{/if}
 </ul>
 
-<div class="line-group" style:height="{height}px">
-	<div class="baseline" style:top="{yScale(1)}%"></div>
-	<svg viewBox="0 0 100 100" preserveAspectRatio="none">
-		{#each [..._data].reverse() as d, i}
-			<path
-				d={makePath(d)}
-				vector-effect="non-scaling-stroke"
-				stroke={i == _data.length - 1 ? "#27A0CC" : "black"}
-				stroke-width={i == _data.length - 1 ? lineWidth + 1.5 : lineWidth}
-			/>
-		{/each}
-	</svg>
-	<div
-		class="point point-black"
-		style:left="{xScale(xVal)}%"
-		style:top="{yScale(_data[1][yKey(xVal)])}%"
-	></div>
-	<div
-		class="point"
-		style:left="{xScale(xVal)}%"
-		style:top="{yScale(_data[0][yKey(xVal)])}%"
-	></div>
-	{#if xVal != xDomain[0]}
-		<div
-			class="point-text brackets"
-			style:left="{xScale(xVal)}%"
-			style:top="{yPos(yScale(_data[1][yKey(xVal)]), yScale(_data[0][yKey(xVal)]))}%"
-		>
-			{format(_data[1][yKey(xVal)])}%
+<div class="chart-block">
+	<div class="line-group" style:height="{height}px">
+		<div class="baseline" style:top="{yScale(1)}%"></div>
+		<div class="x-scale" style:height="1rem">
+			<div>{dateFormat(xDomain[0])}</div>
+			<div class="tick-right">{dateFormat(xDomain[xDomain.length - 1])}</div>
 		</div>
+		<svg viewBox="0 0 100 {height}" preserveAspectRatio="none">
+			{#each [..._data].reverse() as d, i}
+				<path
+					d={makePath(d)}
+					vector-effect="non-scaling-stroke"
+					stroke={i == _data.length - 1 ? "#27A0CC" : "black"}
+					stroke-width={i == _data.length - 1 ? lineWidth + 1.5 : lineWidth}
+				/>
+			{/each}
+		</svg>
 		<div
-			class="point-text bold"
+			class="point point-black"
 			style:left="{xScale(xVal)}%"
-			style:top="{yScale(_data[0][yKey(xVal)])}%"
-		>
-			{format(_data[0][yKey(xVal)])}%
+			style:top="{yScale(_data[1][yKey(xVal)])}px"
+		></div>
+		<div
+			class="point"
+			style:left="{xScale(xVal)}%"
+			style:top="{yScale(_data[0][yKey(xVal)])}px"
+		></div>
+	</div>
+	{#if xVal != xDomain[0]}
+		{@const [y1, y2] = yDodge(yScale(_data[0][yKey(xVal)]), yScale(_data[1][yKey(xVal)]))}
+		<div class="label-group">
+			<div class="point-label bold" style:transform="translateY(calc({y1}px - 50%))">
+				{format(_data[0][yKey(xVal)])}%
+			</div>
+			<div class="point-label brackets" style:transform="translateY(calc({y2}px - 150%))">
+				{format(_data[1][yKey(xVal)])}%
+			</div>
 		</div>
 	{/if}
-</div>
-
-<div class="x-scale" style:height="1rem">
-	<div style:left="0">{dateFormat(xDomain[0])}</div>
-	<div style:right="0">{dateFormat(xDomain[xDomain.length - 1])}</div>
 </div>
 
 {#if base}
@@ -141,14 +135,24 @@
 	.brackets::after {
 		content: ")";
 	}
-	.line-group,
-	.x-scale {
-		display: block;
-		position: relative;
-		width: 100%;
+	.chart-block {
+		display: flex;
+		flex-direction: row;
+		margin: 18px 0 40px;
 	}
 	.line-group {
-		margin-top: 24px;
+		display: block;
+		position: relative;
+		flex-grow: 1;
+		width: 100%;
+	}
+	.x-scale {
+		position: absolute;
+		width: 100%;
+		top: 100%;
+	}
+	.label-group {
+		flex-shrink: 1;
 	}
 	.baseline {
 		position: absolute;
@@ -157,14 +161,25 @@
 		border-top: 1.5px solid #555;
 	}
 	.x-scale {
-		position: relative;
+		position: absolute;
 		font-size: 0.9rem;
 	}
 	.x-scale > div {
 		position: absolute;
 		top: 0;
 		line-height: normal;
-		padding-top: 2px;
+		padding-top: 10px;
+	}
+	.x-scale > div::before {
+		content: " ";
+		position: absolute;
+		height: 12px;
+		top: 0;
+		border-right: 1px solid grey;
+	}
+	.x-scale > div.tick-right,
+	.x-scale > div.tick-right::before {
+		right: 0;
 	}
 	.marker-vis {
 		transform: translate(0, calc(3px - 0.5rem)) !important;
@@ -207,15 +222,16 @@
 		height: 8px;
 		background-color: black;
 	}
-	.point-text {
-		position: absolute;
+	.point-label {
+		/* position: absolute; */
 		line-height: 1;
-		background-color: rgba(245, 245, 246, 0.5);
-		transform: translate(-100%, calc(-100% - 7px));
 		font-size: 16px;
+		padding-left: 8px;
+		transform: translateY(-50%);
 	}
-	.point-text.brackets {
+	.point-label.brackets {
 		font-size: 0.85em;
+		transform: translateY(-150%);
 	}
 	small {
 		font-size: 14px;

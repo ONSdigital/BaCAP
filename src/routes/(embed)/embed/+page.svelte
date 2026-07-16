@@ -45,6 +45,11 @@
 		return tables;
 	}
 
+	function makeSubtitle(range, dateFormat, isYearEnding = false) {
+		const prefix = isYearEnding ? `${range.length > 1 ? "Years" : "Year"} ending ` : "";
+		return prefix + range.map((d) => dateFormat(d)).join(" to ");
+	}
+
 	let topicsLookup = $derived(Object.fromEntries(data.topics.map((d) => [d.key, d])));
 	let embedHash = $state("");
 	let embedData = $state();
@@ -89,7 +94,9 @@
 		{#each tables as tab}
 			{@const dateFormat = makeDateFormatter(tab.meta.dateFormat)}
 			<Card title={tab.meta.label} mode="featured">
-				<div class="card-subtitle">{tab.range.map((d) => dateFormat(d)).join(" to ")}</div>
+				<div class="card-subtitle">
+					{makeSubtitle(tab.range, dateFormat, tab.meta.dateFormat === "year-ending")}
+				</div>
 				{#if tab.meta.chart === "number"}
 					<BigNumber data={tab.data} unit={tab.meta.unit} />
 				{:else if tab.meta.chart === "line"}

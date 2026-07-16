@@ -1,5 +1,13 @@
 import { measures } from "./config.js";
 
+export function ascending(a, b) {
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
+export function descending(a, b) {
+	return b < a ? -1 : b > a ? 1 : 0;
+}
+
 export function makeEmbedHash(
 	tables,
 	buildState,
@@ -40,14 +48,16 @@ export function makeEmbedCode(embedHash) {
 
 const monthFormat = { month: "short", year: "numeric" };
 
-export function makeDateFormatter(format) {
+export function makeDateFormatter(format, length = "short") {
 	return format === "month"
 		? (d) => new Date(d.padEnd(10, "-01")).toLocaleDateString("en-GB", monthFormat)
-		: format === "year-ending"
+		: format === "year-ending" && length === "long"
 			? (d) =>
 					"Year ending " +
 					new Date(d.padEnd(10, "-01")).toLocaleDateString("en-GB", monthFormat)
-			: (d) => d;
+			: format === "year-ending"
+				? (d) => new Date(d.padEnd(10, "-01")).toLocaleDateString("en-GB", monthFormat)
+				: (d) => d;
 }
 
 export function pivotDataOnMeasures(data) {

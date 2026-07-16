@@ -1,5 +1,6 @@
 import { csvParse } from "d3-dsv";
 import { get, set, update } from "./db.js";
+import { ascending } from "./data-utils.js";
 
 const maxRequestLength = 15_700;
 const maxResponseCells = 25_000;
@@ -125,9 +126,9 @@ function makeRowSorter(table, areas) {
 
 	return (a, b) =>
 		areaSorter(a.areanm, b.areanm) ||
-		a.date - b.date ||
+		ascending(a.date, b.date) ||
 		catSorter(a.category, b.category) ||
-		a.measure.localeCompare(b.measure, "en-GB");
+		ascending(a.measure, b.measure);
 }
 
 function parseData(table, areas, csvString) {
