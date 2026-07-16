@@ -244,3 +244,8 @@ export function downloadDatasetCSV(table, data, columns) {
 	const blob = new Blob([csv], { type: "text/csv" });
 	download(blob, `${slugify(table.label)}.csv`);
 }
+
+export function focusChildInput(el) {
+	const input = el.getElementsByTagName("input")?.[0];
+	if (input) input.focus();
+}

@@ -1,6 +1,7 @@
 <script>
 	import { Checkbox, Input, Button, Tooltip } from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
+	import { focusChildInput } from "$lib/utils.js";
 
 	let {
 		buildState = $bindable(),
@@ -29,6 +30,7 @@
 					editName = false;
 				}}
 				style:display="contents"
+				use:focusChildInput
 			>
 				<Input
 					label="Primary area"
@@ -143,5 +145,8 @@
 		border-bottom: 1px solid var(--ons-color-borders);
 		padding-bottom: 1em;
 		margin-bottom: 1em;
+	}
+	.ons-input {
+		background: var(--ons-color-page-light);
 	}
 </style>

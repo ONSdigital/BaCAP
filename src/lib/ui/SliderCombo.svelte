@@ -1,17 +1,27 @@
 <script>
 	import { Input } from "@onsvisual/svelte-components";
 	import Slider from "./Slider.svelte";
+	import { focusChildInput } from "$lib/utils.js";
 
-	let { min = 0.1, max = 20, step = 0.1, value = $bindable(1), unit = "km" } = $props();
+	let {
+		min = 0.1,
+		max = 20,
+		step = 0.1,
+		value = $bindable(1),
+		unit = "km",
+		autoFocus = false
+	} = $props();
 
 	function handleInput(e) {
 		const val = e?.detail?.value;
 		if (+val > min) value = +val > max ? max : +val;
 		else value = min;
 	}
+
+	let focus = $derived(autoFocus ? focusChildInput : () => null);
 </script>
 
-<div class="slider-wrapper">
+<div class="slider-wrapper" use:focus>
 	<Slider {min} {max} {step} bind:value />
 	<Input suffix={unit || null} width={2} {value} on:change={handleInput} on:blur={handleInput} />
 </div>

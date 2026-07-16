@@ -14,7 +14,8 @@
 		label = "Find an area to add to the map",
 		placeholder = "Type a place name or postcode",
 		geoTypes = new Set(Object.keys(geotypesLookup)),
-		postcodeTypes = new Set(["E00", "W00"])
+		postcodeTypes = new Set(["E00", "W00"]),
+		autoFocus = false
 	} = $props();
 
 	const startsWithFilter = (str, filter) => str.toLowerCase().startsWith(filter.toLowerCase());
@@ -161,6 +162,7 @@
 	mode="search"
 	{label}
 	{placeholder}
+	{autoFocus}
 	on:change={handleChange}
 	autoClear={false}
 />

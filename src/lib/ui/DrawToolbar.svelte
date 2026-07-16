@@ -161,7 +161,13 @@
 				</ToolControl>
 				<ToolControl id="circle">
 					<p>Select a radius size and click or tap on the map to select an area.</p>
-					<SliderCombo min={0.1} max={20} step={0.1} bind:value={drawState.radius} />
+					<SliderCombo
+						min={0.1}
+						max={20}
+						step={0.1}
+						bind:value={drawState.radius}
+						autoFocus
+					/>
 				</ToolControl>
 				<ToolControl id="search">
 					<form
@@ -175,7 +181,7 @@
 							}
 						}}
 					>
-						<AreaSearch bind:value={selectedArea} options={areasList} />
+						<AreaSearch bind:value={selectedArea} options={areasList} autoFocus />
 						<div id="search-inputs">
 							<Button type="submit" small>Select area</Button>
 							{#if $history.length > 1}
