@@ -16,7 +16,9 @@
 	} = $props();
 
 	let editName = $state(false);
-	let activeName = $derived($activeArea?.properties?.areanm);
+	let activeName = $derived(
+		!$activeArea.geometry ? null : $activeArea?.properties?.areanm || "Unnamed Area"
+	);
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select areas</h2>
@@ -47,7 +49,7 @@
 		{:else}
 			<div class="ons-field">
 				<p class="ons-label">Primary area</p>
-				<div class="ons-input">{activeName || "Unnamed Area"}</div>
+				<div class="ons-input">{activeName}</div>
 			</div>
 			{#if $activeArea.geometry}
 				<Tooltip text="Edit area name">
