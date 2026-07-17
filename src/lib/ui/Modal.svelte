@@ -21,6 +21,11 @@
 		if (style) style.overflow = value;
 	}
 
+	function showModal() {
+		dialog.showModal();
+		setBodyOverflow("hidden");
+	}
+
 	function initDialog(el) {
 		// Prevent areas dropdown from closing when scrollbar is clicked
 		el.addEventListener("mousedown", (event) => {
@@ -55,12 +60,11 @@
 			interactionLabel: label,
 			interactionValue
 		};
-		analyticsEvent(eventData);
+		// analyticsEvent(eventData);
 	}
 
 	export function openDialog() {
-		dialog.showModal();
-		setBodyOverflow("hidden");
+		showModal();
 		onOpen();
 	}
 
@@ -82,9 +86,8 @@
 		class="toolbar-button"
 		onclick={() => {
 			onOpen();
-			dialog.showModal();
-			setBodyOverflow("hidden");
-			modalAnalyticsEvent("open");
+			showModal();
+			// modalAnalyticsEvent("open");
 		}}
 	>
 		{#if icon}
@@ -100,9 +103,8 @@
 		variant={buttonStyle}
 		on:click={() => {
 			onOpen();
-			dialog.showModal();
-			setBodyOverflow("hidden");
-			modalAnalyticsEvent("open");
+			showModal();
+			// modalAnalyticsEvent("open");
 		}}
 		small
 	>
