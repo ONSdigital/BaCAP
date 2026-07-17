@@ -13,6 +13,7 @@
 	import AreaSearch from "./AreaSearch.svelte";
 	import LoadModal from "./LoadModal.svelte";
 	import SaveModal from "./SaveModal.svelte";
+	import { sleep } from "$lib/utils.js";
 
 	let {
 		appState = $bindable(),
@@ -213,8 +214,9 @@
 						bind:modal={saveModal}
 						{history}
 						{centroids}
-						switchModals={() => {
+						switchModals={async () => {
 							saveModal.cancelDialog();
+							await sleep();
 							loadModal.openDialog();
 						}}
 					/>

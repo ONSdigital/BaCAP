@@ -60,6 +60,7 @@
 
 	export function openDialog() {
 		dialog.showModal();
+		setBodyOverflow("hidden");
 		onOpen();
 	}
 
