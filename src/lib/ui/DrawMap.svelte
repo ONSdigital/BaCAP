@@ -49,6 +49,9 @@
 
 		if (mode === "replace") {
 			$activeArea = _feature;
+		} else {
+			// Remove GSS code if an area has been edited
+			$activeArea.properties.areacd = null;
 		}
 
 		draw?.deleteAll?.();
