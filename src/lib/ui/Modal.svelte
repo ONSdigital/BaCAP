@@ -96,6 +96,7 @@
 	<Button
 		{icon}
 		{hideLabel}
+		variant={buttonStyle}
 		on:click={() => {
 			onOpen();
 			dialog.showModal();

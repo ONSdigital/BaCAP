@@ -20,6 +20,7 @@
 		Li
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
+	import EditModal from "$lib/ui/EditModal.svelte";
 	import { downloadDatasetCSV, downloadDatasetXLSX } from "$lib/utils.js";
 	import { geogroups, measures } from "$lib/config.js";
 	import getData from "$lib/get-data.js";
@@ -36,7 +37,7 @@
 	let { data } = $props();
 
 	let appState = $state(getContext("appState")());
-	let { savedAreas, savedAreasLastId } = appState;
+	let { savedAreas } = appState;
 
 	const ltlaTypes = new Set(["E06", "E07", "E08", "E09", "W06"]);
 	const parentAreaTypes = new Set([...ltlaTypes, "E10", "E12", "E47", "E92", "W92"]);
@@ -184,7 +185,7 @@
 					compact
 				/>
 				<div class="ons-u-mt-s">
-					<Button variant="secondary" icon="edit" small>Edit saved areas</Button>
+					<EditModal {savedAreas} />
 					<p class="ons-u-mt-xs"><a href={resolve("/draw")} small>Draw a new area</a></p>
 				</div>
 			{:else}
