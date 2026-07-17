@@ -73,7 +73,6 @@
 		parsedArea.id = id;
 		if (!parsedArea.properties.group) parsedArea.properties.group = "Uploaded areas";
 		$savedAreas[id] = parsedArea;
-		// $savedAreas = $savedAreas;
 	}
 
 	function saveSelectedNewAreas() {

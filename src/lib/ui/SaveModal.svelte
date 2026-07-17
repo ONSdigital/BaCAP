@@ -7,6 +7,7 @@
 	let {
 		activeArea = $bindable(),
 		savedAreas = $bindable(),
+		savedAreasLastId = $bindable(),
 		history = $bindable(),
 		modal = $bindable(),
 		centroids,
@@ -25,14 +26,12 @@
 	}
 	function saveArea(options = {}) {
 		const existing = $savedAreas[$activeArea.id];
-		const id =
-			existing?.id && !options.copy
-				? existing.id
-				: Math.max(...[0, ...Object.keys($savedAreas)]) + 1;
+		const hasNewId = options.copy || !existing?.id;
+		const id = hasNewId ? $savedAreasLastId + 1 : existing.id;
 		const area = makeSavedArea($activeArea, $history[0], centroids, id);
 		$activeArea = area;
 		$savedAreas[id] = area;
-		// $savedAreas = $savedAreas;
+		if (hasNewId) $savedAreasLastId = id;
 	}
 	async function copyCodes(level = "oa") {
 		const codes = [...($history?.[0]?.[level] || [])].join(",");

@@ -209,6 +209,7 @@
 					<SaveModal
 						bind:activeArea
 						bind:savedAreas
+						bind:savedAreasLastId
 						bind:modal={saveModal}
 						{history}
 						{centroids}
