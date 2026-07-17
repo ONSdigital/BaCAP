@@ -62,7 +62,7 @@
 	onMount(() => {
 		// Initialise embed iframe
 		if (!pymParent) {
-			pymParent = new pym.Parent("embed", resolve(`/embed#${embedHash || ""}`), {
+			pymParent = new pym.Parent("embed", resolve(`/profile/#${embedHash || ""}`), {
 				name: "embed",
 				id: "iframe",
 				title: "Embedded area profile"
