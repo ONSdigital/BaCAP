@@ -86,7 +86,7 @@
 	<Notice>
 		Whilst most datasets in this tool are available down to the smallest Output Area (or OA)
 		level, some datasets are only available down to an LSOA level. We advise caution when
-		comparing values between between OA and LSOA datasets.
+		comparing values between OA and LSOA datasets.
 	</Notice>
 </Section>
 
