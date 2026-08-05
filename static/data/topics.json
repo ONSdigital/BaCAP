@@ -1,7 +1,7 @@
 [
 	{
 		"key": "population",
-		"label": "Population*",
+		"label": "Population",
 		"topic": "Demography and migration",
 		"summary": "Mid-year estimate of the total number of people.",
 		"description": null,
@@ -22,7 +22,7 @@
 	},
 	{
 		"key": "population_timeseries",
-		"label": "Population time series*",
+		"label": "Population time series",
 		"topic": "Demography and migration",
 		"summary": "Mid-year estimate of the total number of people.",
 		"description": null,
@@ -65,7 +65,7 @@
 	},
 	{
 		"key": "resident_age",
-		"label": "Age profile*",
+		"label": "Age profile",
 		"topic": "Demography and migration",
 		"summary": "Five year age bands based on mid-year population estimates.",
 		"description": null,
@@ -108,11 +108,11 @@
 	},
 	{
 		"key": "sex",
-		"label": "Sex*",
+		"label": "Sex",
 		"topic": "Demography and migration",
 		"summary": "Mid-year estimate of the proportion of females and males.",
 		"description": null,
-		"chart": "profile",
+		"chart": "bar",
 		"tableCode": "NM_2014_1",
 		"cellCode": "gender",
 		"measures": [
