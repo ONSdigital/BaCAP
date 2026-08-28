@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { Embed, Grid, Card } from "@onsvisual/svelte-components";
 	import { snapdom } from "@zumer/snapdom";
-	import { makeDateFormatter } from "$lib/data-utils.js";
+	import { makeDateFormatter, atobUtf8 } from "$lib/data-utils.js";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";
@@ -71,7 +71,7 @@
 
 	function update() {
 		embedHash = document.location.hash.slice(1);
-		if (embedHash.length) embedData = JSON.parse(atob(embedHash));
+		if (embedHash.length) embedData = JSON.parse(atobUtf8(embedHash));
 	}
 	onMount(update);
 </script>

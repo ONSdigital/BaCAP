@@ -1,11 +1,13 @@
 import { resolve } from "$app/paths";
 import { csvFormat, csvFormatRows, csvFormatBody } from "d3-dsv";
 import accessibleXLSX from "@onsvisual/accessible-xlsx";
-import { get, set, update } from "./db.js";
+import { get, set } from "./db.js";
 import { decompressData } from "compress-csv-to-json";
-import { initialState, geotypesLookup } from "./config.js";
+import { geotypesLookup } from "./config.js";
 import { getName, makeFilename } from "./geo.svelte.js";
 import { makeDateFormatter } from "./data-utils.js";
+
+const utf8BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
 
 async function loadData(key, path, forceRefresh = false, decompressFn = null) {
 	const val = !forceRefresh ? await get(key) : null;
@@ -203,7 +205,7 @@ export function downloadProfileCSV(tables, activeArea, comparisonArea) {
 
 	const data = tables.map((tab) => formatTable(tab, name, compName)).flat();
 	const csv = csvFormat(data);
-	const blob = new Blob([csv], { type: "text/csv" });
+	const blob = new Blob([utf8BOM, csv], { type: "text/csv;charset=utf-8;" });
 	download(blob, makeFilename(activeArea, "csv"));
 }
 
@@ -241,7 +243,7 @@ export function downloadDatasetCSV(table, data, columns) {
 			data,
 			columns.map((d) => d.key)
 		);
-	const blob = new Blob([csv], { type: "text/csv" });
+	const blob = new Blob([utf8BOM, csv], { type: "text/csv;charset=utf-8;" });
 	download(blob, `${slugify(table.label)}.csv`);
 }
 

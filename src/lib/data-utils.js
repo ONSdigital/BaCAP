@@ -13,6 +13,24 @@ export function round(val, dp = 0) {
 	return Math.round(val * multiplier) / multiplier;
 }
 
+export function btoaUtf8(value) {
+	const bytes = new TextEncoder().encode(value);
+	let binary = "";
+
+	for (let i = 0; i < bytes.length; i += 0x8000) {
+		binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+	}
+
+	return btoa(binary);
+}
+
+export function atobUtf8(value) {
+	const binary = atob(value);
+	const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+
+	return new TextDecoder().decode(bytes);
+}
+
 export function makeEmbedHash(
 	tables,
 	buildState,
@@ -41,7 +59,7 @@ export function makeEmbedHash(
 				? t.meta.dates
 				: [t.meta.dates[0], t.meta.dates[t.meta.dates.length - 1]]
 	}));
-	return btoa(JSON.stringify({ areas, tables: dataTables, polygons }));
+	return btoaUtf8(JSON.stringify({ areas, tables: dataTables, polygons }));
 }
 
 export function makeEmbedCode(embedHash) {
