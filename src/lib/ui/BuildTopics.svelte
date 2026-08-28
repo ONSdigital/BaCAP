@@ -42,6 +42,17 @@
 			$selectedTopics = ids.filter((id) => $selectedTopics.includes(id) || id === item.id);
 		else $selectedTopics = $selectedTopics.filter((id) => id !== item.id);
 	}
+
+	function toggleSelectAll(topic, mode = "add") {
+		$selectedTopics =
+			mode === "add"
+				? topics
+						.filter((d) => $selectedTopics.includes(d.key) || d.topic === topic)
+						.map((d) => d.key)
+				: topics
+						.filter((d) => $selectedTopics.includes(d.key) && d.topic !== topic)
+						.map((d) => d.key);
+	}
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select datasets</h2>
@@ -69,6 +80,20 @@
 							compact
 						/>
 					{/each}
+					<Checkbox
+						id="{group.key}-all"
+						cls="select-all-toggle"
+						label="Select all"
+						checked={group.children.every((d) => $selectedTopics.includes(d.key))}
+						groupName="{group.key}-all"
+						on:change={(e) => {
+							toggleSelectAll(
+								group.label,
+								e?.detail?.item?.checked ? "add" : "remove"
+							);
+						}}
+						compact
+					/>
 				</Checkboxes>
 			</AccordionItem>
 		{/each}
@@ -113,5 +138,9 @@
 		position: absolute;
 		bottom: calc(100% + 4px);
 		right: 0;
+	}
+	:global(.select-all-toggle) {
+		border-top: 1px solid var(--ons-color-borders-light);
+		padding-top: 8px;
 	}
 </style>
