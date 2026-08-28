@@ -13,7 +13,7 @@
 </script>
 
 <div class="counter">
-	<span class="ons-u-fs-s">Population selected</span><br />
+	<span class="ons-u-fs-s">Total population</span><br />
 	<strong
 		>{counter.current.toLocaleString("en-GB", {
 			minimumFractionDigits: 0,
