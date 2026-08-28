@@ -15,7 +15,7 @@
 		switchModals = () => null
 	} = $props();
 
-	let showSuccess = $state({ oa: false, lsoa: false });
+	let showSuccess = $state({ oa: false, lsoa: false, saved: false });
 
 	function updateAreaName(e) {
 		const name = e?.detail?.value;
@@ -38,12 +38,15 @@
 			window.location.hash = "#saved-areas";
 		}
 	}
-	async function copyCodes(level = "oa") {
-		const codes = [...($history?.[0]?.[level] || [])].join(",");
-		await clip(codes);
-		showSuccess[level] = true;
+	async function updateSuccess(key) {
+		showSuccess[key] = true;
 		await sleep(3000);
-		showSuccess[level] = false;
+		showSuccess[key] = false;
+	}
+	async function copyCodes(key = "oa") {
+		const codes = [...($history?.[0]?.[key] || [])].join(",");
+		await clip(codes);
+		await updateSuccess(key);
 	}
 </script>
 
@@ -80,9 +83,6 @@
 					>Download area</Button
 				>
 				{#if $savedAreas[$activeArea.id]}
-					<Button icon="saveas" variant="secondary" small on:click={saveArea}
-						>Save changes</Button
-					>
 					<Button
 						icon="save"
 						variant="secondary"
@@ -90,6 +90,18 @@
 						disabled={!$activeArea.id}
 						on:click={() => saveArea({ copy: true, switchModals: true })}
 						>Save a copy</Button
+					>
+					<Button
+						icon="saveas"
+						variant="secondary"
+						small
+						on:click={() => {
+							saveArea();
+							updateSuccess("saved");
+						}}>Save changes</Button
+					>
+					<span class="success-icon" style:display={showSuccess.saved ? "inline" : "none"}
+						><Icon type="tick" /></span
 					>
 				{:else}
 					<Button
