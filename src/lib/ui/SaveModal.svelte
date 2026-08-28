@@ -25,13 +25,18 @@
 		}
 	}
 	function saveArea(options = {}) {
+		const _options = { copy: false, switchModals: false, ...options };
 		const existing = $savedAreas[$activeArea.id];
-		const hasNewId = options.copy || !existing?.id;
+		const hasNewId = _options.copy || !existing?.id;
 		const id = hasNewId ? $savedAreasLastId + 1 : existing.id;
 		const area = makeSavedArea($activeArea, $history[0], centroids, id);
 		$activeArea = area;
 		$savedAreas[id] = area;
 		if (hasNewId) $savedAreasLastId = id;
+		if (_options.switchModals) {
+			switchModals();
+			window.location.hash = "#saved-areas";
+		}
 	}
 	async function copyCodes(level = "oa") {
 		const codes = [...($history?.[0]?.[level] || [])].join(",");
@@ -83,11 +88,15 @@
 						variant="secondary"
 						small
 						disabled={!$activeArea.id}
-						on:click={() => saveArea({ copy: true })}>Save a copy</Button
+						on:click={() => saveArea({ copy: true, switchModals: true })}
+						>Save a copy</Button
 					>
 				{:else}
-					<Button icon="save" variant="secondary" small on:click={saveArea}
-						>Save area</Button
+					<Button
+						icon="save"
+						variant="secondary"
+						small
+						on:click={() => saveArea({ switchModals: true })}>Save area</Button
 					>
 				{/if}
 			</div>
