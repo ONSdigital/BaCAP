@@ -1,6 +1,6 @@
 import { csvParse } from "d3-dsv";
 import { get, set, update } from "./db.js";
-import { ascending } from "./data-utils.js";
+import { ascending, round } from "./data-utils.js";
 
 const maxRequestLength = 15_700;
 const maxResponseCells = 25_000;
@@ -13,13 +13,17 @@ function makeCells(categories) {
 		.join(",");
 }
 
+function filterMeasures(measures) {
+	return measures.filter((m) => m.cell);
+}
+
 function makeUrlFn(table) {
 	const base = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?`;
 
 	const params = {
 		date: table.dates,
 		...(table.cellCode ? { [table.cellCode]: makeCells(table.categories) } : {}),
-		measures: table.measures.map((d) => d.cell),
+		measures: filterMeasures(table.measures).map((d) => d.cell),
 		select: [
 			"geography_name",
 			"date",
@@ -41,7 +45,8 @@ function makeUrlFn(table) {
 
 function getMaxAreaCodes(table) {
 	const maxGeoDimSize = Math.floor(
-		maxResponseCells / (table.categories.length * table.dates.length * table.measures.length)
+		maxResponseCells /
+			(table.categories.length * table.dates.length * filterMeasures(table.measures).length)
 	);
 	console.log({ maxGeoDimSize });
 	return maxGeoDimSize;
@@ -100,7 +105,9 @@ function makeCategoryLookup(categories) {
 
 function makeRowParser(table) {
 	const categoryLookup = table.categories[0].cells ? makeCategoryLookup(table.categories) : null;
-	const measureLookup = Object.fromEntries(table.measures.map((d) => [d.cell, d.label]));
+	const measureLookup = Object.fromEntries(
+		filterMeasures(table.measures).map((d) => [d.cell, d.label])
+	);
 	const categoryCol = table.cellCode?.toUpperCase?.();
 	const categoryNameCol = categoryCol + "_NAME";
 	const getCategory = categoryLookup
@@ -123,18 +130,40 @@ function makeRowSorter(table, areas) {
 		areas.map((d, i) => [d?.properties?.areanm || `Custom Area ${i}`, i])
 	);
 	const areaSorter = (a, b) => areaLookup[a] - areaLookup[b];
+	const measureLookup = Object.fromEntries(table.measures.map((d, i) => [d.label, i]));
+	const measureSorter = (a, b) => measureLookup[a] - measureLookup[b];
 
 	return (a, b) =>
 		areaSorter(a.areanm, b.areanm) ||
 		ascending(a.date, b.date) ||
 		catSorter(a.category, b.category) ||
-		ascending(a.measure, b.measure);
+		measureSorter(a.measure, b.measure);
 }
 
 function parseData(table, areas, csvString) {
 	const rowParser = makeRowParser(table);
 	const rowSorter = makeRowSorter(table, areas);
 	return csvParse(csvString, rowParser).sort(rowSorter);
+}
+
+function calcPercentages(data) {
+	const indexed = {};
+	for (const d of data) {
+		const key = `${d.areanm}_${d.date}`;
+		if (!indexed[key]) indexed[key] = { rows: [], total: 0 };
+		indexed[key].rows.push(d);
+		indexed[key].total += d.value;
+	}
+	const newData = [];
+	for (const group of Object.values(indexed)) {
+		for (const row of group.rows) {
+			const newRow = { ...row };
+			newRow.measure = "Percent";
+			newRow.value = round(100 * (row.value / group.total), 1);
+			newData.push(row, newRow);
+		}
+	}
+	return newData;
 }
 
 const maxCacheSize = 1000; // Number of cached URLs stored in local IndexedDB
@@ -160,7 +189,7 @@ async function getCache(key) {
 export default async function getData(table, areas) {
 	if (!table || !areas[0]) return null;
 
-	const data = [];
+	let data = [];
 	const urls = makeUrls(table, areas);
 
 	for (const url of urls) {
@@ -178,5 +207,8 @@ export default async function getData(table, areas) {
 			}
 		}
 	}
+	const percentMeasure = table.measures.find((d) => d.label === "Percent");
+	if (percentMeasure && !percentMeasure.cell) data = calcPercentages(data);
+
 	return { meta: table, data };
 }

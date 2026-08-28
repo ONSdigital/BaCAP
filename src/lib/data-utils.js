@@ -8,6 +8,11 @@ export function descending(a, b) {
 	return b < a ? -1 : b > a ? 1 : 0;
 }
 
+export function round(val, dp = 0) {
+	const multiplier = Math.pow(10, dp);
+	return Math.round(val * multiplier) / multiplier;
+}
+
 export function makeEmbedHash(
 	tables,
 	buildState,

@@ -74,7 +74,7 @@
 		"cellCode": "c_age",
 		"measures": [
 			{ "label": "Value", "cell": 20100 },
-			{ "label": "Percent", "cell": 20301 }
+			{ "label": "Percent", "cell": null }
 		],
 		"categories": [
 			{ "label": "Aged 0 to 4", "cells": [1] },
@@ -117,7 +117,7 @@
 		"cellCode": "gender",
 		"measures": [
 			{ "label": "Value", "cell": 20100 },
-			{ "label": "Percent", "cell": 20301 }
+			{ "label": "Percent", "cell": null }
 		],
 		"categories": [
 			{ "label": "Female", "cells": [2] },
