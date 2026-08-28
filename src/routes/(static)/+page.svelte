@@ -15,7 +15,7 @@
 	let { data } = $props();
 
 	let headerBackground = $state(
-		`var(--ons-color-hero-bg) right -40px top / auto 100% no-repeat url("${resolve("/img/banner-image.svg")}")`
+		`var(--ons-color-hero-bg) right 80px top / auto 100% no-repeat url("${resolve("/img/banner-image.svg")}")`
 	);
 </script>
 
