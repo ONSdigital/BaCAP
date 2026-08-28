@@ -84,9 +84,9 @@
 		give you numbers that best represent the area you selected.
 	</p>
 	<Notice>
-		Whilst most datasets in this tool are available down to the smallest Output Area (or OA)
-		level, some datasets are only available down to an LSOA level. We advise caution when
-		comparing values between OA and LSOA datasets.
+		Whilst most datasets in this tool are available down to the smallest Output Area (OA) level,
+		some datasets are only available down to an Lower-layer Super Output Area (LSOA) level. We
+		advise caution when comparing values between OA and LSOA datasets.
 	</Notice>
 </Section>
 

@@ -83,9 +83,10 @@
 >
 <Details title="Show actual best-fit boundaries" cls="ons-u-mt-s ons-u-mb-s">
 	<p>
-		Some datasets are aggregated from Output Areas &mdash; the smallest statistical geography
-		&mdash; whereas others are based on larger LSOAs. The map below compares your selected
-		geographic boundary with the actual underlying statistical areas available in the datasets.
+		Some datasets are aggregated from Output Areas (OAs) &mdash; the smallest statistical
+		geography &mdash; whereas others are based on larger Lower-layer Super Output Areas (LSOAs).
+		The map below compares your selected geographic boundary with the actual underlying
+		statistical areas available in the datasets.
 	</p>
 	<p>
 		If the two best-fit boundaries do not match, we advise caution in comparing values from

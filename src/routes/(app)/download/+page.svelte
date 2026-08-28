@@ -216,7 +216,7 @@
 				<Button type="submit" disabled={!activeParentArea} small>Select area</Button>
 			</form>
 		</Card>
-		{#if childTypes?.length}
+		{#if selectedParentArea && childTypes?.length}
 			<Card title="3. Select child area type" cls="ons-text-indent">
 				<Radios
 					id="area-group"
@@ -228,7 +228,7 @@
 				/>
 				<Checkbox
 					cls="ons-u-mt-s"
-					label="Include parent area in selection"
+					label="Include {selectedParentArea?.label} in selection"
 					bind:checked={includeParent}
 					compact
 				/>

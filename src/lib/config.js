@@ -29,7 +29,7 @@ export const postcodesUrl =
 export const lookupUrl = `https://ons-dp-prod-cdn.s3.eu-west-2.amazonaws.com/maptiles/area-lookup/v1`;
 
 export const geotypes = [
-	{ codes: ["E00", "W00"], label: "Output area" },
+	{ codes: ["E00", "W00"], label: "Output Area" },
 	{ codes: ["E01", "W01"], label: "LSOA" },
 	{ codes: ["E02", "W02"], label: "MSOA" },
 	{ codes: ["E04"], label: "Census merged parish" },
