@@ -1,7 +1,7 @@
 <script>
 	import { Input } from "@onsvisual/svelte-components";
 	import Slider from "./Slider.svelte";
-	import { focusChildInput } from "$lib/utils.js";
+	import { focusChildInput } from "$lib/js/utils";
 
 	let {
 		min = 0.1,

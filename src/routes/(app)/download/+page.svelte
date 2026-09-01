@@ -21,10 +21,9 @@
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import EditModal from "$lib/ui/EditModal.svelte";
-	import { downloadDatasetCSV, downloadDatasetXLSX } from "$lib/utils.js";
-	import { geogroups, measures } from "$lib/config.js";
-	import getData from "$lib/get-data.js";
-	import { pivotDataOnMeasures } from "$lib/data-utils.js";
+	import { downloadDatasetCSV, downloadDatasetXLSX } from "$lib/js/io";
+	import { geogroups, measures } from "$lib/js/config";
+	import { getData, pivotDataOnMeasures } from "$lib/js/data";
 
 	const width = "wider";
 	const columns = [

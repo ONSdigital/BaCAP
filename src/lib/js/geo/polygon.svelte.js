@@ -1,7 +1,7 @@
 import bbox from "@turf/bbox";
 import union from "@turf/union";
 import difference from "@turf/difference";
-import { getGeometry, feature, featureCollection } from "./geo.svelte.js";
+import { getGeometry, feature, featureCollection } from "./index.js";
 
 export default class Polygon {
 	geometry = $state(null);

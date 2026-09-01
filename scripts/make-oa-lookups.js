@@ -1,5 +1,5 @@
 import { writeFileSync } from "node:fs";
-import { geogroups } from "../src/lib/config.js";
+import { geogroups } from "../src/lib/config";
 
 const keys = ["oa", "lsoa"];
 const codes = geogroups

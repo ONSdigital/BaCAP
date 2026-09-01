@@ -1,7 +1,7 @@
 <script>
 	import { onMount, setContext } from "svelte";
 	import Spinner from "$lib/ui/Spinner.svelte";
-	import { appVersion } from "$lib/config.js";
+	import { appVersion } from "$lib/js/config";
 	import {
 		getStoredAppVersion,
 		getAreasList,
@@ -9,9 +9,9 @@
 		getChildLookup,
 		getOAdata,
 		getLSOAcentroids
-	} from "$lib/utils.js";
-	import getAppState from "$lib/app-state.svelte.js";
-	import Centroids from "$lib/centroids.js";
+	} from "$lib/js/io";
+	import { getAppState } from "$lib/js/state";
+	import { Centroids } from "$lib/js/geo";
 
 	let { children } = $props();
 

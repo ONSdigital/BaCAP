@@ -13,7 +13,7 @@
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import SaveModal from "$lib/ui/SaveModal.svelte";
-	import { sleep } from "$lib/utils.js";
+	import { sleep } from "$lib/js/utils";
 
 	let {
 		appState = $bindable(),

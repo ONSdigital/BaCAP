@@ -8,7 +8,7 @@
 		featureCollection,
 		parseGeoJSON,
 		getCodeKey
-	} from "$lib/geo.svelte.js";
+	} from "$lib/js/geo";
 
 	let {
 		activeArea = $bindable(),

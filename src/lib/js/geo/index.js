@@ -2,7 +2,13 @@ import bbox from "@turf/bbox";
 import simplify from "@turf/simplify";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
-import { roundAll, download, slugify } from "$lib/utils.js";
+import { roundAll, slugify } from "../utils";
+import { download } from "../io";
+import { snapshot } from "../state";
+
+export { default as Centroids } from "./centroids.js";
+export { default as MaplibreDraw } from "./draw-lib.js";
+export { default as Polygon } from "./polygon.svelte.js";
 
 export function feature(geometry, properties = {}) {
 	return { type: "Feature", geometry, properties };
@@ -114,7 +120,7 @@ export function simplifyGeo(geometry, maxLength = 5000) {
 }
 
 export function makeSavedArea(activeArea, current, centroids, id = null) {
-	const area = $state.snapshot(activeArea);
+	const area = snapshot(activeArea);
 	if (id) area.id = id;
 	area.geometry = current.geometry;
 	if (!area.properties.group) area.properties.group = "Custom areas";

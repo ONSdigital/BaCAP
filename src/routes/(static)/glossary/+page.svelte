@@ -2,7 +2,7 @@
 	import { resolve } from "$app/paths";
 	import markdownit from "markdown-it";
 	import { Icon, Hero, NavSections, NavSection } from "@onsvisual/svelte-components";
-	import { slugify } from "$lib/utils.js";
+	import { slugify } from "$lib/js/utils";
 
 	let { data } = $props();
 

@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import { get, set } from "./db.js";
-import { initialState, appVersion } from "./config.js";
+import snapshot from "./snapshot.svelte.js";
+import { initialState, appVersion } from "../config";
 
 function syncState(key, val) {
 	console.log(`Syncing state: ${key}`, val);
@@ -14,7 +15,7 @@ function syncedStore(key, initialValue = null) {
 		subscribe,
 		set: (val) => {
 			set(val);
-			syncState(key, $state.snapshot(val));
+			syncState(key, snapshot(val));
 		},
 		update
 	};

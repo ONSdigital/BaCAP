@@ -7,8 +7,8 @@
 		Checkbox,
 		Icon
 	} from "@onsvisual/svelte-components";
-	import { initialState } from "$lib/config.js";
-	import { slugify } from "$lib/utils.js";
+	import { initialState } from "$lib/js/config";
+	import { slugify } from "$lib/js/utils";
 
 	let { buildState, topics, selectedTopics = $bindable() } = $props();
 

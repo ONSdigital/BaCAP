@@ -4,8 +4,8 @@
 	import BuildAreas from "./BuildAreas.svelte";
 	import BuildTopics from "./BuildTopics.svelte";
 	import BuildProfile from "./BuildProfile.svelte";
-	import { geoUrl } from "$lib/config.js";
-	import { parseGeoJSON, isValidAreaCode } from "$lib/geo.svelte.js";
+	import { geoUrl } from "$lib/js/config";
+	import { parseGeoJSON, isValidAreaCode } from "$lib/js/geo";
 
 	let { data } = $props();
 

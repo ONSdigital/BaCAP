@@ -1,6 +1,6 @@
 import { csvParse } from "d3-dsv";
-import { get, set, update } from "./db.js";
-import { ascending, round } from "./data-utils.js";
+import { get, set, update } from "../state";
+import { ascending, round } from "../utils";
 
 const maxRequestLength = 15_700;
 const maxResponseCells = 25_000;

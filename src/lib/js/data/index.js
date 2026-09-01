@@ -1,35 +1,7 @@
-import { measures } from "./config.js";
+import { measures } from "../config";
+import { btoaUtf8 } from "../io";
 
-export function ascending(a, b) {
-	return a < b ? -1 : a > b ? 1 : 0;
-}
-
-export function descending(a, b) {
-	return b < a ? -1 : b > a ? 1 : 0;
-}
-
-export function round(val, dp = 0) {
-	const multiplier = Math.pow(10, dp);
-	return Math.round(val * multiplier) / multiplier;
-}
-
-export function btoaUtf8(value) {
-	const bytes = new TextEncoder().encode(value);
-	let binary = "";
-
-	for (let i = 0; i < bytes.length; i += 0x8000) {
-		binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-	}
-
-	return btoa(binary);
-}
-
-export function atobUtf8(value) {
-	const binary = atob(value);
-	const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
-
-	return new TextDecoder().decode(bytes);
-}
+export { default as getData } from "./get-data.js";
 
 export function makeEmbedHash(
 	tables,
@@ -98,4 +70,18 @@ export function pivotDataOnMeasures(data) {
 		rows[rowId][col] = d.value;
 	}
 	return Object.values(rows);
+}
+
+export function groupData(data, key) {
+	let dataIndexed = {};
+	for (const d of data) {
+		if (!dataIndexed[d[key]]) {
+			dataIndexed[d[key]] = {
+				label: d[key],
+				values: []
+			};
+		}
+		dataIndexed[d[key]].values.push(d);
+	}
+	return Object.values(dataIndexed);
 }

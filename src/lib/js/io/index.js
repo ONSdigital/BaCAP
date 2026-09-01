@@ -1,13 +1,36 @@
 import { resolve } from "$app/paths";
 import { csvFormat, csvFormatRows, csvFormatBody } from "d3-dsv";
 import accessibleXLSX from "@onsvisual/accessible-xlsx";
-import { get, set } from "./db.js";
 import { decompressData } from "compress-csv-to-json";
-import { geotypesLookup } from "./config.js";
-import { getName, makeFilename } from "./geo.svelte.js";
-import { makeDateFormatter } from "./data-utils.js";
+import { get, set } from "../state";
+import { geotypesLookup } from "../config";
+import { getName, makeFilename } from "../geo";
+import { makeDateFormatter } from "../data";
 
 const utf8BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
+
+export function btoaUtf8(value) {
+	const bytes = new TextEncoder().encode(value);
+	let binary = "";
+
+	for (let i = 0; i < bytes.length; i += 0x8000) {
+		binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+	}
+
+	return btoa(binary);
+}
+
+export function atobUtf8(value) {
+	const binary = atob(value);
+	const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+
+	return new TextDecoder().decode(bytes);
+}
+
+export async function getStoredAppVersion() {
+	const version = await get("appVersion");
+	return version || null;
+}
 
 async function loadData(key, path, forceRefresh = false, decompressFn = null) {
 	const val = !forceRefresh ? await get(key) : null;
@@ -68,53 +91,6 @@ export async function getLSOAcentroids(forceRefresh) {
 		lat: d[2][i]
 	});
 	return await loadData("lsoaCentroids", "/data/lsoa21-centroids.json", forceRefresh, fn);
-}
-
-export async function getStoredAppVersion() {
-	const version = await get("appVersion");
-	return version || null;
-}
-
-export function sleep(ms = 0) {
-	return new Promise((resolve) => setInterval(() => resolve(), ms));
-}
-
-export function slugify(str) {
-	return str.toLowerCase().replaceAll(" ", "-");
-}
-
-export function round(num, precision = 0) {
-	const multiplier = Math.pow(10, precision);
-	return Math.round(num * multiplier) / multiplier;
-}
-
-// Recursive function to round numbers in a multi-array (used to round coordinates)
-export function roundAll(arr, decimals) {
-	let newarr = [];
-	arr.forEach((d) => {
-		if (typeof d == "number") {
-			newarr.push(round(d, decimals));
-		} else if (Array.isArray(d)) {
-			newarr.push(roundAll(d, decimals));
-		} else {
-			newarr.push(d);
-		}
-	});
-	return newarr;
-}
-
-export function groupData(data, key) {
-	let dataIndexed = {};
-	for (const d of data) {
-		if (!dataIndexed[d[key]]) {
-			dataIndexed[d[key]] = {
-				label: d[key],
-				values: []
-			};
-		}
-		dataIndexed[d[key]].values.push(d);
-	}
-	return Object.values(dataIndexed);
 }
 
 export function download(blob, filename) {
@@ -245,9 +221,4 @@ export function downloadDatasetCSV(table, data, columns) {
 		);
 	const blob = new Blob([utf8BOM, csv], { type: "text/csv;charset=utf-8;" });
 	download(blob, `${slugify(table.label)}.csv`);
-}
-
-export function focusChildInput(el) {
-	const input = el.getElementsByTagName("input")?.[0];
-	if (input) input.focus();
 }

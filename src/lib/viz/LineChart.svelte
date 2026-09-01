@@ -1,6 +1,6 @@
 <script>
 	import { scaleLinear, scalePoint } from "d3-scale";
-	import { ascending } from "$lib/data-utils.js";
+	import { ascending } from "$lib/js/utils";
 
 	let {
 		data,
