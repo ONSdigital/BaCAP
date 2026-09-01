@@ -1,9 +1,9 @@
 <script>
 	import { onMount, getContext } from "svelte";
 	import { Grid, GridCell, Button, Notice } from "@onsvisual/svelte-components";
-	import BuildAreas from "$lib/ui/BuildAreas.svelte";
-	import BuildTopics from "$lib/ui/BuildTopics.svelte";
-	import BuildProfile from "$lib/ui/BuildProfile.svelte";
+	import BuildAreas from "./BuildAreas.svelte";
+	import BuildTopics from "./BuildTopics.svelte";
+	import BuildProfile from "./BuildProfile.svelte";
 	import { geoUrl } from "$lib/config.js";
 	import { parseGeoJSON, isValidAreaCode } from "$lib/geo.svelte.js";
 

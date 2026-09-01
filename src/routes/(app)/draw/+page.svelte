@@ -4,9 +4,9 @@
 	import { Container, Button } from "@onsvisual/svelte-components";
 	import { geoUrl } from "$lib/config.js";
 	import { isValidAreaCode, parseGeoJSON } from "$lib/geo.svelte.js";
-	import DrawToolbar from "$lib/ui/DrawToolbar.svelte";
-	import DrawMap from "$lib/ui/DrawMap.svelte";
-	import DrawCounter from "$lib/ui/DrawCounter.svelte";
+	import DrawToolbar from "./DrawToolbar.svelte";
+	import DrawMap from "./DrawMap.svelte";
+	import DrawCounter from "./DrawCounter.svelte";
 
 	let drawState = $state({
 		drawMode: "simple_select",

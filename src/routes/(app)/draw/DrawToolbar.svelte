@@ -9,10 +9,10 @@
 		ToolControl,
 		Button
 	} from "@onsvisual/svelte-components";
-	import SliderCombo from "./SliderCombo.svelte";
-	import AreaSearch from "./AreaSearch.svelte";
-	import LoadModal from "./LoadModal.svelte";
-	import SaveModal from "./SaveModal.svelte";
+	import SliderCombo from "$lib/ui/SliderCombo.svelte";
+	import AreaSearch from "$lib/ui/AreaSearch.svelte";
+	import LoadModal from "$lib/ui/LoadModal.svelte";
+	import SaveModal from "$lib/ui/SaveModal.svelte";
 	import { sleep } from "$lib/utils.js";
 
 	let {
