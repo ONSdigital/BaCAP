@@ -1,5 +1,4 @@
 <script>
-	// import tooltip from "$lib/ui/tooltip";
 	import { groupData } from "$lib/utils.js";
 
 	let {
@@ -10,6 +9,7 @@
 		formatTick = (num) => num.toFixed(1),
 		height = 100,
 		markerWidth = 2.5,
+		barGap = 2,
 		minmax = ["0 years", "85+"],
 		base = null,
 		baseExt = ", 5 year age bands",
@@ -23,7 +23,21 @@
 
 	let dataStacked = $derived(groupData(data, zKey));
 
-	$inspect({ data, dataStacked });
+	function dodgeTooltip(el) {
+		const margin = 6;
+		const rect = el.getBoundingClientRect();
+		const parent = el.closest(".bar-group");
+		if (!parent) return;
+		const parentRect = parent.getBoundingClientRect();
+		const offset = rect.width / 2;
+		const leftDiff = rect.left - parentRect.left + margin;
+		const rightDiff = rect.right - parentRect.right - margin + barGap;
+		const translateX =
+			rightDiff > offset ? `-${rightDiff}px` : leftDiff > offset ? "-50%" : `-${leftDiff}px`;
+		el.style.transform = `translateX(${translateX})`;
+	}
+
+	// $inspect({ data, dataStacked });
 </script>
 
 <div class="profile-chart" aria-hidden="true">
@@ -43,18 +57,27 @@
 
 	<div class="bar-group" style:height="{height}px">
 		{#each dataStacked as stack, i}
-			{#if i == 0}
+			{#if i === 0}
 				{#each stack.values as d, j}
 					<div
-						title="{d[xKey]}: {formatTick(d[yKey])}{suffix}{zDomain[1]
-							? ` (${formatTick(dataStacked[i + 1].values[j][yKey])}${suffix})`
-							: ''}"
 						class="bar"
 						style:bottom="0"
 						style:height="{yScale(d[yKey])}%"
 						style:left="calc({(j / xDomain.length) * 100}%)"
-						style:right="calc({(1 - (j + 1) / xDomain.length) * 100}% + 2px)"
-					></div>
+						style:right="calc({(1 - (j + 1) / xDomain.length) * 100}% + {barGap}px)"
+					>
+						<div class="tooltip-arrow"></div>
+						<div
+							class="tooltip"
+							style:top="calc(100% + 8px)"
+							style:left="50%"
+							use:dodgeTooltip
+						>
+							{d[xKey]}: {d[yKey]}{suffix}{dataStacked[1]
+								? ` (${dataStacked[1].values[j][yKey]}${suffix})`
+								: ""}
+						</div>
+					</div>
 				{/each}
 			{:else}
 				{#each stack.values as d, j}
@@ -63,7 +86,7 @@
 						style:bottom="calc({yScale(d[yKey])}% - {markerWidth / 2}px)"
 						style:height="0px"
 						style:left="{(j / xDomain.length) * 100}%"
-						style:width="calc({(1 / xDomain.length) * 100}% - 2px)"
+						style:width="calc({(1 / xDomain.length) * 100}% - {barGap}px)"
 						style:border-bottom-width="{markerWidth}px"
 					></div>
 				{/each}
@@ -71,7 +94,7 @@
 		{/each}
 	</div>
 
-	<div class="x-scale" style:height="1rem">
+	<div class="x-scale" style:width="calc(100% - {barGap}px)">
 		<div style:left="0">{minmax[0]}</div>
 		<div style:right="0">{minmax[1]}</div>
 	</div>
@@ -99,13 +122,13 @@
 	.x-scale {
 		display: block;
 		position: relative;
-		width: calc(100% + 2px);
 	}
 	.x-scale {
 		position: relative;
 		border-top: 1.5px solid #555;
 		font-size: 0.9rem;
 		width: 100%;
+		height: 1rem;
 	}
 	.bar-group > div {
 		position: absolute;
@@ -121,6 +144,32 @@
 		background-color: #27a0cc !important;
 		-webkit-print-color-adjust: exact !important;
 		print-color-adjust: exact !important;
+	}
+	.tooltip {
+		position: absolute;
+		visibility: hidden;
+		top: 100%;
+		font-size: 14px;
+		line-height: 1.4;
+		white-space: nowrap;
+		color: var(--ons-color-page-light);
+		background: var(--ons-color-text);
+		padding: 4px 6px;
+		border-radius: 4px;
+	}
+	.tooltip-arrow {
+		position: absolute;
+		visibility: hidden;
+		top: calc(100% + 4px);
+		left: 50%;
+		transform: translateX(-50%) rotate(45deg);
+		width: 10px;
+		height: 10px;
+		background: var(--ons-color-text);
+	}
+	.bar:hover > .tooltip,
+	.bar:hover > .tooltip-arrow {
+		visibility: visible;
 	}
 	.marker {
 		border-bottom: 2.5px solid black;
