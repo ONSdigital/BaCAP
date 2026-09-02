@@ -25,7 +25,7 @@ function makeUrlFn(table) {
 		...(table.cellCode ? { [table.cellCode]: makeCells(table.categories) } : {}),
 		measures: filterMeasures(table.measures).map((d) => d.cell),
 		select: [
-			"geography_name",
+			"geography_code",
 			"date",
 			...(table.cellCode ? [table.cellCode] : []),
 			...(table.cellCode ? [`${table.cellCode}_name`] : []),
@@ -52,13 +52,25 @@ function getMaxAreaCodes(table) {
 	return maxGeoDimSize;
 }
 
+// Adds unique area codes for non-GSS geographies
+function fillAreaCodes(areas) {
+	let i = 1;
+	for (const area of areas) {
+		if (!area.properties?.areacd) {
+			area.properties.areacd = "X" + String(i).padStart(8, "0");
+			i++;
+		}
+	}
+	return areas;
+}
+
 function makeGeo(area, codes, i) {
 	const areacd = area?.properties?.areacd || null;
 	if (codes[0] === areacd) return areacd;
-	const areanm = area?.properties?.areanm || `Custom Area ${i}`;
-	return `MAKE|${areanm}|${codes.join(";")}`;
+	return `MAKE|${area.properties.areacd}|${codes.join(";")}`;
 }
 
+// Chunks a request into URLs that will not exceed Nomis limits
 function makeUrls(table, areas) {
 	const urlFn = makeUrlFn(table);
 	const geoKey = `${table.geography}cds`;
@@ -68,6 +80,8 @@ function makeUrls(table, areas) {
 	let geosLength = 0;
 	let geos = [];
 	const urls = [];
+
+	console.log({ areas });
 
 	for (let i = 0; i < areas.length; i++) {
 		const area = areas[i];
@@ -103,10 +117,13 @@ function makeCategoryLookup(categories) {
 	return lookup;
 }
 
-function makeRowParser(table) {
+function makeRowParser(table, areas) {
 	const categoryLookup = table.categories[0].cells ? makeCategoryLookup(table.categories) : null;
 	const measureLookup = Object.fromEntries(
 		filterMeasures(table.measures).map((d) => [d.cell, d.label])
+	);
+	const nameLookup = Object.fromEntries(
+		areas.map((d) => [d.properties.areacd, d.properties.areanm])
 	);
 	const categoryCol = table.cellCode?.toUpperCase?.();
 	const categoryNameCol = categoryCol + "_NAME";
@@ -114,7 +131,8 @@ function makeRowParser(table) {
 		? (d) => categoryLookup[d[categoryCol]] || categoryLookup[d[categoryNameCol]]
 		: () => table.categories[0].label;
 	return (d) => ({
-		areanm: d.GEOGRAPHY_NAME,
+		areacd: d.GEOGRAPHY_CODE,
+		areanm: nameLookup[d.GEOGRAPHY_CODE],
 		date: d.DATE,
 		category: getCategory(d),
 		measure: measureLookup[d.MEASURES],
@@ -126,22 +144,20 @@ function makeRowSorter(table, areas) {
 	// Force categories and areas to match the requested order
 	const catLookup = Object.fromEntries(table.categories.map((d, i) => [d.label, i]));
 	const catSorter = (a, b) => catLookup[a] - catLookup[b];
-	const areaLookup = Object.fromEntries(
-		areas.map((d, i) => [d?.properties?.areanm || `Custom Area ${i}`, i])
-	);
+	const areaLookup = Object.fromEntries(areas.map((d, i) => [d.properties.areacd, i]));
 	const areaSorter = (a, b) => areaLookup[a] - areaLookup[b];
 	const measureLookup = Object.fromEntries(table.measures.map((d, i) => [d.label, i]));
 	const measureSorter = (a, b) => measureLookup[a] - measureLookup[b];
 
 	return (a, b) =>
-		areaSorter(a.areanm, b.areanm) ||
+		areaSorter(a.areacd, b.areacd) ||
 		ascending(a.date, b.date) ||
 		catSorter(a.category, b.category) ||
 		measureSorter(a.measure, b.measure);
 }
 
 function parseData(table, areas, csvString) {
-	const rowParser = makeRowParser(table);
+	const rowParser = makeRowParser(table, areas);
 	const rowSorter = makeRowSorter(table, areas);
 	return csvParse(csvString, rowParser).sort(rowSorter);
 }
@@ -190,6 +206,7 @@ export default async function getData(table, areas) {
 	if (!table || !areas[0]) return null;
 
 	let data = [];
+	areas = fillAreaCodes(areas);
 	const urls = makeUrls(table, areas);
 
 	for (const url of urls) {
@@ -207,6 +224,7 @@ export default async function getData(table, areas) {
 			}
 		}
 	}
+	// Calculate percentages if they cannot be provided by Nomis
 	const percentMeasure = table.measures.find((d) => d.label === "Percent");
 	if (percentMeasure && !percentMeasure.cell) data = calcPercentages(data);
 
