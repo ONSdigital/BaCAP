@@ -60,7 +60,7 @@
 		return "M" + series.map((d) => `${xScale(d.x)} ${yScale(d.y)}`).join("L");
 	});
 
-	$inspect({ data });
+	$inspect({ _data });
 </script>
 
 <ul class="legend-block">
@@ -81,7 +81,7 @@
 
 <div class="chart-block">
 	<div class="line-group" style:height="{height}px">
-		<div class="baseline" style:top="{yScale(1)}%"></div>
+		<div class="baseline" style:top="{yScale(1)}px"></div>
 		<div class="x-scale" style:height="1rem">
 			<div>{dateFormat(xDomain[0])}</div>
 			<div class="tick-right">{dateFormat(xDomain[xDomain.length - 1])}</div>
@@ -158,7 +158,7 @@
 		position: absolute;
 		left: 0;
 		width: 100%;
-		border-top: 1.5px solid #555;
+		border-top: 1px solid #555;
 	}
 	.x-scale {
 		position: absolute;
