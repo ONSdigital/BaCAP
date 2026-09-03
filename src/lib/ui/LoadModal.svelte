@@ -48,7 +48,7 @@
 	}
 
 	function loadNewArea(area) {
-		$activeArea = parseGeoJSON(area, centroids);
+		$activeArea = parseGeoJSON(area, centroids, loadedAreas?.isBNG);
 		updateSelection($activeArea);
 		modal.confirmDialog();
 		loadedAreas = { status: null };
@@ -63,13 +63,13 @@
 			: Object.values($savedAreas).find((d) => d.properties.areacd === code)?.id || null;
 	}
 
-	function saveNewArea(area) {
+	function saveNewArea(area, isBNG) {
 		let id = overwriteAreas ? findMatchId(area) : null;
 		if (!id) {
 			$savedAreasLastId += 1;
 			id = $savedAreasLastId;
 		}
-		const parsedArea = parseGeoJSON(area, centroids);
+		const parsedArea = parseGeoJSON(area, centroids, loadedAreas?.isBNG);
 		parsedArea.id = id;
 		if (!parsedArea.properties.group) parsedArea.properties.group = "Uploaded areas";
 		$savedAreas[id] = parsedArea;
@@ -90,10 +90,6 @@
 	function toggleSelectAll() {
 		if (selectAll) loadedAreas.selected = loadedAreas.selected.map(() => true);
 		else loadedAreas.selected = loadedAreas.selected.map(() => false);
-	}
-
-	function getTooltipPos(areas, i) {
-		return areas.length > 1 && i === areas.length - 1 ? "top" : "bottom";
 	}
 </script>
 
@@ -226,8 +222,8 @@
 				>
 				<div>
 					<small
-						>*GeoJSON files must be saved using the WGS 84 (longitude/latitude)
-						coordinate reference system.</small
+						>*GeoJSON files must be saved using WGS 84 (longitude/latitude) or British
+						National Grid coordinates.</small
 					>
 				</div>
 			{/if}

@@ -2,6 +2,7 @@ import bbox from "@turf/bbox";
 import simplify from "@turf/simplify";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
+import proj4 from "proj4";
 import { roundAll, slugify } from "../utils";
 import { download } from "../io";
 import { snapshot } from "../state";
@@ -30,6 +31,50 @@ export function getGeometry(geojson) {
 	return geometry;
 }
 
+export function isValidBBOX(bbox) {
+	return (
+		bbox[0] >= -180 &&
+		bbox[0] <= 180 &&
+		bbox[1] >= -90 &&
+		bbox[1] <= 90 &&
+		bbox[2] >= -180 &&
+		bbox[2] <= 180 &&
+		bbox[3] >= -90 &&
+		bbox[3] <= 90
+	);
+}
+
+export function projectAll(coords, proj) {
+	let newCoords = [];
+	for (const d of coords) {
+		if (typeof d?.[0] === "number") {
+			newCoords.push(proj.inverse(d));
+		} else if (Array.isArray(d)) {
+			newCoords.push(projectAll(d, proj));
+		} else {
+			throw Error("Invalid GeoJSON coordinates");
+		}
+	}
+	return newCoords;
+}
+
+proj4.defs(
+	// British National Grid
+	"EPSG:27700",
+	// Helmert transform, ~5m accuracy
+	"+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 " +
+		"+x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs " +
+		"+towgs84=446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894"
+);
+
+// Converts British National Grid coordinates to WGS84
+function toWgs84(geometry) {
+	return {
+		type: geometry.type,
+		coordinates: projectAll(geometry.coordinates, proj4("EPSG:27700"))
+	};
+}
+
 export function getProperties(geojson) {
 	return geojson.properties
 		? geojson.properties
@@ -41,29 +86,30 @@ export function getProperties(geojson) {
 export function getNameKey(keys) {
 	const prefs = ["areanm", "name", "areacd"];
 	for (const pref of prefs) {
-		const match = keys.find((key) => key.toLowerCase() === pref);
+		const match = keys.find((key) => key.toLowerCase().includes(pref));
 		if (match) return match;
 	}
 	return null;
 }
 
 export function getCodeKey(keys) {
-	const prefs = ["areacd", "code"];
+	const prefs = ["areacd", "code", "id"];
 	for (const pref of prefs) {
-		const match = keys.find((key) => key.toLowerCase() === pref);
+		const match = keys.find((key) => key.toLowerCase().includes(pref));
 		if (match) return match;
 	}
 	return null;
 }
 
-export function parseGeoJSON(geojson, centroids) {
+export function parseGeoJSON(geojson, centroids, isBNG = false) {
 	if (!geojson.type) throw Error("Feature is not valid GeoJSON");
 
 	const props = getProperties(geojson);
 	if (props.areacd === "K04000001") props.oa21cds = props.lsoa21cds = ["E92000001", "W92000001"];
 
-	const geometry = getGeometry(geojson);
+	const geometry = isBNG ? toWgs84(getGeometry(geojson)) : getGeometry(geojson);
 	if (!geometry.bbox) geometry.bbox = props.bounds || bbox(geometry);
+	if (!isValidBBOX(geometry.bbox)) throw Error("Feature has invalid BBOX extents");
 
 	const areanm = props[getNameKey(Object.keys(props))] || null;
 	const areacd = props[getCodeKey(Object.keys(props))] || null;
@@ -86,7 +132,6 @@ export function parseGeoJSON(geojson, centroids) {
 					: centroids.compress(centroids.inPolygon(geometry, "lsoa")))
 		)
 	};
-	console.log({ props, properties });
 
 	return { type: "Feature", id: geojson.id || null, geometry, properties };
 }
@@ -157,9 +202,13 @@ export function uploadAreas(uploader) {
 				);
 				const status = !areas.length ? "empty" : areas.length > 1 ? "multi" : "single";
 				const keys = status === "empty" ? null : Object.keys(areas[0].properties);
+				const isBNG = String(data?.crs?.properties?.name)
+					.toUpperCase()
+					.includes("EPSG:27700");
 				resolve({
 					status,
 					areas,
+					isBNG,
 					selected: areas.map(() => false),
 					nameKey: keys ? getNameKey(keys) : null,
 					codeKey: keys ? getCodeKey(keys) : null
