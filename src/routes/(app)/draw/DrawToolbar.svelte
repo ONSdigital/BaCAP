@@ -7,7 +7,9 @@
 		ToolbarDivider,
 		ToolControls,
 		ToolControl,
-		Button
+		Button,
+		ButtonGroup,
+		ButtonGroupItem
 	} from "@onsvisual/svelte-components";
 	import SliderCombo from "$lib/ui/SliderCombo.svelte";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
@@ -25,6 +27,12 @@
 
 	let { history, rehistory, activeArea, savedAreas, savedAreasLastId } = appState;
 	let selectedArea = $state.raw(null);
+	let eraseOption = $state("polygon");
+	$effect(() => {
+		if (drawState.eraseMode) {
+			drawState.drawMode = eraseOption;
+		}
+	});
 
 	let loadModal = $state();
 	let saveModal = $state();
@@ -39,7 +47,10 @@
 				id="move"
 				icon="move"
 				label="Move and Pan"
-				on:click={() => (drawState.drawMode = "pan")}
+				on:click={() => {
+					drawState.drawMode = "pan";
+					drawState.eraseMode = false;
+				}}
 				sticky
 			>
 				<p>Left-click and hold anywhere on the map to move.</p>
@@ -49,7 +60,10 @@
 				id="polygon"
 				icon="polygon"
 				label="Draw a polygon"
-				on:click={() => (drawState.drawMode = "polygon")}
+				on:click={() => {
+					drawState.drawMode = "polygon";
+					drawState.eraseMode = false;
+				}}
 				hasAriaControls
 				sticky
 			>
@@ -63,7 +77,10 @@
 				id="circle"
 				icon="radius"
 				label="Draw a circle"
-				on:click={() => (drawState.drawMode = "radius")}
+				on:click={() => {
+					drawState.drawMode = "radius";
+					drawState.eraseMode = false;
+				}}
 				hasAriaControls
 				sticky
 			>
@@ -73,19 +90,20 @@
 				</p>
 			</ToolbarButton>
 
-			<ToolbarDivider />
-
 			<ToolbarButton
 				id="erase"
 				icon="erase"
-				label="Toggle erase mode"
-				bind:selected={drawState.eraseMode}
+				label="Erase mode"
+				on:click={() => {
+					drawState.eraseMode = true;
+					drawState.drawMode = eraseOption;
+				}}
 				hasAriaControls
-				toggle
+				sticky
 			>
 				<p>
-					Toggle erase mode. In erase mode, if you draw a polygon or radius, it will be
-					removed from your selection instead of added.
+					Using erase mode, you can remove a polygon or radius from your selection instead
+					of adding it.
 				</p>
 			</ToolbarButton>
 
@@ -156,12 +174,15 @@
 			<ToolControls slot="controls">
 				<ToolControl id="polygon">
 					<p>
-						Click or tap an area on the map to add a node to the shape. To apply a
-						shape, close it by clicking or tapping on the starting node.
+						Click or tap an area on the map to add a node to the shape. To add the shape
+						to your selection, close it by clicking or tapping on the starting node.
 					</p>
 				</ToolControl>
 				<ToolControl id="circle">
-					<p>Select a radius size and click or tap on the map to select an area.</p>
+					<p>
+						Select a radius size and click or tap on the map to add it to your
+						selection.
+					</p>
 					<SliderCombo
 						min={0.1}
 						max={20}
@@ -169,6 +190,31 @@
 						bind:value={drawState.radius}
 						autoFocus
 					/>
+				</ToolControl>
+				<ToolControl id="erase">
+					<ButtonGroup name="erase-modes" bind:value={eraseOption}>
+						<ButtonGroupItem value="polygon" label="Erase by polygon" />
+						<ButtonGroupItem value="radius" label="Erase by radius" />
+					</ButtonGroup>
+					{#if eraseOption === "polygon"}
+						<p>
+							Click or tap an area on the map to add a node to the shape. To remove
+							the shape to your selection, close it by clicking or tapping on the
+							starting node.
+						</p>
+					{:else}
+						<p>
+							Select a radius size and click or tap on the map to remove it from your
+							selection.
+						</p>
+						<SliderCombo
+							min={0.1}
+							max={20}
+							step={0.1}
+							bind:value={drawState.radius}
+							autoFocus
+						/>
+					{/if}
 				</ToolControl>
 				<ToolControl id="search">
 					<form
@@ -283,6 +329,9 @@
 	:global(.toolbar) {
 		pointer-events: all;
 		align-items: stretch !important;
+	}
+	:global(.tool-control .button-group) {
+		margin: 0 0 8px -4px;
 	}
 	#search-inputs {
 		margin-top: 6px;
