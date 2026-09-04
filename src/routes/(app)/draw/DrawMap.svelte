@@ -25,6 +25,12 @@
 		return mode === "polygon" ? "draw_polygon" : "simple_select";
 	}
 
+	function setCursor(mode) {
+		const cursor = mode === "pan" ? "grab" : "crosshair";
+		const canvas = document.querySelector("#map-container canvas");
+		if (canvas) canvas.style.cursor = cursor;
+	}
+
 	export async function applyShape(feature, mode = drawState.eraseMode ? "subtract" : "add") {
 		$lastActivePage = "draw";
 		const _feature = feature.geojson ? parseGeoJSON(feature.geojson, centroids) : feature;
@@ -57,6 +63,7 @@
 		draw?.deleteAll?.();
 		await sleep();
 		draw?.changeMode?.(getDrawMode(drawState.drawMode), {});
+		setCursor(drawState.drawMode);
 
 		$history = [{ ...codes, geometry: polygon.geometry }, ...$history].slice(0, 10);
 		$rehistory = [];
@@ -127,7 +134,10 @@
 	}
 
 	$effect(() => {
-		if (draw) draw.changeMode(getDrawMode(drawState.drawMode));
+		if (draw) {
+			draw.changeMode(getDrawMode(drawState.drawMode));
+			setCursor(drawState.drawMode);
+		}
 	});
 
 	$inspect({ codes });
