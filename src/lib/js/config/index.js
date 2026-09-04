@@ -1,4 +1,5 @@
 // APP STATE CONFIG
+export const baseUrl = "https://www.ons.gov.uk/visualisations/customprofiles";
 export const appVersion = 1;
 export const initialState = {
 	activeArea: {
