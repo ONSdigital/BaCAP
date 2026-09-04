@@ -71,10 +71,12 @@
 	}
 
 	function update() {
-		embedHash = document.location.hash.slice(1);
+		const embedHash = document.location.hash.slice(1);
 		if (embedHash.length) embedData = JSON.parse(atobUtf8(embedHash));
 	}
 	onMount(update);
+
+	$inspect({ embedData });
 </script>
 
 <svelte:window onhashchange={update} />
@@ -83,13 +85,12 @@
 	{#if embedData?.areas?.[0]}
 		<h1>
 			{embedData.areas[0]}
-			<!-- <small>(hash length {embedHash.length})</small> -->
 		</h1>
 	{/if}
 	<Grid cls="data-cards" width="medium" colWidth="narrow">
 		{#if embedData?.polygons?.[0]}
 			<Card title="Area map" mode="featured">
-				<AreaMap polygons={embedData.polygons} />
+				<AreaMap polygons={embedData.polygons} areas={embedData.areas} />
 			</Card>
 		{/if}
 		{#each tables as tab}
@@ -114,7 +115,6 @@
 			</Card>
 		{/each}
 	</Grid>
-	<!-- {JSON.stringify(tables)} -->
 </Embed>
 
 <style>
@@ -132,9 +132,5 @@
 	}
 	.card-footnote + .card-footnote {
 		margin-top: 0;
-	}
-	small {
-		font-size: 1rem;
-		font-weight: normal;
 	}
 </style>
