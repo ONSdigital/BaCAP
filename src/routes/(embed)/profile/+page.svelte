@@ -75,8 +75,6 @@
 		if (embedHash.length) embedData = JSON.parse(atobUtf8(embedHash));
 	}
 	onMount(update);
-
-	$inspect({ embedData });
 </script>
 
 <svelte:window onhashchange={update} />
