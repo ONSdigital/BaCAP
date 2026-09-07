@@ -51,7 +51,14 @@
 		controls={true}
 	>
 		{#each layers as l}
-			<MapSource id={l.key} type="vector" url={l.url} layer="boundaries" promoteId={l.idKey}>
+			<MapSource
+				id={l.key}
+				type="vector"
+				url={l.url}
+				layer="boundaries"
+				promoteId={l.idKey}
+				maxzoom={12}
+			>
 				<MapLayer
 					id="{l.key}-line"
 					type="fill"
