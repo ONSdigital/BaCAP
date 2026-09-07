@@ -113,7 +113,7 @@
 			displayControlsDefault: false
 		});
 		map.addControl(draw, "bottom-left");
-		map.addControl(new maplibre.ScaleControl(), "bottom-right");
+		map.addControl(new maplibre.ScaleControl(), "top-right");
 
 		map.on("draw.create", (e) => {
 			const feature = e.features[0];
@@ -219,5 +219,10 @@
 	}
 	#map-container :global(.maplibregl-ctrl-top-right) {
 		top: 60px;
+		display: flex;
+		flex-direction: row-reverse;
+	}
+	#map-container :global(.maplibregl-ctrl-scale) {
+		height: 24px;
 	}
 </style>
