@@ -155,6 +155,7 @@
 				[2, 56]
 			]
 		}}
+		controls
 	>
 		<MapSource
 			id="polygon"
@@ -215,5 +216,8 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
+	}
+	#map-container :global(.maplibregl-ctrl-top-right) {
+		top: 60px;
 	}
 </style>
