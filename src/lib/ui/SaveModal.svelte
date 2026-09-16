@@ -76,14 +76,15 @@
 				on:change={updateAreaName}
 			/>
 			<div class="ons-u-mt-2xs">
-				<Button
-					icon="download"
-					small
-					on:click={() =>
-						downloadArea(makeSavedArea($activeArea, $history[0], centroids))}
-					>Download area</Button
-				>
 				{#if $savedAreas[$activeArea.id]}
+					<Button
+						icon="saveas"
+						small
+						on:click={() => {
+							saveArea();
+							updateSuccess("saved");
+						}}>Save changes</Button
+					>
 					<Button
 						icon="save"
 						variant="secondary"
@@ -92,26 +93,25 @@
 						on:click={() => saveArea({ copy: true, switchModals: true })}
 						>Save a copy</Button
 					>
-					<Button
-						icon="saveas"
-						variant="secondary"
-						small
-						on:click={() => {
-							saveArea();
-							updateSuccess("saved");
-						}}>Save changes</Button
-					>
-					<span class="success-icon" style:display={showSuccess.saved ? "inline" : "none"}
-						><Icon type="tick" /></span
-					>
 				{:else}
-					<Button
-						icon="save"
-						variant="secondary"
-						small
-						on:click={() => saveArea({ switchModals: true })}>Save area</Button
+					<Button icon="save" small on:click={() => saveArea({ switchModals: true })}
+						>Save area</Button
 					>
 				{/if}
+				<Button
+					icon="download"
+					variant="secondary"
+					small
+					on:click={() =>
+						downloadArea(makeSavedArea($activeArea, $history[0], centroids))}
+					>Download GeoJSON</Button
+				>
+				<span
+					class="success-icon"
+					style:display={showSuccess.saved ? "inline-block" : "none"}
+				>
+					<Icon type="tick" /> Changes saved
+				</span>
 			</div>
 		</Tab>
 		<Tab title="Copy area codes">
@@ -123,17 +123,20 @@
 					<Button variant="primary" icon="copy" small on:click={() => copyCodes("oa")}
 						>Copy Output Area codes</Button
 					>
-					<span class="success-icon" style:display={showSuccess.oa ? "inline" : "none"}
-						><Icon type="tick" /></span
-					>
+					<span class="success-icon" style:display={showSuccess.oa ? "inline" : "none"}>
+						<Icon type="tick" /> Copied codes
+					</span>
 				</div>
 				<div>
 					<Button variant="primary" icon="copy" small on:click={() => copyCodes("lsoa")}
 						>Copy LSOA codes</Button
 					>
-					<span class="success-icon" style:display={showSuccess.lsoa ? "inline" : "none"}
-						><Icon type="tick" /></span
+					<span
+						class="success-icon"
+						style:display={showSuccess.lsoa ? "inline-block" : "none"}
 					>
+						<Icon type="tick" /> Copied codes
+					</span>
 				</div>
 			</div>
 		</Tab>
@@ -148,6 +151,7 @@
 	}
 	.success-icon {
 		padding-left: 6px;
+		transform: translateY(2px);
 	}
 	.success-icon :global(svg > path) {
 		fill: var(--ons-color-success);
