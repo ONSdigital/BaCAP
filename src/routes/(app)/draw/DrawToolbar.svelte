@@ -151,8 +151,8 @@
 			<ToolControls slot="controls">
 				<ToolControl id="polygon">
 					<p>
-						Click or tap an area on the map to add a node to the shape. To add the shape
-						to your selection, close it by clicking or tapping on the starting node.
+						Click on the map to draw the nodes (corners) of a polygon. Add your shape to
+						your selection by double-clicking the final corner.
 					</p>
 				</ToolControl>
 				<ToolControl id="circle">
@@ -175,9 +175,8 @@
 					</ButtonGroup>
 					{#if eraseOption === "polygon"}
 						<p>
-							Click or tap an area on the map to add a node to the shape. To remove
-							the shape to your selection, close it by clicking or tapping on the
-							starting node.
+							Click on the map to draw the nodes (corners) of a polygon. Remove your
+							shape from your selection by double-clicking the final corner.
 						</p>
 					{:else}
 						<p>
