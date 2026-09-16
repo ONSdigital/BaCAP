@@ -12,6 +12,7 @@
 		labelKey = "label",
 		groupKey = "group",
 		label = "Find an area to add to the map",
+		description = null,
 		placeholder = "Type a place name or postcode",
 		geoTypes = new Set(Object.keys(geotypesLookup)),
 		postcodeTypes = new Set(["E00", "W00"]),
@@ -161,6 +162,7 @@
 	{groupKey}
 	mode="search"
 	{label}
+	{description}
 	{placeholder}
 	{autoFocus}
 	on:change={handleChange}
