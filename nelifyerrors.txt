@@ -1,8 +1,0 @@
-Error: Module not found: Can't resolve './Components...'
-
-git config core.ignorecase false dictates how git operates behind the scenes
-
-I then hit git add . , then git commit and ran my build on netlify one more time.
-
-git push
-git config core.ignorecase true
