@@ -8,6 +8,7 @@
 	import { Polygon } from "$lib/js/geo";
 	import { sleep } from "$lib/js/utils";
 	import { parseGeoJSON } from "$lib/js/geo";
+	import { onsColors, drawLayerStyles } from "$lib/js/config";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
 	let { history, rehistory, activeArea, lastActivePage } = appState;
@@ -110,7 +111,8 @@
 
 	function initDraw() {
 		draw = new MaplibreDraw({
-			displayControlsDefault: false
+			displayControlsDefault: false,
+			styles: drawLayerStyles
 		});
 		map.addControl(draw, "bottom-left");
 		map.addControl(new maplibre.ScaleControl(), "top-right");
@@ -166,7 +168,7 @@
 				id="polygon-fill"
 				type="fill"
 				paint={{
-					"fill-color": "#1f8ab0",
+					"fill-color": onsColors.skyBlue,
 					"fill-opacity": 0.2
 				}}
 			/>
@@ -174,7 +176,7 @@
 				id="polygon-line"
 				type="line"
 				paint={{
-					"line-color": "#1f8ab0",
+					"line-color": onsColors.skyBlue,
 					"line-width": 2
 				}}
 			/>
@@ -191,7 +193,7 @@
 				id="radius-fill"
 				type="fill"
 				paint={{
-					"fill-color": "#fbb03b",
+					"fill-color": onsColors.oceanBlue,
 					"fill-opacity": 0.1
 				}}
 			/>
@@ -200,9 +202,9 @@
 				type="line"
 				layout={{ "line-cap": "round", "line-join": "round" }}
 				paint={{
-					"line-color": "#fbb03b",
+					"line-color": onsColors.nightBlue,
 					"line-dasharray": [0.2, 2],
-					"line-width": 2
+					"line-width": 3
 				}}
 			/>
 		</MapSource>

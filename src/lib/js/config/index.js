@@ -95,3 +95,96 @@ export const analyticsProps = {
 	contentType: "content-type", // Optional: eg. scrollytelling, exploratory, edutainment?
 	outputSeries: "url-slug-for-output-series" // Should match the slug for the release on CMS
 };
+
+// COLOURS + VISUAL STYLES
+export const onsColors = {
+	oceanBlue: "#206095",
+	skyBlue: "#27a0cc",
+	skyBlueDark: "#1F80A3",
+	nightBlue: "#003c57",
+	emeraldGreen: "#118c7b",
+	springGreen: "#a8bd3a",
+	springGreenDark: "#8a9b2e",
+	beetrootPurple: "#871A5B",
+	coralPink: "#f66068",
+	lavendarPurple: "#746cb1",
+	mintGreen: "#22d0b6",
+	highlightOrange: "#f39431",
+	highlightOrangeDark: "#f56927",
+	sunYellow: "#fbc900"
+};
+export const drawLayerStyles = [
+	// ACTIVE (being drawn)
+	// line stroke
+	{
+		id: "gl-draw-line",
+		type: "line",
+		filter: ["all", ["==", "$type", "LineString"]],
+		layout: {
+			"line-cap": "round",
+			"line-join": "round"
+		},
+		paint: {
+			"line-color": onsColors.nightBlue,
+			"line-dasharray": [0.2, 2],
+			"line-width": 3
+		}
+	},
+	// polygon fill
+	{
+		id: "gl-draw-polygon-fill",
+		type: "fill",
+		filter: ["all", ["==", "$type", "Polygon"]],
+		paint: {
+			"fill-color": onsColors.nightBlue,
+			"fill-outline-color": onsColors.oceanBlue,
+			"fill-opacity": 0.1
+		}
+	},
+	// polygon mid points
+	{
+		id: "gl-draw-polygon-midpoint",
+		type: "circle",
+		filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
+		paint: {
+			"circle-radius": 4,
+			"circle-color": onsColors.nightBlue
+		}
+	},
+	// polygon outline stroke
+	// This doesn't style the first edge of the polygon, which uses the line stroke styling instead
+	{
+		id: "gl-draw-polygon-stroke-active",
+		type: "line",
+		filter: ["all", ["==", "$type", "Polygon"]],
+		layout: {
+			"line-cap": "round",
+			"line-join": "round"
+		},
+		paint: {
+			"line-color": onsColors.nightBlue,
+			"line-dasharray": [0.2, 2],
+			"line-width": 3
+		}
+	},
+	// vertex point halos
+	{
+		id: "gl-draw-polygon-and-line-vertex-halo-active",
+		type: "circle",
+		filter: ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"]],
+		paint: {
+			"circle-radius": 6,
+			"circle-color": "#fff"
+		}
+	},
+	// vertex points
+	{
+		id: "gl-draw-polygon-and-line-vertex-active",
+		type: "circle",
+		filter: ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"]],
+		paint: {
+			"circle-radius": 4,
+			"circle-color": onsColors.nightBlue
+		}
+	}
+];
