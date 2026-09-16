@@ -57,7 +57,7 @@
 	label="Save current area"
 	buttonStyle={mode === "draw" ? "menu" : "primary"}
 	hideLabel
-	icon="download"
+	icon="save"
 	onOpen={() => null}
 	onConfirm={() => null}
 	onCancel={() => null}
