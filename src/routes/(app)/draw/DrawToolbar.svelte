@@ -141,29 +141,6 @@
 			</ToolbarButton>
 
 			<ToolbarDivider />
-
-			<ToolbarButton
-				id="zoomin"
-				icon="zoomin"
-				label="Zoom in"
-				on:click={() => runAction("zoomIn")}
-				transient
-			>
-				<p>Zoom in.</p>
-			</ToolbarButton>
-
-			<ToolbarButton
-				id="zoomout"
-				icon="zoomout"
-				label="Zoom out"
-				on:click={() => runAction("zoomOut")}
-				transient
-			>
-				<p>Zoom out.</p>
-			</ToolbarButton>
-
-			<!-- <ToolbarButton id="redo" icon="redo" label="Redo last step" disabled /> -->
-			<ToolbarDivider />
 			<ToolbarButton id="search" icon="search" label="Search for an area" sticky>
 				<p>
 					You can use the Area search tool to quickly search for and automatically select
