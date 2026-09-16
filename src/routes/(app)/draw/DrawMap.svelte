@@ -103,7 +103,7 @@
 	}
 
 	export function clearDraw() {
-		$history = [{ oa: new Set(), lsoa: new Set(), geometry: null }];
+		$history = [{ oa: new Set(), lsoa: new Set(), geometry: null }, ...$history].slice(0, 10);
 		$rehistory = [];
 		$activeArea = { type: "Feature", id: null, geometry: null, properties: {} };
 		applyHistory($history[0]);

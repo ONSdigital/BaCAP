@@ -112,12 +112,12 @@
 			<ToolbarButton
 				id="clear"
 				icon="bin"
-				label="Clear all drawn areas"
+				label="Clear current selection"
 				disabled={$history.length < 2}
 				on:click={() => runAction("clearDraw")}
 				transient
 			>
-				<p>Clear all selected areas from the map.</p>
+				<p>Clear your selected area from the map.</p>
 			</ToolbarButton>
 			<ToolbarButton
 				id="undo"
