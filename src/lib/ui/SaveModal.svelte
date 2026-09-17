@@ -1,6 +1,6 @@
 <script>
 	import Modal from "./Modal.svelte";
-	import { Tabs, Tab, Input, Button, Icon } from "@onsvisual/svelte-components";
+	import { Tabs, Tab, Input, Textarea, Button, Icon } from "@onsvisual/svelte-components";
 	import { makeSavedArea, downloadArea } from "$lib/js/geo";
 	import { sleep } from "$lib/js/utils";
 	import { clip } from "$lib/js/io";
@@ -17,6 +17,12 @@
 	} = $props();
 
 	let showSuccess = $state({ oa: false, lsoa: false, saved: false });
+	let areaCodes = $derived(
+		["oa", "lsoa"].map((key) => ({
+			key,
+			codes: [...($history?.[0]?.[key] || [])].join(",")
+		}))
+	);
 
 	function updateAreaName(e) {
 		const name = e?.detail?.value;
@@ -44,10 +50,9 @@
 		await sleep(3000);
 		showSuccess[key] = false;
 	}
-	async function copyCodes(key = "oa") {
-		const codes = [...($history?.[0]?.[key] || [])].join(",");
-		await clip(codes);
-		await updateSuccess(key);
+	async function copyCodes(obj) {
+		await clip(obj.codes);
+		await updateSuccess(obj.key);
 	}
 </script>
 
@@ -120,16 +125,38 @@
 			</p>
 			<div class="copy-buttons">
 				<div>
-					<Button variant="primary" icon="copy" small on:click={() => copyCodes("oa")}
-						>Copy Output Area codes</Button
+					<Textarea
+						rows={2}
+						width="100%"
+						label="Output area codes"
+						value={areaCodes[0].codes}
+						readonly
+					/>
+					<Button
+						variant="primary"
+						icon="copy"
+						cls="ons-u-mt-2xs"
+						small
+						on:click={() => copyCodes(areaCodes[0])}>Copy codes</Button
 					>
 					<span class="success-icon" style:display={showSuccess.oa ? "inline" : "none"}>
 						<Icon type="tick" /> Copied codes
 					</span>
 				</div>
-				<div>
-					<Button variant="primary" icon="copy" small on:click={() => copyCodes("lsoa")}
-						>Copy LSOA codes</Button
+				<div class="ons-u-mt-s">
+					<Textarea
+						rows={2}
+						width="100%"
+						label="LSOA codes"
+						value={areaCodes[1].codes}
+						readonly
+					/>
+					<Button
+						variant="primary"
+						icon="copy"
+						cls="ons-u-mt-2xs"
+						small
+						on:click={() => copyCodes(areaCodes[1])}>Copy codes</Button
 					>
 					<span
 						class="success-icon"
