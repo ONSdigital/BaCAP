@@ -98,7 +98,7 @@
 </Details>
 <hr class="ons-u-mt-m ons-u-mb-m" />
 <div id="embed"></div>
-<h2 class="ons-u-fs-m ons-u-mb-3xs">Use and share this profile</h2>
+<h2 class="ons-u-fs-m ons-u-mb-3xs">Use and share profile</h2>
 <ul class="profile-actions">
 	<li>
 		<Icon type="download" /> Download profile as
@@ -115,21 +115,14 @@
 				e.preventDefault();
 				downloadProfileCSV(tables, $activeArea, $comparisonArea);
 			}}>CSV</a
-		>,
-		<a
-			href="#0"
-			onclick={(e) => {
-				e.preventDefault();
-				pymParent?.sendMessage?.("png");
-			}}>PNG</a
 		>
 		or
 		<a
 			href="#0"
 			onclick={(e) => {
 				e.preventDefault();
-				downloadArea($activeArea, makeFilename($activeArea, "geojson"));
-			}}>GeoJSON</a
+				pymParent?.sendMessage?.("png");
+			}}>PNG</a
 		>
 	</li>
 	<li>
@@ -142,8 +135,6 @@
 			}}>Print profile</a
 		>
 	</li>
-</ul>
-<ul class="profile-actions">
 	<li>
 		<Icon type="code" />
 		<a
@@ -153,17 +144,6 @@
 				showCodes = false;
 				showEmbed = !showEmbed;
 			}}>{showEmbed ? "Hide embed code" : "Get embed code"}</a
-		>
-	</li>
-	<li>
-		<Icon type="copy" />
-		<a
-			href="#0"
-			onclick={(e) => {
-				e.preventDefault();
-				showEmbed = false;
-				showCodes = !showCodes;
-			}}>{showCodes ? "Hide area codes" : "Copy area codes"}</a
 		>
 	</li>
 </ul>
@@ -182,6 +162,30 @@
 		{#if confirmed.embed}<Icon type="tick" marginLeft />{/if}
 	</div>
 {/if}
+<h2 class="ons-u-fs-m ons-u-mt-s ons-u-mb-3xs">Export selected area</h2>
+<ul class="profile-actions">
+	<li>
+		<Icon type="download" /> Download area as
+		<a
+			href="#0"
+			onclick={(e) => {
+				e.preventDefault();
+				downloadArea($activeArea, makeFilename($activeArea, "geojson"));
+			}}>GeoJSON</a
+		>
+	</li>
+	<li>
+		<Icon type="copy" />
+		<a
+			href="#0"
+			onclick={(e) => {
+				e.preventDefault();
+				showEmbed = false;
+				showCodes = !showCodes;
+			}}>{showCodes ? "Hide area codes" : "Get area codes"}</a
+		>
+	</li>
+</ul>
 {#if showCodes}
 	{@const oaCodes = [...centroids.expand($activeArea?.properties?.oa21cds || [], "oa")].join(",")}
 	{@const lsoaCodes = [
