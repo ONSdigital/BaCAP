@@ -175,7 +175,7 @@ export function makeSavedArea(activeArea, current, centroids, id = null) {
 }
 
 export function downloadArea(area, filename = null) {
-	const name = filename || area.properties?.areanm || "Custom Area";
+	const name = filename || area.properties?.areanm || "Unnamed Area";
 	const str = JSON.stringify(area, (key, val) => (val instanceof Set ? [...val] : val));
 	const file = new Blob([str], { type: "application/json" });
 	download(file, `${name.replaceAll(" ", "_")}.json`);
@@ -222,7 +222,7 @@ export function uploadAreas(uploader) {
 	});
 }
 
-export function getName(activeArea, fallback = "Custom Area") {
+export function getName(activeArea, fallback = "Unnamed Area") {
 	return activeArea?.properties?.areanm || fallback;
 }
 

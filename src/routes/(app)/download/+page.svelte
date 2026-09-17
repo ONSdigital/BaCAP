@@ -242,7 +242,7 @@
 			<List mode="dash">
 				{#each selectedAreas as area, i}
 					<Li>
-						<strong>{area.properties.areanm || `Custom Area ${i}`}</strong>
+						<strong>{area.properties.areanm || `Unnamed Area ${i}`}</strong>
 						{#if area.properties.areacd}({area.properties.areacd}){/if}
 					</Li>
 				{/each}

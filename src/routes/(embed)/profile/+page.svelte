@@ -60,7 +60,7 @@
 		const result = await snapdom(document.body, { embedFonts: true });
 		await result.download({
 			format: "png",
-			filename: `${(embedData?.areas?.[0] || "Custom area").replaceAll(" ", "_")}.png`
+			filename: `${(embedData?.areas?.[0] || "Unnamed Area").replaceAll(" ", "_")}.png`
 		});
 	}
 
