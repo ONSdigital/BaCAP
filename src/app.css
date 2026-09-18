@@ -1,0 +1,7 @@
+/* Use this file for app specific CSS and overrides */
+.ons-btn + .ons-btn {
+	margin-left: 0;
+}
+.tooltip {
+	z-index: 1;
+}

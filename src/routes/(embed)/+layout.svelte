@@ -1,5 +1,10 @@
 <script>
-  import "$lib/css/ons.css";
+	let { children } = $props();
 </script>
 
-<slot />
+<svelte:head>
+	<meta name="robots" content="noindex" />
+	<meta name="googlebot" content="indexifembedded" />
+</svelte:head>
+
+{@render children()}
