@@ -24,7 +24,7 @@
 			}
 			indexed[d[zKey]][d.date] = d.value;
 		}
-		for (let key in indexed) {
+		for (const key in indexed) {
 			for (const xVal of xDomain) {
 				const yVal = indexed[key][xVal] / indexed[key][xDomain[0]];
 				indexed[key][`${xVal}_change`] = yVal;
@@ -32,7 +32,10 @@
 				if (yVal > yDomain[1]) yDomain[1] = yVal;
 			}
 		}
-		return { _data: Object.values(indexed), yDomain };
+		return {
+			_data: Object.values(indexed),
+			yDomain
+		};
 	}
 	function yDodge(y1, y2 = null, h = height, buffer = 24) {
 		// Make sure the labels don't overlap or go outside of the vertical chart area
@@ -69,11 +72,11 @@
 			<li>
 				<div
 					class="legend-vis marker-vis"
-					style:border-bottom={i == 0
+					style:border-bottom={i === 0
 						? `${lineWidth + 1.5}px solid #27A0CC`
 						: `${lineWidth}px solid black`}
 				></div>
-				<span class={i == 0 ? "bold" : "brackets"}>{group}</span>
+				<span class={i === 0 ? "bold" : "brackets"}>{group}</span>
 			</li>
 		{/each}
 	{/if}
@@ -91,24 +94,25 @@
 				<path
 					d={makePath(d)}
 					vector-effect="non-scaling-stroke"
-					stroke={i == _data.length - 1 ? "#27A0CC" : "black"}
-					stroke-width={i == _data.length - 1 ? lineWidth + 1.5 : lineWidth}
+					stroke={i === _data.length - 1 ? "#27A0CC" : "black"}
+					stroke-width={i === _data.length - 1 ? lineWidth + 1.5 : lineWidth}
 				/>
 			{/each}
 		</svg>
 		{#each [..._data].reverse() as d, i}
 			<div
 				class="point"
-				class:point-black={i === 0}
+				class:point-black={_data.length === 2 && i === 0}
 				style:left="100%"
 				style:top="{yScale(d[yKey(xVal)])}px"
 			></div>
 		{/each}
 	</div>
-	{#if xVal != xDomain[0]}
+	{#if xVal !== xDomain[0]}
 		{@const coords = yDodge(..._data.map((d) => yScale(d[yKey(xVal)])))}
+		{console.log({ coords })}
 		<div class="label-group">
-			{#each coords.filter((d) => d) as coord, i}
+			{#each coords.filter((d) => d != null) as coord, i}
 				<div
 					class="point-label {i === 0 ? 'bold' : 'brackets'}"
 					style:transform="translateY(calc({coord}px - {i === 0 ? 50 : 100}%))"
