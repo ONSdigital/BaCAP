@@ -3,7 +3,7 @@ import simplify from "@turf/simplify";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
 import proj4 from "proj4";
-import { roundAll, slugify } from "../common/index.js";
+import { roundAll, slugify, makeFilename } from "../common/index.js";
 import { download } from "../io/index.js";
 import { snapshot } from "../state/index.js";
 
@@ -174,11 +174,10 @@ export function makeSavedArea(activeArea, current, centroids, id = null) {
 	return area;
 }
 
-export function downloadArea(area, filename = null) {
-	const name = filename || area.properties?.areanm || "Unnamed Area";
+export function downloadArea(area) {
 	const str = JSON.stringify(area, (key, val) => (val instanceof Set ? [...val] : val));
 	const file = new Blob([str], { type: "application/json" });
-	download(file, `${name.replaceAll(" ", "_")}.json`);
+	download(file, makeFilename(area, "json"));
 }
 
 export function uploadAreas(uploader) {
@@ -223,7 +222,7 @@ export function uploadAreas(uploader) {
 }
 
 export function getName(activeArea, fallback = "Unnamed Area") {
-	return activeArea?.properties?.areanm || fallback;
+	return activeArea?.properties?.areanm || activeArea || fallback;
 }
 
 export function makeFilename(activeArea, extension = null) {

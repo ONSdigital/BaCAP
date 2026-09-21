@@ -4,6 +4,7 @@
 	import { snapdom } from "@zumer/snapdom";
 	import { makeDateFormatter } from "$lib/util/data";
 	import { atobUtf8 } from "$lib/util/io";
+	import { makeFilename } from "$lib/util/geo";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";
@@ -60,7 +61,7 @@
 		const result = await snapdom(document.body, { embedFonts: true });
 		await result.download({
 			format: "png",
-			filename: `${(embedData?.areas?.[0] || "Unnamed Area").replaceAll(" ", "_")}.png`
+			filename: makeFilename(embedData?.areas?.[0], "png")
 		});
 	}
 
