@@ -1,7 +1,7 @@
 <script>
 	import { Checkbox, Input, Button, Tooltip } from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
-	import { focusChildInput } from "$lib/js/utils";
+	import { focusChildInput } from "$lib/util/common";
 
 	let {
 		buildState = $bindable(),

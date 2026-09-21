@@ -3,7 +3,7 @@
 	import { resolve } from "$app/paths";
 	import { Embed, Container, Button } from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
-	import { getAreasList } from "$lib/js/io";
+	import { getAreasList } from "$lib/util/io";
 
 	let areasList = $state.raw();
 	let selectedArea = $state.raw(null);

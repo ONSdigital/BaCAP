@@ -2,7 +2,7 @@
 	import { resolve } from "$app/paths";
 	import bbox from "@turf/bbox";
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
-	import { feature, featureCollection } from "$lib/js/geo";
+	import { feature, featureCollection } from "$lib/util/geo";
 
 	const fitBoundsOptions = { padding: 10 };
 

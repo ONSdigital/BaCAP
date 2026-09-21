@@ -2,8 +2,8 @@
 	import { afterNavigate } from "$app/navigation";
 	import { onMount, getContext } from "svelte";
 	import { Container, Button } from "@onsvisual/svelte-components";
-	import { geoUrl } from "$lib/js/config";
-	import { isValidAreaCode, parseGeoJSON } from "$lib/js/geo";
+	import { geoUrl } from "$lib/config";
+	import { isValidAreaCode, parseGeoJSON } from "$lib/util/geo";
 	import DrawToolbar from "./DrawToolbar.svelte";
 	import DrawMap from "./DrawMap.svelte";
 	import DrawCounter from "./DrawCounter.svelte";

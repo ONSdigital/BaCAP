@@ -8,7 +8,7 @@
 		featureCollection,
 		parseGeoJSON,
 		getCodeKey
-	} from "$lib/js/geo";
+	} from "$lib/util/geo";
 
 	let {
 		activeArea = $bindable(),

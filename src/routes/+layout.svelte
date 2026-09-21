@@ -6,7 +6,7 @@
 	import { beforeNavigate } from "$app/navigation";
 	import { setContext } from "svelte";
 	import { PhaseBanner, Header, Main, Footer } from "@onsvisual/svelte-components";
-	import { baseUrl } from "$lib/js/config";
+	import { baseUrl } from "$lib/config";
 
 	let fullscreen = $state(false);
 	let width = $derived(fullscreen ? "full" : "wider");

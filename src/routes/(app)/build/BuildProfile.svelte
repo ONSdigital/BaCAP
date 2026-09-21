@@ -4,10 +4,9 @@
 	import pym from "pym.js";
 	import { Notice, Details, Button, Icon, Textarea } from "@onsvisual/svelte-components";
 	import BestFitMap from "$lib/viz/BestFitMap.svelte";
-	import { downloadProfileXLSX, downloadProfileCSV, clip } from "$lib/js/io";
-	import { makeEmbedHash, makeEmbedCode } from "$lib/js/data";
-	import { simplifyGeo, downloadArea, makeFilename } from "$lib/js/geo";
-	import { getData } from "$lib/js/data";
+	import { downloadProfileXLSX, downloadProfileCSV, clip } from "$lib/util/io";
+	import { makeEmbedHash, makeEmbedCode, getData } from "$lib/util/data";
+	import { simplifyGeo, downloadArea, makeFilename } from "$lib/util/geo";
 
 	let { buildState, topics, selectedTopics, activeArea, comparisonArea, centroids } = $props();
 

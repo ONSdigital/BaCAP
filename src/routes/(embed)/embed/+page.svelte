@@ -4,7 +4,7 @@
 
 	import { onMount } from "svelte";
 	import { Embed, Grid, Card } from "@onsvisual/svelte-components";
-	import { atobUtf8 } from "$lib/js/io";
+	import { atobUtf8 } from "$lib/util/io";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";

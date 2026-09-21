@@ -15,7 +15,7 @@
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import SaveModal from "$lib/ui/SaveModal.svelte";
-	import { sleep } from "$lib/js/utils";
+	import { sleep } from "$lib/util/common";
 
 	let {
 		appState = $bindable(),

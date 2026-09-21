@@ -1,5 +1,5 @@
 <script>
-	import { groupData } from "$lib/js/data";
+	import { groupData } from "$lib/util/data";
 
 	let {
 		data,

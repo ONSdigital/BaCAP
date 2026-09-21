@@ -3,7 +3,7 @@
 	import { pointToTile } from "@mapbox/tilebelt";
 	import inPolygon from "@turf/boolean-point-in-polygon";
 	import { Select } from "@onsvisual/svelte-components";
-	import { geoUrl, postcodesUrl, lookupUrl, geotypesLookup } from "$lib/js/config";
+	import { geoUrl, postcodesUrl, lookupUrl, geotypesLookup } from "$lib/config";
 
 	let {
 		options = [],

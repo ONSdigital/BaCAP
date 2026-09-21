@@ -3,9 +3,9 @@ import simplify from "@turf/simplify";
 import buffer from "@turf/buffer";
 import area from "@turf/area";
 import proj4 from "proj4";
-import { roundAll, slugify } from "../utils";
-import { download } from "../io";
-import { snapshot } from "../state";
+import { roundAll, slugify } from "../common/index.js";
+import { download } from "../io/index.js";
+import { snapshot } from "../state/index.js";
 
 export { default as Centroids } from "./centroids.js";
 export { default as MaplibreDraw } from "./draw-lib.js";

@@ -1,5 +1,5 @@
-import { measures } from "../config";
-import { btoaUtf8 } from "../io";
+import { measures } from "../../config/index.js";
+import { btoaUtf8 } from "../io/index.js";
 
 export { default as getData } from "./get-data.js";
 

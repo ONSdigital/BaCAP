@@ -1,14 +1,12 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
-	import MaplibreDraw from "$lib/js/geo/draw-lib.js";
 	import maplibre from "maplibre-gl";
 	import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 	import circle from "@turf/circle";
-	import { Polygon } from "$lib/js/geo";
-	import { sleep } from "$lib/js/utils";
-	import { parseGeoJSON } from "$lib/js/geo";
-	import { onsColors, drawLayerStyles } from "$lib/js/config";
+	import { sleep } from "$lib/util/common";
+	import { MaplibreDraw, Polygon, parseGeoJSON } from "$lib/util/geo";
+	import { onsColors, drawLayerStyles } from "$lib/config";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
 	let { history, rehistory, activeArea, lastActivePage } = appState;

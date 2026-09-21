@@ -2,10 +2,10 @@ import { resolve } from "$app/paths";
 import { csvFormat, csvFormatRows, csvFormatBody } from "d3-dsv";
 import accessibleXLSX from "@onsvisual/accessible-xlsx";
 import { decompressData } from "compress-csv-to-json";
-import { get, set } from "../state";
-import { geotypesLookup } from "../config";
-import { getName, makeFilename } from "../geo";
-import { makeDateFormatter } from "../data";
+import { get, set } from "../state/index.js";
+import { geotypesLookup } from "../../config/index.js";
+import { getName, makeFilename } from "../geo/index.js";
+import { makeDateFormatter } from "../data/index.js";
 
 const utf8BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
 
