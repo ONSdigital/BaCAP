@@ -50,7 +50,7 @@
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "lowestGeography": "oa",
     "census": false,
-    "source": "ONS – Mid-year estimates",
+    "source": "ONS - Mid-year estimates",
     "topic": "Demography and migration",
     "validFromVersion":2,
     "versions":{
@@ -88,7 +88,7 @@
     "lowestGeography": "oa",
     "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
     "census": true,
-    "source": "ONS – Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -115,7 +115,7 @@
       }
     ],
     "lowestGeography": "lsoa",
-    "source": "HM Land Registry – Price Paid Transaction Data",
+    "source": "HM Land Registry - Price Paid Transaction Data",
     "census": false,
     "dateLabelLong": "Year ending September 2024",
     "topic": "Housing",
@@ -390,7 +390,7 @@
     "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "source": "ONS – Mid-year estimates",
+    "source": "ONS - Mid-year estimates",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -468,7 +468,7 @@
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "queryExt": "&c_age=200",
-    "source": "ONS – Mid-year estimates",
+    "source": "ONS - Mid-year estimates",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
