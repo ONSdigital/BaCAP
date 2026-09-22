@@ -1,4 +1,4 @@
-// APP STATE CONFIG
+// APP STATE CONFIG + DEFAULTS
 export const baseUrl = "https://www.ons.gov.uk/visualisations/customprofiles";
 export const appVersion = 1;
 export const initialState = {
@@ -16,6 +16,7 @@ export const initialState = {
 	lastActivePage: null,
 	selectedTopics: ["population"]
 };
+export const defaultAreaName = "Unnamed Area";
 
 // DATA CONFIG
 export const measures = [

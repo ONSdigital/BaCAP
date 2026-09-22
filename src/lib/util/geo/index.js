@@ -6,6 +6,7 @@ import proj4 from "proj4";
 import { roundAll, slugify } from "../common/index.js";
 import { download } from "../io/index.js";
 import { snapshot } from "../state/index.js";
+import { defaultAreaName } from "../../config/index.js";
 
 export { default as Centroids } from "./centroids.js";
 export { default as MaplibreDraw } from "./draw-lib.js";
@@ -227,7 +228,7 @@ export function uploadAreas(uploader) {
 	});
 }
 
-export function getName(activeArea, fallback = "Unnamed Area") {
+export function getName(activeArea, fallback = defaultAreaName) {
 	return activeArea?.properties?.areanm || activeArea || fallback;
 }
 

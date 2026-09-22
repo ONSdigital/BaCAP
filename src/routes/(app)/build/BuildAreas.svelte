@@ -2,6 +2,7 @@
 	import { Checkbox, Input, Button, Tooltip } from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import { focusChildInput } from "$lib/util/common";
+	import { defaultAreaName } from "$lib/config";
 
 	let {
 		buildState = $bindable(),
@@ -17,7 +18,7 @@
 
 	let editName = $state(false);
 	let activeName = $derived(
-		!$activeArea.geometry ? null : $activeArea?.properties?.areanm || "Unnamed Area"
+		!$activeArea.geometry ? null : $activeArea?.properties?.areanm || defaultAreaName
 	);
 	let comparisonModal = $state();
 </script>

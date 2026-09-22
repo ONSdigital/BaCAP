@@ -22,7 +22,7 @@
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import EditModal from "$lib/ui/EditModal.svelte";
 	import { downloadDatasetCSV, downloadDatasetXLSX } from "$lib/util/io";
-	import { geogroups, measures } from "$lib/config";
+	import { geogroups, measures, defaultAreaName } from "$lib/config";
 	import { getData, pivotDataOnMeasures } from "$lib/util/data";
 
 	const width = "wider";
@@ -242,7 +242,7 @@
 			<List mode="dash">
 				{#each selectedAreas as area, i}
 					<Li>
-						<strong>{area.properties.areanm || `Unnamed Area ${i}`}</strong>
+						<strong>{area.properties.areanm || `${defaultAreaName} ${i}`}</strong>
 						{#if area.properties.areacd}({area.properties.areacd}){/if}
 					</Li>
 				{/each}
