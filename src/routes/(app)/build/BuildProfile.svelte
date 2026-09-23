@@ -49,7 +49,6 @@
 	$inspect({ tables });
 	$effect(() => {
 		if (pymParent) pymParent.iframe.contentWindow.location.hash = embedHash;
-		console.log({ pymParent, embedHash });
 	});
 
 	async function setConfirmed(type = "oa") {

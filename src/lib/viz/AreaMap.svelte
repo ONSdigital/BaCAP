@@ -56,7 +56,6 @@
 			preserveDrawingBuffer: true
 		}}
 		interactive={false}
-		on:load={(e) => console.log(e)}
 	>
 		{#if polygons[1]}
 			<MapSource id="comp" type="geojson" data={polygons[1]}>

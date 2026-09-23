@@ -84,7 +84,6 @@
 
 	export function undoDraw() {
 		if ($history.length > 1) {
-			console.log("undoing", $history.length);
 			$rehistory = [$history[0], ...$rehistory];
 			$history = $history.slice(1);
 			applyHistory($history[0]);
@@ -93,7 +92,6 @@
 
 	export function redoDraw() {
 		if ($rehistory.length) {
-			console.log("redoing", $rehistory.length);
 			$history = [$rehistory[0], ...$history];
 			$rehistory = $rehistory.slice(1);
 			applyHistory($history[0]);

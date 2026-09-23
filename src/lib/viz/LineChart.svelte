@@ -110,7 +110,6 @@
 	</div>
 	{#if xVal !== xDomain[0]}
 		{@const coords = yDodge(..._data.map((d) => yScale(d[yKey(xVal)])))}
-		{console.log({ coords })}
 		<div class="label-group">
 			{#each coords.filter((d) => d != null) as coord, i}
 				<div

@@ -108,7 +108,6 @@
 
 		// Name search
 		const results = filterAreas(query);
-		console.log({ results });
 
 		populateResults(results);
 		return;

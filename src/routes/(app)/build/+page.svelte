@@ -32,7 +32,6 @@
 	function setGeoState(area) {
 		if (!area) return;
 		buildState.geography = area.properties.lsoa21cds.size ? "lsoa" : "oa";
-		console.log(area.properties.lsoa21cds, buildState.geography);
 		buildState.coverage = new Set(
 			[...area.properties[`${buildState.geography}21cds`]].map((cd) => cd[0])
 		);
@@ -48,7 +47,6 @@
 			try {
 				const data = await (await fetch(url)).json();
 				$activeArea = parseGeoJSON(data, centroids);
-				console.log("history", window.history);
 				window.history.replaceState(null, null, " ");
 				refreshedArea = true;
 			} catch (err) {
