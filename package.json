@@ -10,7 +10,6 @@
 		"preview": "vite preview",
 		"deploy": "gh-pages -d build -t",
 		"data:compress": "node ./scripts/compress-data.js",
-		"data:convert": "node ./scripts/convert-topics.js",
 		"data:lookups": "node ./scripts/make-oa-lookups.js && node ./scripts/make-rgn-cauth-children.js",
 		"test": "vitest run",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. .",
