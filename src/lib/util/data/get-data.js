@@ -5,7 +5,7 @@ import { ascending, round } from "../common/index.js";
 const maxRequestLength = 15_700;
 const maxResponseCells = 25_000;
 
-function makeCells(categories) {
+export function makeCells(categories) {
 	return categories
 		.map((cat) =>
 			cat.cells.length > 1 ? `MAKE|${cat.label}|${cat.cells.join(";")}` : cat.cells[0]
@@ -13,11 +13,11 @@ function makeCells(categories) {
 		.join(",");
 }
 
-function filterMeasures(measures) {
+export function filterMeasures(measures) {
 	return measures.filter((m) => m.cell);
 }
 
-function makeUrlFn(table) {
+export function makeUrlFn(table) {
 	const base = `https://www.nomisweb.co.uk/api/v01/dataset/${table.tableCode}.data.csv?`;
 
 	const params = {
@@ -43,17 +43,17 @@ function makeUrlFn(table) {
 	return { make: (areas) => url + areas.join(","), length: url.length };
 }
 
-function getMaxAreaCodes(table) {
+export function getMaxAreaCodes(table) {
 	const maxGeoDimSize = Math.floor(
 		maxResponseCells /
 			(table.categories.length * table.dates.length * filterMeasures(table.measures).length)
 	);
-	console.log({ maxGeoDimSize });
+	console.debug({ maxGeoDimSize });
 	return maxGeoDimSize;
 }
 
 // Adds unique area codes for non-GSS geographies
-function fillAreaCodes(areas) {
+export function fillAreaCodes(areas) {
 	let i = 1;
 	for (const area of areas) {
 		if (!area.properties?.areacd) {
@@ -64,14 +64,14 @@ function fillAreaCodes(areas) {
 	return areas;
 }
 
-function makeGeo(area, codes, i) {
+export function makeGeo(area, codes, i) {
 	const areacd = area?.properties?.areacd || null;
 	if (codes[0] === areacd) return areacd;
 	return `MAKE|${area.properties.areacd}|${codes.join(";")}`;
 }
 
 // Chunks a request into URLs that will not exceed Nomis limits
-function makeUrls(table, areas) {
+export function makeUrls(table, areas) {
 	const urlFn = makeUrlFn(table);
 	const geoKey = `${table.geography}cds`;
 	const maxAreaCodes = getMaxAreaCodes(table);
@@ -81,7 +81,7 @@ function makeUrls(table, areas) {
 	let geos = [];
 	const urls = [];
 
-	console.log({ areas });
+	console.debug({ areas });
 
 	for (let i = 0; i < areas.length; i++) {
 		const area = areas[i];
@@ -103,11 +103,11 @@ function makeUrls(table, areas) {
 		geosLength += geo.length + 1;
 	}
 	if (geos.length) urls.push(urlFn.make(geos));
-	console.log({ urls });
+	console.debug({ urls });
 	return urls;
 }
 
-function makeCategoryLookup(categories) {
+export function makeCategoryLookup(categories) {
 	const lookup = {};
 	for (const cat of categories) {
 		// NOTE: Nomis removes colons from custom field names
@@ -117,7 +117,7 @@ function makeCategoryLookup(categories) {
 	return lookup;
 }
 
-function makeRowParser(table, areas) {
+export function makeRowParser(table, areas) {
 	const categoryLookup = table.categories[0].cells ? makeCategoryLookup(table.categories) : null;
 	const measureLookup = Object.fromEntries(
 		filterMeasures(table.measures).map((d) => [d.cell, d.label])
@@ -140,7 +140,7 @@ function makeRowParser(table, areas) {
 	});
 }
 
-function makeRowSorter(table, areas) {
+export function makeRowSorter(table, areas) {
 	// Force categories and areas to match the requested order
 	const catLookup = Object.fromEntries(table.categories.map((d, i) => [d.label, i]));
 	const catSorter = (a, b) => catLookup[a] - catLookup[b];
@@ -156,13 +156,13 @@ function makeRowSorter(table, areas) {
 		measureSorter(a.measure, b.measure);
 }
 
-function parseData(table, areas, csvString) {
+export function parseData(table, areas, csvString) {
 	const rowParser = makeRowParser(table, areas);
 	const rowSorter = makeRowSorter(table, areas);
 	return csvParse(csvString, rowParser).sort(rowSorter);
 }
 
-function calcPercentages(data) {
+export function calcPercentages(data) {
 	const indexed = {};
 	for (const d of data) {
 		const key = `${d.areanm}_${d.date}`;

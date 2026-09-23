@@ -16,6 +16,8 @@ npm run preview            # Preview a production build
 npm run deploy             # Publish /build to gh-pages
 npm run lint                # prettier --check
 npm run format              # prettier --write
+npm test                    # vitest run (unit tests; currently only src/lib/util/data/get-data.js is covered)
+npx vitest                  # watch mode
 ```
 
 Data pipeline scripts (regenerate static JSON data from `raw_data/` or remote ONS/geo-scripts sources — run only when source data changes):
@@ -25,8 +27,6 @@ npm run data:compress   # Compresses raw_data/*.csv into static/data/*.json (oa2
 npm run data:convert    # Converts scripts/data/topics-old.json into static/data/topics-generated.json
 npm run data:lookups    # Fetches best-fit and region/combined-authority child lookups from ONSdigital/geo-scripts on GitHub, writes static/data/bestfit-lookup.json and static/data/rgn-cauth-children.json
 ```
-
-There is no test suite in this repo.
 
 ## Base path configuration
 
