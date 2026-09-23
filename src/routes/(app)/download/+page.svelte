@@ -5,24 +5,25 @@
 		Hero,
 		Container,
 		Section,
-		Grid,
-		Card,
 		Notice,
 		Radios,
+		Radio,
 		Checkbox,
+		Checkboxes,
 		Select,
 		Button,
 		Divider,
 		Details,
 		Table,
 		Icon,
-		List,
-		Li
+		Em,
+		Tooltip,
+		Indent
 	} from "@onsvisual/svelte-components";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import EditModal from "$lib/ui/EditModal.svelte";
 	import { downloadDatasetCSV, downloadDatasetXLSX } from "$lib/util/io";
-	import { geogroups, measures, defaultAreaName } from "$lib/config";
+	import { geogroups, measures, defaultAreaName, onsColors } from "$lib/config";
 	import { getData, pivotDataOnMeasures } from "$lib/util/data";
 
 	const width = "wider";
@@ -36,14 +37,13 @@
 	let { data } = $props();
 
 	let appState = $state(getContext("appState")());
-	let { savedAreas } = appState;
+	let { savedAreas, selectedAreas } = appState;
 
 	const ltlaTypes = new Set(["E06", "E07", "E08", "E09", "W06"]);
 	const parentAreaTypes = new Set([...ltlaTypes, "E10", "E12", "E47", "E92", "W92"]);
 	const areasList = getContext("areasList")();
 	const areasLookup = Object.fromEntries(areasList.map((d) => [d.areacd, d]));
 	const childLookup = getContext("childLookup")();
-	const filteredAreasList = areasList.filter((d) => parentAreaTypes.has(d.areacd.slice(0, 3)));
 
 	function getChildTypes(area) {
 		return [...geogroups]
@@ -61,10 +61,8 @@
 
 	const bestFits = getContext("bestFits")();
 
-	function getAllChildren(props, includeParent = false) {
-		console.log({ props, includeParent });
-
-		const children = includeParent ? [props, ...props.children] : props.children;
+	function getAllChildren(props) {
+		const children = props.children;
 		if (childLookup[props.areacd]) {
 			const cds = new Set(children.map((d) => d.areacd));
 			for (const cd of childLookup[props.areacd]) {
@@ -78,78 +76,85 @@
 		return children;
 	}
 
-	function makeSelectedAreas(
-		selectionType,
-		selectedAreaGroup,
-		selectedParentArea,
-		selectedChildType,
-		includeParent
-	) {
-		if (selectionType?.id === "saved")
-			return selectedAreaGroup?.label
-				? Object.values($savedAreas).filter(
-						(d) => d?.properties?.group === selectedAreaGroup.label
-					)
-				: null;
-		return selectedChildType?.codes
-			? getAllChildren(selectedParentArea.properties, includeParent)
-					.filter(
-						(d) =>
-							selectedChildType.codes.includes(d.areacd.slice(0, 3)) ||
-							d.areacd === selectedParentArea.properties.areacd
-					)
-					.map((d) => {
-						const fits = bestFits[d.areacd] || [[d.areacd]];
-						return {
-							type: "Feature",
-							geometry: null,
-							properties: {
-								...d,
-								areanm: d.areanm || d.areacd,
-								oa21cds: fits[0],
-								lsoa21cds: fits[fits.length - 1]
-							}
-						};
-					})
-			: null;
+	function makeChildAreas(selectedArea, childTypes, includeParent) {
+		const areas = childTypes?.length ? getAllChildren(selectedArea.properties) : [];
+		if (includeParent) areas.unshift(selectedArea.properties);
+		return areas
+			.filter(
+				(d) =>
+					childTypes
+						.map((type) => type.codes)
+						.flat()
+						.includes(d.areacd.slice(0, 3)) ||
+					d.areacd === selectedArea.properties.areacd
+			)
+			.map((d) => {
+				const fits = bestFits[d.areacd] || [[d.areacd]];
+				return {
+					type: "Feature",
+					geometry: null,
+					properties: {
+						...d,
+						areanm: d.areanm || d.areacd,
+						oa21cds: fits[0],
+						// lsoa21cs is same as oa21cds if length === 1
+						lsoa21cds: fits[fits.length - 1]
+					}
+				};
+			});
+	}
+
+	function addAreasToSelection(areas) {
+		const selectedAreaCodes = new Set($selectedAreas.map((d) => d.properties.areacd));
+		$selectedAreas = [
+			...$selectedAreas,
+			...areas.filter((d) => !selectedAreaCodes.has(d.properties.areacd))
+		];
+	}
+
+	function makeSavedAreaOptions(savedAreas) {
+		const options = [];
+		let noNameIndex = 1;
+		let noCodeIndex = 1;
+
+		for (const obj of Object.values(savedAreas)) {
+			const area = structuredClone(obj);
+			area.selected = false;
+			if (!area.properties?.areanm) {
+				area.properties.areanm = `${defaultAreaName} ${noNameIndex}`;
+				noNameIndex += 1;
+			}
+			if (!area.properties?.areacd) {
+				area.properties.areacd = `Z99${String(noCodeIndex).padStart(6, "0")}`;
+				noCodeIndex += 1;
+			}
+			options.push(area);
+		}
+		return options;
 	}
 
 	const selectionTypes = [
-		{ id: "saved", label: "A group of saved areas" },
-		{ id: "children", label: "Areas within a larger area" }
+		{ id: "search", label: "Search for areas" },
+		{ id: "saved", label: "Choose from saved areas" }
 	];
+
+	let step = $state($selectedAreas?.length ? 2 : 1);
+
+	let savedAreaOptions = $state(makeSavedAreaOptions($savedAreas));
 	let selectionType = $state.raw(selectionTypes[0]);
 
-	let areaGroups = $derived(
-		[...new Set(Object.values($savedAreas).map((d) => d?.properties?.group))].map((d) => ({
-			id: d,
-			label: d
-		}))
-	);
-	let selectedAreaGroup = $derived(areaGroups[0]);
-	let activeParentArea = $state.raw();
-	let selectedParentArea = $state.raw();
-	let includeParent = $state(false);
-	let childTypes = $derived(
-		selectedParentArea?.geojson ? getChildTypes(selectedParentArea.geojson) : []
-	);
-	let selectedChildType = $derived(childTypes[0] || null);
-
-	let selectedAreas = $derived(
-		makeSelectedAreas(
-			selectionType,
-			selectedAreaGroup,
-			selectedParentArea?.geojson,
-			selectedChildType,
-			includeParent
-		)
-	);
+	let activeArea = $state.raw();
+	let includeParent = $state(true);
+	let childTypes = $derived(activeArea?.geojson ? getChildTypes(activeArea.geojson) : []);
+	let childTypesChecked = $derived(childTypes.map(() => false));
 
 	let activeTopic = $state.raw();
-	let selectedTopic = $derived(!!selectedAreas && null); // Gets reset when new areas selected
+	let selectedTopic = $derived(!!$selectedAreas && null); // Gets reset when new areas selected
 
 	let selectedData = $derived(
-		selectedTopic && selectedAreas?.length ? await getData(selectedTopic, selectedAreas) : null
+		selectedTopic && $selectedAreas?.length
+			? await getData(selectedTopic, $selectedAreas)
+			: null
 	);
 	$inspect({ selectedData });
 </script>
@@ -161,121 +166,262 @@
 	{width}
 />
 
-<Grid {width} colWidth="wide" marginTop>
-	<Card title="1. Choose selection type" cls="ons-text-indent">
-		<Radios
-			id="selection-type"
-			items={selectionTypes}
-			bind:value={selectionType}
-			title="Choose selection type"
-			hideTitle
-			compact
-		/>
-	</Card>
-	{#if selectionType?.id === "saved"}
-		<Card title="2. Select area group" cls="ons-text-indent">
-			{#if areaGroups.length}
-				<Radios
-					id="area-group"
-					items={areaGroups}
-					bind:value={selectedAreaGroup}
-					title="Select area group"
-					hideTitle
-					compact
-				/>
-				<div class="ons-u-mt-s">
-					<EditModal {savedAreas} />
-					<p class="ons-u-mt-xs"><a href={resolve("/draw")} small>Draw a new area</a></p>
-				</div>
-			{:else}
-				<p>
-					You don't currently have any saved areas. Try the <a href={resolve("/draw")}
-						>draw an area</a
-					> tool or choose "areas within a larger area" to select pre-defined areas.
-				</p>
-			{/if}
-		</Card>
+<Container {width}>
+	{#if step === 2}
+		<div class="ons-summary ons-summary--hub">
+			<div class="ons-summary__group">
+				<dl class="ons-summary__items">
+					<div class="ons-summary__item">
+						<dt class="ons-summary__item-title">
+							<div class="ons-summary__item--text ons-u-fs-m">
+								<Em mode="badge" fontSize="16px">STEP 1</Em>
+								<span>Select areas</span>
+							</div>
+						</dt>
+						<dd class="ons-summary__values">
+							<span class="ons-summary__text"
+								>{$selectedAreas.length} areas selected</span
+							>
+						</dd>
+						<dd class="ons-summary__actions">
+							<a
+								href="#0"
+								class="ons-summary__button"
+								onclick={(e) => {
+									e.preventDefault();
+									step = 1;
+								}}
+							>
+								<span class="ons-summary__button-text" aria-hidden="true"
+									>Change areas</span
+								>
+							</a>
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
 	{:else}
-		<Card title="2. Select a parent area" cls="ons-text-indent">
-			<form
-				class="input-group"
-				onsubmit={(e) => {
-					e.preventDefault();
-					selectedParentArea = activeParentArea;
-					selectedChildType = childTypes[0];
-				}}
-			>
-				<AreaSearch
-					bind:value={activeParentArea}
-					options={filteredAreasList}
-					label="Find an area"
-					geoTypes={parentAreaTypes}
-					postcodeTypes={ltlaTypes}
-				/>
-				<Button type="submit" disabled={!activeParentArea} small>Select area</Button>
-			</form>
-		</Card>
-		{#if selectedParentArea && childTypes?.length}
-			<Card title="3. Select child area type" cls="ons-text-indent">
-				<Radios
-					id="area-group"
-					items={childTypes}
-					bind:value={selectedChildType}
-					title="Select area group"
-					hideTitle
-					compact
-				/>
-				<Checkbox
-					cls="ons-u-mt-s"
-					label="Include {selectedParentArea?.label} in selection"
-					bind:checked={includeParent}
-					compact
-				/>
-			</Card>
+		<h2 class="ons-u-fs-m ons-u-mt-s">
+			<Em mode="badge" fontSize="16px" color={onsColors.oceanBlue}>STEP 1</Em>
+			<span>Select areas</span>
+		</h2>
+		<Radios>
+			<Radio
+				groupId="selection-type"
+				item={selectionTypes[0]}
+				bind:value={selectionType}
+				compact
+			/>
+			{#if selectionType?.id === "search"}
+				<Indent>
+					<form
+						class="col-auto-width"
+						onsubmit={(e) => {
+							e.preventDefault();
+							addAreasToSelection(
+								makeChildAreas(
+									activeArea.geojson,
+									childTypes.filter((d, i) => childTypesChecked[i]),
+									includeParent
+								)
+							);
+						}}
+					>
+						<AreaSearch
+							bind:value={activeArea}
+							options={areasList}
+							label="Find an area by name"
+							geoTypes={parentAreaTypes}
+							postcodeTypes={ltlaTypes}
+							clearable
+							onChange={() => (includeParent = true)}
+						/>
+						{#if activeArea}
+							{#key activeArea}
+								<Checkboxes
+									id="searched-areas"
+									cls="ons-u-mt-xs"
+									label="Choose areas"
+									compact
+								>
+									<Checkbox
+										label="{activeArea.label} ({activeArea.group})"
+										bind:checked={includeParent}
+										compact
+									/>
+									{#each childTypes as childType, i}
+										<Checkbox
+											label="All {childType.label}s in {activeArea.label}"
+											bind:checked={childTypesChecked[i]}
+											compact
+										/>
+									{/each}
+								</Checkboxes>
+							{/key}
+						{/if}
+						<Button cls="ons-u-mt-2xs" type="submit" small disabled={!activeArea}
+							>Add to selection</Button
+						>
+					</form>
+				</Indent>
+			{/if}
+			<Radio
+				groupId="selection-type"
+				item={selectionTypes[1]}
+				bind:value={selectionType}
+				compact
+			/>
+			{#if selectionType?.id === "saved"}
+				<Indent>
+					{#if Object.keys($savedAreas)?.length}
+						<form
+							class="col-auto-width"
+							onsubmit={(e) => {
+								e.preventDefault();
+								addAreasToSelection(savedAreaOptions.filter((d) => d.selected));
+							}}
+						>
+							<Checkboxes id="saved-areas">
+								<Checkbox
+									id="areas-all"
+									label="Select all"
+									compact
+									checked={savedAreaOptions.every((d) => d.selected)}
+									on:change={(e) => {
+										const isChecked = e?.detail?.e?.target?.checked;
+										for (const area of savedAreaOptions)
+											area.selected = isChecked;
+									}}
+								/>
+								<hr class="input-divider" />
+								{#each savedAreaOptions as area}
+									<Checkbox
+										id={area.id}
+										label={area.properties.areanm}
+										bind:checked={area.selected}
+										compact
+									/>
+								{/each}
+							</Checkboxes>
+							<div class="ons-u-mt-s">
+								<Button
+									type="submit"
+									small
+									disabled={!savedAreaOptions.some((d) => d.selected)}
+									>Add to selection</Button
+								>
+								<EditModal {savedAreas} />
+								<!-- <p class="ons-u-mt-xs">
+							<a href={resolve("/draw")} small>Draw a new area</a>
+						</p> -->
+							</div>
+						</form>
+					{:else}
+						<p>
+							You don't currently have any saved areas. Try the <a
+								href={resolve("/draw")}>draw an area</a
+							> tool or choose "areas within a larger area" to select pre-defined areas.
+						</p>
+					{/if}
+				</Indent>
+			{/if}
+		</Radios>
+		{#if $selectedAreas?.length}
+			<Details cls="ons-u-mt-xs" title="Show {$selectedAreas.length} selected areas">
+				<table class="ons-table ons-table--bottom-space ons-table--responsive">
+					<thead class="ons-table__head">
+						<tr class="ons-table__row">
+							<th scope="col" class="ons-table__header ons-table__header--top"
+								>Name</th
+							>
+							<th scope="col" class="ons-table__header ons-table__header--top"
+								>Code</th
+							>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody class="ons-table__body">
+						{#each $selectedAreas as area, i}
+							<tr class="ons-table__row">
+								<td class="ons-table__cell ons-table__cell--top">
+									{area.properties.areanm || `${defaultAreaName} ${i}`}
+								</td>
+								<td class="ons-table__cell ons-table__cell--top">
+									{area.properties.areacd}
+								</td>
+								<td
+									class="ons-table__cell ons-table__cell--top ons-table__cell--numeric"
+								>
+									<Tooltip text="Remove area">
+										<Button
+											variant="secondary"
+											icon="cross"
+											small
+											hideLabel
+											on:click={() =>
+												($selectedAreas = $selectedAreas.filter(
+													(d) =>
+														d.properties.areacd !==
+														area.properties.areacd
+												))}>Remove area</Button
+										>
+									</Tooltip>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</Details>
+			<div class="ons-u-mt-s">
+				<Button
+					variant="secondary"
+					icon="cross"
+					small
+					on:click={() => ($selectedAreas = [])}>Clear all areas</Button
+				>
+				<Button icon="arrow" iconPosition="after" small on:click={() => (step = 2)}
+					>Next step</Button
+				>
+			</div>
 		{/if}
 	{/if}
-</Grid>
-{#if selectedAreas?.length}
-	<Divider {width} />
+</Container>
+
+{#if step === 2}
 	<Container {width}>
-		<Details title="View {selectedAreas.length} selected areas">
-			<List mode="dash">
-				{#each selectedAreas as area, i}
-					<Li>
-						<strong>{area.properties.areanm || `${defaultAreaName} ${i}`}</strong>
-						{#if area.properties.areacd}({area.properties.areacd}){/if}
-					</Li>
-				{/each}
-			</List>
-		</Details>
-	</Container>
-	<Divider {width} />
-	<Container {width} marginBottom>
-		<div class="ons-text-indent">
-			<h2 class="ons-u-fs-m">
-				{selectionType?.id === "saved" ? "3" : "4"}. Select a dataset
-			</h2>
-			<p>
-				Find out more about the available datasets in the <a href={resolve("/glossary")}
-					>data glossary</a
-				>.
-			</p>
-			<form
-				id="select-dataset"
-				class="input-group"
-				onsubmit={(e) => {
-					e.preventDefault();
-					selectedTopic = activeTopic;
-				}}
+		<h2 class="ons-u-fs-m ons-u-mt-s">
+			<Em mode="badge" fontSize="16px" color={onsColors.oceanBlue}>STEP 2</Em>
+			<span>Select a dataset</span>
+		</h2>
+		<p>
+			Find out more about the available datasets in the <a href={resolve("/glossary")}
+				>data glossary</a
+			>.
+		</p>
+		<form
+			id="select-dataset"
+			class="col-auto-width"
+			onsubmit={(e) => {
+				e.preventDefault();
+				selectedTopic = activeTopic;
+			}}
+		>
+			<Select
+				label="Choose a dataset"
+				placeholder="Select or type a dataset name"
+				bind:value={activeTopic}
+				options={data.topics}
+				groupKey="topic"
+			/>
+			<Button cls="ons-u-mt-2xs" type="submit" small disabled={!activeTopic}
+				>Select dataset</Button
 			>
-				<Select bind:value={activeTopic} options={data.topics} groupKey="topic" />
-				<Button type="submit" small>Select dataset</Button>
-			</form>
-		</div>
+		</form>
 	</Container>
 	{#if selectedData}
 		{@const pivotedData = pivotDataOnMeasures(selectedData.data)}
-		<Section {width} title={selectedData.meta.label}>
+		<Section {width} title={selectedData.meta.label} marginTop>
 			<p>
 				{selectedData.meta.summary}
 				<a href="https://www.ons.gov.uk/{selectedData.meta.url}"
@@ -290,45 +436,52 @@
 			{#key selectedData}
 				<Table data={pivotedData} {columns} sortable />
 			{/key}
-			<Button
-				icon="download"
-				on:click={() => downloadDatasetXLSX(selectedData.meta, pivotedData, columns)}
-				>Download as XLSX</Button
-			>
-			<Button
-				icon="download"
-				on:click={() => downloadDatasetCSV(selectedData.meta, pivotedData, columns)}
-				>Download as CSV</Button
-			>
+			<h2 class="ons-u-fs-m ons-u-mb-3xs">Get the data</h2>
+			<ul class="profile-actions">
+				<li>
+					<Icon type="download" /> Download data as
+					<a
+						href="#0"
+						onclick={(e) => {
+							e.preventDefault();
+							downloadDatasetXLSX(selectedData.meta, pivotedData, columns);
+						}}>XLSX</a
+					>
+					or
+					<a
+						href="#0"
+						onclick={(e) => {
+							e.preventDefault();
+							() => downloadDatasetCSV(selectedData.meta, pivotedData, columns);
+						}}>CSV</a
+					>
+				</li>
+			</ul>
 		</Section>
 	{/if}
 {/if}
+<Divider {width} hr={false} />
 
 <style>
-	.input-group {
-		display: flex;
-		flex-direction: row;
-		align-items: flex-end;
-		gap: 4px;
-		margin: 6px 0 4px;
-		max-width: 600px;
+	.col-auto-width {
+		width: 350px;
+		max-width: calc(100vw - 58px);
 	}
-	.input-group :global(.ons-btn__inner) {
-		height: 37px;
-		transform: translateY(-3px);
+	.ons-u-fs-m > span {
+		display: inline-block;
+		transform: translateY(-2px);
 	}
-	.input-group :global(.ons-label) {
-		margin-bottom: 4px;
+	h2.ons-u-fs-m {
+		padding-top: 5px;
 	}
-	.input-group :global(.ons-field) {
-		flex-grow: 1;
+	ul.profile-actions {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
 	}
-	.input-group :global(.ons-btn) {
-		flex-shrink: 1;
-	}
-	.input-group :global .selections-divider {
-		border-bottom: 1px solid var(--ons-color-borders);
-		padding-bottom: 1em;
-		margin-bottom: 1em;
+	ul.profile-actions > li {
+		display: inline-block;
+		padding: 0;
+		margin-right: 16px;
 	}
 </style>

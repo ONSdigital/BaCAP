@@ -11,14 +11,12 @@
 	let filterText = $state("");
 	let regex = $derived(new RegExp(`\\b${filterText}`, "i"));
 	let areas = $derived(Object.values($savedAreas));
-	let groups = $derived(Array.from(new Set(areas.map((d) => d.properties.group))));
-	let activeGroups = $derived([...groups]);
 </script>
 
 <Modal
 	bind:this={modal}
 	title="Edit saved areas"
-	label="Edit saved areas"
+	label="Edit areas"
 	buttonStyle="secondary"
 	icon="edit"
 	onOpen={() => null}
@@ -37,15 +35,13 @@
 					<tr>
 						<th>Name</th>
 						<th>Code</th>
-						<th>Group</th>
 						<th class="align-right"><span class="ons-u-vh">Options</span></th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each areas as area, i (area.id)}
 						<tr
-							style:display={(!filterText || regex.test(area.properties.areanm)) &&
-							activeGroups.includes(area.properties.group)
+							style:display={!filterText || regex.test(area.properties.areanm)
 								? null
 								: "none"}
 						>
@@ -62,16 +58,9 @@
 										bind:value={editArea.properties.areacd}
 									/></td
 								>
-								<td
-									><input
-										class="ons-input ons-input--text ons-input-type__input ons-input--w-10"
-										bind:value={editArea.properties.group}
-									/></td
-								>
 							{:else}
 								<td>{area.properties.areanm}</td>
 								<td>{area.properties.areacd}</td>
-								<td>{area.properties.group}</td>
 							{/if}
 							<td>
 								<div class="area-buttons">

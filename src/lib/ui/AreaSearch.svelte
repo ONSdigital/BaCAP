@@ -16,7 +16,9 @@
 		placeholder = "Type a place name or postcode",
 		geoTypes = new Set(Object.keys(geotypesLookup)),
 		postcodeTypes = new Set(["E00", "W00"]),
-		autoFocus = false
+		autoFocus = false,
+		clearable = false,
+		onChange = () => null
 	} = $props();
 
 	const startsWithFilter = (str, filter) => str.toLowerCase().startsWith(filter.toLowerCase());
@@ -139,7 +141,10 @@
 		} else {
 			areacd = obj[idKey];
 		}
-		if (!areacd) return;
+		if (!areacd) {
+			onChange(null);
+			return;
+		}
 
 		try {
 			const geojson = await (
@@ -148,8 +153,10 @@
 			value = {
 				[idKey]: areacd,
 				[labelKey]: geojson.properties.areanm || areacd,
+				[groupKey]: e.detail?.group,
 				geojson
 			};
+			onChange(value);
 		} catch (err) {
 			console.warn(err);
 		}
@@ -165,6 +172,8 @@
 	{description}
 	{placeholder}
 	{autoFocus}
+	{clearable}
 	on:change={handleChange}
+	on:clear={() => (value = null)}
 	autoClear={false}
 />

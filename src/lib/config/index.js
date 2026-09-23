@@ -14,7 +14,8 @@ export const initialState = {
 	history: [{ geometry: null, oa: new Set(), lsoa: new Set() }],
 	rehistory: [],
 	lastActivePage: null,
-	selectedTopics: ["population"]
+	selectedTopics: ["population"],
+	selectedAreas: []
 };
 export const defaultAreaName = "Unnamed Area";
 

@@ -117,7 +117,6 @@ export function parseGeoJSON(geojson, centroids, isBNG = false) {
 	const properties = {
 		areanm,
 		areacd,
-		group: props.group || null,
 		oa21cds: new Set(
 			props.oa21cds ||
 				props.codes_compressed ||
@@ -169,7 +168,6 @@ export function makeSavedArea(activeArea, current, centroids, id = null) {
 	const area = snapshot(activeArea);
 	if (id) area.id = id;
 	area.geometry = current.geometry;
-	if (!area.properties.group) area.properties.group = "Custom areas";
 	area.properties.oa21cds = centroids.compress(current.oa);
 	area.properties.lsoa21cds = centroids.compress(current.lsoa);
 	return area;

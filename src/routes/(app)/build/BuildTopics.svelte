@@ -80,9 +80,9 @@
 							compact
 						/>
 					{/each}
+					<hr class="input-divider" />
 					<Checkbox
 						id="{group.key}-all"
-						cls="select-all-toggle"
 						label="Select all"
 						checked={group.children.every((d) => $selectedTopics.includes(d.key))}
 						groupName="{group.key}-all"
@@ -138,9 +138,5 @@
 		position: absolute;
 		bottom: calc(100% + 4px);
 		right: 0;
-	}
-	:global(.select-all-toggle) {
-		border-top: 1px solid var(--ons-color-borders-light);
-		padding-top: 8px;
 	}
 </style>
