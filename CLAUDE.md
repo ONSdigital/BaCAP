@@ -13,7 +13,6 @@ npm run dev              # Start dev server (localhost:5173)
 npm run build             # Production build to /build (also runs scripts/js-fix.js to fix JS mimetypes)
 npm run build:preview     # Build with PUBLIC_APP_ENV=preview, using base_preview path
 npm run preview            # Preview a production build
-npm run deploy             # Publish /build to gh-pages
 npm run lint                # prettier --check
 npm run format              # prettier --write
 npm test                    # vitest run (unit tests; currently only src/lib/util/data/get-data.js is covered)
@@ -32,7 +31,7 @@ npm run data:lookups    # Fetches best-fit and region/combined-authority child l
 
 ## Base path configuration
 
-Before building for a target environment, `src/app.config.js` sets the base path: `base_prod` for the ONS site (`/visualisations/customprofiles`), `base_preview` for preview/GitHub Pages. `svelte.config.js` picks between them based on `NODE_ENV`/`PUBLIC_APP_ENV`.
+Before building for a target environment, `src/app.config.js` sets the base path: `base_prod` for the ONS site (`/visualisations/customprofiles`), `base_preview` for preview builds. `svelte.config.js` picks between them based on `NODE_ENV`/`PUBLIC_APP_ENV`.
 
 ## Architecture
 
@@ -80,7 +79,9 @@ Reference/geometry data (area boundaries, postcode lookups, area-code lookups) i
 
 ### Deployment model
 
-The app builds via `@sveltejs/adapter-static` (see `svelte.config.js`) and ships as static files with no backend of its own — it's deployed onto the ONS website and gh-pages/preview environments as plain static assets. This is an intentional constraint, not a gap: it means there's no server-side layer available for API proxying, response caching, or auth, so all caching (Nomis response cache in `get-data.js`, reference-dataset cache in `io/index.js`, app state in `state/`) has to live client-side in IndexedDB, and every browser session repeats its own Nomis requests independently. Keep this in mind before suggesting a server-side cache, API proxy, or edge layer — those would require a platform change, not just a code change.
+The app builds via `@sveltejs/adapter-static` (see `svelte.config.js`) and ships as static files with no backend of its own — it's deployed onto the ONS website as plain static assets. This is an intentional constraint, not a gap: it means there's no server-side layer available for API proxying, response caching, or auth, so all caching (Nomis response cache in `get-data.js`, reference-dataset cache in `io/index.js`, app state in `state/`) has to live client-side in IndexedDB, and every browser session repeats its own Nomis requests independently. Keep this in mind before suggesting a server-side cache, API proxy, or edge layer — those would require a platform change, not just a code change.
+
+Previews are built automatically per-branch/PR by Vercel (linked from each PR); the `main`/production branch's preview is at https://ons-bacap.vercel.app. There's no `vercel.json` or Vercel-specific adapter in this repo, so Vercel's exact build/base-path configuration lives in its own project settings, not here.
 
 ## Code style
 
