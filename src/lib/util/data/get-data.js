@@ -228,5 +228,6 @@ export default async function getData(table, areas) {
 	const percentMeasure = table.measures.find((d) => d.label === "Percent");
 	if (percentMeasure && !percentMeasure.cell) data = calcPercentages(data);
 
+	console.debug({ meta: table, data });
 	return { meta: table, data };
 }

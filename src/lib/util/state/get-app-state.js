@@ -4,7 +4,7 @@ import snapshot from "./snapshot.svelte.js";
 import { initialState, appVersion } from "../../config/index.js";
 
 function syncState(key, val) {
-	console.log(`Syncing state: ${key}`, val);
+	console.debug(`Syncing state: ${key}`, val);
 	set(key, val);
 }
 

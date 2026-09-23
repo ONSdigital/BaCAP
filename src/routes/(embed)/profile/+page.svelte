@@ -74,6 +74,7 @@
 	function update() {
 		const embedHash = document.location.hash.slice(1);
 		if (embedHash.length) embedData = JSON.parse(atobUtf8(embedHash));
+		console.debug({ embedHash, embedData });
 	}
 	onMount(update);
 </script>
