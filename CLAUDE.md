@@ -23,10 +23,12 @@ npx vitest                  # watch mode
 Data pipeline scripts (regenerate static JSON data from `raw_data/` or remote ONS/geo-scripts sources — run only when source data changes):
 
 ```bash
-npm run data:compress   # Compresses raw_data/*.csv into static/data/*.json (oa21-data, lsoa21-data, places-list)
-npm run data:convert    # Converts scripts/data/topics-old.json into static/data/topics-generated.json
+npm run data:get-places # Fetches raw_data/places-list.csv from ONSdigital/geo-scripts on GitHub
+npm run data:compress   # Compresses raw_data/*.csv (oa21-data, lsoa21-data, places-list) into static/data/*.json
 npm run data:lookups    # Fetches best-fit and region/combined-authority child lookups from ONSdigital/geo-scripts on GitHub, writes static/data/bestfit-lookup.json and static/data/rgn-cauth-children.json
 ```
+
+`static/data/topics.json` (topic/dataset definitions loaded by the root layout) is maintained directly rather than generated — there is no longer a conversion script for it.
 
 ## Base path configuration
 
