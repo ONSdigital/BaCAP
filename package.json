@@ -9,6 +9,7 @@
 		"package": "vite package",
 		"preview": "vite preview",
 		"deploy": "gh-pages -d build -t",
+		"data:get-places": "node ./scripts/get-places-list.js",
 		"data:compress": "node ./scripts/compress-data.js",
 		"data:lookups": "node ./scripts/make-oa-lookups.js && node ./scripts/make-rgn-cauth-children.js",
 		"test": "vitest run",
