@@ -321,7 +321,7 @@
 						<p>
 							You don't currently have any saved areas. Try the <a
 								href={resolve("/draw")}>draw an area</a
-							> tool or choose "areas within a larger area" to select pre-defined areas.
+							> tool or choose "search for areas" to select pre-defined areas.
 						</p>
 					{/if}
 				</Indent>
