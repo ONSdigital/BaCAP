@@ -1,6 +1,6 @@
 {
-	"name": "@onsvisual/sveltekit-starter",
-	"homepage": "http://onsdigital.github.io/sveltekit-starter",
+	"name": "ons-bacap",
+	"homepage": "http://github.com/ONSdigital/BaCAP",
 	"version": "1.0.0",
 	"scripts": {
 		"dev": "vite dev",
