@@ -118,8 +118,9 @@
 		let noCodeIndex = 1;
 
 		for (const obj of Object.values(savedAreas)) {
-			const area = structuredClone(obj);
+			const area = { ...obj };
 			area.selected = false;
+			area.properties = { ...obj.properties };
 			if (!area.properties?.areanm) {
 				area.properties.areanm = `${defaultAreaName} ${noNameIndex}`;
 				noNameIndex += 1;
