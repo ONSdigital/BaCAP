@@ -104,7 +104,10 @@ decompressed in the browser.
 `loadData()` in `src/lib/util/io/index.js` caches each dataset in IndexedDB after its first
 download. When `appVersion` in `src/lib/config/index.js` differs from the version stored in
 IndexedDB, the cached datasets are ignored and downloaded again. This means bumping `appVersion`
-is how a change to the reference data reaches returning users.
+is how a change to the reference data reaches returning users. The new version is saved only after
+every dataset has reloaded, so a failed refresh is tried again on the next visit. Bumping
+`appVersion` does **not** clear the user's saved app state
+([see below](#versioning-and-migrations)).
 
 ## Best-fit lookups
 
@@ -340,6 +343,15 @@ the codebase changes stores by assignment: `$activeArea = …`, or a nested muta
 It returns an object of stores (`{ activeArea, comparisonArea, savedAreas, history, … }`), which
 the layout shares through `setContext("appState", …)`. Pages destructure the stores they need and
 use them with the `$store` syntax.
+
+### Versioning and migrations
+
+The user's saved state (`savedAreas` in particular) is meant to last across releases, so it is
+**not** cleared when `appVersion` changes. `getAppState()` is given the version previously stored
+in IndexedDB (`null` for a new user). If a future release changes the structure of stored state in
+a way that would break or corrupt existing data, add a migration for that specific version at the
+start of `getAppState()`, for example `if (storedAppVersion && storedAppVersion < 2) { … }`, which
+can amend, restructure or clear only the affected keys.
 
 ### Coordinating pages through shared state
 

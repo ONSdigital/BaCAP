@@ -47,7 +47,7 @@ The root `+layout.js` prerenders (except in preview mode), sets `trailingSlash: 
 
 ### State persistence (`src/lib/util/state/`)
 
-App state (`activeArea`, `comparisonArea`, `savedAreas`, draw `history`, `selectedTopics`, etc. — see `initialState` in `src/lib/config/index.js`) is held in Svelte stores that transparently sync to IndexedDB (`db.js`, via `idb-keyval`) on every `.set()`. `getAppState()` rehydrates these stores from IndexedDB on startup, seeding any missing key from `initialState`. Bumping `appVersion` in `src/lib/config/index.js` invalidates old stored state/data caches.
+App state (`activeArea`, `comparisonArea`, `savedAreas`, draw `history`, `selectedTopics`, etc. — see `initialState` in `src/lib/config/index.js`) is held in Svelte stores that transparently sync to IndexedDB (`db.js`, via `idb-keyval`) on every `.set()`. `getAppState()` rehydrates these stores from IndexedDB on startup, seeding any missing key from `initialState`. Bumping `appVersion` in `src/lib/config/index.js` forces the cached reference datasets (`loadData()` in `io/index.js`) to be re-fetched, but deliberately does **not** clear the user's stored app state (e.g. saved areas), which should persist across releases. Only when a release makes a breaking change to the structure of stored state should a version-specific migration be added at the top of `getAppState()` (which receives the previously stored version) to amend or clear the affected keys.
 
 `snapshot.svelte.js` wraps `$state.snapshot` — used whenever a `$state` proxy needs to be serialized (persisted to IndexedDB, JSON-stringified, etc).
 

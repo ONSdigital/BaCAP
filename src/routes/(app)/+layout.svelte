@@ -4,6 +4,7 @@
 	import { appVersion } from "$lib/config";
 	import {
 		getStoredAppVersion,
+		setStoredAppVersion,
 		getAreasList,
 		getBestFits,
 		getChildLookup,
@@ -33,13 +34,15 @@
 		const isNewVersion = appVersion !== storedAppVersion;
 
 		const data = await Promise.all([
-			getAppState(),
+			getAppState(storedAppVersion),
 			getAreasList(isNewVersion),
 			getBestFits(isNewVersion),
 			getChildLookup(isNewVersion),
 			getOAdata(isNewVersion),
 			getLSOAcentroids(isNewVersion)
 		]);
+		// Only record the new version once all reference data has been refreshed
+		if (isNewVersion) await setStoredAppVersion();
 
 		appState = data[0];
 		areasList = data[1];

@@ -3,7 +3,7 @@ import { csvFormat, csvFormatRows, csvFormatBody } from "d3-dsv";
 import accessibleXLSX from "@onsvisual/accessible-xlsx";
 import { decompressData } from "compress-csv-to-json";
 import { get, set } from "../state/index.js";
-import { geotypesLookup } from "../../config/index.js";
+import { geotypesLookup, appVersion } from "../../config/index.js";
 import { getName, makeFilename } from "../geo/index.js";
 import { makeDateFormatter } from "../data/index.js";
 
@@ -30,6 +30,10 @@ export function atobUtf8(value) {
 export async function getStoredAppVersion() {
 	const version = await get("appVersion");
 	return version || null;
+}
+
+export async function setStoredAppVersion() {
+	await set("appVersion", appVersion);
 }
 
 async function loadData(key, path, forceRefresh = false, decompressFn = null) {
