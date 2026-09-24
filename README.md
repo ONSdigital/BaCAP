@@ -10,8 +10,9 @@ Live at: **https://www.ons.gov.uk/visualisations/customprofiles**
 Built with SvelteKit (Svelte 5) on the ONS [svelte-components](https://github.com/ONSvisual/svelte-components)
 design system, deployed as a static site (no backend/server of its own).
 
-For architecture notes aimed at developers working in the codebase (route structure, state
-management, geography utilities, etc.), see [CLAUDE.md](./CLAUDE.md).
+For an overview of how the app works (app structure, best-fit lookups, Nomis data fetching,
+embed hashes, and IndexedDB state and caching), see [ARCHITECTURE.md](./ARCHITECTURE.md). Further
+notes for developers working in the codebase are in [CLAUDE.md](./CLAUDE.md).
 
 ## Development
 
