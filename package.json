@@ -20,7 +20,7 @@
 	"devDependencies": {
 		"@mapbox/mapbox-gl-draw": "^1.4.3",
 		"@mapbox/tilebelt": "^2.0.3",
-		"@onsvisual/accessible-xlsx": "^0.2.0",
+		"@onsvisual/accessible-xlsx": "^0.2.1",
 		"@onsvisual/svelte-components": "^1.1.59",
 		"@onsvisual/svelte-maps": "^2.0.3",
 		"@sveltejs/adapter-static": "^3.0.0",
@@ -41,6 +41,7 @@
 		"d3-scale": "^4.0.2",
 		"idb-keyval": "^6.2.4",
 		"install": "^0.13.0",
+		"markdown-it": "^14.2.0",
 		"npm": "^11.15.0",
 		"prettier": "^3.8.3",
 		"prettier-plugin-svelte": "^3.2.6",
@@ -52,7 +53,6 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
-		"markdown-it": "^14.2.0",
 		"sirv-cli": "^1.0.0"
 	},
 	"type": "module"
