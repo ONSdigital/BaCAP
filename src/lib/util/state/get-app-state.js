@@ -21,6 +21,15 @@ function syncedStore(key, initialValue = null) {
 	};
 }
 
+async function initSyncedStore(key, fallbackValue = null) {
+	let value = await get(key);
+	if (!value) {
+		value = fallbackValue;
+		set(key, value);
+	}
+	return syncedStore(key, value);
+}
+
 export default async function getAppState() {
 	const version = get("appVersion");
 	if (version !== appVersion) {
@@ -28,10 +37,8 @@ export default async function getAppState() {
 		set("appVersion", appVersion);
 	}
 	const keys = Object.keys(initialState);
-	const storedState = await Promise.all(keys.map((key) => get(key)));
-	const appState = Object.fromEntries(
-		keys.map((key, i) => [key, syncedStore(key, storedState[i] || initialState[key])])
-	);
+	const stores = await Promise.all(keys.map((key) => initSyncedStore(key, initialState[key])));
+	const appState = Object.fromEntries(keys.map((key, i) => [key, stores[i]]));
 
 	return appState;
 }
