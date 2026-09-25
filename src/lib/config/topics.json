@@ -2182,7 +2182,7 @@
   },
   {
     "code": "claimant_count",
-    "label": "Claimant count",
+    "label": "Claimant Count",
     "desc": "Percentage of people aged 16 to 64 who are claiming unemployment-related benefits.",
     "tableCode": "NM_162_1",
     "measures": 20100,
