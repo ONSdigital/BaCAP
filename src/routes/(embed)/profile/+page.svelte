@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { Embed, Grid, Card } from "@onsvisual/svelte-components";
+	import { Embed, Grid, GridCell, Card } from "@onsvisual/svelte-components";
 	import { snapdom } from "@zumer/snapdom";
 	import { makeDateFormatter } from "$lib/util/data";
 	import { atobUtf8 } from "$lib/util/io";
@@ -82,12 +82,14 @@
 <svelte:window onhashchange={update} />
 
 <Embed id="embed" on:load={init}>
-	{#if embedData?.areas?.[0]}
-		<h1>
-			{embedData.areas[0]}
-		</h1>
-	{/if}
 	<Grid cls="data-cards" width="medium" colWidth="narrow">
+		{#if embedData?.areas?.[0]}
+			<GridCell colspan={3}>
+				<h1>
+					{embedData.areas[0]}
+				</h1>
+			</GridCell>
+		{/if}
 		{#if embedData?.polygons?.[0]}
 			<Card title="Area map" mode="featured">
 				<AreaMap polygons={embedData.polygons} areas={embedData.areas} />
@@ -118,6 +120,9 @@
 </Embed>
 
 <style>
+	h1 {
+		margin: 0;
+	}
 	:global(.data-cards h2) {
 		margin-bottom: 0;
 	}
