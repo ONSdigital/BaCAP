@@ -6,6 +6,7 @@ import { get, set } from "../state/index.js";
 import { geotypesLookup, appVersion } from "../../config/index.js";
 import { getName, makeFilename } from "../geo/index.js";
 import { makeDateFormatter } from "../data/index.js";
+import { slugify } from "../common/index.js";
 
 const utf8BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
 

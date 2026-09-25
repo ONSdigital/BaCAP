@@ -453,7 +453,7 @@
 						href="#0"
 						onclick={(e) => {
 							e.preventDefault();
-							() => downloadDatasetCSV(selectedData.meta, pivotedData, columns);
+							downloadDatasetCSV(selectedData.meta, pivotedData, columns);
 						}}>CSV</a
 					>
 				</li>
