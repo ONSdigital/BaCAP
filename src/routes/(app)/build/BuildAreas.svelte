@@ -179,12 +179,14 @@
 		padding-bottom: 1em;
 		margin-bottom: 1em;
 	}
-	.input-group :global(.ons-label) {
-		/* font-weight: normal; */
-	}
+	/* .input-group :global(.ons-label) {
+		font-weight: normal;
+	} */
 	.area-name {
 		border-color: rgba(0, 0, 0, 0);
 		padding-left: 0;
+		height: auto;
+		min-height: 40px;
 	}
 	.hidden {
 		visibility: hidden;
