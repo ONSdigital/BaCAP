@@ -21,7 +21,7 @@
 	"devDependencies": {
 		"@mapbox/mapbox-gl-draw": "^1.4.3",
 		"@mapbox/tilebelt": "^2.0.3",
-		"@onsvisual/accessible-xlsx": "^0.2.1",
+		"@onsvisual/accessible-xlsx": "^0.2.3",
 		"@onsvisual/svelte-components": "^1.1.59",
 		"@onsvisual/svelte-maps": "^2.0.3",
 		"@sveltejs/adapter-static": "^3.0.0",
