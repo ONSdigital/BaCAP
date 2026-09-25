@@ -633,7 +633,7 @@
 	},
 	{
 		"key": "claimant_count",
-		"label": "Claimant count",
+		"label": "Claimant Count",
 		"topic": "Economy",
 		"summary": "Percentage of people aged 16 to 64 who are claiming unemployment-related benefits.",
 		"description": null,
@@ -654,7 +654,7 @@
 	},
 	{
 		"key": "claimant_count_timeseries",
-		"label": "Claimant count time series",
+		"label": "Claimant Count time series",
 		"topic": "Economy",
 		"summary": "Percentage of people aged 16 to 64 who are claiming unemployment-related benefits.",
 		"description": null,
