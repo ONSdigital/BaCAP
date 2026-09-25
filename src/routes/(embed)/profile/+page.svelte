@@ -58,7 +58,7 @@
 	let tables = $derived(expandTables(topicsLookup, embedData));
 
 	async function downloadPNG() {
-		const result = await snapdom(document.body, { embedFonts: true });
+		const result = await snapdom(document.body, { embedFonts: true, backgroundColor: "white" });
 		await result.download({
 			format: "png",
 			filename: makeFilename(embedData?.areas?.[0], "png")
