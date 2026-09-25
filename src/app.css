@@ -1,0 +1,12 @@
+/* Use this file for app specific CSS and overrides */
+.ons-btn + .ons-btn {
+	margin-left: 0;
+}
+.tooltip {
+	z-index: 1;
+}
+.input-divider {
+	border-top: 1px solid var(--ons-color-borders-light);
+	padding: 0;
+	margin: 0 0 8px;
+}
