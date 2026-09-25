@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from "$app/paths";
 	import { onMount, getContext } from "svelte";
 	import { Grid, GridCell, Button, Notice } from "@onsvisual/svelte-components";
 	import BuildAreas from "./BuildAreas.svelte";
@@ -114,7 +115,9 @@
 		{:else}
 			<Notice
 				>No area is selected. To build a profile, select a primary area and then choose the
-				datasets you are interested in.</Notice
+				datasets you are interested in. You can define a custom area on the <a
+					href={resolve("/draw")}>Draw an area</a
+				> page</Notice
 			>
 		{/if}
 	</GridCell>

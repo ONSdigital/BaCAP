@@ -20,12 +20,13 @@
 	let activeName = $derived(
 		!$activeArea.geometry ? null : $activeArea?.properties?.areanm || defaultAreaName
 	);
+	let primaryModal = $state();
 	let comparisonModal = $state();
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select areas</h2>
 <div class="area-selection-container">
-	<div class="area-selection">
+	<div class="area-selection" class:hidden={!$activeArea.geometry}>
 		<div class="input-group">
 			{#if editName}
 				<form
@@ -77,6 +78,7 @@
 					bind:activeArea
 					bind:savedAreas
 					bind:savedAreasLastId
+					bind:modal={primaryModal}
 					{areasList}
 					{centroids}
 					mode="build"
@@ -125,7 +127,17 @@
 			compact
 		/>
 	</div>
-	{#if !$comparisonArea}
+	{#if !$activeArea.geometry}
+		<div class="ons-u-mt-3xs">
+			<a
+				href="#0"
+				onclick={(e) => {
+					e.preventDefault();
+					primaryModal.openDialog();
+				}}>Select an area</a
+			>
+		</div>
+	{:else if !$comparisonArea}
 		<div class="ons-u-mt-3xs">
 			<a
 				href="#0"
