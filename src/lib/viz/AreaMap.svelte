@@ -53,7 +53,7 @@
 		}}
 		options={{
 			fitBoundsOptions,
-			preserveDrawingBuffer: true
+			canvasContextAttributes: { preserveDrawingBuffer: true }
 		}}
 		interactive={false}
 	>
