@@ -20,3 +20,10 @@ export function getDatasetForVersion(dataset, version) {
       ...overrides,
     };
   }
+
+export function makeTopicsLookup(topics, version) {
+    return Object.fromEntries(topics
+      .filter((d) => isDatasetAvailableInVersion(d, version))
+      .map((d) => getDatasetForVersion(d, version))
+      .map((t) => [t.code, t]));
+  }

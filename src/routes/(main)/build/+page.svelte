@@ -525,10 +525,10 @@ async function setConfirmed(type = 'oa') {
 
        
         <label class='ons-label' for='oa-textarea'>Output Area codes</label>
-        <textarea rows="2" readonly id='oa-textarea' class="ons-input ons-input--textarea" >{store.properties.oa_all.join(",")}</textarea>
+        <textarea rows="2" readonly id='oa-textarea' class="ons-input ons-input--textarea" >{(store.properties.oa_all || []).join(",")}</textarea>
 
          <Button variant="secondary" small icon="copy" on:click={async () => {
-                const hasCopied = copyAreasToClipboard(store.properties.oa_all);
+                const hasCopied = copyAreasToClipboard(store.properties.oa_all || []);
                 if (hasCopied) setConfirmed('oa');
                 }}>
                 Copy Output Area codes
@@ -537,9 +537,9 @@ async function setConfirmed(type = 'oa') {
           <Icon type="tick" marginLeft/>{/if}
    
           <label class='ons-label' for='lsoa-textarea'>LSOA codes</label>
-        <textarea rows="2" readonly id='lsoa-textarea' class="ons-input ons-input--textarea" >{store.properties.lsoa_all.join(",")}</textarea>
+        <textarea rows="2" readonly id='lsoa-textarea' class="ons-input ons-input--textarea" >{(store.properties.lsoa_all || []).join(",")}</textarea>
           <Button variant="secondary" small icon="copy" on:click={async () => {
-                const hasCopied = copyAreasToClipboard(store.properties.lsoa_all);
+                const hasCopied = copyAreasToClipboard(store.properties.lsoa_all || []);
                 if (hasCopied) setConfirmed('lsoa');
                 }}>
                 Copy LSOA codes

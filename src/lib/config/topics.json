@@ -50,7 +50,7 @@
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "lowestGeography": "oa",
     "census": false,
-    "source": "ONS – Mid-year estimates",
+    "source": "ONS - Mid-year estimates",
     "topic": "Demography and migration",
     "validFromVersion":2,
     "versions":{
@@ -88,7 +88,7 @@
     "lowestGeography": "oa",
     "url": "census/census2021dictionary/variablesbytopic/demographyvariablescensus2021/householdsize",
     "census": true,
-    "source": "ONS – Census 2021",
+    "source": "ONS - Census 2021",
     "topic": "Demography and migration",
     "validFromVersion": 1
   },
@@ -115,7 +115,7 @@
       }
     ],
     "lowestGeography": "lsoa",
-    "source": "HM Land Registry – Price Paid Transaction Data",
+    "source": "HM Land Registry - Price Paid Transaction Data",
     "census": false,
     "dateLabelLong": "Year ending September 2024",
     "topic": "Housing",
@@ -390,7 +390,7 @@
     "dateLabelLong": 2024,
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "source": "ONS – Mid-year estimates",
+    "source": "ONS - Mid-year estimates",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -468,7 +468,7 @@
     "census": false,
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
     "queryExt": "&c_age=200",
-    "source": "ONS – Mid-year estimates",
+    "source": "ONS - Mid-year estimates",
     "topic": "Demography and migration",
     "validFromVersion": 2,
     "versions":{
@@ -521,6 +521,11 @@
         "dateLabel": 2024,
         "date": 2024,
         "dateLabelLong": 2024
+      },
+      "5":{
+        "dateLabel": 2025,
+        "date": 2025,
+        "dateLabelLong": 2025
       }
     }
   },
@@ -2177,7 +2182,7 @@
   },
   {
     "code": "claimant_count",
-    "label": "Claimant count",
+    "label": "Claimant Count",
     "desc": "Percentage of people aged 16 to 64 who are claiming unemployment-related benefits.",
     "tableCode": "NM_162_1",
     "measures": 20100,
@@ -2206,6 +2211,11 @@
         "dateLabel": "Mar 2026",
         "date": "2026-03",
         "dateLabelLong": "March 2026"
+      },
+      "5":{
+        "dateLabel": "Aug 2026",
+        "date": "2026-08",
+        "dateLabelLong": "August 2026"
       }
     }
   },
