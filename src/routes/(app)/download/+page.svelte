@@ -9,6 +9,7 @@
 	let { data } = $props();
 
 	let appState = $state(getContext("appState")());
+	// svelte-ignore non_reactive_update
 	let { savedAreas, selectedAreas } = appState;
 
 	const areasList = getContext("areasList")();
