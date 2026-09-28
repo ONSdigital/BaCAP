@@ -43,7 +43,7 @@
 			contentTitle: page.data.contentTitle,
 			contentSubType: page.data.contentSubType
 		};
-		console.log({ eventData });
+		console.debug({ eventData });
 		analyticsEvent(eventData);
 	});
 

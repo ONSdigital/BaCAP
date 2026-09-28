@@ -2,13 +2,9 @@
 	import { Tabs, Tab, Input, Button, Checkbox, Tooltip } from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
 	import AreaSearch from "./AreaSearch.svelte";
-	import {
-		uploadAreas,
-		downloadArea,
-		featureCollection,
-		parseGeoJSON,
-		getCodeKey
-	} from "$lib/util/geo";
+	import { uploadAreas, featureCollection, parseGeoJSON, getCodeKey } from "$lib/util/geo";
+	import { downloadArea } from "$lib/util/io";
+	import { areaSelectEvent } from "$lib/util/analytics";
 
 	let {
 		activeArea = $bindable(),
@@ -112,6 +108,10 @@
 					onsubmit={(e) => {
 						e.preventDefault();
 						loadNewArea(selectedArea.geojson);
+						areaSelectEvent({
+							area: selectedArea.geojson?.properties,
+							label: "Select area"
+						});
 					}}
 				>
 					<AreaSearch

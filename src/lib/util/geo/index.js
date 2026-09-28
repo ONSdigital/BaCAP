@@ -179,12 +179,6 @@ export function makeFilename(activeArea, extension = null) {
 	return slugify(name) + ext;
 }
 
-export function downloadArea(area) {
-	const str = JSON.stringify(area, (key, val) => (val instanceof Set ? [...val] : val));
-	const file = new Blob([str], { type: "application/json" });
-	download(file, makeFilename(area, "json"));
-}
-
 export function uploadAreas(uploader) {
 	return new Promise((resolve) => {
 		let file = uploader?.files?.[0];

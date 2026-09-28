@@ -1,7 +1,8 @@
 <script>
 	import { Input, Button, Tooltip } from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
-	import { downloadArea, featureCollection } from "$lib/util/geo";
+	import { featureCollection } from "$lib/util/geo";
+	import { downloadArea } from "$lib/util/io";
 
 	let { savedAreas = $bindable(), modal = $bindable() } = $props();
 

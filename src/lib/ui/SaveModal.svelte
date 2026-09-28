@@ -1,9 +1,9 @@
 <script>
 	import Modal from "./Modal.svelte";
 	import { Tabs, Tab, Input, Textarea, Button, Icon } from "@onsvisual/svelte-components";
-	import { makeSavedArea, downloadArea } from "$lib/util/geo";
+	import { makeSavedArea } from "$lib/util/geo";
 	import { sleep } from "$lib/util/common";
-	import { clip } from "$lib/util/io";
+	import { downloadArea, clip } from "$lib/util/io";
 
 	let {
 		activeArea = $bindable(),

@@ -7,6 +7,7 @@ import { geotypesLookup, appVersion } from "../../config/index.js";
 import { getName, makeFilename } from "../geo/index.js";
 import { makeDateFormatter } from "../data/index.js";
 import { slugify } from "../common/index.js";
+import { downloadEvent } from "../analytics/index.js";
 
 const utf8BOM = new Uint8Array([0xef, 0xbb, 0xbf]);
 
@@ -177,7 +178,14 @@ export async function downloadProfileXLSX(tables, activeArea, comparisonArea) {
 	const blob = new Blob([xlsx], {
 		type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	});
-	download(blob, makeFilename(activeArea, "xlsx"));
+	const filename = makeFilename(activeArea, "xlsx");
+	download(blob, filename);
+	downloadEvent({
+		filename,
+		area: activeArea?.properties,
+		format: "csv",
+		label: `Download area profile as CSV`
+	});
 }
 
 export function downloadProfileCSV(tables, activeArea, comparisonArea) {
@@ -187,7 +195,14 @@ export function downloadProfileCSV(tables, activeArea, comparisonArea) {
 	const data = tables.map((tab) => formatTable(tab, name, compName)).flat();
 	const csv = csvFormat(data);
 	const blob = new Blob([utf8BOM, csv], { type: "text/csv;charset=utf-8;" });
-	download(blob, makeFilename(activeArea, "csv"));
+	const filename = makeFilename(activeArea, "csv");
+	download(blob, filename);
+	downloadEvent({
+		filename,
+		area: activeArea?.properties,
+		format: "csv",
+		label: `Download area profile as CSV`
+	});
 }
 
 export async function downloadDatasetXLSX(table, data, columns) {
@@ -213,7 +228,9 @@ export async function downloadDatasetXLSX(table, data, columns) {
 	const blob = new Blob([xlsx], {
 		type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	});
-	download(blob, `${slugify(table.label)}.xlsx`);
+	const filename = `${slugify(table.label)}.xlsx`;
+	download(blob, filename);
+	downloadEvent({ filename, format: "csv", label: `Download dataset as XLSX` });
 }
 
 export function downloadDatasetCSV(table, data, columns) {
@@ -225,5 +242,20 @@ export function downloadDatasetCSV(table, data, columns) {
 			columns.map((d) => d.key)
 		);
 	const blob = new Blob([utf8BOM, csv], { type: "text/csv;charset=utf-8;" });
-	download(blob, `${slugify(table.label)}.csv`);
+	const filename = `${slugify(table.label)}.csv`;
+	download(blob, filename);
+	downloadEvent({ filename, format: "csv", label: `Download dataset as CSV` });
+}
+
+export function downloadArea(area) {
+	const str = JSON.stringify(area, (key, val) => (val instanceof Set ? [...val] : val));
+	const file = new Blob([str], { type: "application/json" });
+	const filename = makeFilename(area, "geojson");
+	download(file, filename);
+	downloadEvent({
+		filename,
+		area: area?.properties,
+		format: "geojson",
+		label: `Download area as GeoJSON`
+	});
 }

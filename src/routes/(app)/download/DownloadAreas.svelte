@@ -15,6 +15,7 @@
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import EditModal from "$lib/ui/EditModal.svelte";
 	import { geogroups, defaultAreaName, onsColors } from "$lib/config";
+	import { areaSelectEvent } from "$lib/util/analytics";
 
 	let {
 		areasList,
@@ -92,10 +93,15 @@
 
 	function addAreasToSelection(areas) {
 		const selectedAreaCodes = new Set($selectedAreas.map((d) => d.properties.areacd));
-		$selectedAreas = [
-			...$selectedAreas,
-			...areas.filter((d) => !selectedAreaCodes.has(d.properties.areacd))
-		];
+		const newAreas = areas.filter((d) => !selectedAreaCodes.has(d.properties.areacd));
+
+		if (newAreas.length) {
+			$selectedAreas = [...$selectedAreas, ...newAreas];
+			areaSelectEvent({
+				area: newAreas[0].properties,
+				label: "Select multiple areas"
+			});
+		}
 	}
 
 	function makeSavedAreaOptions(savedAreas) {

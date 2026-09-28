@@ -16,6 +16,7 @@
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import SaveModal from "$lib/ui/SaveModal.svelte";
 	import { sleep } from "$lib/util/common";
+	import { areaSelectEvent } from "$lib/util/analytics";
 
 	let {
 		appState = $bindable(),
@@ -200,6 +201,10 @@
 							if (selectedArea) {
 								runAction("applyShape", [selectedArea, "replace"]);
 								runAction("fitPolygon");
+								areaSelectEvent({
+									area: selectedArea?.geojson?.properties,
+									label: "Select area"
+								});
 								selectedArea = null;
 							}
 						}}
@@ -211,18 +216,24 @@
 							autoFocus
 						/>
 						<div id="search-inputs">
-							<Button type="submit" small>Select area</Button>
-							{#if $history.length > 1}
+							<Button type="submit" small disabled={!selectedArea}>Select area</Button
+							>
+							{#if $history?.[0]?.geometry}
 								<Button
 									on:click={() => {
 										if (selectedArea) {
 											runAction("applyShape", [selectedArea, "add"]);
 											runAction("fitPolygon");
+											areaSelectEvent({
+												area: selectedArea?.geojson?.properties,
+												label: "Add area to selection"
+											});
 											selectedArea = null;
 										}
 									}}
 									small
-									variant="secondary">Add to current selection</Button
+									variant="secondary"
+									disabled={!selectedArea}>Add to current selection</Button
 								>
 							{/if}
 						</div>
