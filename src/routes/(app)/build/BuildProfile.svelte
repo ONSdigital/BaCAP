@@ -139,7 +139,6 @@
 			href="#0"
 			onclick={(e) => {
 				e.preventDefault();
-				showCodes = false;
 				showEmbed = !showEmbed;
 			}}>{showEmbed ? "Hide embed code" : "Get embed code"}</a
 		>
@@ -178,7 +177,6 @@
 			href="#0"
 			onclick={(e) => {
 				e.preventDefault();
-				showEmbed = false;
 				showCodes = !showCodes;
 			}}>{showCodes ? "Hide area codes" : "Get area codes"}</a
 		>
