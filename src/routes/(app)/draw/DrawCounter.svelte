@@ -12,7 +12,7 @@
 	$effect(() => (counter.target = population));
 </script>
 
-<div class="counter">
+<div class="population-counter">
 	<span class="ons-u-fs-s">Total population</span><br />
 	<strong
 		>{counter.current.toLocaleString("en-GB", {
@@ -23,14 +23,14 @@
 </div>
 
 <style>
-	.counter {
+	.population-counter {
 		background: white;
-		padding: 10px;
+		padding: 3px 10px 5px;
 		border-radius: 8px;
 		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 		position: absolute;
 		z-index: 99;
-		margin: 8px;
-		bottom: 15px;
+		margin: 10px;
+		bottom: 0;
 	}
 </style>

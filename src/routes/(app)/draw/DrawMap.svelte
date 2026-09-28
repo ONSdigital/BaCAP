@@ -1,7 +1,7 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
-	import { ScaleControl } from "maplibre-gl";
+	import { NavigationControl, ScaleControl } from "maplibre-gl";
 	import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 	import circle from "@turf/circle";
 	import { sleep } from "$lib/util/common";
@@ -111,7 +111,8 @@
 			styles: drawLayerStyles
 		});
 		map.addControl(draw, "bottom-left");
-		map.addControl(new ScaleControl(), "top-right");
+		map.addControl(new ScaleControl(), "bottom-right");
+		map.addControl(new NavigationControl({ showCompass: false }), "bottom-right");
 
 		map.on("draw.create", (e) => {
 			const feature = e.features[0];
@@ -153,7 +154,6 @@
 				[2, 56]
 			]
 		}}
-		controls
 	>
 		<MapSource
 			id="polygon"
@@ -215,12 +215,8 @@
 		left: 0;
 		right: 0;
 	}
-	#map-container :global(.maplibregl-ctrl-top-right) {
-		top: 60px;
-		display: flex;
-		flex-direction: row-reverse;
-	}
 	#map-container :global(.maplibregl-ctrl-scale) {
 		height: 24px;
+		margin-bottom: 0;
 	}
 </style>
