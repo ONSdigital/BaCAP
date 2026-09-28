@@ -113,7 +113,7 @@
 				id="clear"
 				icon="bin"
 				label="Clear current selection"
-				disabled={$history.length < 2}
+				disabled={!$history?.length || !$history?.[0]?.geometry}
 				on:click={() => runAction("clearDraw")}
 				transient
 			>
