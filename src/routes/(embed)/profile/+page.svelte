@@ -48,7 +48,11 @@
 	}
 
 	function makeSubtitle(range, dateFormat, isYearEnding = false) {
-		const prefix = isYearEnding ? `${range.length > 1 ? "Years" : "Year"} ending ` : "";
+		const prefix = isYearEnding
+			? `${range.length > 1 ? "% change, years" : "Year"} ending `
+			: range.length > 1
+				? "% change, "
+				: "";
 		return prefix + range.map((d) => dateFormat(d)).join(" to ");
 	}
 
