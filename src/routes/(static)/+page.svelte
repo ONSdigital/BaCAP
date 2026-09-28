@@ -77,7 +77,7 @@
 			target="_blank"
 			>best-fit methodology<span class="ons-u-vh"> (opens in a new tab)</span></a
 		>
-		<Icon type="external" />..
+		<Icon type="external" />.
 	</p>
 	<p>
 		When you select a dataset, the data for the best-fit areas is added up (or "aggregated") to
