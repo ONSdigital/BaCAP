@@ -9,6 +9,8 @@ export async function load({ fetch }) {
 	const topics = await (await fetch(topicsUrl)).json();
 
 	return {
+		contentTitle: "Build a custom area profile - ONS",
+		contentSubType: "bacap-home",
 		topics
 	};
 }
