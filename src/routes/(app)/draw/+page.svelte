@@ -53,7 +53,7 @@
 
 <Container cls="pos-relative" {width} marginBottom={!getFullscreen()}>
 	<Button
-		cls="ons-u-mt-s ons-u-mb-s ons-u-d-no@xs@l {getFullscreen()
+		cls="ons-u-mt-s ons-u-mb-s ons-u-d-no@2xs@l {getFullscreen()
 			? 'pos-compact'
 			: 'pos-expanded'}"
 		variant="ghost"
