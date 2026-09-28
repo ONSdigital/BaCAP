@@ -1,5 +1,6 @@
 <script>
 	import { scaleLinear, scalePoint } from "d3-scale";
+	import { Icon } from "@onsvisual/svelte-components";
 	import { ascending } from "$lib/util/common";
 
 	let {
@@ -10,7 +11,7 @@
 		height = 120,
 		lineWidth = 2,
 		base = null,
-		format = (d) => `${d - 1 > 0 ? "+" : ""}${Math.round((d - 1) * 100)}`,
+		format = (d) => Math.round(Math.abs((d - 1) * 100)),
 		dateFormat = (d) => d
 	} = $props();
 
@@ -37,10 +38,10 @@
 			yDomain
 		};
 	}
-	function yDodge(y1, y2 = null, h = height, buffer = 24) {
+	function yDodge(y1, y2 = null, h = height, buffer = 16) {
 		// Make sure the labels don't overlap or go outside of the vertical chart area
 		const diff = Math.abs(y2 - y1);
-		if (!y2 || diff > buffer) return [y1, y2];
+		if (y2 == null || diff > buffer) return [y1, y2];
 		let ys =
 			y1 < y2
 				? [y1 - (buffer - diff) / 2, y2 + (buffer - diff) / 2]
@@ -66,6 +67,10 @@
 	$inspect({ _data });
 </script>
 
+{#snippet arrow(d)}
+	{#if d !== 1}<Icon type="arrow" rotation={d > 1 ? -90 : 90} />{/if}
+{/snippet}
+
 <ul class="legend-block">
 	{#if zDomain[1]}
 		{#each zDomain as group, i}
@@ -76,7 +81,7 @@
 						? `${lineWidth + 1.5}px solid #27A0CC`
 						: `${lineWidth}px solid black`}
 				></div>
-				<span class={i === 0 ? "bold" : "brackets"}>{group}</span>
+				<span class={i === 0 ? "bold" : "secondary"}>{group}</span>
 			</li>
 		{/each}
 	{/if}
@@ -113,10 +118,10 @@
 		<div class="label-group">
 			{#each coords.filter((d) => d != null) as coord, i}
 				<div
-					class="point-label {i === 0 ? 'bold' : 'brackets'}"
-					style:transform="translateY(calc({coord}px - {i === 0 ? 50 : 100}%))"
+					class="point-label {i === 0 ? 'bold' : 'secondary'}"
+					style:transform="translateY(calc({coord}px - {i === 0 ? 50 : 150}%))"
 				>
-					{format(_data[i][yKey(xVal)])}%
+					{@render arrow(_data[i][yKey(xVal)])}{format(_data[i][yKey(xVal)])}%
 				</div>
 			{/each}
 		</div>
@@ -131,12 +136,6 @@
 	.bold {
 		font-weight: bold;
 		color: #1b708f;
-	}
-	.brackets::before {
-		content: "(";
-	}
-	.brackets::after {
-		content: ")";
 	}
 	.chart-block {
 		display: flex;
@@ -226,15 +225,22 @@
 		background-color: black;
 	}
 	.point-label {
-		/* position: absolute; */
+		position: relative;
+		display: block;
 		line-height: 1;
 		font-size: 16px;
 		padding-left: 8px;
 		transform: translateY(-50%);
+		white-space: nowrap;
 	}
-	.point-label.brackets {
+	.point-label.secondary {
 		font-size: 0.85em;
-		transform: translateY(-150%);
+		/* transform: translateY(-150%); */
+	}
+	.point-label :global(.ons-icon) {
+		display: inline-block;
+		height: 10px;
+		margin: 0 -3px 2px -4px;
 	}
 	small {
 		font-size: 14px;

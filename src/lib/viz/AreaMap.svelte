@@ -19,7 +19,7 @@
 			color: "#555",
 			width: 1,
 			opacity: 0.05,
-			class: "brackets"
+			class: "secondary"
 		}
 	};
 
@@ -128,11 +128,5 @@
 	.bold {
 		font-weight: bold;
 		color: #1b708f;
-	}
-	.brackets::before {
-		content: "(";
-	}
-	.brackets::after {
-		content: ")";
 	}
 </style>

@@ -49,7 +49,7 @@
 						class="legend-vis {i == 0 ? 'bar' : 'marker-vis'}"
 						style:border-bottom-width="{i == 0 ? 0 : markerWidth}px"
 					></div>
-					<span class={i == 0 ? "bold" : "brackets"}>{group}</span>
+					<span class={i == 0 ? "bold" : "secondary"}>{group}</span>
 				</li>
 			{/each}
 		{/if}
@@ -111,12 +111,6 @@
 	.bold {
 		font-weight: bold;
 		color: #1b708f;
-	}
-	.brackets::before {
-		content: "(";
-	}
-	.brackets::after {
-		content: ")";
 	}
 	.bar-group,
 	.x-scale {

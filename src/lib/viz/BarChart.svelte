@@ -30,7 +30,7 @@
 						style:height="1rem"
 						style:width={i == 0 ? "1rem" : markerWidth + "px"}
 					></div>
-					<span class={i == 0 ? "bold" : "brackets"}>{group}</span>
+					<span class={i == 0 ? "bold" : "secondary"}>{group}</span>
 				</li>
 			{/each}
 		</ul>
@@ -41,7 +41,7 @@
 			{group.label}
 			<span class="nowrap">
 				{#each group.values as d, i}
-					<span class="label {i == 0 ? 'bold' : 'sml brackets'}"
+					<span class="label {i == 0 ? 'bold' : 'sml secondary'}"
 						>{formatTick(d[xKey])}{suffix}</span
 					>
 				{/each}
@@ -83,12 +83,6 @@
 	.sml {
 		margin-left: 3px;
 		font-size: 0.85rem;
-	}
-	.brackets::before {
-		content: "(";
-	}
-	.brackets::after {
-		content: ")";
 	}
 	.bar-group {
 		display: block;
