@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Icon, ToolbarIcon, Button, analyticsEvent } from "@onsvisual/svelte-components";
+	import { Icon, ToolbarIcon, Button } from "@onsvisual/svelte-components";
+	import { modalToggleEvent } from "$lib/util/analytics";
 
 	let {
 		title,
@@ -53,16 +54,6 @@
 		};
 	}
 
-	function modalAnalyticsEvent(interactionValue) {
-		const eventData = {
-			event: "interaction",
-			interactionType: "modal-toggle",
-			interactionLabel: label,
-			interactionValue
-		};
-		// analyticsEvent(eventData);
-	}
-
 	export function openDialog() {
 		showModal();
 		onOpen();
@@ -87,7 +78,7 @@
 		onclick={() => {
 			onOpen();
 			showModal();
-			// modalAnalyticsEvent("open");
+			modalToggleEvent({ label: title, value: "open" });
 		}}
 	>
 		{#if icon}
@@ -104,7 +95,7 @@
 		on:click={() => {
 			onOpen();
 			showModal();
-			// modalAnalyticsEvent("open");
+			modalToggleEvent({ label: title, value: "open" });
 		}}
 		small
 	>
@@ -125,7 +116,7 @@
 		onclick={() => {
 			dialog.close();
 			onCancel();
-			modalAnalyticsEvent("cancel");
+			modalToggleEvent({ label: title, value: "close" });
 		}}><Icon type="cross" size="l" /></button
 	>
 	<div class="modal-contents">

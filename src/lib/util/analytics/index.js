@@ -99,3 +99,14 @@ export function printEvent(eventProps = {}) {
 	console.debug({ eventData });
 	analyticsEvent(eventData);
 }
+
+export function modalToggleEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: "modal-toggle",
+		interactionLabel: eventProps.label,
+		interactionValue: eventProps.value
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
