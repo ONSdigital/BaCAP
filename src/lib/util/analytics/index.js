@@ -1,4 +1,5 @@
 import { analyticsEvent } from "@onsvisual/svelte-components";
+import { formatName } from "@onsvisual/robo-utils";
 import { geogroupsLookup } from "../../config/index.js";
 
 function getAreaProps(area) {
@@ -33,6 +34,19 @@ export function downloadEvent(eventProps = {}) {
 		linkDomain: "www.ons.gov.uk",
 		...getAreaProps(eventProps.area)
 	};
-	console.denbug({ eventData });
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function embedEvent(eventProps = {}) {
+	const areaProps = getAreaProps(eventProps.area);
+	const eventData = {
+		event: "embed",
+		pageUrl: eventProps.url,
+		chartTitle: `Area profile for ${formatName(areaProps.areaName, "the")}`,
+		chartType: "dashboard",
+		...areaProps
+	};
+	console.debug({ eventData });
 	analyticsEvent(eventData);
 }

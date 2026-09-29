@@ -12,6 +12,7 @@
 		Tooltip,
 		Indent
 	} from "@onsvisual/svelte-components";
+	import { pluralise, formatName } from "@onsvisual/robo-utils";
 	import AreaSearch from "$lib/ui/AreaSearch.svelte";
 	import EditModal from "$lib/ui/EditModal.svelte";
 	import { geogroups, defaultAreaName, onsColors } from "$lib/config";
@@ -221,7 +222,10 @@
 									/>
 									{#each childTypes as childType, i}
 										<Checkbox
-											label="All {childType.label}s in {activeArea.label}"
+											label="All {pluralise(childType.label)} {formatName(
+												activeArea.label,
+												'in'
+											)}"
 											bind:checked={childTypesChecked[i]}
 											compact
 										/>

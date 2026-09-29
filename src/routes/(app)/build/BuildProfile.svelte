@@ -7,6 +7,7 @@
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
 	import { makeEmbedHash, makeEmbedCode, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
+	import { embedEvent } from "$lib/util/analytics";
 
 	let { buildState, topics, selectedTopics, activeArea, comparisonArea, centroids } = $props();
 
@@ -153,6 +154,7 @@
 			on:click={() => {
 				clip(embedCode);
 				setConfirmed("embed");
+				embedEvent({ area: $activeArea?.properties });
 			}}
 			small>Copy embed code</Button
 		>
