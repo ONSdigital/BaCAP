@@ -1,23 +1,23 @@
 import { analyticsEvent } from "@onsvisual/svelte-components";
 import { formatName } from "@onsvisual/robo-utils";
-import { geogroupsLookup } from "../../config/index.js";
+import { geogroupsLookup, defaultAreaName, defaultAreaType } from "../../config/index.js";
 
 function getAreaProps(area) {
 	if (area?.areacd || area?.areanm) {
 		const typecd = area?.areacd?.slice?.(0, 3);
 		return {
 			areaCode: area.areacd,
-			areaName: area.areanm || area.areacd,
-			areaType: geogroupsLookup?.[typecd]?.label || area.groupnm || null
+			areaName: area.areanm || area.areacd || defaultAreaName,
+			areaType: geogroupsLookup?.[typecd]?.label || area.groupnm || defaultAreaType
 		};
 	}
 	return {};
 }
 
-export function areaSelectEvent(eventProps = {}) {
+export function areaEvent(eventProps = {}) {
 	const eventData = {
 		event: "interaction",
-		interactionType: "search-select",
+		interactionType: eventProps.type, // "search-select"|"area-save"|"area-load"|"area-delete"
 		interactionLabel: eventProps.label,
 		...getAreaProps(eventProps.area)
 	};

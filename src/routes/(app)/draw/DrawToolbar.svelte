@@ -16,7 +16,7 @@
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import SaveModal from "$lib/ui/SaveModal.svelte";
 	import { sleep } from "$lib/util/common";
-	import { areaSelectEvent } from "$lib/util/analytics";
+	import { areaEvent } from "$lib/util/analytics";
 
 	let {
 		appState = $bindable(),
@@ -201,7 +201,8 @@
 							if (selectedArea) {
 								runAction("applyShape", [selectedArea, "replace"]);
 								runAction("fitPolygon");
-								areaSelectEvent({
+								areaEvent({
+									type: "search-select",
 									area: selectedArea?.geojson?.properties,
 									label: "Select area"
 								});
@@ -224,7 +225,8 @@
 										if (selectedArea) {
 											runAction("applyShape", [selectedArea, "add"]);
 											runAction("fitPolygon");
-											areaSelectEvent({
+											areaEvent({
+												type: "search-select",
 												area: selectedArea?.geojson?.properties,
 												label: "Add area to selection"
 											});

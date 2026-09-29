@@ -18,6 +18,7 @@ export const initialState = {
 	selectedAreas: []
 };
 export const defaultAreaName = "Unnamed Area";
+export const defaultAreaType = "Custom area";
 
 // DATA CONFIG
 export const measures = [

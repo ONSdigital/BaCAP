@@ -4,7 +4,7 @@
 	import { makeSavedArea } from "$lib/util/geo";
 	import { sleep } from "$lib/util/common";
 	import { downloadArea, clip } from "$lib/util/io";
-	import { copyAreaCodesEvent } from "$lib/util/analytics";
+	import { areaEvent, copyAreaCodesEvent } from "$lib/util/analytics";
 
 	let {
 		activeArea = $bindable(),
@@ -45,6 +45,11 @@
 			switchModals();
 			window.location.hash = "#saved-areas";
 		}
+		areaEvent({
+			type: "area-save",
+			label: _options.copy ? "Save a copy" : existing ? "Save changes" : "Save area",
+			area: $activeArea?.properties
+		});
 	}
 	async function updateSuccess(key) {
 		showSuccess[key] = true;

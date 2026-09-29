@@ -3,6 +3,8 @@
 	import Modal from "./Modal.svelte";
 	import { featureCollection } from "$lib/util/geo";
 	import { downloadArea } from "$lib/util/io";
+	import { areaEvent } from "$lib/util/analytics";
+	import { defaultAreaName } from "$lib/config";
 
 	let { savedAreas = $bindable(), modal = $bindable() } = $props();
 
@@ -60,7 +62,7 @@
 									/></td
 								>
 							{:else}
-								<td>{area.properties.areanm}</td>
+								<td>{area.properties.areanm || defaultAreaName}</td>
 								<td>{area.properties.areacd}</td>
 							{/if}
 							<td>
@@ -120,6 +122,11 @@
 											on:click={() => {
 												delete $savedAreas[area.id];
 												$savedAreas = $savedAreas;
+												areaEvent({
+													type: "area-delete",
+													label: "Delete area",
+													area: area?.properties
+												});
 											}}>Delete area</Button
 										>
 									</Tooltip>
@@ -145,7 +152,10 @@
 			icon="delete"
 			color="#d0021b"
 			small
-			on:click={() => ($savedAreas = {})}>Delete all areas</Button
+			on:click={() => {
+				$savedAreas = {};
+				areaEvent({ type: "area-delete", label: "Delete all areas" });
+			}}>Delete all areas</Button
 		>
 	{:else}
 		<p>

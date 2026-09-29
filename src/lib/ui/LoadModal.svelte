@@ -4,7 +4,8 @@
 	import AreaSearch from "./AreaSearch.svelte";
 	import { uploadAreas, featureCollection, parseGeoJSON, getCodeKey } from "$lib/util/geo";
 	import { downloadArea } from "$lib/util/io";
-	import { areaSelectEvent } from "$lib/util/analytics";
+	import { areaEvent } from "$lib/util/analytics";
+	import { defaultAreaName } from "$lib/config";
 
 	let {
 		activeArea = $bindable(),
@@ -39,13 +40,16 @@
 		updateSelection($activeArea);
 		modal.confirmDialog();
 		loadedAreas = { status: null };
+		areaEvent({ type: "area-load", label: "Load area", area: $activeArea?.properties });
 	}
 
-	function loadNewArea(area) {
+	function loadNewArea(area, sendEvent = true) {
 		$activeArea = parseGeoJSON(area, centroids, loadedAreas?.isBNG);
 		updateSelection($activeArea);
 		modal.confirmDialog();
 		loadedAreas = { status: null };
+		if (sendEvent)
+			areaEvent({ type: "area-load", label: "Load area", area: $activeArea?.properties });
 	}
 
 	function findMatchId(area) {
@@ -57,7 +61,7 @@
 			: Object.values($savedAreas).find((d) => d.properties.areacd === code)?.id || null;
 	}
 
-	function saveNewArea(area, isBNG) {
+	function saveNewArea(area, isBNG, sendEvent = true) {
 		let id = overwriteAreas ? findMatchId(area) : null;
 		if (!id) {
 			$savedAreasLastId += 1;
@@ -66,12 +70,15 @@
 		const parsedArea = parseGeoJSON(area, centroids, loadedAreas?.isBNG);
 		parsedArea.id = id;
 		$savedAreas[id] = parsedArea;
+		if (sendEvent)
+			areaEvent({ type: "area-save", label: "Save area", area: $activeArea?.properties });
 	}
 
 	function saveSelectedNewAreas() {
 		for (const area of loadedAreas.areas.filter((d, i) => loadedAreas.selected[i])) {
-			saveNewArea(area);
+			saveNewArea(area, loadedAreas?.isBNG, false);
 		}
+		areaEvent({ type: "area-load", label: "Load multiple areas" });
 		window.location.hash = "#saved-areas";
 		loadedAreas = { status: null };
 	}
@@ -107,10 +114,11 @@
 				<form
 					onsubmit={(e) => {
 						e.preventDefault();
-						loadNewArea(selectedArea.geojson);
-						areaSelectEvent({
-							area: selectedArea.geojson?.properties,
-							label: "Select area"
+						loadNewArea(selectedArea.geojson, false);
+						areaEvent({
+							type: "search-select",
+							label: "Select area",
+							area: selectedArea.geojson?.properties
 						});
 					}}
 				>
@@ -171,7 +179,8 @@
 								<tr>
 									<td
 										><Checkbox
-											label={area.properties?.[loadedAreas.nameKey] || ""}
+											label={area.properties?.[loadedAreas.nameKey] ||
+												defaultAreaName}
 											bind:checked={loadedAreas.selected[i]}
 											compact
 										/></td
@@ -262,7 +271,7 @@
 											/></td
 										>
 									{:else}
-										<td>{area.properties.areanm}</td>
+										<td>{area.properties.areanm || defaultAreaName}</td>
 										<td>{area.properties.areacd}</td>
 									{/if}
 									<td>
@@ -322,13 +331,20 @@
 													on:click={() => {
 														delete $savedAreas[area.id];
 														$savedAreas = $savedAreas;
+														areaEvent({
+															type: "area-delete",
+															label: "Delete area",
+															area: area?.properties
+														});
 													}}>Delete area</Button
 												>
 											</Tooltip>
 											<Button
 												variant="primary"
 												small
-												on:click={() => loadSavedArea(area)}>Select</Button
+												on:click={() => {
+													loadSavedArea(area);
+												}}>Select</Button
 											>
 										</div>
 									</td>
@@ -352,7 +368,13 @@
 					icon="delete"
 					color="#d0021b"
 					small
-					on:click={() => ($savedAreas = {})}>Delete all areas</Button
+					on:click={() => {
+						$savedAreas = {};
+						areaEvent({
+							type: "area-delete",
+							label: "Delete all areas"
+						});
+					}}>Delete all areas</Button
 				>
 			{:else}
 				<p>

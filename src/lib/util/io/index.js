@@ -250,12 +250,13 @@ export function downloadDatasetCSV(table, data, columns) {
 export function downloadArea(area) {
 	const str = JSON.stringify(area, (key, val) => (val instanceof Set ? [...val] : val));
 	const file = new Blob([str], { type: "application/json" });
-	const filename = makeFilename(area, "geojson");
+	const isCollection = area.type === "FeatureCollection";
+	const filename = makeFilename(isCollection ? "area-collection" : area, "geojson");
 	download(file, filename);
 	downloadEvent({
 		filename,
-		area: area?.properties,
+		area: isCollection ? null : area?.properties,
 		format: "geojson",
-		label: `Download area as GeoJSON`
+		label: isCollection ? "Download all areas as GeoJSON" : "Download area as GeoJSON"
 	});
 }
