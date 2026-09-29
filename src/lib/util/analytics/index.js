@@ -17,7 +17,7 @@ function getAreaProps(area) {
 export function areaEvent(eventProps = {}) {
 	const eventData = {
 		event: "interaction",
-		interactionType: eventProps.type, // "search-select"|"area-save"|"area-load"|"area-delete"
+		interactionType: eventProps.type, // "search-select"|"manage-areas"
 		interactionLabel: eventProps.label,
 		...getAreaProps(eventProps.area)
 	};
@@ -32,6 +32,16 @@ export function selectDatasetEvent(eventProps = {}) {
 		interactionLabel:
 			eventProps?.mode === "all" ? "Select all datasets by topic" : "Select a dataset",
 		interactionValue: eventProps.label
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function mapDrawEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: "map-draw",
+		interactionLabel: eventProps.label
 	};
 	console.debug({ eventData });
 	analyticsEvent(eventData);

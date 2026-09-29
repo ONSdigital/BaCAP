@@ -46,7 +46,7 @@
 			window.location.hash = "#saved-areas";
 		}
 		areaEvent({
-			type: "area-save",
+			type: "manage-areas",
 			label: _options.copy ? "Save a copy" : existing ? "Save changes" : "Save area",
 			area: $activeArea?.properties
 		});

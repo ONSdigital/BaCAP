@@ -40,7 +40,7 @@
 		updateSelection($activeArea);
 		modal.confirmDialog();
 		loadedAreas = { status: null };
-		areaEvent({ type: "area-load", label: "Load area", area: $activeArea?.properties });
+		areaEvent({ type: "manage-areas", label: "Load area", area: $activeArea?.properties });
 	}
 
 	function loadNewArea(area, sendEvent = true) {
@@ -49,7 +49,7 @@
 		modal.confirmDialog();
 		loadedAreas = { status: null };
 		if (sendEvent)
-			areaEvent({ type: "area-load", label: "Load area", area: $activeArea?.properties });
+			areaEvent({ type: "manage-areas", label: "Load area", area: $activeArea?.properties });
 	}
 
 	function findMatchId(area) {
@@ -71,14 +71,14 @@
 		parsedArea.id = id;
 		$savedAreas[id] = parsedArea;
 		if (sendEvent)
-			areaEvent({ type: "area-save", label: "Save area", area: $activeArea?.properties });
+			areaEvent({ type: "manage-areas", label: "Save area", area: $activeArea?.properties });
 	}
 
 	function saveSelectedNewAreas() {
 		for (const area of loadedAreas.areas.filter((d, i) => loadedAreas.selected[i])) {
 			saveNewArea(area, loadedAreas?.isBNG, false);
 		}
-		areaEvent({ type: "area-load", label: "Load multiple areas" });
+		areaEvent({ type: "manage-areas", label: "Load multiple areas" });
 		window.location.hash = "#saved-areas";
 		loadedAreas = { status: null };
 	}
@@ -332,7 +332,7 @@
 														delete $savedAreas[area.id];
 														$savedAreas = $savedAreas;
 														areaEvent({
-															type: "area-delete",
+															type: "manage-areas",
 															label: "Delete area",
 															area: area?.properties
 														});
@@ -371,7 +371,7 @@
 					on:click={() => {
 						$savedAreas = {};
 						areaEvent({
-							type: "area-delete",
+							type: "manage-areas",
 							label: "Delete all areas"
 						});
 					}}>Delete all areas</Button

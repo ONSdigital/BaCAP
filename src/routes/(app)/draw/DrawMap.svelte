@@ -7,6 +7,7 @@
 	import { sleep } from "$lib/util/common";
 	import { MaplibreDraw, Polygon, parseGeoJSON } from "$lib/util/geo";
 	import { onsColors, drawLayerStyles } from "$lib/config";
+	import { mapDrawEvent } from "$lib/util/analytics";
 
 	let { appState = $bindable(), drawState, centroids } = $props();
 	let { history, rehistory, activeArea, lastActivePage } = appState;
@@ -87,6 +88,7 @@
 			$rehistory = [$history[0], ...$rehistory];
 			$history = $history.slice(1);
 			applyHistory($history[0]);
+			mapDrawEvent({ label: "Undo last action" });
 		}
 	}
 
@@ -95,6 +97,7 @@
 			$history = [$rehistory[0], ...$history];
 			$rehistory = $rehistory.slice(1);
 			applyHistory($history[0]);
+			mapDrawEvent({ label: "Redo next action" });
 		}
 	}
 
@@ -103,6 +106,7 @@
 		$rehistory = [];
 		$activeArea = { type: "Feature", id: null, geometry: null, properties: {} };
 		applyHistory($history[0]);
+		mapDrawEvent({ label: "Clear all drawn areas" });
 	}
 
 	function initDraw() {
@@ -117,9 +121,14 @@
 		map.on("draw.create", (e) => {
 			const feature = e.features[0];
 			applyShape(feature);
+			mapDrawEvent({
+				label: drawState.eraseMode
+					? "Remove polygon from selection"
+					: "Add polygon to selection"
+			});
 		});
 		map.on("mousemove", (e) => {
-			if (drawState.drawMode === "radius") {
+			if (drawState.drawMode) {
 				const center = [e?.lngLat?.lng, e?.lngLat?.lat];
 				radius = circle(center, drawState.radius);
 			}
@@ -127,6 +136,11 @@
 		map.on("click", () => {
 			if (drawState.drawMode === "radius") {
 				applyShape(radius);
+				mapDrawEvent({
+					label: drawState.eraseMode
+						? "Remove circle from selection"
+						: "Add circle to selection"
+				});
 			}
 		});
 		fitPolygon();

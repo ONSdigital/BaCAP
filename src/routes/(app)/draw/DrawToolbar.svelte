@@ -171,8 +171,8 @@
 				</ToolControl>
 				<ToolControl id="erase">
 					<ButtonGroup name="erase-modes" bind:value={eraseOption}>
-						<ButtonGroupItem value="polygon" label="Erase by polygon" />
-						<ButtonGroupItem value="radius" label="Erase by radius" />
+						<ButtonGroupItem value="polygon" label="Erase a polygon" />
+						<ButtonGroupItem value="radius" label="Erase a circle" />
 					</ButtonGroup>
 					{#if eraseOption === "polygon"}
 						<p>

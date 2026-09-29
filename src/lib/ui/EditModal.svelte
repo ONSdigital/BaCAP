@@ -123,7 +123,7 @@
 												delete $savedAreas[area.id];
 												$savedAreas = $savedAreas;
 												areaEvent({
-													type: "area-delete",
+													type: "manage-areas",
 													label: "Delete area",
 													area: area?.properties
 												});
@@ -154,7 +154,7 @@
 			small
 			on:click={() => {
 				$savedAreas = {};
-				areaEvent({ type: "area-delete", label: "Delete all areas" });
+				areaEvent({ type: "manage-areas", label: "Delete all areas" });
 			}}>Delete all areas</Button
 		>
 	{:else}
