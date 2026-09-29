@@ -52,6 +52,18 @@ export function embedEvent(eventProps = {}) {
 	analyticsEvent(eventData);
 }
 
+export function copyAreaCodesEvent(eventProps = {}) {
+	const areaProps = getAreaProps(eventProps.area);
+	const eventData = {
+		event: "interaction",
+		interactionType: "copy-area-codes",
+		interactionLabel: eventProps.label || "Copy area codes",
+		...areaProps
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
 export function printEvent(eventProps = {}) {
 	const areaProps = getAreaProps(eventProps.area);
 	const eventData = {

@@ -4,6 +4,7 @@
 	import { makeSavedArea } from "$lib/util/geo";
 	import { sleep } from "$lib/util/common";
 	import { downloadArea, clip } from "$lib/util/io";
+	import { copyAreaCodesEvent } from "$lib/util/analytics";
 
 	let {
 		activeArea = $bindable(),
@@ -128,7 +129,7 @@
 					<Textarea
 						rows={2}
 						width="100%"
-						label="Output area codes"
+						label="Output Area codes"
 						value={areaCodes[0].codes}
 						readonly
 					/>
@@ -137,7 +138,10 @@
 						icon="copy"
 						cls="ons-u-mt-2xs"
 						small
-						on:click={() => copyCodes(areaCodes[0])}>Copy codes</Button
+						on:click={() => {
+							copyCodes(areaCodes[0]);
+							copyAreaCodesEvent({ label: "Copy Output Area codes" });
+						}}>Copy Output Area codes</Button
 					>
 					<span class="success-icon" style:display={showSuccess.oa ? "inline" : "none"}>
 						<Icon type="tick" /> Copied codes
@@ -156,7 +160,10 @@
 						icon="copy"
 						cls="ons-u-mt-2xs"
 						small
-						on:click={() => copyCodes(areaCodes[1])}>Copy codes</Button
+						on:click={() => {
+							copyCodes(areaCodes[1]);
+							copyAreaCodesEvent({ label: "Copy LSOA codes" });
+						}}>Copy LSOA codes</Button
 					>
 					<span
 						class="success-icon"

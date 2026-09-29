@@ -7,7 +7,7 @@
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
 	import { makeEmbedHash, makeEmbedCode, makeEmbedUrl, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
-	import { embedEvent, printEvent } from "$lib/util/analytics";
+	import { embedEvent, printEvent, copyAreaCodesEvent } from "$lib/util/analytics";
 
 	let { buildState, topics, selectedTopics, activeArea, comparisonArea, centroids } = $props();
 
@@ -197,6 +197,7 @@
 			on:click={() => {
 				clip(oaCodes);
 				setConfirmed("oa");
+				copyAreaCodesEvent({ label: "Copy Output Area codes" });
 			}}
 			small>Copy Output Area codes</Button
 		>
@@ -207,6 +208,7 @@
 			on:click={() => {
 				clip(lsoaCodes);
 				setConfirmed("lsoa");
+				copyAreaCodesEvent({ label: "Copy LSOA codes" });
 			}}
 			small>Copy LSOA codes</Button
 		>
