@@ -2,6 +2,7 @@
 	import { resolve } from "$app/paths";
 	import { Container, Em, Select, Button } from "@onsvisual/svelte-components";
 	import { onsColors } from "$lib/config";
+	import { selectDatasetEvent } from "$lib/util/analytics";
 
 	let { topics, selectedTopic = $bindable() } = $props();
 
@@ -24,6 +25,7 @@
 		onsubmit={(e) => {
 			e.preventDefault();
 			selectedTopic = activeTopic;
+			selectDatasetEvent(activeTopic);
 		}}
 	>
 		<Select

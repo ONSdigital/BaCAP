@@ -25,6 +25,18 @@ export function areaEvent(eventProps = {}) {
 	analyticsEvent(eventData);
 }
 
+export function selectDatasetEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: "dataset-select",
+		interactionLabel:
+			eventProps?.mode === "all" ? "Select all datasets by topic" : "Select a dataset",
+		interactionValue: eventProps.label
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
 export function downloadEvent(eventProps = {}) {
 	const eventData = {
 		event: "fileDownload",

@@ -9,6 +9,7 @@
 	} from "@onsvisual/svelte-components";
 	import { initialState } from "$lib/config";
 	import { slugify } from "$lib/util/common";
+	import { selectDatasetEvent } from "$lib/util/analytics";
 
 	let { buildState, topics, selectedTopics = $bindable() } = $props();
 
@@ -38,20 +39,22 @@
 
 	function updateTopics(item) {
 		const ids = topics.map((d) => d.key);
-		if (item.checked)
+		if (item.checked) {
 			$selectedTopics = ids.filter((id) => $selectedTopics.includes(id) || id === item.id);
-		else $selectedTopics = $selectedTopics.filter((id) => id !== item.id);
+			selectDatasetEvent(item);
+		} else $selectedTopics = $selectedTopics.filter((id) => id !== item.id);
 	}
 
 	function toggleSelectAll(topic, mode = "add") {
-		$selectedTopics =
-			mode === "add"
-				? topics
-						.filter((d) => $selectedTopics.includes(d.key) || d.topic === topic)
-						.map((d) => d.key)
-				: topics
-						.filter((d) => $selectedTopics.includes(d.key) && d.topic !== topic)
-						.map((d) => d.key);
+		if (mode === "add") {
+			$selectedTopics = topics
+				.filter((d) => $selectedTopics.includes(d.key) || d.topic === topic)
+				.map((d) => d.key);
+			selectDatasetEvent({ mode: "all", label: topic });
+		} else
+			$selectedTopics = topics
+				.filter((d) => $selectedTopics.includes(d.key) && d.topic !== topic)
+				.map((d) => d.key);
 	}
 </script>
 
@@ -64,7 +67,7 @@
 				onclick={(e) => {
 					e.preventDefault();
 					$selectedTopics = [...initialState.selectedTopics];
-				}}>Clear all</a
+				}}>Reset all</a
 			>
 		</div>
 		{#each groupedTopics as group, i (group.key)}
