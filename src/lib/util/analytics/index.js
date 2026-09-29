@@ -17,7 +17,7 @@ function getAreaProps(area) {
 export function areaSelectEvent(eventProps = {}) {
 	const eventData = {
 		event: "interaction",
-		interactionType: "select",
+		interactionType: "search-select",
 		interactionLabel: eventProps.label,
 		...getAreaProps(eventProps.area)
 	};
@@ -43,6 +43,21 @@ export function embedEvent(eventProps = {}) {
 	const eventData = {
 		event: "embed",
 		pageUrl: eventProps.url,
+		linkText: "Copy embed code",
+		chartTitle: `Area profile for ${formatName(areaProps.areaName, "the")}`,
+		chartType: "dashboard",
+		...areaProps
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function printEvent(eventProps = {}) {
+	const areaProps = getAreaProps(eventProps.area);
+	const eventData = {
+		event: "interaction",
+		interactionType: "save-print",
+		interactionLabel: "Print profile",
 		chartTitle: `Area profile for ${formatName(areaProps.areaName, "the")}`,
 		chartType: "dashboard",
 		...areaProps

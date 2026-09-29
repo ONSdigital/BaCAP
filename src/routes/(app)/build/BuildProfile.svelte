@@ -5,9 +5,9 @@
 	import { Notice, Details, Button, Icon, Textarea } from "@onsvisual/svelte-components";
 	import BestFitMap from "$lib/viz/BestFitMap.svelte";
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
-	import { makeEmbedHash, makeEmbedCode, getData } from "$lib/util/data";
+	import { makeEmbedHash, makeEmbedCode, makeEmbedUrl, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
-	import { embedEvent } from "$lib/util/analytics";
+	import { embedEvent, printEvent } from "$lib/util/analytics";
 
 	let { buildState, topics, selectedTopics, activeArea, comparisonArea, centroids } = $props();
 
@@ -131,6 +131,7 @@
 			onclick={(e) => {
 				e.preventDefault();
 				pymParent?.sendMessage?.("print");
+				printEvent({ area: $activeArea?.properties });
 			}}>Print profile</a
 		>
 	</li>
@@ -154,7 +155,7 @@
 			on:click={() => {
 				clip(embedCode);
 				setConfirmed("embed");
-				embedEvent({ area: $activeArea?.properties });
+				embedEvent({ area: $activeArea?.properties, url: makeEmbedUrl() });
 			}}
 			small>Copy embed code</Button
 		>
