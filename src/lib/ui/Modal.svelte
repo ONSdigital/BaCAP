@@ -25,6 +25,13 @@
 	function showModal() {
 		dialog.showModal();
 		setBodyOverflow("hidden");
+		modalToggleEvent({ label: title, value: "open" });
+	}
+
+	function handleClose() {
+		// Fires however the dialog is closed (close button, Esc, click outside, confirm, cancel)
+		setBodyOverflow("visible");
+		modalToggleEvent({ label: title, value: "close" });
 	}
 
 	function initDialog(el) {
@@ -78,7 +85,6 @@
 		onclick={() => {
 			onOpen();
 			showModal();
-			modalToggleEvent({ label: title, value: "open" });
 		}}
 	>
 		{#if icon}
@@ -95,7 +101,6 @@
 		on:click={() => {
 			onOpen();
 			showModal();
-			modalToggleEvent({ label: title, value: "open" });
 		}}
 		small
 	>
@@ -108,7 +113,7 @@
 	aria-labelledby={id}
 	bind:this={dialog}
 	use:initDialog
-	onclose={() => setBodyOverflow("visible")}
+	onclose={handleClose}
 >
 	<h1 {id} tabindex="-1">{title}</h1>
 	<button
@@ -116,7 +121,6 @@
 		onclick={() => {
 			dialog.close();
 			onCancel();
-			modalToggleEvent({ label: title, value: "close" });
 		}}><Icon type="cross" size="l" /></button
 	>
 	<div class="modal-contents">

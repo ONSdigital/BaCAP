@@ -183,8 +183,8 @@ export async function downloadProfileXLSX(tables, activeArea, comparisonArea) {
 	downloadEvent({
 		filename,
 		area: activeArea?.properties,
-		format: "csv",
-		label: `Download area profile as CSV`
+		format: "xlsx",
+		label: `Download area profile as XLSX`
 	});
 }
 
@@ -230,7 +230,7 @@ export async function downloadDatasetXLSX(table, data, columns) {
 	});
 	const filename = `${slugify(table.label)}.xlsx`;
 	download(blob, filename);
-	downloadEvent({ filename, format: "csv", label: `Download dataset as XLSX` });
+	downloadEvent({ filename, format: "xlsx", label: `Download dataset as XLSX` });
 }
 
 export function downloadDatasetCSV(table, data, columns) {

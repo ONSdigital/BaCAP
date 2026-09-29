@@ -145,7 +145,10 @@
 						small
 						on:click={() => {
 							copyCodes(areaCodes[0]);
-							copyAreaCodesEvent({ label: "Copy Output Area codes" });
+							copyAreaCodesEvent({
+								label: "Copy Output Area codes",
+								area: $activeArea?.properties
+							});
 						}}>Copy Output Area codes</Button
 					>
 					<span class="success-icon" style:display={showSuccess.oa ? "inline" : "none"}>
@@ -167,7 +170,10 @@
 						small
 						on:click={() => {
 							copyCodes(areaCodes[1]);
-							copyAreaCodesEvent({ label: "Copy LSOA codes" });
+							copyAreaCodesEvent({
+								label: "Copy LSOA codes",
+								area: $activeArea?.properties
+							});
 						}}>Copy LSOA codes</Button
 					>
 					<span

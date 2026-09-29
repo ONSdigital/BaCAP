@@ -101,7 +101,7 @@
 			const area = $selectedAreas.length === 1 ? $selectedAreas[0] : null;
 			areaEvent({
 				type: "search-select",
-				area,
+				area: area?.properties,
 				label: area ? "Select area" : "Select multiple areas"
 			});
 		}

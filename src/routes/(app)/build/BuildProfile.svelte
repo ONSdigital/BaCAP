@@ -197,7 +197,10 @@
 			on:click={() => {
 				clip(oaCodes);
 				setConfirmed("oa");
-				copyAreaCodesEvent({ label: "Copy Output Area codes" });
+				copyAreaCodesEvent({
+					label: "Copy Output Area codes",
+					area: $activeArea?.properties
+				});
 			}}
 			small>Copy Output Area codes</Button
 		>
@@ -208,7 +211,7 @@
 			on:click={() => {
 				clip(lsoaCodes);
 				setConfirmed("lsoa");
-				copyAreaCodesEvent({ label: "Copy LSOA codes" });
+				copyAreaCodesEvent({ label: "Copy LSOA codes", area: $activeArea?.properties });
 			}}
 			small>Copy LSOA codes</Button
 		>
