@@ -84,7 +84,7 @@ Reference/geometry data (area boundaries, postcode lookups, area-code lookups) i
 Google Analytics events are pushed to the GTM dataLayer via `analyticsEvent()` from `@onsvisual/svelte-components`, which only sends them once the user has accepted cookies (the consent banner is `AnalyticsBanner` in the root `+layout.svelte`).
 
 - Page views are sent from `afterNavigate` in the root `+layout.svelte`, using the `contentTitle`/`contentSubType` each route returns from its `+page.js`. Add both to any new route's `+page.js`.
-- The GTM ID and base `analyticsProps` actually used are defined locally in the root `+layout.svelte`. `analyticsId`/`analyticsProps` in `src/lib/config/index.js` are unused template placeholders.
+- The GTM ID (`analyticsId`) and the base `analyticsProps` sent with every page view are defined in `src/lib/config/index.js` and imported by the root `+layout.svelte`.
 - All other events go through the wrapper functions in `src/lib/util/analytics/index.js` (`areaEvent`, `selectDatasetEvent`, `mapDrawEvent`, `downloadEvent`, `embedEvent`, `copyAreaCodesEvent`, `printEvent`, `modalToggleEvent`). Call these rather than `analyticsEvent()` directly, and add a new wrapper there for a new event type.
 - Pass an area's `properties` object (not the whole GeoJSON Feature) as `area`. `getAreaProps` reads `areacd`/`areanm` from it to add `areaCode`/`areaName`/`areaType`. A Feature silently sends no area properties.
 - `modalToggleEvent` is fired inside `src/lib/ui/Modal.svelte` itself: "open" in `showModal()` and "close" from the dialog's native `close` event. Individual modals don't need to send these.
