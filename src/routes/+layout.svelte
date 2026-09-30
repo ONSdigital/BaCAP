@@ -20,14 +20,7 @@
 		AnalyticsBanner,
 		analyticsEvent
 	} from "@onsvisual/svelte-components";
-	import { baseUrl } from "$lib/config";
-
-	const analyticsId = "GTM-MBCBVQS";
-	const analyticsProps = {
-		product: "bacap",
-		contentTitle: "Build a custom area profile",
-		contentType: "bacap"
-	};
+	import { baseUrl, analyticsId, analyticsProps } from "$lib/config";
 
 	let fullscreen = $state(false);
 	let width = $derived(fullscreen ? "full" : "wider");

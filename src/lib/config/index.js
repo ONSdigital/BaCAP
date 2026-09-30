@@ -93,10 +93,9 @@ export const geogroupsLookup = (() => {
 export const analyticsId = "GTM-MBCBVQS";
 
 export const analyticsProps = {
-	contentTitle: "Product title", // Insert the title of the product here
-	releaseDate: "YYYYMMDD",
-	contentType: "content-type", // Optional: eg. scrollytelling, exploratory, edutainment?
-	outputSeries: "url-slug-for-output-series" // Should match the slug for the release on CMS
+	product: "bacap",
+	contentTitle: "Build a custom area profile",
+	contentType: "bacap"
 };
 
 // COLOURS + VISUAL STYLES
