@@ -2,7 +2,7 @@
 
 This document gives a high-level overview of how BaCAP ("Build a Custom Area Profile") works. It is
 aimed at developers who are new to the codebase. For setup, build and maintenance instructions, see
-[README.md](./README.md).
+[README.md](../README.md).
 
 - [Overview](#overview)
 - [App structure](#app-structure)

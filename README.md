@@ -11,8 +11,10 @@ Built with SvelteKit (Svelte 5) on the ONS [svelte-components](https://github.co
 design system, deployed as a static site (no backend/server of its own).
 
 For an overview of how the app works (app structure, best-fit lookups, Nomis data fetching,
-embed hashes, and IndexedDB state and caching), see [ARCHITECTURE.md](./ARCHITECTURE.md). Further
-notes for developers working in the codebase are in [CLAUDE.md](./CLAUDE.md).
+embed hashes, and IndexedDB state and caching), see [ARCHITECTURE.md](./docs/ARCHITECTURE.md). The
+Google Analytics events the app sends are listed, with an example of each, in
+[ANALYTICS.md](./docs/ANALYTICS.md). Further notes for developers working in the codebase are in
+[CLAUDE.md](./CLAUDE.md).
 
 ## Development
 
