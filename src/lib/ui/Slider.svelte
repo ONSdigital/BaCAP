@@ -1,11 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 
-	export let min = 0.1;
-	export let max = 20;
-	export let step = 0.1;
-	export let value = 1;
-	export let width = null;
+	let { min = 0.1, max = 20, step = 0.1, value = $bindable(1) } = $props();
 
 	let range, thumb, track;
 
@@ -23,24 +19,16 @@
 		updateSlider(value); // Init value
 	});
 
-	$: updateSlider(value);
+	$effect(() => updateSlider(value));
+	$inspect({ value });
 </script>
 
 <div class="slider">
-	<input
-		type="range"
-		class="range"
-		{min}
-		{max}
-		{step}
-		bind:value
-		bind:this={range}
-		style:width="{width}px"
-	/>
+	<input type="range" class="range" {min} {max} {step} bind:value bind:this={range} />
 	<div class="track">
-		<div class="track-inner" bind:this={track} />
+		<div class="track-inner" bind:this={track}></div>
 	</div>
-	<div class="thumb" bind:this={thumb} />
+	<div class="thumb" bind:this={thumb}></div>
 </div>
 
 <style>
