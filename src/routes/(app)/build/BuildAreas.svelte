@@ -1,5 +1,5 @@
 <script>
-	import { Checkbox, Input, Button, Tooltip } from "@onsvisual/svelte-components";
+	import { Checkbox, Input, Button, Tooltip, Icon } from "@onsvisual/svelte-components";
 	import LoadModal from "$lib/ui/LoadModal.svelte";
 	import { focusChildInput } from "$lib/util/common";
 	import { defaultAreaName } from "$lib/config";
@@ -64,7 +64,7 @@
 					<Tooltip text="Edit area name">
 						<Button
 							variant="secondary"
-							icon="edit"
+							icon="edit-text"
 							color="white"
 							hideLabel
 							small
@@ -73,7 +73,7 @@
 					</Tooltip>
 				{/if}
 			{/if}
-			<Tooltip text="Load an area">
+			<Tooltip text="Change area">
 				<LoadModal
 					bind:activeArea
 					bind:savedAreas
@@ -81,6 +81,7 @@
 					bind:modal={primaryModal}
 					{areasList}
 					{centroids}
+					title={$activeArea.geometry ? "Change primary area" : "Select an area"}
 					mode="build"
 					updateSelection={(area) => {
 						$lastActivePage = "build";
@@ -107,7 +108,7 @@
 					$comparisonArea = null;
 				}}>Remove</a
 			>
-			<Tooltip text="Load an area">
+			<Tooltip text="Change area">
 				<LoadModal
 					bind:activeArea={comparisonArea}
 					bind:savedAreas
@@ -115,6 +116,7 @@
 					bind:modal={comparisonModal}
 					{areasList}
 					{centroids}
+					title={$comparisonArea ? "Change comparison area" : "Add comparison area"}
 					mode="build"
 					updateSelection={() => ($lastActivePage = "build")}
 				/>
@@ -134,7 +136,7 @@
 				onclick={(e) => {
 					e.preventDefault();
 					primaryModal.openDialog();
-				}}>Select an area</a
+				}}><Icon type="plus" /> Select an area</a
 			>
 		</div>
 	{:else if !$comparisonArea}
@@ -144,7 +146,7 @@
 				onclick={(e) => {
 					e.preventDefault();
 					comparisonModal.openDialog();
-				}}>Add comparison area</a
+				}}><Icon type="plus" /> Add comparison area</a
 			>
 		</div>
 	{/if}

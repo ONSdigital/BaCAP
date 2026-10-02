@@ -15,6 +15,8 @@
 		areasList = null,
 		centroids,
 		mode = "draw",
+		title = mode === "draw" ? "Load a saved area" : "Change primary area",
+		label = mode === "draw" ? "Load a saved area" : "Change area",
 		updateSelection = () => null,
 		switchModals = () => null
 	} = $props();
@@ -95,11 +97,11 @@
 
 <Modal
 	bind:this={modal}
-	title="Load a saved area"
-	label="Load a saved area"
+	{title}
+	{label}
 	buttonStyle={mode === "draw" ? "menu" : "primary"}
 	hideLabel
-	icon="upload"
+	icon={mode === "draw" ? "upload" : "edit"}
 	onOpen={() => null}
 	onConfirm={() => null}
 	onCancel={() => null}
