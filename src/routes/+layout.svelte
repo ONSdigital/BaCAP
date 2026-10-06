@@ -66,7 +66,7 @@
 {#if page?.route?.id?.includes?.("embed")}
 	{@render children()}
 {:else}
-	<AnalyticsBanner {analyticsId} {analyticsProps} pageViewEnabled={false} />
+	<AnalyticsBanner {analyticsId} {analyticsProps} {width} pageViewEnabled={false} />
 	{#if !fullscreen}<PhaseBanner {width} phase="Prototype" />{/if}
 	{#key [page.url, fullscreen]}
 		<Header
