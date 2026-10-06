@@ -552,7 +552,7 @@
     "queryExt": "&cause_of_death=0&gender=0&age=0",
     "lowestGeography": "lsoa",
     "url": "peoplepopulationandcommunity/populationandmigration/populationestimates/methodologies/midyearpopulationestimatesqmi",
-    "dateLabelLong": 2024,
+    "dateLabelLong": 2025,
     "census": false,
     "source": "ONS - Death registrations",
     "topic": "Demography and migration",
@@ -567,6 +567,11 @@
         "dateLabel": 2024,
         "date": 2024,
         "dateLabelLong": 2024
+      },
+      "6":{
+        "dateLabel": 2025,
+        "date": 2025,
+        "dateLabelLong": 2025
       }
     }
   },
