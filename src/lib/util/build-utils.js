@@ -1,8 +1,5 @@
 import {
-  mapObject,
   centroids,
-  selected,
-  state,
   version,
 } from "$lib/stores/mapstore";
 import { get } from "svelte/store";
@@ -19,8 +16,7 @@ import {
   isDatasetAvailableInVersion,
   getDatasetForVersion,
 } from "$lib/util/topic-functions";
-
-const topicsLookup = Object.fromEntries(topicsAll.map((d) => [d.code, d]));
+import { makeTopicsLookup } from "./topic-functions";
 
 export function filterTopics(allTopics, level, coverage) {
   return allTopics
@@ -179,6 +175,8 @@ function makeTable(data, meta, name, compName) {
 
 export async function downloadData() {
   const bs = get(buildstate);
+  const ver = get(version);
+  const topicsLookup = makeTopicsLookup(topicsAll, ver);
 
   const header = [
     `Custom area profile data for ${getName()}`,

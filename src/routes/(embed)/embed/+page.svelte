@@ -12,8 +12,7 @@
   import BigNumber from "$lib/charts/BigNumber.svelte";
   import LineChart from "$lib/charts/LineChart.svelte";
   import {
-    isDatasetAvailableInVersion,
-    getDatasetForVersion,
+    makeTopicsLookup
   } from "$lib/util/topic-functions";
 
   let pymChild,
@@ -29,12 +28,6 @@
   let hideTables = false;
 
   let topicsLookup = {};
-  function makeTopicsLookup() {
-    topics
-      .filter((d) => isDatasetAvailableInVersion(d, version))
-      .map((d) => getDatasetForVersion(d, version))
-      .forEach((t) => (topicsLookup[t.code] = t));
-  }
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -87,7 +80,7 @@
       population = props.population;
       tables = props.tabs.map(t => ({...t, data: t.data.filter(d => d.value >= 0)}));
       stats = props.stats;
-      makeTopicsLookup();
+      topicsLookup = makeTopicsLookup(topics, version);
     }
   }
 
