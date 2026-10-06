@@ -1,0 +1,103 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+For a longer overview of how the app works, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md). The analytics events the app sends are listed in [docs/ANALYTICS.md](./docs/ANALYTICS.md).
+
+## What this is
+
+BaCAP ("Build a Custom Area Profile") is an ONS (Office for National Statistics) SvelteKit app that lets users draw or select a geographic area of England/Wales, choose census data topics, and generate a data profile (charts, tables, downloadable XLSX/CSV) for that area — aggregated on a best-fit basis from Output Areas (OA) / LSOAs. Built on the ONS `svelte-components` / `svelte-maps` design system, using Svelte 5 runes.
+
+## Commands
+
+```bash
+npm run dev              # Start dev server (localhost:5173)
+npm run build             # Production build to /build (also runs scripts/js-fix.js to fix JS mimetypes)
+npm run build:preview     # Build with PUBLIC_APP_ENV=preview, using base_preview path
+npm run preview            # Preview a production build
+npm run lint                # prettier --check
+npm run format              # prettier --write
+npm test                    # vitest run (unit tests; currently only src/lib/util/data/get-data.js is covered)
+npx vitest                  # watch mode
+```
+
+Data pipeline scripts (regenerate static JSON data from `raw_data/` or remote ONS/geo-scripts sources — run only when source data changes):
+
+```bash
+npm run data:get-places # Fetches raw_data/places-list.csv from ONSdigital/geo-scripts on GitHub
+npm run data:compress   # Compresses raw_data/*.csv (oa21-data, lsoa21-data, places-list) into static/data/*.json
+npm run data:lookups    # Fetches best-fit and region/combined-authority child lookups from ONSdigital/geo-scripts on GitHub, writes static/data/bestfit-lookup.json and static/data/rgn-cauth-children.json
+```
+
+`static/data/topics.json` (topic/dataset definitions loaded by the root layout) is maintained directly rather than generated — there is no longer a conversion script for it.
+
+## Base path configuration
+
+Before building for a target environment, `src/app.config.js` sets the base path: `base_prod` for the ONS site (`/visualisations/customprofiles`), `base_preview` for preview builds. `svelte.config.js` picks between them based on `NODE_ENV`/`PUBLIC_APP_ENV`.
+
+## Architecture
+
+### Route groups
+
+Three route groups under `src/routes/`, each with its own layout:
+
+- **`(app)`** — the main interactive tool (`/draw`, `/build`, `/download`). Its `+layout.svelte` does the app's startup: on mount it loads persisted app state plus reference datasets (areas list, best-fit lookups, region/authority child lookups, OA data, LSOA centroids) and exposes them all via Svelte `setContext` (`appState`, `areasList`, `bestFits`, `childLookup`, `centroids`) rather than props — downstream components read these with `getContext`. Nothing under `(app)` renders until this finishes (shows `Spinner` meanwhile).
+- **`(embed)`** — pages (`/embed`, `/landing`, `/profile`) meant to be iframed into ONS articles via `pym.js`; sets `noindex` and skips the app chrome (`Header`/`Footer`/`PhaseBanner`).
+- **`(static)`** — plain content pages (home, `/glossary`).
+
+The root `+layout.js` prerenders (except in preview mode), sets `trailingSlash: "always"`, and loads `topics.json` (topic/dataset definitions) into every route's `data`.
+
+### State persistence (`src/lib/util/state/`)
+
+App state (`activeArea`, `comparisonArea`, `savedAreas`, draw `history`, `selectedTopics`, etc. — see `initialState` in `src/lib/config/index.js`) is held in Svelte stores that transparently sync to IndexedDB (`db.js`, via `idb-keyval`) on every `.set()`. `getAppState()` rehydrates these stores from IndexedDB on startup, seeding any missing key from `initialState`. Bumping `appVersion` in `src/lib/config/index.js` forces the cached reference datasets (`loadData()` in `io/index.js`) to be re-fetched, but deliberately does **not** clear the user's stored app state (e.g. saved areas), which should persist across releases. Only when a release makes a breaking change to the structure of stored state should a version-specific migration be added at the top of `getAppState()` (which receives the previously stored version) to amend or clear the affected keys.
+
+`snapshot.svelte.js` wraps `$state.snapshot` — used whenever a `$state` proxy needs to be serialized (persisted to IndexedDB, JSON-stringified, etc).
+
+### Data loading (`src/lib/util/io/`, `src/lib/util/data/`)
+
+- `io/index.js` — `loadData()` fetches and IndexedDB-caches static JSON reference datasets (with optional decompression via `compress-csv-to-json`), plus the XLSX/CSV export functions (via `@onsvisual/accessible-xlsx`) used on the build/download pages.
+- `data/get-data.js` — fetches actual census statistics live from the Nomis API for the selected area/topic. Handles chunking requests to stay under Nomis URL/response-size limits (`makeUrls`), caches raw responses per-URL in IndexedDB (`getCache`/`setCache`, capped at 1000 entries), and derives percentages client-side when Nomis can't provide them (`calcPercentages`).
+- `data/index.js` — shared helpers: embed-hash encoding for the `/embed` viewer, date formatting per topic (`month`/`year-ending`), data pivoting/grouping.
+
+### Geography (`src/lib/util/geo/`)
+
+- `Centroids` class (`centroids.js`) — spatial index over OA/LSOA centroids; used to determine which small areas fall inside a drawn/selected polygon (`inPolygon`), compress/expand area-code sets, and find a common parent area for auto-selecting a comparison area.
+- `MaplibreDraw` (`draw-lib.js`) — wraps `@mapbox/mapbox-gl-draw` for the polygon-drawing tool on `/draw`.
+- `Polygon` (`polygon.svelte.js`) — reactive polygon state for the draw page.
+- `parseGeoJSON` — normalizes an arbitrary uploaded/fetched GeoJSON feature into the app's area shape (detects name/code property keys heuristically via `getNameKey`/`getCodeKey`, reprojects British National Grid to WGS84 when needed, computes OA/LSOA membership via `Centroids` if not already embedded in the file).
+- `simplifyGeo` — iteratively simplifies/buffers a polygon (via `@turf`) until its serialized size is under a target length, for embedding in the URL/hash used by `/embed`.
+- Area code prefixes (E00/W00 = OA, E01/W01 = LSOA, E12 = Region, E47 = Combined authority, etc.) are mapped in `geotypes`/`geogroups` in `src/lib/config/index.js` — consult these when working with geography codes.
+
+### Key pages
+
+- `/draw` — draw a custom polygon area on a MapLibre map (`DrawMap`, `DrawToolbar`, `DrawCounter`); resolves the drawn shape to a set of OA/LSOA codes via `Centroids`.
+- `/build` — select an area (`BuildAreas`: search, draw import, saved areas) and data topics (`BuildTopics`), then renders the profile (`BuildProfile`: charts/tables fetched live from Nomis via `getData`). On mount, restores the previously active area from a URL hash (`#<areacode>`) or from a polygon just drawn on `/draw` (coordinated via the shared `appState.lastActivePage`/`history`).
+- `/download` — bulk dataset download page (CSV/XLSX exports via `io/index.js`).
+- `/embed` — read-only embedded viewer for a profile encoded into the URL hash (via `makeEmbedHash`/`btoaUtf8`), designed to be loaded inside a `pym.js` iframe on ons.gov.uk articles.
+
+### Data sources at runtime
+
+Reference/geometry data (area boundaries, postcode lookups, area-code lookups) is fetched from ONS's S3-backed CDN (`geoUrl`, `postcodesUrl`, `lookupUrl` in `src/lib/config/index.js`); live statistics come from the Nomis API (`nomisweb.co.uk`). Static reference JSON shipped with the app itself lives in `static/data/` (generated by the `data:*` npm scripts above from `raw_data/`).
+
+### Analytics (`src/lib/util/analytics/`)
+
+Google Analytics events are pushed to the GTM dataLayer via `analyticsEvent()` from `@onsvisual/svelte-components`, which only sends them once the user has accepted cookies (the consent banner is `AnalyticsBanner` in the root `+layout.svelte`).
+
+- Page views are sent from `afterNavigate` in the root `+layout.svelte`, using the `contentTitle`/`contentSubType` each route returns from its `+page.js`. Add both to any new route's `+page.js`.
+- The GTM ID (`analyticsId`) and the base `analyticsProps` sent with every page view are defined in `src/lib/config/index.js` and imported by the root `+layout.svelte`.
+- All other events go through the wrapper functions in `src/lib/util/analytics/index.js` (`areaEvent`, `selectDatasetEvent`, `mapDrawEvent`, `downloadEvent`, `embedEvent`, `copyAreaCodesEvent`, `printEvent`, `modalToggleEvent`). Call these rather than `analyticsEvent()` directly, and add a new wrapper there for a new event type.
+- Pass an area's `properties` object (not the whole GeoJSON Feature) as `area`. `getAreaProps` reads `areacd`/`areanm` from it to add `areaCode`/`areaName`/`areaType`. A Feature silently sends no area properties.
+- `modalToggleEvent` is fired inside `src/lib/ui/Modal.svelte` itself: "open" in `showModal()` and "close" from the dialog's native `close` event. Individual modals don't need to send these.
+- The `embed` event deliberately sends the embed URL without its hash, to avoid putting very long strings in events.
+- When adding, removing or changing an event or its labels, update [docs/ANALYTICS.md](./docs/ANALYTICS.md) to match.
+
+### Deployment model
+
+The app builds via `@sveltejs/adapter-static` (see `svelte.config.js`) and ships as static files with no backend of its own — it's deployed onto the ONS website as plain static assets. This is an intentional constraint, not a gap: it means there's no server-side layer available for API proxying, response caching, or auth, so all caching (Nomis response cache in `get-data.js`, reference-dataset cache in `io/index.js`, app state in `state/`) has to live client-side in IndexedDB, and every browser session repeats its own Nomis requests independently. Keep this in mind before suggesting a server-side cache, API proxy, or edge layer — those would require a platform change, not just a code change.
+
+Previews are built automatically per-branch/PR by Vercel (linked from each PR); the `main`/production branch's preview is at https://ons-bacap.vercel.app. There's no `vercel.json` or Vercel-specific adapter in this repo, so Vercel's exact build/base-path configuration lives in its own project settings, not here.
+
+## Code style
+
+- Tabs for indentation, no trailing commas, 100-char print width — enforced by Prettier (`.prettierrc`); run `npm run format` rather than hand-formatting.
+- Svelte 5 runes (`$state`, `$derived`, `$props`, context via `setContext`/`getContext`) are used throughout instead of the older stores-only pattern, except where a `writable` store is specifically needed for IndexedDB sync (see `state/get-app-state.js`).
