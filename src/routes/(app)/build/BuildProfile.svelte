@@ -97,7 +97,7 @@
 </Details>
 <hr class="ons-u-mt-m ons-u-mb-m" />
 <div id="embed"></div>
-<h2 class="ons-u-fs-m ons-u-mb-3xs">Use and share profile</h2>
+<h2 class="ons-u-fs-m ons-u-mb-3xs">Export and share this profile</h2>
 <ul class="profile-actions">
 	<li>
 		<Icon type="download" /> Download profile as
