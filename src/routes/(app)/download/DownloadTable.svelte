@@ -6,6 +6,7 @@
 
 	const columns = [
 		{ key: "areanm", label: "Area name" },
+		{ key: "areacd", label: "Area code" },
 		{ key: "category", label: "Category" },
 		{ key: "date", label: "Time period" },
 		...measures.map((d) => ({ key: d.label.toLowerCase(), label: d.label, numeric: true }))

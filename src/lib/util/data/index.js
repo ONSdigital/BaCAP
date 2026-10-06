@@ -66,6 +66,7 @@ export function pivotDataOnMeasures(data) {
 		if (!rows[rowId])
 			rows[rowId] = {
 				areanm: d.areanm,
+				areacd: d.areacd,
 				category: d.category,
 				date: d.date,
 				...Object.fromEntries(measures.map((m) => [m.label.toLowerCase(), null]))
