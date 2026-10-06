@@ -62,7 +62,9 @@
 									/></td
 								>
 							{:else}
-								<td>{area.properties.areanm || defaultAreaName}</td>
+								<td class:text-light={!area.properties.areanm}
+									>{area.properties.areanm || defaultAreaName}</td
+								>
 								<td>{area.properties.areacd}</td>
 							{/if}
 							<td>
