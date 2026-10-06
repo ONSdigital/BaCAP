@@ -390,7 +390,7 @@
 				>
 				<div>
 					<small
-						>*GeoJSON files must be saved using WGS 84 (longitude/latitude) or British
+						>*GeoJSON files must be saved using longitude/latitude (WGS 84) or British
 						National Grid coordinates.</small
 					>
 				</div>
