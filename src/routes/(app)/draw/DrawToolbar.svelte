@@ -210,12 +210,7 @@
 							}
 						}}
 					>
-						<AreaSearch
-							bind:value={selectedArea}
-							options={areasList}
-							description="Includes administrative, electoral and built-up areas"
-							autoFocus
-						/>
+						<AreaSearch bind:value={selectedArea} options={areasList} autoFocus />
 						<div id="search-inputs">
 							<Button type="submit" small disabled={!selectedArea}>Select area</Button
 							>

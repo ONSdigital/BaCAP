@@ -5,15 +5,24 @@
 	import { Select } from "@onsvisual/svelte-components";
 	import { geoUrl, postcodesUrl, lookupUrl, geotypesLookup } from "$lib/config";
 
+	const placeholders = [
+		`Eg. "Fareham" or "PO15 5RR"`,
+		`Eg. "Newport" or "NP10 8XG"`,
+		`Eg. "Manchester" or "M2 5LE"`,
+		`Eg. "Westminster" or "SW1P 4DF"`,
+		`Eg. "Darlington" or "DL1 5AD"`,
+		`Eg. "Edinburgh" or "EH8 8FT"`
+	];
+
 	let {
 		options = [],
 		value = $bindable(),
 		idKey = "id",
 		labelKey = "label",
 		groupKey = "group",
-		label = "Find an area to add to the map",
-		description = null,
-		placeholder = "Type a place name or postcode",
+		label = "Find an area to select on the map",
+		description = "Type a place name, postcode or GSS code to find administrative, electoral and built-up areas",
+		placeholder = placeholders[Math.floor(Math.random() * placeholders.length)],
 		geoTypes = new Set(Object.keys(geotypesLookup)),
 		postcodeTypes = new Set(["E00", "W00"]),
 		autoFocus = false,
@@ -152,7 +161,7 @@
 			value = {
 				[idKey]: areacd,
 				[labelKey]: geojson.properties.areanm || areacd,
-				[groupKey]: e.detail?.group,
+				[groupKey]: obj?.group || geotypesLookup[geojson.properties.typecd],
 				geojson
 			};
 			onChange(value);
