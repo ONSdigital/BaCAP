@@ -96,9 +96,12 @@ Datasets published at LSOA level start the hierarchy at LSOA. See
 
 ### 5. 2021 geography boundaries
 
-All geographies must be on **2021 boundaries**, equivalent to those used for Census 2021. This
-applies at **every level**, including local authorities, which must be the census-frozen 2021 local
-authorities rather than current boundaries.
+All data must be available on **2021 geographic boundaries**, equivalent to those used for
+Census 2021. This applies at **every level**, including local authorities, which must be the
+census-frozen 2021 local authorities rather than current boundaries.
+
+> **Note:** The inclusion of data for 2021 local authorities on Nomis does not prevent the inclusion
+> of more recent/current geographies in addition.
 
 BaCAP's lookups between OAs, LSOAs, MSOAs, local authorities and regions are all based on the 2021
 boundaries. Data published on other boundaries would not match these lookups, so custom areas would
