@@ -2,6 +2,7 @@
 	import { Tabs, Tab, Input, Button, Checkbox, Tooltip } from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
 	import AreaSearch from "./AreaSearch.svelte";
+	import ConfirmButton from "./ConfirmButton.svelte";
 	import { uploadAreas, featureCollection, parseGeoJSON, getCodeKey } from "$lib/util/geo";
 	import { downloadArea } from "$lib/util/io";
 	import { areaEvent } from "$lib/util/analytics";
@@ -266,18 +267,18 @@
 							`custom_areas_${new Date().toISOString().slice(0, 10)}`
 						)}>Download all areas</Button
 				>
-				<Button
+				<ConfirmButton
 					variant="primary"
 					icon="delete"
 					color="#d0021b"
 					small
-					on:click={() => {
+					onConfirm={() => {
 						$savedAreas = {};
 						areaEvent({
 							type: "manage-areas",
 							label: "Delete all areas"
 						});
-					}}>Delete all areas</Button
+					}}>Delete all areas</ConfirmButton
 				>
 			{:else}
 				<p>
