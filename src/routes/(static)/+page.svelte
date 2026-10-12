@@ -35,11 +35,11 @@
 
 <Grid width="wider" colWidth="wide" marginTop>
 	<Card title="Create an area" href={resolve("/draw")} mode="featured">
-		<p>There are three ways to select an area:</p>
-		<List mode="number">
-			<Li>Search for an area in the search box.</Li>
-			<Li>Draw your own area on the map.</Li>
-			<Li>Upload an area boundary.</Li>
+		<p>In order to select an area, you can:</p>
+		<List mode="bullet">
+			<Li>find an area in the search box</Li>
+			<Li>draw your own area on the map</Li>
+			<Li>upload an area boundary</Li>
 		</List>
 	</Card>
 	<Card title="Build a profile" href={resolve("/build")} mode="featured">
