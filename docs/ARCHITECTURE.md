@@ -26,8 +26,8 @@ browser:
 
 - **Geography calculations** (which OAs/LSOAs fall inside a shape) run client-side against a
   centroids dataset that ships with the app.
-- **Statistics** are requested directly from the [Nomis API](https://www.nomisweb.co.uk/api/v01/help),
-  which aggregates the small areas on the fly.
+- **Statistics** are requested directly from the
+  [Nomis API](https://www.nomisweb.co.uk/api/v01/help), which aggregates the small areas on the fly.
 - **Persistence** (app state, reference data, cached API responses) uses the browser's IndexedDB.
 
 ```mermaid
@@ -66,21 +66,21 @@ src/
 
 ### Route groups
 
-- **`(app)`**: the main tool. Its `+layout.svelte` bootstraps the app. On mount it loads
-  persisted app state (`getAppState()`) and the reference datasets (areas list, best-fit lookups,
+- **`(app)`**: the main tool. Its `+layout.svelte` bootstraps the app. On mount it loads persisted
+  app state (`getAppState()`) and the reference datasets (areas list, best-fit lookups,
   region/combined authority child lookups, OA data, LSOA centroids). It then builds a `Centroids`
-  index from the OA and LSOA data. All of these are exposed to child routes through
-  `setContext` as getter functions (`getContext("centroids")()` etc.). Nothing under `(app)`
-  renders until they have loaded.
+  index from the OA and LSOA data. All of these are exposed to child routes through `setContext` as
+  getter functions (`getContext("centroids")()` etc.). Nothing under `(app)` renders until they have
+  loaded.
     - `/draw`: draw, buffer or erase shapes on a MapLibre map, or add named areas to a shape.
     - `/build`: choose a primary area and optional comparison area, pick data topics, and view,
       download or embed the resulting profile.
-    - `/download`: bulk download a dataset for many areas at once, for example every ward in a
-      local authority.
+    - `/download`: bulk download a dataset for many areas at once, for example every ward in a local
+      authority.
 - **`(embed)`**: pages designed to be loaded in an iframe using `pym.js`. They carry no app chrome
   and are marked `noindex`. `/profile` renders a profile entirely from its URL hash (see
-  [below](#inlining-data-in-the-profile-url-hash)). `/embed` does the same for legacy embed
-  codes created by the previous version of the app, using `static/data/legacy/topics.json`.
+  [below](#inlining-data-in-the-profile-url-hash)). `/embed` does the same for legacy embed codes
+  created by the previous version of the app, using `static/data/legacy/topics.json`.
 - **`(static)`**: plain content pages.
 
 ### Reference data
@@ -98,14 +98,14 @@ Two kinds of reference data are loaded:
 | Boundary of a named area (GeoJSON)     | ONS CDN (`geoUrl`)                         | fetched on demand    |
 
 The `static/data/` files are generated from `raw_data/` or from
-[ONSdigital/geo-scripts](https://github.com/ONSdigital/geo-scripts) by the `data:*` npm scripts.
-The larger files are stored in a column-compressed format (`compress-csv-to-json`) and are
-decompressed in the browser.
+[ONSdigital/geo-scripts](https://github.com/ONSdigital/geo-scripts) by the `data:*` npm scripts. The
+larger files are stored in a column-compressed format (`compress-csv-to-json`) and are decompressed
+in the browser.
 
 `loadData()` in `src/lib/util/io/index.js` caches each dataset in IndexedDB after its first
 download. When `appVersion` in `src/lib/config/index.js` differs from the version stored in
-IndexedDB, the cached datasets are ignored and downloaded again. This means bumping `appVersion`
-is how a change to the reference data reaches returning users. The new version is saved only after
+IndexedDB, the cached datasets are ignored and downloaded again. This means bumping `appVersion` is
+how a change to the reference data reaches returning users. The new version is saved only after
 every dataset has reloaded, so a failed refresh is tried again on the next visit. Bumping
 `appVersion` does **not** clear the user's saved app state
 ([see below](#versioning-and-migrations)).
@@ -121,16 +121,15 @@ Nomis for that topic.
 ### Calculating best-fits for a drawn shape
 
 Best-fit uses a **centroid-in-polygon** rule: a small area is included if its centroid falls inside
-the shape. The rule is implemented by the `Centroids` class
-(`src/lib/util/geo/centroids.js`):
+the shape. The rule is implemented by the `Centroids` class (`src/lib/util/geo/centroids.js`):
 
 1. On startup, `Centroids` converts the OA and LSOA centroids into GeoJSON point collections. From
    the columns of `oa21-data.json` (`oa21cd → lsoa21cd → msoa21cd → ltla21cd → rgn21cd`) it also
    builds a `parents` map and a `children` map covering the full hierarchy.
-2. When the user finishes drawing a polygon or clicks with the radius tool,
-   `DrawMap.applyShape()` calls `centroids.inPolygon(shape, "oa")` and
-   `centroids.inPolygon(shape, "lsoa")`. Each returns the `Set` of codes whose centroids fall inside
-   the shape, found with `@turf/boolean-point-in-polygon`.
+2. When the user finishes drawing a polygon or clicks with the radius tool, `DrawMap.applyShape()`
+   calls `centroids.inPolygon(shape, "oa")` and `centroids.inPolygon(shape, "lsoa")`. Each returns
+   the `Set` of codes whose centroids fall inside the shape, found with
+   `@turf/boolean-point-in-polygon`.
 3. The resulting sets are combined with the current selection according to the draw mode:
     - **add**: set union, with the drawn geometry merged using `@turf/union`
     - **subtract** (erase mode): set difference, with the geometry cut using `@turf/difference`
@@ -148,11 +147,10 @@ The population counter on the map sums the `population` of the selected OAs
 ### Named areas and uploaded GeoJSON
 
 Selecting a named area such as a ward or local authority fetches its boundary from the ONS CDN.
-Those files already contain precomputed `oa21cds`/`lsoa21cds` lists, and `parseGeoJSON()`
-uses these when they are present. For an uploaded file without them, `parseGeoJSON()` falls back
-to the same `centroids.inPolygon()` calculation, first converting British National Grid
-coordinates to WGS84 if the file uses them. If the code is itself an OA or LSOA code, the area is
-simply its own best-fit.
+Those files already contain precomputed `oa21cds`/`lsoa21cds` lists, and `parseGeoJSON()` uses these
+when they are present. For an uploaded file without them, `parseGeoJSON()` falls back to the same
+`centroids.inPolygon()` calculation, first converting British National Grid coordinates to WGS84 if
+the file uses them. If the code is itself an OA or LSOA code, the area is simply its own best-fit.
 
 `/download` works with lists of child areas rather than drawn shapes. It uses the prebuilt
 `bestfit-lookup.json`, generated by `npm run data:lookups` from geo-scripts. This maps a higher
@@ -179,21 +177,21 @@ area's boundary as the default comparison area.
 ## Fetching and transforming data from Nomis
 
 All live statistics come from the Nomis API through `getData(table, areas)` in
-`src/lib/util/data/get-data.js`. Here `table` is a topic definition from `topics.json`, and
-`areas` is the primary area plus the optional comparison area.
+`src/lib/util/data/get-data.js`. Here `table` is a topic definition from `topics.json`, and `areas`
+is the primary area plus the optional comparison area.
 
 ### Building the request
 
-Each request is a Nomis `…/dataset/{tableCode}.data.csv` URL (`makeUrlFn()`). It uses Nomis's
-`MAKE` syntax to aggregate on the server, so the browser never downloads data for individual OAs:
+Each request is a Nomis `…/dataset/{tableCode}.data.csv` URL (`makeUrlFn()`). It uses Nomis's `MAKE`
+syntax to aggregate on the server, so the browser never downloads data for individual OAs:
 
-- **Geography**: each area becomes `MAKE|<areacd>|<code1>;<code2>;…`, built from its compressed
-  OA or LSOA codes (`makeGeo()`). If the area is a single official area whose only code is its own
-  GSS code, that code is sent directly. Areas without a GSS code, such as drawn shapes, are given
-  placeholder codes like `X00000001` (`fillAreaCodes()`) so that rows in the response can be
-  matched back to them.
-- **Categories**: a category built from several Nomis cells becomes
-  `MAKE|<label>|<cell1>;<cell2>`. Single-cell categories are sent as the cell code (`makeCells()`).
+- **Geography**: each area becomes `MAKE|<areacd>|<code1>;<code2>;…`, built from its compressed OA
+  or LSOA codes (`makeGeo()`). If the area is a single official area whose only code is its own GSS
+  code, that code is sent directly. Areas without a GSS code, such as drawn shapes, are given
+  placeholder codes like `X00000001` (`fillAreaCodes()`) so that rows in the response can be matched
+  back to them.
+- **Categories**: a category built from several Nomis cells becomes `MAKE|<label>|<cell1>;<cell2>`.
+  Single-cell categories are sent as the cell code (`makeCells()`).
 - **Other parameters**: `date`, `measures` (only measures that have a Nomis `cell`), a fixed
   `select` column list, and any topic-specific `miscParams` such as `gender=0`.
 
@@ -215,19 +213,17 @@ For each URL, the CSV response is processed by `parseData()`:
 
 1. **Parse** with `d3-dsv`. Each row is mapped into the app's tidy format:
    `{ areacd, areanm, date, category, measure, value }`. Nomis codes are translated back to the
-   labels in `topics.json`. Nomis strips colons from `MAKE` labels, so the lookup removes them
-   too.
-2. **Sort** into a fixed order: area, then date, then category, then measure, following the order
-   in the request and in `topics.json` rather than the order Nomis returns. This order matters,
-   because the embed hash stores values by position
-   ([see below](#inlining-data-in-the-profile-url-hash)).
+   labels in `topics.json`. Nomis strips colons from `MAKE` labels, so the lookup removes them too.
+2. **Sort** into a fixed order: area, then date, then category, then measure, following the order in
+   the request and in `topics.json` rather than the order Nomis returns. This order matters, because
+   the embed hash stores values by position ([see below](#inlining-data-in-the-profile-url-hash)).
 3. **Derive percentages** when necessary. Some Nomis tables can't return a percentage, and in
    `topics.json` their topics define a `Percent` measure with `cell: null`. For these,
    `calcPercentages()` sums values across categories for each area and date, and adds a `Percent`
    row (rounded to 1 decimal place) after each value row.
 
-`getData()` returns `{ meta: table, data }`. If a request fails, for example because Nomis is
-down, it returns `{ message: "Could not load data" }`.
+`getData()` returns `{ meta: table, data }`. If a request fails, for example because Nomis is down,
+it returns `{ message: "Could not load data" }`.
 
 ### How `/build` calls it
 
@@ -238,8 +234,8 @@ adding a topic, changing the comparison area or editing the shape. Every topic i
 again, not just the one that changed. This is why the response cache described
 [below](#caching-nomis-api-responses-in-indexeddb) is important.
 
-The same `tables` feed the XLSX/CSV downloads (`downloadProfileXLSX()` and
-`downloadProfileCSV()` in `io/index.js`) and the embed hash.
+The same `tables` feed the XLSX/CSV downloads (`downloadProfileXLSX()` and `downloadProfileCSV()` in
+`io/index.js`) and the embed hash.
 
 ## Inlining data in the profile URL hash
 
@@ -249,8 +245,8 @@ from data encoded in its URL hash (`#…`). As a result:
 
 - a profile embedded in an ONS article or third-party page makes no API requests, so a busy page
   doesn't send traffic to Nomis for every visitor;
-- an embedded profile is a fixed snapshot of the data when it was created, and doesn't change
-  as Nomis data is revised;
+- an embedded profile is a fixed snapshot of the data when it was created, and doesn't change as
+  Nomis data is revised;
 - the preview on `/build` is exactly what will be embedded.
 
 ### Encoding (`makeEmbedHash()` in `src/lib/util/data/index.js`)
@@ -284,26 +280,26 @@ To keep the hash small:
 
 The page decodes the hash with `atobUtf8()` and `expandTables()` rebuilds the tidy rows. It loops
 over areas × dates (sliced from the topic's `dates` using the stored `range`) × the topic's
-`categories`, taking the next value from the array each time. The page listens for `hashchange`,
-so `/build` updates the preview by setting the iframe's `location.hash`, without reloading it.
+`categories`, taking the next value from the array each time. The page listens for `hashchange`, so
+`/build` updates the preview by setting the iframe's `location.hash`, without reloading it.
 
-The parent page sends pym messages (`png`, `print`) to the iframe to save a PNG with `snapdom` or
-to print. The embed code from `makeEmbedCode()` loads the same `/profile` page on the live ONS site
+The parent page sends pym messages (`png`, `print`) to the iframe to save a PNG with `snapdom` or to
+print. The embed code from `makeEmbedCode()` loads the same `/profile` page on the live ONS site
 with the hash attached.
 
 > **Compatibility note:** because the hash relies on `topics.json` for everything except values,
 > existing embeds depend on each topic's `key`, the order of its `categories`, and its `dates`.
-> Renaming a key, reordering or removing categories, or removing dates will corrupt existing
-> embeds. Adding new dates to the end of a topic is safe, because embeds store the date range they
-> used. The previous version of the app used a different format, which is why `/embed` and
+> Renaming a key, reordering or removing categories, or removing dates will corrupt existing embeds.
+> Adding new dates to the end of a topic is safe, because embeds store the date range they used. The
+> previous version of the app used a different format, which is why `/embed` and
 > `static/data/legacy/topics.json` are kept.
 
 ## Downloads and exports
 
-Every file the user can download is **generated on the fly in the browser** from data already
-loaded on the page. No file is created on or stored by a server, so **downloads have no persistent
-URL**: a downloaded file can't be linked to, bookmarked or fetched again later. To get it again,
-the user has to rebuild the profile or dataset and download it again.
+Every file the user can download is **generated on the fly in the browser** from data already loaded
+on the page. No file is created on or stored by a server, so **downloads have no persistent URL**: a
+downloaded file can't be linked to, bookmarked or fetched again later. To get it again, the user has
+to rebuild the profile or dataset and download it again.
 
 | Download                         | Generated by                                                             | Built from                                                  |
 | -------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- |
@@ -323,9 +319,9 @@ uses the [response cache](#caching-nomis-api-responses-in-indexeddb), that may b
 response rather than a new request.
 
 Embedded profiles are the exception. They are, in effect, persistently addressable, because all
-their data is stored in the URL hash itself
-([see above](#inlining-data-in-the-profile-url-hash)): anyone with the embed URL sees the same
-profile, without the app needing to store anything. Downloads have no equivalent.
+their data is stored in the URL hash itself ([see above](#inlining-data-in-the-profile-url-hash)):
+anyone with the embed URL sees the same profile, without the app needing to store anything.
+Downloads have no equivalent.
 
 ## Synced stores: persisting app state in IndexedDB
 
@@ -335,11 +331,11 @@ is kept across page navigations **and** across browser sessions. It is stored in
 
 ### The IndexedDB wrapper (`db.js`)
 
-`db.js` wraps [`idb-keyval`](https://github.com/jakearchibald/idb-keyval) around a single
-object store, `bacap-db` / `store`, with `get`, `set`, `update` and `del` functions. This one store
-holds app state, cached reference datasets and cached Nomis responses, each under its own key.
-Because IndexedDB uses the structured clone algorithm, values such as `Set` and `Map`, which JSON
-can't represent, can be stored directly. The OA/LSOA code sets are stored this way.
+`db.js` wraps [`idb-keyval`](https://github.com/jakearchibald/idb-keyval) around a single object
+store, `bacap-db` / `store`, with `get`, `set`, `update` and `del` functions. This one store holds
+app state, cached reference datasets and cached Nomis responses, each under its own key. Because
+IndexedDB uses the structured clone algorithm, values such as `Set` and `Map`, which JSON can't
+represent, can be stored directly. The OA/LSOA code sets are stored this way.
 
 ### Synced stores (`get-app-state.js`)
 
@@ -352,9 +348,9 @@ set: (val) => {
 };
 ```
 
-`snapshot()` (`snapshot.svelte.js`) wraps `$state.snapshot()`, which turns Svelte 5 `$state`
-proxies into plain objects. Without this, a proxy that reaches the store couldn't be
-structured-cloned into IndexedDB.
+`snapshot()` (`snapshot.svelte.js`) wraps `$state.snapshot()`, which turns Svelte 5 `$state` proxies
+into plain objects. Without this, a proxy that reaches the store couldn't be structured-cloned into
+IndexedDB.
 
 The write is **fire-and-forget**: it isn't awaited, so the UI never waits for IndexedDB. Only
 `set()` persists the value. Store `update()` is passed through unchanged and does not persist, so
@@ -370,31 +366,31 @@ the codebase changes stores by assignment: `$activeArea = …`, or a nested muta
 2. if nothing is stored, writes the default from `initialState` and uses that;
 3. creates a synced store holding the value.
 
-It returns an object of stores (`{ activeArea, comparisonArea, savedAreas, history, … }`), which
-the layout shares through `setContext("appState", …)`. Pages destructure the stores they need and
-use them with the `$store` syntax.
+It returns an object of stores (`{ activeArea, comparisonArea, savedAreas, history, … }`), which the
+layout shares through `setContext("appState", …)`. Pages destructure the stores they need and use
+them with the `$store` syntax.
 
 ### Versioning and migrations
 
 The user's saved state (`savedAreas` in particular) is meant to last across releases, so it is
-**not** cleared when `appVersion` changes. `getAppState()` is given the version previously stored
-in IndexedDB (`null` for a new user). If a future release changes the structure of stored state in
-a way that would break or corrupt existing data, add a migration for that specific version at the
+**not** cleared when `appVersion` changes. `getAppState()` is given the version previously stored in
+IndexedDB (`null` for a new user). If a future release changes the structure of stored state in a
+way that would break or corrupt existing data, add a migration for that specific version at the
 start of `getAppState()`, for example `if (storedAppVersion && storedAppVersion < 2) { … }`, which
 can amend, restructure or clear only the affected keys.
 
 ### Coordinating pages through shared state
 
-Because `/draw` and `/build` read and write the same stores, they pass the user's selection back
-and forth without URL parameters:
+Because `/draw` and `/build` read and write the same stores, they pass the user's selection back and
+forth without URL parameters:
 
-- Every change on `/draw` pushes a new entry onto `history` and sets
-  `lastActivePage = "draw"`. When `/build` mounts after that, it copies `history[0]` into
-  `activeArea` (compressing the code sets) and picks a new default comparison area.
-- Changing the area on `/build` sets `lastActivePage = "build"`. When the user goes back to
-  `/draw`, it replaces the drawn shape with the new `activeArea`.
-- Either page also accepts a GSS code in the URL hash, such as `/build/#E06000001`, to load a
-  named area directly. The `/landing` embed uses this to send users into the tool.
+- Every change on `/draw` pushes a new entry onto `history` and sets `lastActivePage = "draw"`. When
+  `/build` mounts after that, it copies `history[0]` into `activeArea` (compressing the code sets)
+  and picks a new default comparison area.
+- Changing the area on `/build` sets `lastActivePage = "build"`. When the user goes back to `/draw`,
+  it replaces the drawn shape with the new `activeArea`.
+- Either page also accepts a GSS code in the URL hash, such as `/build/#E06000001`, to load a named
+  area directly. The `/landing` embed uses this to send users into the tool.
 
 State is stored per browser and per origin. There is no sync across devices, and nothing is shared
 between users.
@@ -403,23 +399,23 @@ between users.
 
 Because `/build` requests every selected topic again whenever anything changes
 ([see above](#how-build-calls-it)), one user editing a profile will often repeat the same Nomis
-request many times. For example, adding a fourth topic re-runs the requests for the first three,
-and switching the comparison area back and forth repeats earlier requests. With no server-side
-layer to cache responses, `get-data.js` caches them in the browser.
+request many times. For example, adding a fourth topic re-runs the requests for the first three, and
+switching the comparison area back and forth repeats earlier requests. With no server-side layer to
+cache responses, `get-data.js` caches them in the browser.
 
 ### How it works
 
 - **Key**: the full Nomis request URL. The URL encodes the table, dates, categories, measures and
-  the exact compressed geography codes, so two requests that would return the same data produce
-  the same key.
-- **Value**: the raw CSV text of the response. The response is cached before parsing, so parsing
-  and percentage calculations always run on the current code, and a parsing change never leaves
-  stale results in the cache.
+  the exact compressed geography codes, so two requests that would return the same data produce the
+  same key.
+- **Value**: the raw CSV text of the response. The response is cached before parsing, so parsing and
+  percentage calculations always run on the current code, and a parsing change never leaves stale
+  results in the cache.
 - **Storage**: a single `Map` stored under the `cachedData` key in the same IndexedDB store as the
   app state. It persists across sessions, so returning to the same area on a later day is also
   served from the cache.
-- **Lookup**: `getData()` calls `getCache(url)` for each chunked URL before fetching. On a hit,
-  the cached CSV is parsed and no request is made. On a miss, the response is fetched, parsed and
+- **Lookup**: `getData()` calls `getCache(url)` for each chunked URL before fetching. On a hit, the
+  cached CSV is parsed and no request is made. On a miss, the response is fetched, parsed and
   written with `setCache(url, csv)`, which is not awaited.
 - **Size limit**: the map holds at most **1,000 URLs** (`maxCacheSize`). When it's full, the oldest
   entry is removed. `Map` keeps insertion order, so this is first-in, first-out; reading an entry
@@ -432,8 +428,8 @@ layer to cache responses, `get-data.js` caches them in the browser.
   entries. Nomis rarely revises historical figures, and new data periods mean new `date` values and
   therefore new URLs, so stale results are rare in practice. Clearing the site data in the browser
   resets the cache.
-- The whole `Map` is read from IndexedDB on every lookup and rewritten on every insert. This is
-  fast enough at the current limit, but raising `maxCacheSize` a lot would make each lookup slower.
+- The whole `Map` is read from IndexedDB on every lookup and rewritten on every insert. This is fast
+  enough at the current limit, but raising `maxCacheSize` a lot would make each lookup slower.
 - The cache belongs to one browser, so it only avoids repeated requests from the same user. Sharing
-  cached responses between users would need a server-side cache or proxy, and the static
-  deployment model doesn't provide one.
+  cached responses between users would need a server-side cache or proxy, and the static deployment
+  model doesn't provide one.

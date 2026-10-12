@@ -2,17 +2,18 @@
 
 An ONS (Office for National Statistics) tool that lets users draw or select a geographic area of
 England and Wales, choose from a set of census and administrative data topics, and generate a data
-profile for that area — charts, tables, and downloadable XLSX/CSV exports — aggregated on a
-best-fit basis from Output Areas (OA) and LSOAs.
+profile for that area — charts, tables, and downloadable XLSX/CSV exports — aggregated on a best-fit
+basis from Output Areas (OA) and LSOAs.
 
 Live at: **https://www.ons.gov.uk/visualisations/customprofiles**
 
-Built with SvelteKit (Svelte 5) on the ONS [svelte-components](https://github.com/ONSvisual/svelte-components)
-design system, deployed as a static site (no backend/server of its own).
+Built with SvelteKit (Svelte 5) on the ONS
+[svelte-components](https://github.com/ONSvisual/svelte-components) design system, deployed as a
+static site (no backend/server of its own).
 
-For an overview of how the app works (app structure, best-fit lookups, Nomis data fetching,
-embed hashes, and IndexedDB state and caching), see [ARCHITECTURE.md](./docs/ARCHITECTURE.md). The
-Google Analytics events the app sends are listed, with an example of each, in
+For an overview of how the app works (app structure, best-fit lookups, Nomis data fetching, embed
+hashes, and IndexedDB state and caching), see [ARCHITECTURE.md](./docs/ARCHITECTURE.md). The Google
+Analytics events the app sends are listed, with an example of each, in
 [ANALYTICS.md](./docs/ANALYTICS.md). Further notes for developers working in the codebase are in
 [CLAUDE.md](./CLAUDE.md).
 
@@ -112,17 +113,17 @@ Field reference:
 | `url`         | Path (without a leading slash) to the ONS methodology page, appended to `https://www.ons.gov.uk/` for the "Read more" link on the glossary and download pages.                                                                      |
 | `census`      | Informational flag for whether the dataset comes from Census 2021.                                                                                                                                                                  |
 
-**If Nomis doesn't provide a percentage for a table directly**, add a `{"label": "Percent", "cell": null}`
-entry to `measures` — the app calculates percentages client-side from the Value rows instead
-(see `calcPercentages` in `src/lib/util/data/get-data.js`).
+**If Nomis doesn't provide a percentage for a table directly**, add a
+`{"label": "Percent", "cell": null}` entry to `measures` — the app calculates percentages
+client-side from the Value rows instead (see `calcPercentages` in `src/lib/util/data/get-data.js`).
 
 After adding or editing an entry, verify it on the `/build` page: select an area, tick the new
 dataset, and check the values match what Nomis's own site returns for the same table/area/date.
 
 ### Updating geographic reference data
 
-The app's geography data — the list of selectable areas, the boundary data itself, and the
-best-fit lookups that translate a drawn area into OA/LSOA codes — comes from the
+The app's geography data — the list of selectable areas, the boundary data itself, and the best-fit
+lookups that translate a drawn area into OA/LSOA codes — comes from the
 [ONSdigital/geo-scripts](https://github.com/ONSdigital/geo-scripts) repository. That repository is
 updated roughly annually (as local authority boundaries, combined authorities, etc. change) and is
 maintained separately — refreshing it is outside the scope of this repo.
