@@ -78,7 +78,7 @@
 				? null
 				: [
 						{ label: "Home", href: resolve("/") },
-						{ label: "Draw an area", href: resolve("/draw") },
+						{ label: "Create an area", href: resolve("/draw") },
 						{ label: "Build a profile", href: resolve("/build") },
 						{ label: "Download datasets", href: resolve("/download") },
 						{ label: "Data glossary", href: resolve("/glossary") }

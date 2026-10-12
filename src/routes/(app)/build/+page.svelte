@@ -116,7 +116,7 @@
 			<Notice
 				>No area is selected. To build a profile, select a primary area and then choose the
 				datasets you are interested in. You can define a custom area on the <a
-					href={resolve("/draw")}>Draw an area</a
+					href={resolve("/draw")}>Create an area</a
 				> page</Notice
 			>
 		{/if}

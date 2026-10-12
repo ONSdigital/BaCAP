@@ -34,7 +34,7 @@
 </Hero>
 
 <Grid width="wider" colWidth="wide" marginTop>
-	<Card title="Draw an area" href={resolve("/draw")} mode="featured">
+	<Card title="Create an area" href={resolve("/draw")} mode="featured">
 		<p>There are three ways to select an area:</p>
 		<List mode="number">
 			<Li>Search for an area in the search box.</Li>

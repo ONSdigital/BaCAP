@@ -162,7 +162,7 @@
 		>
 	{:else}
 		<p>
-			No saved areas available. Visit the <a href="#upload-areas">draw an area</a> page to define
+			No saved areas available. Visit the <a href="#upload-areas">Create an area</a> page to define
 			and save areas.
 		</p>
 	{/if}
