@@ -220,7 +220,7 @@ export default async function getData(table, areas) {
 			} catch (err) {
 				// Handle error if Nomis is unavailable
 				console.warn(err);
-				return { message: "Could not load data" };
+				return { meta: table, data: [], message: "Could not load data" };
 			}
 		}
 	}

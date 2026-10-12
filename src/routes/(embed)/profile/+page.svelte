@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-	import { Embed, Grid, GridCell, Card } from "@onsvisual/svelte-components";
+	import { Embed, Grid, GridCell, Card, Notice } from "@onsvisual/svelte-components";
 	import { snapdom } from "@zumer/snapdom";
 	import { makeDateFormatter } from "$lib/util/data";
 	import { atobUtf8 } from "$lib/util/io";
@@ -32,15 +32,17 @@
 						])
 			);
 			const data = [];
-			for (const area of areas) {
-				for (const date of dates) {
-					for (const cat of meta.categories) {
-						data.push({
-							areanm: area,
-							date,
-							category: cat.label,
-							value: tab.data[data.length]
-						});
+			if (tab.data.length) {
+				for (const area of areas) {
+					for (const date of dates) {
+						for (const cat of meta.categories) {
+							data.push({
+								areanm: area,
+								date,
+								category: cat.label,
+								value: tab.data[data.length]
+							});
+						}
 					}
 				}
 			}
@@ -107,7 +109,9 @@
 				<div class="card-subtitle">
 					{makeSubtitle(tab.range, dateFormat, tab.meta.dateFormat === "year-ending")}
 				</div>
-				{#if tab.meta.chart === "number"}
+				{#if !tab.data.length}
+					<Notice mode="warning">Failed to load data</Notice>
+				{:else if tab.meta.chart === "number"}
 					<BigNumber data={tab.data} unit={tab.meta.unit} />
 				{:else if tab.meta.chart === "line"}
 					<LineChart data={tab.data} {dateFormat} />
