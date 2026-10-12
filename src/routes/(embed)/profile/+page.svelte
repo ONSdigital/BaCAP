@@ -13,6 +13,8 @@
 
 	let { data } = $props();
 
+	const colCls = "ons-col-6@s ons-col-4@m ons-col-3@xl";
+
 	function expandTables(lookup, data) {
 		if (!data) return [];
 		const areas = [...data.areas];
@@ -86,22 +88,22 @@
 <svelte:window onhashchange={update} />
 
 <Embed id="embed" on:load={init}>
-	<Grid cls="data-cards" width="medium" colWidth="narrow">
+	<Grid cls="data-cards" width="full">
 		{#if embedData?.areas?.[0]}
-			<GridCell colspan={3}>
+			<GridCell colCls=" ">
 				<h1>
 					{embedData.areas[0]}
 				</h1>
 			</GridCell>
 		{/if}
 		{#if embedData?.polygons?.[0]}
-			<Card title="Area map" mode="featured">
+			<Card title="Area map" mode="featured" {colCls}>
 				<AreaMap polygons={embedData.polygons} areas={embedData.areas} />
 			</Card>
 		{/if}
 		{#each tables as tab}
 			{@const dateFormat = makeDateFormatter(tab.meta.dateFormat)}
-			<Card title={tab.meta.label} mode="featured">
+			<Card title={tab.meta.label} mode="featured" {colCls}>
 				<div class="card-subtitle">
 					{makeSubtitle(tab.range, dateFormat, tab.meta.dateFormat === "year-ending")}
 				</div>

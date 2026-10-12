@@ -3,7 +3,7 @@
 	// New-style embeds can be found at /(embed)/profile/+page.svelte
 
 	import { onMount } from "svelte";
-	import { Embed, Grid, Card } from "@onsvisual/svelte-components";
+	import { Embed, Grid, Card, GridCell } from "@onsvisual/svelte-components";
 	import { atobUtf8 } from "$lib/util/io";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
@@ -11,6 +11,8 @@
 	import ProfileChart from "$lib/viz/ProfileChart.svelte";
 
 	let { data } = $props();
+
+	const colCls = "ons-col-6@s ons-col-4@m ons-col-3@xl";
 
 	function getDatasetForVersion(dataset, version) {
 		const versionKeys = Object.keys(dataset.versions || {})
@@ -98,19 +100,21 @@
 </script>
 
 <Embed id="embed">
-	{#if embedData?.name}
-		<h1>
-			{embedData.name}
-		</h1>
-	{/if}
-	<Grid cls="data-cards" width="medium" colWidth="narrow">
+	<Grid cls="data-cards" width="full">
+		{#if embedData?.name}
+			<GridCell colCls=" ">
+				<h1>
+					{embedData?.name}
+				</h1>
+			</GridCell>
+		{/if}
 		{#if embedData?.geojson}
-			<Card title="Area map" mode="featured">
+			<Card title="Area map" mode="featured" {colCls}>
 				<AreaMap polygons={[embedData.geojson, embedData.compGeojson].filter((d) => d)} />
 			</Card>
 		{/if}
 		{#each tables as tab}
-			<Card title={tab.meta.label} mode="featured">
+			<Card title={tab.meta.label} mode="featured" {colCls}>
 				<div class="card-subtitle">
 					{tab.meta.dateLabel || "2021"}
 				</div>
@@ -131,6 +135,9 @@
 </Embed>
 
 <style>
+	h1 {
+		margin: 0;
+	}
 	:global(.data-cards h2) {
 		margin-bottom: 0;
 	}
