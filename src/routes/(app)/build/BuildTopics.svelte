@@ -35,27 +35,25 @@
 		return Object.values(groups);
 	}
 
-	let groupedTopics = $derived(groupTopics(topics, buildState.geography, buildState.coverage));
-
 	function updateTopics(item) {
-		const ids = topics.map((d) => d.key);
 		if (item.checked) {
-			$selectedTopics = ids.filter((id) => $selectedTopics.includes(id) || id === item.id);
+			$selectedTopics = [...$selectedTopics, item.id];
 			selectDatasetEvent(item);
 		} else $selectedTopics = $selectedTopics.filter((id) => id !== item.id);
 	}
 
 	function toggleSelectAll(topic, mode = "add") {
 		if (mode === "add") {
-			$selectedTopics = topics
-				.filter((d) => $selectedTopics.includes(d.key) || d.topic === topic)
+			const newIds = topics
+				.filter((d) => d.topic === topic && !$selectedTopics.includes(d.key))
 				.map((d) => d.key);
+			$selectedTopics = [...$selectedTopics, ...newIds];
 			selectDatasetEvent({ mode: "all", label: topic });
-		} else
-			$selectedTopics = topics
-				.filter((d) => $selectedTopics.includes(d.key) && d.topic !== topic)
-				.map((d) => d.key);
+		} else $selectedTopics = $selectedTopics.filter((id) => topicsLookup[id].topic !== topic);
 	}
+
+	let topicsLookup = $derived(Object.fromEntries(topics.map((d) => [d.key, d])));
+	let groupedTopics = $derived(groupTopics(topics, buildState.geography, buildState.coverage));
 </script>
 
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Select datasets</h2>
