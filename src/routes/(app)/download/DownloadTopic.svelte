@@ -34,6 +34,7 @@
 			bind:value={activeTopic}
 			options={topics}
 			groupKey="topic"
+			on:clear={() => (selectedTopic = null)}
 		/>
 		<Button cls="ons-u-mt-2xs" type="submit" small disabled={!activeTopic}
 			>Select dataset</Button
