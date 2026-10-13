@@ -38,7 +38,9 @@
 		<span class="legend-viz" style:background="rgb(0,0,255,0.3)"></span>OA best-fit
 	</li>
 	<li><span class="legend-viz" style:background="rgb(255,0,0,0.3)"></span>LSOA best-fit</li>
-	<li><span class="legend-viz" style:background="rgb(128,0,128,0.3)"></span>Both OA and LSOA</li>
+	<li>
+		<span class="legend-viz" style:background="rgb(128,0,128,0.3)"></span>OA and LSOA overlap
+	</li>
 </ul>
 <div class="map-container">
 	<Map

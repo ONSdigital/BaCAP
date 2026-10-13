@@ -3,7 +3,7 @@
 	import { onMount } from "svelte";
 	import pym from "pym.js";
 	import { Notice, Details, Button, Icon, Textarea } from "@onsvisual/svelte-components";
-	import BestFitMap from "$lib/viz/BestFitMap.svelte";
+	import BestFitDetails from "$lib/viz/BestFitDetails.svelte";
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
 	import { makeEmbedHash, makeEmbedCode, makeEmbedUrl, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
@@ -80,21 +80,7 @@
 	>The data provided here is aggregated on a best-fit basis, so may not precisely represent the
 	selected geographic boundary.</Notice
 >
-<Details title="Show actual best-fit boundaries" cls="ons-u-mt-s ons-u-mb-s">
-	<p>
-		Some datasets are aggregated from Output Areas (OAs) &mdash; the smallest statistical
-		geography &mdash; whereas others are based on larger Lower-layer Super Output Areas (LSOAs).
-		The map below compares your selected geographic boundary with the actual underlying
-		statistical areas available in the datasets.
-	</p>
-	<p>
-		If the two best-fit boundaries do not match, we advise caution in comparing values from
-		datasets based on Output Areas with those based on LSOAs.
-	</p>
-	{#if $activeArea?.properties?.oa21cds}
-		<BestFitMap {activeArea} {centroids} />
-	{/if}
-</Details>
+<BestFitDetails {activeArea} {centroids} />
 <hr class="ons-u-mt-m ons-u-mb-m" />
 <div id="embed"></div>
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Export and share this profile</h2>

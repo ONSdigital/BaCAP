@@ -5,6 +5,7 @@
 	import BuildAreas from "./BuildAreas.svelte";
 	import BuildTopics from "./BuildTopics.svelte";
 	import BuildProfile from "./BuildProfile.svelte";
+	import BestFitDetails from "$lib/viz/BestFitDetails.svelte";
 	import { geoUrl } from "$lib/config";
 	import { parseGeoJSON, isValidAreaCode } from "$lib/util/geo";
 
@@ -26,6 +27,13 @@
 		savedAreas,
 		savedAreasLastId
 	} = appState;
+	let activeAreaStatus = $derived(
+		$activeArea?.properties?.oa21cds?.size
+			? "complete"
+			: $activeArea?.geometry
+				? "geometry"
+				: "none"
+	);
 
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
@@ -103,7 +111,7 @@
 		<BuildTopics {buildState} topics={data.topics} bind:selectedTopics />
 	</GridCell>
 	<GridCell cls="ons-col-8@l ons-col-9@xl">
-		{#if $activeArea.geometry}
+		{#if activeAreaStatus === "complete"}
 			<BuildProfile
 				{buildState}
 				topics={data.topics}
@@ -112,6 +120,13 @@
 				{comparisonArea}
 				{centroids}
 			/>
+		{:else if activeAreaStatus === "geometry"}
+			<Notice
+				>The selected area is too small to provide data (it contains no Output Area
+				centroids to calculate a best-fit). You can expand the size of your selected area on
+				the <a href={resolve("/draw")}>Create an area</a> page</Notice
+			>
+			<BestFitDetails {activeArea} {centroids} />
 		{:else}
 			<Notice
 				>No area is selected. To build a profile, select a primary area and then choose the
