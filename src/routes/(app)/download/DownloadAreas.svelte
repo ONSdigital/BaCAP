@@ -50,7 +50,8 @@
 	}
 
 	function getAllChildren(props) {
-		const children = props.children;
+		// Copy, so the children list in the area's CDN properties is never changed
+		const children = [...(props.children || [])];
 		if (childLookup[props.areacd]) {
 			const cds = new Set(children.map((d) => d.areacd));
 			for (const cd of childLookup[props.areacd]) {
@@ -65,8 +66,10 @@
 	}
 
 	function makeChildAreas(selectedArea, childTypes, includeParent) {
-		const areas = childTypes?.length ? getAllChildren(selectedArea.properties) : [];
-		if (includeParent) areas.unshift(selectedArea.properties);
+		const areas = [
+			...(includeParent ? [selectedArea.properties] : []),
+			...(childTypes?.length ? getAllChildren(selectedArea.properties) : [])
+		];
 		return areas
 			.filter(
 				(d) =>
@@ -94,7 +97,13 @@
 
 	function addAreasToSelection(areas) {
 		const selectedAreaCodes = new Set($selectedAreas.map((d) => d.properties.areacd));
-		const newAreas = areas.filter((d) => !selectedAreaCodes.has(d.properties.areacd));
+		const newAreas = [];
+		for (const area of areas) {
+			// Skip areas already selected, or repeated within the areas being added
+			if (selectedAreaCodes.has(area.properties.areacd)) continue;
+			selectedAreaCodes.add(area.properties.areacd);
+			newAreas.push(area);
+		}
 
 		if (newAreas.length) {
 			$selectedAreas = [...$selectedAreas, ...newAreas];
