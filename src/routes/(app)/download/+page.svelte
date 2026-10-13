@@ -1,10 +1,10 @@
 <script>
 	import { getContext } from "svelte";
-	import { Hero, Divider } from "@onsvisual/svelte-components";
+	import { Hero, Divider, Notice, Button } from "@onsvisual/svelte-components";
 	import DownloadAreas from "./DownloadAreas.svelte";
 	import DownloadTopic from "./DownloadTopic.svelte";
 	import DownloadTable from "./DownloadTable.svelte";
-	import { getData } from "$lib/util/data";
+	import Spinner from "$lib/ui/Spinner.svelte";
 
 	let { data } = $props();
 
@@ -19,11 +19,6 @@
 	let step = $state($selectedAreas?.length ? 2 : 1);
 
 	let selectedTopic = $derived(!!$selectedAreas && null); // Gets reset when new areas selected
-	let selectedData = $derived(
-		selectedTopic && $selectedAreas?.length
-			? await getData(selectedTopic, $selectedAreas)
-			: null
-	);
 </script>
 
 <Hero
@@ -36,7 +31,16 @@
 <DownloadAreas {areasList} {childLookup} {bestFits} {savedAreas} bind:selectedAreas bind:step />
 {#if step === 2}
 	<DownloadTopic topics={data.topics} bind:selectedTopic />
-	<DownloadTable data={selectedData} />
+	<svelte:boundary>
+		<DownloadTable topic={selectedTopic} areas={$selectedAreas} />
+		{#snippet pending()}
+			<Spinner message="Loading data..." />
+		{/snippet}
+		{#snippet failed(error, reset)}
+			<Notice mode="error">Sorry, there was a problem loading this dataset.</Notice>
+			<Button cls="ons-u-mt-s" small on:click={reset}>Try again</Button>
+		{/snippet}
+	</svelte:boundary>
 {/if}
 
 <Divider width="wider" hr={false} />

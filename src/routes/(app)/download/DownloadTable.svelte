@@ -1,7 +1,8 @@
 <script>
-	import { Section, Icon, Notice, Table } from "@onsvisual/svelte-components";
+	import { Container, Section, Icon, Notice, Table } from "@onsvisual/svelte-components";
 	import { measures } from "$lib/config";
-	import { pivotDataOnMeasures } from "$lib/util/data";
+	import { pivotDataOnMeasures, getData } from "$lib/util/data";
+	import LoadingStatus from "$lib/ui/LoadingStatus.svelte";
 	import { downloadDatasetXLSX, downloadDatasetCSV } from "$lib/util/io";
 
 	const columns = [
@@ -12,10 +13,12 @@
 		...measures.map((d) => ({ key: d.label.toLowerCase(), label: d.label, numeric: true }))
 	];
 
-	let { data } = $props();
+	let { topic, areas } = $props();
+	let data = $derived(topic && areas?.length ? await getData(topic, areas) : null);
 	let pivotedData = $derived(data ? pivotDataOnMeasures(data.data) : []);
 </script>
 
+<Container width="wider"><LoadingStatus /></Container>
 {#if data}
 	<Section width="wider" title={data.meta.label} marginTop>
 		<p>
@@ -25,34 +28,40 @@
 			>
 			<Icon type="external" />
 		</p>
-		<Notice mode="warning"
-			>The data provided here is aggregated on a best-fit basis, so may not precisely match
-			other data sources.</Notice
-		>
-		{#key pivotedData}
-			<Table data={pivotedData} {columns} sortable />
-		{/key}
-		<h2 class="ons-u-fs-m ons-u-mb-3xs">Get the data</h2>
-		<ul class="profile-actions">
-			<li>
-				<Icon type="download" /> Download data as
-				<a
-					href="#0"
-					onclick={(e) => {
-						e.preventDefault();
-						downloadDatasetXLSX(data.meta, pivotedData, columns);
-					}}>XLSX</a
-				>
-				or
-				<a
-					href="#0"
-					onclick={(e) => {
-						e.preventDefault();
-						downloadDatasetCSV(data.meta, pivotedData, columns);
-					}}>CSV</a
-				>
-			</li>
-		</ul>
+		{#if data.message}
+			<Notice mode="error"
+				>Sorry, this dataset could not be loaded. Please try again later.</Notice
+			>
+		{:else}
+			<Notice mode="warning"
+				>The data provided here is aggregated on a best-fit basis, so may not precisely
+				match other data sources.</Notice
+			>
+			{#key pivotedData}
+				<Table data={pivotedData} {columns} sortable />
+			{/key}
+			<h2 class="ons-u-fs-m ons-u-mb-3xs">Get the data</h2>
+			<ul class="profile-actions">
+				<li>
+					<Icon type="download" /> Download data as
+					<a
+						href="#0"
+						onclick={(e) => {
+							e.preventDefault();
+							downloadDatasetXLSX(data.meta, pivotedData, columns);
+						}}>XLSX</a
+					>
+					or
+					<a
+						href="#0"
+						onclick={(e) => {
+							e.preventDefault();
+							downloadDatasetCSV(data.meta, pivotedData, columns);
+						}}>CSV</a
+					>
+				</li>
+			</ul>
+		{/if}
 	</Section>
 {/if}
 

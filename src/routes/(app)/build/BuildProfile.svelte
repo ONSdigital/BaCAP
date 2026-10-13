@@ -4,6 +4,7 @@
 	import pym from "pym.js";
 	import { Notice, Details, Button, Icon, Textarea } from "@onsvisual/svelte-components";
 	import BestFitDetails from "$lib/viz/BestFitDetails.svelte";
+	import LoadingStatus from "$lib/ui/LoadingStatus.svelte";
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
 	import { makeEmbedHash, makeEmbedCode, makeEmbedUrl, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
@@ -23,27 +24,43 @@
 	let confirmed = $state({ oa: false, lsoa: false, embed: false });
 
 	let topicsLookup = $derived(Object.fromEntries(topics.map((d) => [d.key, d])));
-	let tables = $derived(
-		$activeArea?.properties?.oa21cds
-			? await Promise.all(
-					$selectedTopics
-						.map((key) => topicsLookup[key])
-						.filter(
-							(t) =>
-								(!t.coverage ||
-									(t.coverage &&
-										t.coverage.every((c) => buildState.coverage.has(c)))) &&
-								(t.geography === "oa21" || buildState.geography === "lsoa")
-						)
-						.map((t) =>
-							getData(
-								t,
-								[$activeArea, $comparisonArea].filter((d) => d)
-							)
-						)
-				)
-			: []
-	);
+	// Tables are loaded in an effect rather than an awaited $derived, so the rest of the page keeps
+	// updating while Nomis responds, and a loading message can be shown on the first load too
+	let tables = $state.raw([]);
+	let loading = $state(false);
+	let loadFailed = $state(false);
+	let retries = $state(0);
+	let requestId = 0;
+
+	$effect(() => {
+		retries; // Re-run when the user clicks "Try again"
+		const areas = [$activeArea, $comparisonArea].filter((d) => d);
+		const topicsToLoad = $activeArea?.properties?.oa21cds
+			? $selectedTopics
+					.map((key) => topicsLookup[key])
+					.filter(
+						(t) =>
+							t &&
+							(!t.coverage || t.coverage.every((c) => buildState.coverage.has(c))) &&
+							(t.geography === "oa21" || buildState.geography === "lsoa")
+					)
+			: [];
+
+		const id = ++requestId; // Ignore responses to requests that have since been superseded
+		loading = true;
+		loadFailed = false;
+		Promise.all(topicsToLoad.map((t) => getData(t, areas)))
+			.then((results) => {
+				if (id === requestId) tables = results.filter((d) => d);
+			})
+			.catch((err) => {
+				console.warn(err);
+				if (id === requestId) loadFailed = true;
+			})
+			.finally(() => {
+				if (id === requestId) loading = false;
+			});
+	});
 	let embedHash = $derived(
 		makeEmbedHash(tables, buildState, $activeArea, $comparisonArea, areaPolygon, compPolygon)
 	);
@@ -67,11 +84,9 @@
 				title: "Embedded area profile"
 			});
 		}
-		return {
-			destroy: () => {
-				pymParent?.remove?.();
-				pymParent = null;
-			}
+		return () => {
+			pymParent?.remove?.();
+			pymParent = null;
 		};
 	});
 </script>
@@ -82,6 +97,11 @@
 >
 <BestFitDetails {activeArea} {centroids} />
 <hr class="ons-u-mt-m ons-u-mb-m" />
+<LoadingStatus {loading} />
+{#if loadFailed}
+	<Notice mode="error">Sorry, there was a problem loading data for this profile.</Notice>
+	<Button cls="ons-u-mt-s ons-u-mb-s" small on:click={() => retries++}>Try again</Button>
+{/if}
 <div id="embed"></div>
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Export and share this profile</h2>
 <ul class="profile-actions">

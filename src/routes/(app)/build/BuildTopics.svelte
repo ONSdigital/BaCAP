@@ -49,7 +49,7 @@
 				.map((d) => d.key);
 			$selectedTopics = [...$selectedTopics, ...newIds];
 			selectDatasetEvent({ mode: "all", label: topic });
-		} else $selectedTopics = $selectedTopics.filter((id) => topicsLookup[id].topic !== topic);
+		} else $selectedTopics = $selectedTopics.filter((id) => topicsLookup[id]?.topic !== topic);
 	}
 
 	let topicsLookup = $derived(Object.fromEntries(topics.map((d) => [d.key, d])));

@@ -47,24 +47,25 @@
 		$lastActivePage = "build";
 	}
 
+	let comparisonRequestId = 0;
 	async function setComparisonArea(area) {
-		const compcd = area?.properties?.oa21cds
-			? centroids.commonParent({
-					raw: centroids.expand(area.properties.oa21cds),
-					compresed: area.properties.oa21cds
-				})
-			: null;
-
-		if (compcd) {
-			try {
-				const url = `${geoUrl}/${compcd.slice(0, 3)}/${compcd}.json`;
-				const data = await (await fetch(url)).json();
-				$comparisonArea = parseGeoJSON(data, centroids);
-			} catch (err) {
-				console.warn(err);
+		const id = ++comparisonRequestId; // Ignore responses superseded by a newer area selection
+		try {
+			const compcd = area?.properties?.oa21cds
+				? centroids.commonParent({ compressed: area.properties.oa21cds })
+				: null;
+			// No comparison if there's no common parent, or it's the area itself (eg. England and Wales)
+			if (!compcd || compcd === area.properties.areacd) {
 				$comparisonArea = null;
+				return;
 			}
-		} else $comparisonArea = null;
+			const url = `${geoUrl}/${compcd.slice(0, 3)}/${compcd}.json`;
+			const data = await (await fetch(url)).json();
+			if (id === comparisonRequestId) $comparisonArea = parseGeoJSON(data, centroids);
+		} catch (err) {
+			console.warn(err);
+			if (id === comparisonRequestId) $comparisonArea = null;
+		}
 	}
 
 	onMount(async () => {
@@ -122,14 +123,22 @@
 	</GridCell>
 	<GridCell cls="ons-col-8@l ons-col-9@xl">
 		{#if activeAreaStatus === "complete"}
-			<BuildProfile
-				{buildState}
-				topics={data.topics}
-				{selectedTopics}
-				{activeArea}
-				{comparisonArea}
-				{centroids}
-			/>
+			<svelte:boundary>
+				<BuildProfile
+					{buildState}
+					topics={data.topics}
+					{selectedTopics}
+					{activeArea}
+					{comparisonArea}
+					{centroids}
+				/>
+				{#snippet failed(error, reset)}
+					<Notice mode="error"
+						>Sorry, there was a problem loading data for this profile.</Notice
+					>
+					<Button cls="ons-u-mt-s" small on:click={reset}>Try again</Button>
+				{/snippet}
+			</svelte:boundary>
 		{:else if activeAreaStatus === "geometry"}
 			<Notice
 				>The selected area is too small to provide data (it contains no Output Area
