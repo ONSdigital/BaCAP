@@ -39,7 +39,7 @@
 	const centroids = getContext("centroids")();
 
 	function setGeoState(area) {
-		if (!area) return;
+		if (!area?.geometry) return;
 		buildState.geography = area.properties.lsoa21cds.size ? "lsoa" : "oa";
 		buildState.coverage = new Set(
 			[...area.properties[`${buildState.geography}21cds`]].map((cd) => cd[0])
@@ -69,6 +69,8 @@
 			$activeArea.properties.lsoa21cds = centroids.compress($history[0].lsoa);
 			$activeArea = $activeArea;
 			refreshedArea = true;
+		} else if (activeAreaStatus === "none") {
+			$comparisonArea = null;
 		}
 
 		if (refreshedArea) {
@@ -89,7 +91,7 @@
 					console.warn(err);
 					$comparisonArea = null;
 				}
-			}
+			} else $comparisonArea = null;
 		}
 
 		setGeoState($activeArea);
