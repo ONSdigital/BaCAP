@@ -223,16 +223,27 @@ For each URL, the CSV response is processed by `parseData()`:
    row (rounded to 1 decimal place) after each value row.
 
 `getData()` returns `{ meta: table, data }`. If a request fails, for example because Nomis is down,
-it returns `{ message: "Could not load data" }`.
+it returns `{ meta: table, data: [], message: "Could not load data" }`, so callers can still show
+the topic's label alongside the error.
 
 ### How `/build` calls it
 
-In `BuildProfile.svelte`, `tables` is a single `$derived` value built with `await Promise.all(...)`.
-It calls `getData()` for **every** selected topic, filtered to those whose coverage and geography
-suit the current area. Svelte re-runs the whole derivation whenever any input changes, such as
-adding a topic, changing the comparison area or editing the shape. Every topic is then requested
-again, not just the one that changed. This is why the response cache described
-[below](#caching-nomis-api-responses-in-indexeddb) is important.
+In `BuildProfile.svelte`, `tables` is loaded by an `$effect` that calls `getData()` for **every**
+selected topic, filtered to those whose coverage and geography suit the current area. The effect
+re-runs whenever any input changes, such as adding a topic, changing the comparison area or editing
+the shape. Every topic is then requested again, not just the one that changed. This is why the
+response cache described [below](#caching-nomis-api-responses-in-indexeddb) is important.
+
+The effect deliberately doesn't use an awaited `$derived`. In Svelte's async mode an awaited derived
+holds back the rest of the page's updates until Nomis responds, and on a first load nothing can show
+that data is loading. Instead the effect sets a `loading` flag (shown by `LoadingStatus`) and
+numbers each request, so a slow response that has since been superseded is ignored. If Nomis fails,
+`getData()` returns an error result rather than throwing. The profile shows "Failed to load data"
+for that topic, and anything unexpected is caught by a `<svelte:boundary>` on the page.
+
+`/download` does use an awaited `$derived`, in `DownloadTable.svelte`, inside a `<svelte:boundary>`
+with `pending` and `failed` snippets. Its `LoadingStatus` uses `$effect.pending()`. Don't add a
+`pending` snippet to the `/build` boundary: it stopped the area panel on the left from updating.
 
 The same `tables` feed the XLSX/CSV downloads (`downloadProfileXLSX()` and `downloadProfileCSV()` in
 `io/index.js`) and the embed hash.
@@ -280,8 +291,12 @@ To keep the hash small:
 
 The page decodes the hash with `atobUtf8()` and `expandTables()` rebuilds the tidy rows. It loops
 over areas × dates (sliced from the topic's `dates` using the stored `range`) × the topic's
-`categories`, taking the next value from the array each time. The page listens for `hashchange`, so
-`/build` updates the preview by setting the iframe's `location.hash`, without reloading it.
+`categories`, taking the next value from the array each time. Topics whose `key` or stored dates are
+no longer in `topics.json` are skipped. Before decoding, `cleanBase64()` undoes changes a CMS may
+make when publishing the URL, such as encoding `=` as `%3D`. If the hash still can't be decoded, for
+example because it was truncated, the page shows an error rather than staying blank. The legacy
+`/embed` page does the same. The page listens for `hashchange`, so `/build` updates the preview by
+setting the iframe's `location.hash`, without reloading it.
 
 The parent page sends pym messages (`png`, `print`) to the iframe to save a PNG with `snapdom` or to
 print. The embed code from `makeEmbedCode()` loads the same `/profile` page on the live ONS site
@@ -337,6 +352,10 @@ app state, cached reference datasets and cached Nomis responses, each under its 
 IndexedDB uses the structured clone algorithm, values such as `Set` and `Map`, which JSON can't
 represent, can be stored directly. The OA/LSOA code sets are stored this way.
 
+IndexedDB can be unavailable or fail, for example when site data is blocked or storage is full.
+`db.js` catches and logs these failures, so `get` resolves to `undefined` and writes are skipped.
+The app then works as normal, but nothing persists between visits.
+
 ### Synced stores (`get-app-state.js`)
 
 `syncedStore(key, initialValue)` is a standard Svelte `writable` with a modified `set()`:
@@ -358,6 +377,9 @@ the codebase changes stores by assignment: `$activeArea = …`, or a nested muta
 `$activeArea.properties.areacd = null`. Svelte compiles both of these to `store.set()`.
 
 ### Startup (`getAppState()`)
+
+If anything in the `(app)` layout's startup fails, for example a reference dataset can't be fetched,
+the layout shows an error with a "Try again" button instead of the loading spinner.
 
 `getAppState()` runs in the `(app)` layout. For each key in `initialState` (in
 `src/lib/config/index.js`) it:
@@ -420,7 +442,10 @@ cache responses, `get-data.js` caches them in the browser.
 - **Size limit**: the map holds at most **1,000 URLs** (`maxCacheSize`). When it's full, the oldest
   entry is removed. `Map` keeps insertion order, so this is first-in, first-out; reading an entry
   does not move it to the back.
-- **Failures**: failed requests are not cached, so the next attempt tries Nomis again.
+- **Failures**: failed requests are not cached, so the next attempt tries Nomis again. That covers
+  network errors, HTTP errors and responses without the Nomis CSV header row (`isNomisCsv()`). Nomis
+  returns an empty body for an invalid area code. Requests time out after 30 seconds. A cached
+  response that fails the same check is fetched again.
 
 ### Trade-offs
 

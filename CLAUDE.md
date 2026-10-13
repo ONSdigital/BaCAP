@@ -25,7 +25,7 @@ npm run build:preview     # Build with PUBLIC_APP_ENV=preview, using base_previe
 npm run preview            # Preview a production build
 npm run lint                # prettier --check
 npm run format              # prettier --write
-npm test                    # vitest run (unit tests; currently only src/lib/util/data/get-data.js is covered)
+npm test                    # vitest run (unit tests for src/lib/util: data, geo centroids/polygon, io helpers)
 npx vitest                  # watch mode
 ```
 
@@ -77,6 +77,9 @@ re-fetched, but deliberately does **not** clear the user's stored app state (e.g
 which should persist across releases. Only when a release makes a breaking change to the structure
 of stored state should a version-specific migration be added at the top of `getAppState()` (which
 receives the previously stored version) to amend or clear the affected keys.
+
+Storage failures in `db.js` are caught and logged, so the app keeps working without persistence if
+IndexedDB is unavailable.
 
 `snapshot.svelte.js` wraps `$state.snapshot` — used whenever a `$state` proxy needs to be serialized
 (persisted to IndexedDB, JSON-stringified, etc).
