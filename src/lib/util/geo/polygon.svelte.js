@@ -7,7 +7,6 @@ export default class Polygon {
 	geometry = $state(null);
 
 	constructor(geojson) {
-		console.log("construct", geojson);
 		if (!geojson) this.geometry = null;
 		else {
 			const _bbox = geojson.bbox || bbox(geojson);
@@ -17,7 +16,6 @@ export default class Polygon {
 		}
 	}
 	add(geojson) {
-		console.log("add", geojson);
 		const geometry = this.geometry
 			? getGeometry(union(featureCollection([this, feature(getGeometry(geojson))])))
 			: getGeometry(geojson);
@@ -25,7 +23,6 @@ export default class Polygon {
 		this.geometry = geometry;
 	}
 	subtract(geojson) {
-		console.log("subtract", geojson);
 		if (!this.geometry) return;
 		const geometry = getGeometry(
 			difference(featureCollection([this, feature(getGeometry(geojson))]))
