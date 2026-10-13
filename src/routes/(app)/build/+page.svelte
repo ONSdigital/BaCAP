@@ -44,6 +44,7 @@
 		buildState.coverage = new Set(
 			[...area.properties[`${buildState.geography}21cds`]].map((cd) => cd[0])
 		);
+		$lastActivePage = "build";
 	}
 
 	onMount(async () => {
