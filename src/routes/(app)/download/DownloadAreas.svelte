@@ -36,7 +36,7 @@
 	let areasLookup = $derived(Object.fromEntries(areasList.map((d) => [d.areacd, d])));
 
 	function getChildTypes(area) {
-		return [...geogroups]
+		return [...geogroups.slice(2)]
 			.reverse()
 			.filter((grp) =>
 				grp.codes.some((cd) =>

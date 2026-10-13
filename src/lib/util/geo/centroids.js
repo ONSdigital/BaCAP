@@ -1,4 +1,5 @@
 import inPolygon from "@turf/boolean-point-in-polygon";
+import { geogroups, geolevelsLookup } from "$lib/config/index.js";
 
 function makeFeatureCollection(data, key, includePopulation = true) {
 	return {
@@ -12,6 +13,12 @@ function makeFeatureCollection(data, key, includePopulation = true) {
 			geometry: { type: "Point", coordinates: [d.lng, d.lat] }
 		}))
 	};
+}
+
+function isSmallerThanGeoLevel(code, levelKey) {
+	const areaLevelIndex = geogroups.findIndex((d) => d.codes.includes(code?.slice?.(0, 3)));
+	const levelIndex = geogroups.findIndex((d) => d.key === levelKey);
+	return areaLevelIndex < levelIndex; // Also returns true if areaLevelIndex not found (-1)
 }
 
 const cols = ["oa21cd", "lsoa21cd", "msoa21cd", "ltla21cd", "rgn21cd"];
@@ -98,21 +105,39 @@ export default class Centroids {
 			.map((cd) => this.#data.lookup[cd].properties.population)
 			.reduce((a, b) => a + b, 0);
 	}
-	commonParent(cds = { raw: null, compressed: null }) {
+	getParentByLevel(cd, level) {
+		const levelObj = geolevelsLookup[level];
+		let parentcd = this.#data.parents[cd];
+		while (parentcd && !levelObj.codes.includes(parentcd.slice(0, 3))) {
+			parentcd = this.#data.parents[parentcd];
+		}
+		return parentcd || null;
+	}
+	commonParent(cds = { raw: null, compressed: null }, minLevel = "ltla") {
 		// Finds the closest parent area that a selection sits fully within
+		const getParentByGeoLevel = (cd) =>
+			minLevel && isSmallerThanGeoLevel(cd, minLevel)
+				? this.getParentByLevel(cd, minLevel)
+				: cd;
+
 		let raw = cds.raw;
 		let compressed = cds.compressed;
 		if (!raw && !compressed) return null;
-
 		if (!compressed) compressed = this.compress(raw);
-		if (compressed.size === 1)
-			return this.#data.parents[compressed.values().next().value] || null;
+
+		if (compressed.size === 1) {
+			const parentcd = this.#data.parents[compressed.values().next().value];
+			if (!parentcd) return null;
+			return getParentByGeoLevel(parentcd);
+		}
 
 		let unique = !raw ? this.expand(compressed, "oa") : new Set(raw);
 		while (unique.size > 1) {
 			unique = new Set([...unique].map((cd) => this.#data.parents[cd]).filter((cd) => cd));
 		}
-		return unique.values().next().value || null;
+		const parentcd = unique.values().next().value;
+		if (!parentcd) return null;
+		return getParentByGeoLevel(parentcd);
 	}
 	isValidCode(cd, level = "oa") {
 		// Checks if a code exists in the full heirarchy

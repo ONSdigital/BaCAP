@@ -65,6 +65,8 @@ export const geotypesLookup = (() => {
 	return lookup;
 })();
 export const geogroups = [
+	{ key: "oa", codes: ["E00", "W00"], label: "Output Area" },
+	{ key: "lsoa", codes: ["E01", "W01"], label: "LSOA" },
 	{ key: "msoa", codes: ["E02", "W02"], label: "MSOA" },
 	{ key: "par", codes: ["E04", "W04"], label: "Parish/community" },
 	{ key: "wd", codes: ["E05", "W05"], label: "Ward" },
@@ -88,6 +90,7 @@ export const geogroupsLookup = (() => {
 	geogroups.forEach((d) => d.codes.forEach((cd) => (lookup[cd] = d)));
 	return lookup;
 })();
+export const geolevelsLookup = Object.fromEntries(geogroups.map((d) => [d.key, d]));
 
 // ANALYTICS CONFIG
 export const analyticsId = "GTM-MBCBVQS";

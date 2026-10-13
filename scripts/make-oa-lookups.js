@@ -3,7 +3,7 @@ import { geogroups } from "../src/lib/config";
 
 const keys = ["oa", "lsoa"];
 const codes = geogroups
-	.slice(1)
+	.slice(3)
 	.map((d) => d.codes)
 	.flat();
 const url = (key) =>
