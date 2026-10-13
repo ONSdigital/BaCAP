@@ -3,7 +3,7 @@
 	import { Embed, Grid, GridCell, Card, Notice } from "@onsvisual/svelte-components";
 	import { snapdom } from "@zumer/snapdom";
 	import { makeDateFormatter } from "$lib/util/data";
-	import { atobUtf8 } from "$lib/util/io";
+	import { atobUtf8, cleanBase64 } from "$lib/util/io";
 	import { makeFilename } from "$lib/util/geo";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
@@ -16,21 +16,19 @@
 	const colCls = "ons-col-6@s ons-col-4@m ons-col-3@xl";
 
 	function expandTables(lookup, data) {
-		if (!data) return [];
+		if (!Array.isArray(data?.areas) || !Array.isArray(data?.tables)) return [];
 		const areas = [...data.areas];
 		if (!areas[0]) areas[0] = "Selected area";
 
 		const tables = [];
 		for (const tab of data.tables) {
 			const meta = lookup[tab.key];
-			const dates = meta.dates.slice(
-				...(tab.range.length === 1
-					? [0]
-					: [
-							meta.dates.indexOf(tab.range[0]),
-							meta.dates.indexOf(tab.range[tab.range.length - 1]) + 1
-						])
-			);
+			if (!meta) continue; // Skip topics no longer in topics.json
+			// Look up the stored date range, so dates added to a topic later don't misalign values
+			const start = meta.dates.indexOf(tab.range[0]);
+			const end = meta.dates.indexOf(tab.range[tab.range.length - 1]) + 1;
+			if (start < 0 || end < 1) continue; // Skip topics whose stored dates have been removed
+			const dates = meta.dates.slice(start, end);
 			const data = [];
 			if (tab.data.length) {
 				for (const area of areas) {
@@ -63,6 +61,7 @@
 	let topicsLookup = $derived(Object.fromEntries(data.topics.map((d) => [d.key, d])));
 	let embedHash = $state("");
 	let embedData = $state();
+	let loadError = $state(false);
 	let tables = $derived(expandTables(topicsLookup, embedData));
 
 	async function downloadPNG() {
@@ -81,7 +80,16 @@
 
 	function update() {
 		const embedHash = document.location.hash.slice(1);
-		if (embedHash.length) embedData = JSON.parse(atobUtf8(embedHash));
+		if (!embedHash.length) return;
+		try {
+			embedData = JSON.parse(atobUtf8(cleanBase64(embedHash)));
+			loadError = false;
+		} catch (err) {
+			// Hash may be truncated or altered when an embed code is copied or published
+			console.warn(err);
+			embedData = null;
+			loadError = true;
+		}
 		console.debug({ embedHash, embedData });
 	}
 	onMount(update);
@@ -91,6 +99,14 @@
 
 <Embed id="embed" on:load={init}>
 	<Grid cls="data-cards" width="full">
+		{#if loadError}
+			<GridCell colCls=" ">
+				<Notice mode="error"
+					>Sorry, this profile could not be loaded. The link or embed code may be
+					incomplete.</Notice
+				>
+			</GridCell>
+		{/if}
 		{#if embedData?.areas?.[0]}
 			<GridCell colCls=" ">
 				<h1>

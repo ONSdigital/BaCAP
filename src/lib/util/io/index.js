@@ -29,6 +29,11 @@ export function atobUtf8(value) {
 	return new TextDecoder().decode(bytes);
 }
 
+// Undoes changes a CMS or URLSearchParams may make to base64 in a URL (eg. "=" to "%3D", "+" to " ")
+export function cleanBase64(value) {
+	return decodeURIComponent(value).replaceAll(" ", "+");
+}
+
 export async function getStoredAppVersion() {
 	const version = await get("appVersion");
 	return version || null;

@@ -3,8 +3,8 @@
 	// New-style embeds can be found at /(embed)/profile/+page.svelte
 
 	import { onMount } from "svelte";
-	import { Embed, Grid, Card, GridCell } from "@onsvisual/svelte-components";
-	import { atobUtf8 } from "$lib/util/io";
+	import { Embed, Grid, Card, GridCell, Notice } from "@onsvisual/svelte-components";
+	import { cleanBase64 } from "$lib/util/io";
 	import AreaMap from "$lib/viz/AreaMap.svelte";
 	import BigNumber from "$lib/viz/BigNumber.svelte";
 	import BarChart from "$lib/viz/BarChart.svelte";
@@ -55,17 +55,32 @@
 	let topicsLookup = $state.raw();
 	let embedData = $state.raw();
 	let tables = $state.raw([]);
+	let loadError = $state(false);
 
 	function update() {
+		try {
+			parseHash();
+			loadError = false;
+		} catch (err) {
+			// Hash may be truncated or altered when an embed code is copied or published
+			console.warn(err);
+			embedData = null;
+			tables = [];
+			loadError = true;
+		}
+	}
+
+	function parseHash() {
 		const hash = document.location.hash;
 		if (hash && hash.includes("name=")) {
 			const props = {};
 			const searchParams = new URLSearchParams(hash.slice(3));
 			for (let pair of searchParams.entries()) {
 				if (["name", "comp", "showMap", "version"].includes(pair[0])) {
-					props[pair[0]] = atob(pair[1]);
+					props[pair[0]] = atob(cleanBase64(pair[1]));
 				} else if (["tabs", "poly", "comppoly", "population", "stats"].includes(pair[0])) {
-					props[pair[0]] = JSON.parse(atobUtf8(pair[1]));
+					// Legacy embeds encoded JSON with btoa(), so decode with atob() rather than atobUtf8()
+					props[pair[0]] = JSON.parse(atob(cleanBase64(pair[1])));
 				}
 			}
 			const version = props.version || 1;
@@ -90,10 +105,12 @@
 				population,
 				stats
 			};
-			tables = props.tabs.map((t) => ({
-				meta: topicsLookup[t.code],
-				data: expandTable(t, version, name, comp)
-			}));
+			tables = (props.tabs || [])
+				.filter((t) => topicsLookup[t.code])
+				.map((t) => ({
+					meta: topicsLookup[t.code],
+					data: expandTable(t, version, name, comp)
+				}));
 		}
 	}
 	onMount(update);
@@ -101,6 +118,14 @@
 
 <Embed id="embed">
 	<Grid cls="data-cards" width="full">
+		{#if loadError}
+			<GridCell colCls=" ">
+				<Notice mode="error"
+					>Sorry, this profile could not be loaded. The link or embed code may be
+					incomplete.</Notice
+				>
+			</GridCell>
+		{/if}
 		{#if embedData?.name}
 			<GridCell colCls=" ">
 				<h1>
