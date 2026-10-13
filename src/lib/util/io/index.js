@@ -42,7 +42,9 @@ async function loadData(key, path, forceRefresh = false, decompressFn = null) {
 	const val = !forceRefresh ? await get(key) : null;
 	if (val) return val;
 
-	const rawData = await (await fetch(resolve(path))).json();
+	const res = await fetch(resolve(path));
+	if (!res.ok) throw new Error(`Failed to load ${path} (HTTP ${res.status})`);
+	const rawData = await res.json();
 	const data = decompressFn ? decompressData(rawData, decompressFn) : rawData;
 	await set(key, data);
 	return data;
