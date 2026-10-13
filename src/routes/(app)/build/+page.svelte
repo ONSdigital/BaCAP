@@ -47,6 +47,26 @@
 		$lastActivePage = "build";
 	}
 
+	async function setComparisonArea(area) {
+		const compcd = area?.properties?.oa21cds
+			? centroids.commonParent({
+					raw: centroids.expand(area.properties.oa21cds),
+					compresed: area.properties.oa21cds
+				})
+			: null;
+
+		if (compcd) {
+			try {
+				const url = `${geoUrl}/${compcd.slice(0, 3)}/${compcd}.json`;
+				const data = await (await fetch(url)).json();
+				$comparisonArea = parseGeoJSON(data, centroids);
+			} catch (err) {
+				console.warn(err);
+				$comparisonArea = null;
+			}
+		} else $comparisonArea = null;
+	}
+
 	onMount(async () => {
 		let refreshedArea = false;
 
@@ -75,23 +95,7 @@
 
 		if (refreshedArea) {
 			// Refresh comparison area if area updated
-			const compcd = $activeArea.properties?.oa21cds
-				? centroids.commonParent({
-						raw: centroids.expand($activeArea.properties.oa21cds),
-						compresed: $activeArea.properties.oa21cds
-					})
-				: null;
-
-			if (compcd) {
-				try {
-					const url = `${geoUrl}/${compcd.slice(0, 3)}/${compcd}.json`;
-					const data = await (await fetch(url)).json();
-					$comparisonArea = parseGeoJSON(data, centroids);
-				} catch (err) {
-					console.warn(err);
-					$comparisonArea = null;
-				}
-			} else $comparisonArea = null;
+			setComparisonArea($activeArea);
 		}
 
 		setGeoState($activeArea);
@@ -109,7 +113,10 @@
 			bind:lastActivePage
 			{areasList}
 			{centroids}
-			updateActiveArea={(area) => setGeoState(area)}
+			updateActiveArea={(area) => {
+				setGeoState(area);
+				if (!$comparisonArea) setComparisonArea(area);
+			}}
 		/>
 		<BuildTopics {buildState} topics={data.topics} bind:selectedTopics />
 	</GridCell>
