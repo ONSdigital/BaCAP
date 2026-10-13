@@ -6,12 +6,13 @@ vi.mock("../state/index.js", () => ({
 	update: vi.fn()
 }));
 
-import { get } from "../state/index.js";
+import { get, update } from "../state/index.js";
 import getData, {
 	calcPercentages,
 	fillAreaCodes,
 	filterMeasures,
 	getMaxAreaCodes,
+	isNomisCsv,
 	makeCategoryLookup,
 	makeCells,
 	makeGeo,
@@ -105,13 +106,37 @@ describe("fillAreaCodes", () => {
 			{ properties: {} }
 		];
 
-		fillAreaCodes(areas);
+		const filled = fillAreaCodes(areas);
 
-		expect(areas.map((a) => a.properties.areacd)).toEqual([
+		expect(filled.map((a) => a.properties.areacd)).toEqual([
 			"E00000001",
 			"X00000001",
 			"E00000002",
 			"X00000002"
+		]);
+	});
+
+	it("does not change the areas passed in", () => {
+		const areas = [{ properties: {} }];
+
+		fillAreaCodes(areas);
+
+		expect(areas[0].properties.areacd).toBeUndefined();
+	});
+
+	it("gives unique codes when areas share a code or already hold a placeholder", () => {
+		const areas = [
+			{ properties: { areacd: "X00000001" } },
+			{ properties: {} },
+			{ properties: { areacd: "E06000001" } },
+			{ properties: { areacd: "E06000001" } }
+		];
+
+		expect(fillAreaCodes(areas).map((a) => a.properties.areacd)).toEqual([
+			"X00000001",
+			"X00000002",
+			"E06000001",
+			"X00000003"
 		]);
 	});
 });
@@ -171,6 +196,25 @@ describe("makeUrls", () => {
 		});
 	});
 
+	it("never creates a URL without areas when one area exceeds the budget on its own", () => {
+		const table = makeChunkTable();
+		const big = {
+			properties: {
+				areacd: "X00000001",
+				oa21cds: Array.from(
+					{ length: 30 },
+					(_, j) => `E000000${String(j).padStart(2, "0")}`
+				)
+			}
+		};
+		const [small] = makeChunkAreas();
+
+		const urls = makeUrls(table, [big, small]);
+
+		expect(urls).toHaveLength(2);
+		expect(urls.some((url) => url.endsWith("geography="))).toBe(false);
+	});
+
 	it("returns a single URL when areas fit within the limits", () => {
 		const table = {
 			tableCode: "NM_1_1",
@@ -226,23 +270,23 @@ describe("makeCategoryLookup", () => {
 describe("calcPercentages", () => {
 	it("adds a Percent row after each Value row within a group", () => {
 		const data = [
-			{ areanm: "A", date: "2021", category: "Cat1", measure: "Value", value: 30 },
-			{ areanm: "A", date: "2021", category: "Cat2", measure: "Value", value: 70 }
+			{ areacd: "A", date: "2021", category: "Cat1", measure: "Value", value: 30 },
+			{ areacd: "A", date: "2021", category: "Cat2", measure: "Value", value: 70 }
 		];
 
 		expect(calcPercentages(data)).toEqual([
-			{ areanm: "A", date: "2021", category: "Cat1", measure: "Value", value: 30 },
-			{ areanm: "A", date: "2021", category: "Cat1", measure: "Percent", value: 30 },
-			{ areanm: "A", date: "2021", category: "Cat2", measure: "Value", value: 70 },
-			{ areanm: "A", date: "2021", category: "Cat2", measure: "Percent", value: 70 }
+			{ areacd: "A", date: "2021", category: "Cat1", measure: "Value", value: 30 },
+			{ areacd: "A", date: "2021", category: "Cat1", measure: "Percent", value: 30 },
+			{ areacd: "A", date: "2021", category: "Cat2", measure: "Value", value: 70 },
+			{ areacd: "A", date: "2021", category: "Cat2", measure: "Percent", value: 70 }
 		]);
 	});
 
 	it("rounds percentages to one decimal place", () => {
 		const data = [
-			{ areanm: "A", date: "2021", category: "Cat1", measure: "Value", value: 1 },
-			{ areanm: "A", date: "2021", category: "Cat2", measure: "Value", value: 1 },
-			{ areanm: "A", date: "2021", category: "Cat3", measure: "Value", value: 1 }
+			{ areacd: "A", date: "2021", category: "Cat1", measure: "Value", value: 1 },
+			{ areacd: "A", date: "2021", category: "Cat2", measure: "Value", value: 1 },
+			{ areacd: "A", date: "2021", category: "Cat3", measure: "Value", value: 1 }
 		];
 
 		const percentValues = calcPercentages(data)
@@ -254,8 +298,8 @@ describe("calcPercentages", () => {
 
 	it("keeps totals isolated per area/date group", () => {
 		const data = [
-			{ areanm: "A", date: "2021", category: "Cat1", measure: "Value", value: 50 },
-			{ areanm: "B", date: "2021", category: "Cat1", measure: "Value", value: 200 }
+			{ areacd: "A", date: "2021", category: "Cat1", measure: "Value", value: 50 },
+			{ areacd: "B", date: "2021", category: "Cat1", measure: "Value", value: 200 }
 		];
 
 		const percentValues = calcPercentages(data)
@@ -328,6 +372,19 @@ describe("parseData", () => {
 	});
 });
 
+describe("isNomisCsv", () => {
+	it("accepts a CSV with the Nomis header row, quoted or not", () => {
+		expect(isNomisCsv("GEOGRAPHY_CODE,DATE,OBS_VALUE\nE1,2021,5")).toBe(true);
+		expect(isNomisCsv('"GEOGRAPHY_CODE","DATE","OBS_VALUE"')).toBe(true);
+	});
+
+	it("rejects error pages and empty values", () => {
+		expect(isNomisCsv("<html><body>Error</body></html>")).toBe(false);
+		expect(isNomisCsv("")).toBe(false);
+		expect(isNomisCsv(undefined)).toBe(false);
+	});
+});
+
 describe("getData", () => {
 	function makeTable() {
 		return {
@@ -368,7 +425,7 @@ describe("getData", () => {
 
 	it("fetches, parses and adds calculated percentages when Nomis can't provide them", async () => {
 		const csv = "GEOGRAPHY_CODE,DATE,MEASURES,OBS_VALUE\nE00000001,2021,20100,500";
-		const fetchMock = vi.fn().mockResolvedValue({ text: () => Promise.resolve(csv) });
+		const fetchMock = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(csv) });
 		vi.stubGlobal("fetch", fetchMock);
 
 		const table = makeTable();
@@ -430,12 +487,54 @@ describe("getData", () => {
 		]);
 	});
 
-	it("returns an error message when the Nomis request fails", async () => {
-		vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")));
+	it("labels rows for an unnamed area with the default area name", async () => {
+		const csv = "GEOGRAPHY_CODE,DATE,MEASURES,OBS_VALUE\nE00000001,2021,20100,500";
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(csv) })
+		);
+		const areas = [{ properties: { areacd: "E00000001", oa21cds: ["E00000001"] } }];
+
+		const result = await getData(makeTable(), areas);
+
+		expect(result.data.map((d) => d.areanm)).toEqual(["Unnamed Area", "Unnamed Area"]);
+	});
+
+	it("returns an error and caches nothing when Nomis returns an HTTP error", async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue({ ok: false, status: 500, text: () => Promise.resolve("Error") });
+		vi.stubGlobal("fetch", fetchMock);
 		vi.spyOn(console, "warn").mockImplementation(() => {});
 
 		const result = await getData(makeTable(), makeAreas());
 
-		expect(result).toEqual({ message: "Could not load data" });
+		expect(result.message).toBe("Could not load data");
+		expect(update).not.toHaveBeenCalled();
+	});
+
+	it("fetches again when the cached response is not a valid Nomis CSV", async () => {
+		const table = makeTable();
+		const areas = makeAreas();
+		const [url] = makeUrls(table, fillAreaCodes(areas));
+		get.mockResolvedValue(new Map([[url, "<html>Service unavailable</html>"]]));
+		const csv = "GEOGRAPHY_CODE,DATE,MEASURES,OBS_VALUE\nE00000001,2021,20100,500";
+		const fetchMock = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(csv) });
+		vi.stubGlobal("fetch", fetchMock);
+
+		const result = await getData(table, areas);
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(result.data[0].value).toBe(500);
+	});
+
+	it("returns an error message when the Nomis request fails", async () => {
+		vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")));
+		vi.spyOn(console, "warn").mockImplementation(() => {});
+
+		const table = makeTable();
+		const result = await getData(table, makeAreas());
+
+		expect(result).toEqual({ meta: table, data: [], message: "Could not load data" });
 	});
 });

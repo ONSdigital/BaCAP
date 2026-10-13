@@ -62,7 +62,8 @@ export function makeDateFormatter(format, length = "short") {
 export function pivotDataOnMeasures(data) {
 	const rows = {};
 	for (const d of data) {
-		const rowId = `${d.areanm}_${d.category}_${d.date}`;
+		// Key by code, as different areas can share a name (eg. a district and a constituency)
+		const rowId = `${d.areacd}_${d.category}_${d.date}`;
 		if (!rows[rowId])
 			rows[rowId] = {
 				areanm: d.areanm,

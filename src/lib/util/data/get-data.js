@@ -1,9 +1,11 @@
 import { csvParse } from "d3-dsv";
-import { get, set, update } from "../state/index.js";
+import { get, update } from "../state/index.js";
 import { ascending, round } from "../common/index.js";
+import { defaultAreaName } from "../../config/index.js";
 
 const maxRequestLength = 15_700;
 const maxResponseCells = 25_000;
+const fetchTimeout = 30_000; // Milliseconds before a Nomis request is abandoned
 
 export function makeCells(categories) {
 	return categories
@@ -52,16 +54,24 @@ export function getMaxAreaCodes(table) {
 	return maxGeoDimSize;
 }
 
-// Adds unique area codes for non-GSS geographies
+// Gives a unique placeholder code to areas without one (eg. drawn areas), or whose code is already
+// used by another area (eg. the same area selected twice). Returns copies, so the areas held in app
+// state are never changed.
 export function fillAreaCodes(areas) {
+	const used = new Set();
 	let i = 1;
-	for (const area of areas) {
-		if (!area.properties?.areacd) {
-			area.properties.areacd = "X" + String(i).padStart(8, "0");
-			i++;
+	return areas.map((area) => {
+		const areacd = area?.properties?.areacd;
+		if (areacd && !used.has(areacd)) {
+			used.add(areacd);
+			return area;
 		}
-	}
-	return areas;
+		let code;
+		do code = "X" + String(i++).padStart(8, "0");
+		while (used.has(code) || areas.some((d) => d?.properties?.areacd === code));
+		used.add(code);
+		return { ...area, properties: { ...area?.properties, areacd: code } };
+	});
 }
 
 export function makeGeo(area, codes, i) {
@@ -89,9 +99,12 @@ export function makeUrls(table, areas) {
 		if (!codes.length) continue; // Skip geographies too small for a best-fit
 
 		const geo = makeGeo(area, codes, i);
+		// Start a new URL if this area would exceed a limit. Never send a URL without areas, as Nomis
+		// then returns its default geography instead of an error.
 		if (
-			codesLength + codes.length > maxAreaCodes ||
-			urlFn.length + geosLength + geo.length >= maxRequestLength
+			geos.length &&
+			(codesLength + codes.length > maxAreaCodes ||
+				urlFn.length + geosLength + geo.length >= maxRequestLength)
 		) {
 			urls.push(urlFn.make(geos));
 			codesLength = 0;
@@ -123,7 +136,8 @@ export function makeRowParser(table, areas) {
 		filterMeasures(table.measures).map((d) => [d.cell, d.label])
 	);
 	const nameLookup = Object.fromEntries(
-		areas.map((d) => [d.properties.areacd, d.properties.areanm])
+		// Unnamed areas get the same default name as getName(), so exported columns line up
+		areas.map((d) => [d.properties.areacd, d.properties.areanm || defaultAreaName])
 	);
 	const categoryCol = table.cellCode?.toUpperCase?.();
 	const categoryNameCol = categoryCol + "_NAME";
@@ -165,7 +179,7 @@ export function parseData(table, areas, csvString) {
 export function calcPercentages(data) {
 	const indexed = {};
 	for (const d of data) {
-		const key = `${d.areanm}_${d.date}`;
+		const key = `${d.areacd}_${d.date}`;
 		if (!indexed[key]) indexed[key] = { rows: [], total: 0 };
 		indexed[key].rows.push(d);
 		indexed[key].total += d.value;
@@ -184,10 +198,7 @@ export function calcPercentages(data) {
 
 const maxCacheSize = 1000; // Number of cached URLs stored in local IndexedDB
 async function setCache(key, val) {
-	const cache = await get("cachedData");
-	if (!cache) await set("cachedData", new Map());
-
-	update("cachedData", (map) => {
+	await update("cachedData", (map = new Map()) => {
 		map.set(key, val);
 		if (map.size > maxCacheSize) {
 			const firstKey = map.keys().next().value;
@@ -202,6 +213,22 @@ async function getCache(key) {
 	return cache?.get?.(key);
 }
 
+// Checks for the header row of a Nomis CSV, so error pages are never parsed or cached as data
+export function isNomisCsv(str) {
+	if (typeof str !== "string") return false;
+	const end = str.indexOf("\n");
+	const header = end === -1 ? str : str.slice(0, end);
+	return header.includes("GEOGRAPHY_CODE") && header.includes("OBS_VALUE");
+}
+
+async function fetchCsv(url) {
+	const res = await fetch(url, { signal: AbortSignal.timeout(fetchTimeout) });
+	if (!res.ok) throw new Error(`Nomis request failed with HTTP ${res.status}`);
+	const csv = await res.text();
+	if (!isNomisCsv(csv)) throw new Error("Nomis response is not a valid CSV");
+	return csv;
+}
+
 export default async function getData(table, areas) {
 	if (!table || !areas[0]) return null;
 
@@ -210,18 +237,17 @@ export default async function getData(table, areas) {
 	const urls = makeUrls(table, areas);
 
 	for (const url of urls) {
-		const raw = await getCache(url);
-		if (raw) data.push(...parseData(table, areas, raw));
-		else {
-			try {
-				const raw = await (await fetch(url)).text();
+		try {
+			let raw = await getCache(url);
+			if (!isNomisCsv(raw)) {
+				raw = await fetchCsv(url);
 				setCache(url, raw);
-				data.push(...parseData(table, areas, raw));
-			} catch (err) {
-				// Handle error if Nomis is unavailable
-				console.warn(err);
-				return { meta: table, data: [], message: "Could not load data" };
 			}
+			data.push(...parseData(table, areas, raw));
+		} catch (err) {
+			// Handle error if Nomis is unavailable, times out or returns unreadable data
+			console.warn(err);
+			return { meta: table, data: [], message: "Could not load data" };
 		}
 	}
 	// Calculate percentages if they cannot be provided by Nomis
