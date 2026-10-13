@@ -13,10 +13,6 @@
 	} from "@onsvisual/svelte-components";
 
 	let { data } = $props();
-
-	let headerBackground = $state(
-		`var(--ons-color-hero-bg) right 80px top / auto 100% no-repeat url("${resolve("/img/banner-image.svg")}")`
-	);
 </script>
 
 <Hero
@@ -26,11 +22,16 @@
 	title="A flexible way to get local data"
 	lede="Define your own geographic area and explore {data.topics
 		.length} datasets covering England and Wales down to a neighbourhood level"
-	background={headerBackground}
 >
-	<div>
+	<div
+		class="header-image"
+		style:background="var(--ons-color-hero-bg) right top / auto 100% no-repeat url('{resolve(
+			'/img/banner-image.svg'
+		)}')"
+	></div>
+	<span>
 		<Button icon="arrow" iconPosition="after" href={resolve("/draw")}>Get started</Button>
-	</div>
+	</span>
 </Hero>
 
 <Grid width="wider" colWidth="wide" marginTop>
@@ -99,13 +100,25 @@
 </Section>
 
 <style>
-	@media (max-width: 800px) {
-		:global(.ons-svelte-theme-wrapper:has(.page-banner)) {
+	:global(.page-banner .ons-hero__title-container) {
+		position: relative;
+		width: 100%;
+	}
+	:global(.page-banner .ons-hero__title-container > *) {
+		max-width: 768px;
+	}
+	.header-image {
+		z-index: -1;
+		position: absolute;
+		top: -2rem;
+		right: 0;
+		height: calc(100% + 5.5rem);
+		width: 400px;
+		background: grey;
+	}
+	@media (max-width: 980px) {
+		.header-image {
 			background-image: none !important;
 		}
-	}
-	:global(.ons-section__text),
-	:global(.ons-hero__title-container) {
-		max-width: 800px;
 	}
 </style>
