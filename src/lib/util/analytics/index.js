@@ -1,0 +1,112 @@
+import { analyticsEvent } from "@onsvisual/svelte-components";
+import { formatName } from "@onsvisual/robo-utils";
+import { geogroupsLookup, defaultAreaName, defaultAreaType } from "../../config/index.js";
+
+function getAreaProps(area) {
+	if (area?.areacd || area?.areanm) {
+		const typecd = area?.areacd?.slice?.(0, 3);
+		return {
+			areaCode: area.areacd,
+			areaName: area.areanm || area.areacd || defaultAreaName,
+			areaType: geogroupsLookup?.[typecd]?.label || area.groupnm || defaultAreaType
+		};
+	}
+	return {};
+}
+
+export function areaEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: eventProps.type, // "search-select"|"manage-areas"
+		interactionLabel: eventProps.label,
+		...getAreaProps(eventProps.area)
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function selectDatasetEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: "dataset-select",
+		interactionLabel:
+			eventProps?.mode === "all" ? "Select all datasets by topic" : "Select a dataset",
+		interactionValue: eventProps.label
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function mapDrawEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: "map-draw",
+		interactionLabel: eventProps.label
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function downloadEvent(eventProps = {}) {
+	const eventData = {
+		event: "fileDownload",
+		extension: eventProps.format,
+		filename: eventProps.filename,
+		linkText: eventProps.label,
+		linkDomain: "www.ons.gov.uk",
+		...getAreaProps(eventProps.area)
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function embedEvent(eventProps = {}) {
+	const areaProps = getAreaProps(eventProps.area);
+	const eventData = {
+		event: "embed",
+		pageUrl: eventProps.url,
+		linkText: "Copy embed code",
+		chartTitle: `Area profile for ${formatName(areaProps.areaName, "the")}`,
+		chartType: "dashboard",
+		...areaProps
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function copyAreaCodesEvent(eventProps = {}) {
+	const areaProps = getAreaProps(eventProps.area);
+	const eventData = {
+		event: "interaction",
+		interactionType: "copy-area-codes",
+		interactionLabel: eventProps.label || "Copy area codes",
+		...areaProps
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function printEvent(eventProps = {}) {
+	const areaProps = getAreaProps(eventProps.area);
+	const eventData = {
+		event: "interaction",
+		interactionType: "save-print",
+		interactionLabel: "Print profile",
+		chartTitle: `Area profile for ${formatName(areaProps.areaName, "the")}`,
+		chartType: "dashboard",
+		...areaProps
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}
+
+export function modalToggleEvent(eventProps = {}) {
+	const eventData = {
+		event: "interaction",
+		interactionType: "modal-toggle",
+		interactionLabel: eventProps.label,
+		interactionValue: eventProps.value
+	};
+	console.debug({ eventData });
+	analyticsEvent(eventData);
+}

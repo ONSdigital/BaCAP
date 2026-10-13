@@ -1,29 +1,34 @@
 /** @type {import('@sveltejs/kit').Config} */
-import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from "@sveltejs/adapter-static";
+import { base_preview, base_prod } from "./src/app.config.js";
 
-const production = process.env.NODE_ENV === 'production';
-const ons_path = process.env.APP_PATH && process.env.APP_PATH.includes('ons');
+const preview = process.env.PUBLIC_APP_ENV === "preview";
+const production = process.env.NODE_ENV === "production";
+const base = preview ? base_preview : production ? base_prod : "";
 
 const config = {
 	kit: {
+		// hydrate the <div id="svelte"> element in src/app.html
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: '404.html'
+			// Options below are defaults
+			pages: "build",
+			assets: "build",
+			strict: false,
+			fallback: preview ? "404.html" : undefined
 		}),
 		prerender: {
-			handleHttpError: 'warn',
-			handleMissingId: 'warn',
+			handleHttpError: "warn",
+			handleMissingId: "warn"
 		},
 		paths: {
-			base: production && ons_path ? '/visualisations/customprofiles' : '',
+			base,
 			relative: false
 		}
 	},
-	preprocess: vitePreprocess(), // Ensures Svelte processes linked files
-	vitePlugin: {
-		inspector: true // Enables the Svelte inspector in development (optional)
+	compilerOptions: {
+		experimental: {
+			async: true
+		}
 	}
 };
 
