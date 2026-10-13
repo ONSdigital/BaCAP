@@ -16,6 +16,7 @@ function makeFeatureCollection(data, key, includePopulation = true) {
 }
 
 function isSmallerThanGeoLevel(code, levelKey) {
+	if (code?.startsWith?.("K04")) return false; // England and Wales is above every level
 	const areaLevelIndex = geogroups.findIndex((d) => d.codes.includes(code?.slice?.(0, 3)));
 	const levelIndex = geogroups.findIndex((d) => d.key === levelKey);
 	return areaLevelIndex < levelIndex; // Also returns true if areaLevelIndex not found (-1)
@@ -24,7 +25,7 @@ function isSmallerThanGeoLevel(code, levelKey) {
 const cols = ["oa21cd", "lsoa21cd", "msoa21cd", "ltla21cd", "rgn21cd"];
 const ew = "K04000001";
 const england = "E92000001";
-const wales = "E92000001";
+const wales = "W92000004";
 const regions = [...Array(9).keys()].map((i) => `E1200000${i + 1}`);
 
 export default class Centroids {
@@ -38,7 +39,7 @@ export default class Centroids {
 			[wales, ew],
 			...regions.map((d) => [d, england])
 		]);
-		const children = { [england]: new Set(regions) };
+		const children = { [ew]: new Set([england, wales]), [england]: new Set(regions) };
 
 		for (const d of oaData) {
 			for (let i = 0; i < cols.length - 1; i++) {
@@ -55,7 +56,17 @@ export default class Centroids {
 		return this.#data;
 	}
 	compress(cds) {
-		// Compresses to the highest parent area codes that have all their children present
+		// Compresses to the highest parent area codes that have all their children present.
+		// Repeats until stable, as Welsh codes reach country level one step before English codes.
+		let compressed = this.#compressOnce(cds);
+		let size;
+		do {
+			size = compressed.size;
+			compressed = this.#compressOnce(compressed);
+		} while (compressed.size < size);
+		return compressed;
+	}
+	#compressOnce(cds) {
 		const orphans = [];
 		let current = [...cds];
 		while (current.length > 0) {
@@ -87,7 +98,8 @@ export default class Centroids {
 			const next = [];
 			for (const cd of current) {
 				if (cd.slice(1, 3) === match) expanded.push(cd);
-				else next.push(...this.#data.children[cd]);
+				else if (this.#data.children[cd]) next.push(...this.#data.children[cd]);
+				else console.warn(`Cannot expand unknown area code ${cd}`);
 			}
 			current = next;
 		}
@@ -102,7 +114,7 @@ export default class Centroids {
 		// Gets the total population of the selected OAs
 		if (cds.size === 0) return 0;
 		return Array.from(cds)
-			.map((cd) => this.#data.lookup[cd].properties.population)
+			.map((cd) => this.#data.lookup[cd]?.properties?.population || 0)
 			.reduce((a, b) => a + b, 0);
 	}
 	getParentByLevel(cd, level) {

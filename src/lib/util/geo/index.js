@@ -106,7 +106,7 @@ export function parseGeoJSON(geojson, centroids, isBNG = false) {
 	if (!geojson.type) throw Error("Feature is not valid GeoJSON");
 
 	const props = getProperties(geojson);
-	if (props.areacd === "K04000001") props.oa21cds = props.lsoa21cds = ["E92000001", "W92000001"];
+	if (props.areacd === "K04000001") props.oa21cds = props.lsoa21cds = ["E92000001", "W92000004"];
 
 	const geometry = isBNG ? toWgs84(getGeometry(geojson)) : getGeometry(geojson);
 	if (!geometry.bbox) geometry.bbox = props.bounds || bbox(geometry);
@@ -220,8 +220,10 @@ export function uploadAreas(uploader) {
 	});
 }
 
-export function getName(activeArea, fallback = defaultAreaName) {
-	return activeArea?.properties?.areanm || activeArea || fallback;
+// Accepts an area Feature or a name string, and always returns a string
+export function getName(area, fallback = defaultAreaName) {
+	if (typeof area === "string") return area || fallback;
+	return area?.properties?.areanm || fallback;
 }
 
 export function isValidAreaCode(code) {

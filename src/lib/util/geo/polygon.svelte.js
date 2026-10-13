@@ -17,17 +17,26 @@ export default class Polygon {
 	}
 	add(geojson) {
 		const geometry = this.geometry
-			? getGeometry(union(featureCollection([this, feature(getGeometry(geojson))])))
+			? getGeometry(
+					union(
+						featureCollection([feature(this.geometry), feature(getGeometry(geojson))])
+					)
+				)
 			: getGeometry(geojson);
 		geometry.bbox = bbox(geometry);
 		this.geometry = geometry;
 	}
 	subtract(geojson) {
 		if (!this.geometry) return;
-		const geometry = getGeometry(
-			difference(featureCollection([this, feature(getGeometry(geojson))]))
+		const result = difference(
+			featureCollection([feature(this.geometry), feature(getGeometry(geojson))])
 		);
-		if (!geometry) this.geometry = null;
+		if (!result) {
+			// Nothing is left when the erased shape covers the whole polygon
+			this.geometry = null;
+			return;
+		}
+		const geometry = getGeometry(result);
 		geometry.bbox = bbox(geometry);
 		this.geometry = geometry;
 	}

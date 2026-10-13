@@ -55,6 +55,9 @@
 
 		if (mode === "replace") {
 			$activeArea = _feature;
+		} else if (!polygon.geometry) {
+			// The whole area has been erased
+			$activeArea = { type: "Feature", id: null, geometry: null, properties: {} };
 		} else {
 			// Remove GSS code if an area has been edited
 			$activeArea.properties.areacd = null;

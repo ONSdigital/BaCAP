@@ -1,5 +1,5 @@
 export function sleep(ms = 0) {
-	return new Promise((resolve) => setInterval(() => resolve(), ms));
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function slugify(str) {
