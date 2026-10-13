@@ -1,11 +1,15 @@
 import { writeFileSync } from "node:fs";
-import { geogroups } from "../src/lib/config";
+import { geogroups } from "../src/lib/config/index.js";
 
 const keys = ["oa", "lsoa"];
-const codes = geogroups
-	.slice(3)
-	.map((d) => d.codes)
-	.flat();
+const codes = [
+	...new Set(
+		geogroups
+			.slice(3)
+			.map((d) => d.codes)
+			.flat()
+	)
+];
 const url = (key) =>
 	`https://raw.githubusercontent.com/ONSdigital/geo-scripts/refs/heads/main/input/lookups/lookup_bestfit_${key}21.json`;
 
