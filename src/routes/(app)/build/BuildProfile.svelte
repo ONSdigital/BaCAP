@@ -4,7 +4,7 @@
 	import pym from "pym.js";
 	import { Notice, Details, Button, Icon, Textarea } from "@onsvisual/svelte-components";
 	import BestFitDetails from "$lib/viz/BestFitDetails.svelte";
-	import LoadingStatus from "$lib/ui/LoadingStatus.svelte";
+	import Spinner from "$lib/ui/Spinner.svelte";
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
 	import { makeEmbedHash, makeEmbedCode, makeEmbedUrl, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
@@ -97,12 +97,16 @@
 >
 <BestFitDetails {activeArea} {centroids} />
 <hr class="ons-u-mt-m ons-u-mb-m" />
-<LoadingStatus {loading} />
 {#if loadFailed}
 	<Notice mode="error">Sorry, there was a problem loading data for this profile.</Notice>
 	<Button cls="ons-u-mt-s ons-u-mb-s" small on:click={() => retries++}>Try again</Button>
 {/if}
-<div id="embed"></div>
+<div class="embed-container">
+	{#if loading}
+		<div class="embed-loading"><Spinner inline message="Loading data..." /></div>
+	{/if}
+	<div id="embed"></div>
+</div>
 <h2 class="ons-u-fs-m ons-u-mb-3xs">Export and share this profile</h2>
 <ul class="profile-actions">
 	<li>
@@ -226,6 +230,17 @@
 {/if}
 
 <style>
+	.embed-container {
+		position: relative;
+	}
+	.embed-loading {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 1;
+		padding: 6px 10px;
+		background: rgba(255, 255, 255, 0.9);
+	}
 	ul.profile-actions {
 		list-style-type: none;
 		padding: 0;

@@ -1,10 +1,11 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Container, Em, Select, Button } from "@onsvisual/svelte-components";
+	import Spinner from "$lib/ui/Spinner.svelte";
 	import { onsColors } from "$lib/config";
 	import { selectDatasetEvent } from "$lib/util/analytics";
 
-	let { topics, selectedTopic = $bindable() } = $props();
+	let { topics, selectedTopic = $bindable(), loading = false } = $props();
 
 	let activeTopic = $state.raw();
 </script>
@@ -36,13 +37,27 @@
 			groupKey="topic"
 			on:clear={() => (selectedTopic = null)}
 		/>
-		<Button cls="ons-u-mt-2xs" type="submit" small disabled={!activeTopic}
-			>Select dataset</Button
-		>
+		<div class="submit-container ons-u-mt-2xs">
+			<Button type="submit" small disabled={!activeTopic}>Select dataset</Button>
+			{#if loading}
+				<div class="submit-loading"><Spinner inline message="Loading data..." /></div>
+			{/if}
+		</div>
 	</form>
 </Container>
 
 <style>
+	.submit-container {
+		position: relative;
+		display: inline-block;
+	}
+	.submit-loading {
+		position: absolute;
+		top: 50%;
+		left: 100%;
+		transform: translateY(-50%);
+		padding-left: 12px;
+	}
 	.col-auto-width {
 		width: 450px;
 		max-width: calc(100vw - 58px);

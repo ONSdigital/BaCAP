@@ -1,8 +1,7 @@
 <script>
-	import { Container, Section, Icon, Notice, Table } from "@onsvisual/svelte-components";
+	import { Section, Icon, Notice, Table } from "@onsvisual/svelte-components";
 	import { measures } from "$lib/config";
-	import { pivotDataOnMeasures, getData } from "$lib/util/data";
-	import LoadingStatus from "$lib/ui/LoadingStatus.svelte";
+	import { pivotDataOnMeasures } from "$lib/util/data";
 	import { downloadDatasetXLSX, downloadDatasetCSV } from "$lib/util/io";
 
 	const columns = [
@@ -13,12 +12,10 @@
 		...measures.map((d) => ({ key: d.label.toLowerCase(), label: d.label, numeric: true }))
 	];
 
-	let { topic, areas } = $props();
-	let data = $derived(topic && areas?.length ? await getData(topic, areas) : null);
+	let { data } = $props();
 	let pivotedData = $derived(data ? pivotDataOnMeasures(data.data) : []);
 </script>
 
-<Container width="wider"><LoadingStatus /></Container>
 {#if data}
 	<Section width="wider" title={data.meta.label} marginTop>
 		<p>

@@ -1,16 +1,18 @@
 <script lang="ts">
-	let { message = null } = $props();
+	// Loading animation with an optional message. By default it fills a 500px-high block, eg. while
+	// the app loads. Set `inline` for a compact version with the message beside it, to place over or
+	// next to other content (the parent positions it).
+	let { message = null, inline = false } = $props();
 </script>
 
-<div class="loading-spinner-container">
+<div class="loading-spinner-container" class:inline role="status">
 	<div class="loading-spinner"></div>
-	{#if message}<div class="ons-u-fs-s">{message}</div>{/if}
+	{#if message}<div class={inline ? "ons-u-fs-r" : "ons-u-fs-s"}>{message}</div>{/if}
 </div>
 
 <style>
 	.loading-spinner-container {
 		position: relative;
-		display: block;
 		width: 100%;
 		height: 500px;
 		display: flex;
@@ -18,10 +20,19 @@
 		align-items: center;
 		justify-content: center;
 	}
+	.loading-spinner-container.inline {
+		width: auto;
+		height: auto;
+		flex-direction: row;
+		gap: 8px;
+		white-space: nowrap;
+	}
 	/* CSS adapted from https://cssloaders.github.io */
 	.loading-spinner {
-		width: 40px;
-		height: 25px;
+		--bar-width: 10px;
+		width: calc(4 * var(--bar-width));
+		height: calc(2.5 * var(--bar-width));
+		flex-shrink: 0;
 		background:
 			linear-gradient(
 				var(--ons-color-branded-tint) calc(1 * 100% / 6),
@@ -38,9 +49,13 @@
 				var(--ons-color-branded) 0 calc(5 * 100% / 6),
 				var(--ons-color-branded-tint) 0
 			);
-		background-size: 10px 400%;
+		background-size: var(--bar-width) 400%;
 		background-repeat: no-repeat;
 		animation: matrix 1.5s infinite linear;
+	}
+	.inline .loading-spinner {
+		/* Scaled from 6px with the text, from small (14px) to regular body size (18px) */
+		--bar-width: calc(6px * 18 / 14);
 	}
 	@keyframes matrix {
 		0% {
