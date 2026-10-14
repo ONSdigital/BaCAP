@@ -236,14 +236,16 @@ response cache described [below](#caching-nomis-api-responses-in-indexeddb) is i
 
 The effect deliberately doesn't use an awaited `$derived`. In Svelte's async mode an awaited derived
 holds back the rest of the page's updates until Nomis responds, and on a first load nothing can show
-that data is loading. Instead the effect sets a `loading` flag (shown by `LoadingStatus`) and
-numbers each request, so a slow response that has since been superseded is ignored. If Nomis fails,
-`getData()` returns an error result rather than throwing. The profile shows "Failed to load data"
-for that topic, and anything unexpected is caught by a `<svelte:boundary>` on the page.
+that data is loading. Instead the effect sets a `loading` flag and numbers each request, so a slow
+response that has since been superseded is ignored. While `loading` is true, an inline `Spinner`
+sits over the top-right corner of the profile iframe. If Nomis fails, `getData()` returns an error
+result rather than throwing. The profile shows "Failed to load data" for that topic, and anything
+unexpected is caught by a `<svelte:boundary>` on the page.
 
-`/download` does use an awaited `$derived`, in `DownloadTable.svelte`, inside a `<svelte:boundary>`
-with `pending` and `failed` snippets. Its `LoadingStatus` uses `$effect.pending()`. Don't add a
-`pending` snippet to the `/build` boundary: it stopped the area panel on the left from updating.
+`/download` loads its dataset the same way, in an effect in `+page.svelte`, and shows an inline
+`Spinner` beside the "Select dataset" button. Avoid awaited `$derived` values and `pending` boundary
+snippets for these requests: a `pending` snippet on the `/build` boundary stopped the area panel on
+the left from updating.
 
 The same `tables` feed the XLSX/CSV downloads (`downloadProfileXLSX()` and `downloadProfileCSV()` in
 `io/index.js`) and the embed hash.
