@@ -104,7 +104,8 @@
 		position: relative;
 		width: 100%;
 	}
-	:global(.page-banner .ons-hero__title-container > *) {
+	:global(.page-banner .ons-hero__title-container > *),
+	:global(.ons-section__text) {
 		max-width: 768px;
 	}
 	.header-image {
