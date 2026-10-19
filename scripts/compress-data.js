@@ -3,7 +3,10 @@ import { csvParse, autoType } from "d3-dsv";
 import { compressData } from "compress-csv-to-json";
 
 const parse = (path) =>
-	csvParse(fs.readFileSync(path, { encoding: "utf8", flag: "r" }).replace(/\uFEFF/, ""), autoType);
+	csvParse(
+		fs.readFileSync(path, { encoding: "utf8", flag: "r" }).replace(/\uFEFF/, ""),
+		autoType
+	);
 
 const input = (filename) => `./raw_data/${filename}.csv`;
 const output = (filename) => `./static/data/${filename}.json`;
@@ -14,8 +17,8 @@ const placesList = parse(input("places-list"));
 
 const lsoaColumnTypes = [
 	{ key: "lsoa21cd", colType: "string" },
-	{ key: "lng", colType: 10_000 },
-	{ key: "lat", colType: 10_000 }
+	{ key: "lng", colType: 100_000 },
+	{ key: "lat", colType: 100_000 }
 ];
 const oaColumnTypes = [
 	{ key: "oa21cd", colType: "string" },
@@ -23,8 +26,8 @@ const oaColumnTypes = [
 	{ key: "msoa21cd", colType: "interned_string" },
 	{ key: "ltla21cd", colType: "interned_string" },
 	{ key: "rgn21cd", colType: "interned_string" },
-	{ key: "lng", colType: 10_000 },
-	{ key: "lat", colType: 10_000 },
+	{ key: "lng", colType: 100_000 },
+	{ key: "lat", colType: 100_000 },
 	{ key: "population", colType: 1 }
 ];
 const placesColumnTypes = [
