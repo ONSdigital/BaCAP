@@ -34,9 +34,22 @@ sources — run only when source data changes):
 
 ```bash
 npm run data:get-places # Fetches raw_data/places-list.csv from ONSdigital/geo-scripts on GitHub
-npm run data:compress   # Compresses raw_data/*.csv (oa21-data, lsoa21-data, places-list) into static/data/*.json
+npm run data:oa-lsoa    # Rebuilds raw_data/oa21-data.csv and raw_data/lsoa21-data.csv (see below)
+npm run data:compress   # Compresses raw_data/*.csv (oa21-data, lsoa21-data, places-list) into static/data/*.json — run after data:get-places and data:oa-lsoa
 npm run data:lookups    # Fetches best-fit and region/combined-authority child lookups from ONSdigital/geo-scripts on GitHub, writes static/data/bestfit-lookup.json and static/data/rgn-cauth-children.json
 ```
+
+`data:oa-lsoa` (`scripts/make-oa-lsoa-data.js`) builds the OA/LSOA hierarchy from a frozen
+OA→LSOA→MSOA→LTLA22→RGN22 lookup released in `ONSdigital/geo-source-files` as
+`oa21_lsoa21_msoa21_ltla22_rgn22.csv`. This is deliberately not the live `geo-scripts` `lookup.csv`,
+since Nomis's geographies lag local government reorganisations and a live lookup would produce
+LTLA/RGN codes Nomis doesn't recognise yet. Population-weighted centroids come from the gzipped
+NDJSON releases at the same repo (rounded to 5dp — ~1m accuracy), and population figures from the
+Nomis API using the `"population"` entry in `topics.json` (`topics[0]`) — reusing its
+`tableCode`/`cellCode`/`categories`/`measures`/`miscParams`, so it stays correct if that entry's
+`dates` changes, and paginating via `recordoffset`/`recordlimit` around Nomis's 25,000-row limit.
+Only the population figures need periodic refreshing (alongside a `topics.json` population-entry
+update) — the hierarchy/centroids are frozen to the 2021 Census geography (LTLA/RGN pinned to 2022).
 
 `static/data/topics.json` (topic/dataset definitions loaded by the root layout) is maintained
 directly rather than generated — there is no longer a conversion script for it.

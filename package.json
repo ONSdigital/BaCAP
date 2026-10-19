@@ -10,6 +10,7 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo \"\"",
 		"data:get-places": "node ./scripts/get-places-list.js",
+		"data:oa-lsoa": "node ./scripts/make-oa-lsoa-data.js",
 		"data:compress": "node ./scripts/compress-data.js",
 		"data:lookups": "node ./scripts/make-oa-lookups.js && node ./scripts/make-rgn-cauth-children.js",
 		"test": "vitest run",

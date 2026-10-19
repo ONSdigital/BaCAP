@@ -122,26 +122,46 @@ dataset, and check the values match what Nomis's own site returns for the same t
 
 ### Updating geographic reference data
 
-The app's geography data — the list of selectable areas, the boundary data itself, and the best-fit
-lookups that translate a drawn area into OA/LSOA codes — comes from the
-[ONSdigital/geo-scripts](https://github.com/ONSdigital/geo-scripts) repository. That repository is
-updated roughly annually (as local authority boundaries, combined authorities, etc. change) and is
-maintained separately — refreshing it is outside the scope of this repo.
+The app's geography data — the list of selectable areas, the boundary data itself, the best-fit
+lookups that translate a drawn area into OA/LSOA codes, and the OA/LSOA hierarchy and centroids —
+comes from two sister repositories,
+[ONSdigital/geo-scripts](https://github.com/ONSdigital/geo-scripts) and
+[ONSdigital/geo-source-files](https://github.com/ONSdigital/geo-source-files). Both are updated
+roughly annually (as local authority boundaries, combined authorities, etc. change) and are
+maintained separately — refreshing them is outside the scope of this repo.
 
 Once the data in `geo-scripts` is up to date, refresh this repo's copies by running these npm
-scripts. `data:get-places` and `data:compress` must run in that order; `data:lookups` is independent
-and can be run separately:
+scripts. `data:get-places`, `data:oa-lsoa` and `data:compress` must run in that order;
+`data:lookups` is independent and can be run separately:
 
 ```bash
 npm run data:get-places   # 1. Fetch the latest raw_data/places-list.csv from geo-scripts
-npm run data:compress     # 2. Compress raw_data/*.csv into static/data/*.json (must run after step 1)
-npm run data:lookups      # 3. Independently fetch and write static/data/bestfit-lookup.json
+npm run data:oa-lsoa      # 2. Rebuild raw_data/oa21-data.csv and raw_data/lsoa21-data.csv
+npm run data:compress     # 3. Compress raw_data/*.csv into static/data/*.json (must run after steps 1-2)
+npm run data:lookups      # 4. Independently fetch and write static/data/bestfit-lookup.json
                            #    and static/data/rgn-cauth-children.json from geo-scripts
 ```
 
-Note that `data:compress` also compresses `raw_data/oa21-data.csv` and `raw_data/lsoa21-data.csv` —
-these are Output Area/LSOA centroids and hierarchy codes tied to the 2021 Census geography, and
-aren't part of this annual refresh (they'd only need replacing alongside a new Census geography).
+`data:oa-lsoa` (`scripts/make-oa-lsoa-data.js`) rebuilds the OA/LSOA hierarchy, centroids and
+population figures from three sources:
+
+- the area hierarchy (OA→LSOA→MSOA→LTLA→RGN) from the frozen lookup at
+  [ONSdigital/geo-source-files](https://github.com/ONSdigital/geo-source-files)'
+  `lookups/oa21_lsoa21_msoa21_ltla22_rgn22.csv` release asset. This is deliberately **not** the live
+  `geo-scripts` lookup: Nomis's own geographies lag local government reorganisations by months or
+  years, so using current-day LTLA/RGN codes would produce area codes Nomis doesn't recognise.
+- population-weighted centroids from the gzipped NDJSON releases at the same
+  `ONSdigital/geo-source-files` repo (`oa21_pwc.json.gz` / `lsoa21_pwc.json.gz`), rounded to 5
+  decimal places (~1m accuracy at UK latitudes)
+- population figures from the Nomis API, using the same `tableCode`/`cellCode`/`categories`/
+  `measures`/`miscParams` config as the `"population"` entry in `topics.json` (the first entry in
+  that file) — so it stays in sync if that entry's `dates` is bumped to a newer year — paginated via
+  Nomis's `recordoffset`/`recordlimit` to work around its 25,000-row-per-request limit
+
+The hierarchy and centroids are tied to the 2021 Census geography and rarely change; the population
+figures should be refreshed whenever ONS publishes a newer mid-year population estimate (i.e.
+whenever `topics.json`'s `"population"` entry's `dates` is updated) — re-run `data:oa-lsoa` at the
+same time.
 
 After running the scripts, review the diff in `static/data/`, commit the updated files, and rebuild
 the app.
