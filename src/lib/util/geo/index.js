@@ -85,7 +85,7 @@ export function getProperties(geojson) {
 }
 
 export function getNameKey(keys) {
-	const prefs = ["areanm", "name", "areacd"];
+	const prefs = ["areanm", "name", "nm", "areacd"];
 	for (const pref of prefs) {
 		const match = keys.find((key) => key.toLowerCase().includes(pref));
 		if (match) return match;
@@ -94,7 +94,7 @@ export function getNameKey(keys) {
 }
 
 export function getCodeKey(keys) {
-	const prefs = ["areacd", "code", "id"];
+	const prefs = ["areacd", "code", "cd", "id"];
 	for (const pref of prefs) {
 		const match = keys.find((key) => key.toLowerCase().includes(pref));
 		if (match) return match;
