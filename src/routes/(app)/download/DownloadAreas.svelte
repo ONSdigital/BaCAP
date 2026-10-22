@@ -80,7 +80,7 @@
 					d.areacd === selectedArea.properties.areacd
 			)
 			.map((d) => {
-				const fits = bestFits[d.areacd] || [[d.areacd]];
+				const fits = bestFits[d.areacd] || [[]];
 				return {
 					type: "Feature",
 					geometry: null,

@@ -30,11 +30,9 @@ for (const key of keys) {
 	}
 }
 for (const cd of Object.keys(lookup)) {
-	if ([...lookup[cd].oa, ...lookup[cd].lsoa].every((d) => d === cd)) delete lookup[cd];
-	else
-		lookup[cd] = lookup[cd].oa.every((d) => lookup[cd].lsoa.includes(d))
-			? [lookup[cd].oa]
-			: [lookup[cd].oa, lookup[cd].lsoa];
+	lookup[cd] = lookup[cd].oa.every((d) => lookup[cd].lsoa.includes(d))
+		? [lookup[cd].oa]
+		: [lookup[cd].oa, lookup[cd].lsoa];
 }
 writeFileSync(path, JSON.stringify(lookup));
 console.log(`Wrote ${path}`);
