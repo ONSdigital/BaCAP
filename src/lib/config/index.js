@@ -118,6 +118,26 @@ export const onsColors = {
 	highlightOrangeDark: "#f56927",
 	sunYellow: "#fbc900"
 };
+export const bestfitLayers = [
+	{
+		key: "oa",
+		url: "https://cdn.ons.gov.uk/maptiles/administrative/2021/oa/v3/boundaries/{z}/{x}/{y}.pbf",
+		idKey: "areacd",
+		layer: "boundaries",
+		minzoom: 5,
+		maxzoom: 12,
+		color: [0, 0, 255]
+	},
+	{
+		key: "lsoa",
+		url: "https://cdn.ons.gov.uk/maptiles/administrative/2021/lsoa/v3/boundaries/{z}/{x}/{y}.pbf",
+		idKey: "areacd",
+		layer: "boundaries",
+		minzoom: 5,
+		maxzoom: 12,
+		color: [255, 0, 0]
+	}
+];
 export const drawLayerStyles = [
 	// ACTIVE (being drawn)
 	// line stroke

@@ -2,6 +2,12 @@
 	import { Tween } from "svelte/motion";
 	import { cubicOut } from "svelte/easing";
 
+	const bestfitOptions = [
+		{ id: "none", label: "No best-fit" },
+		{ id: "oa", label: "Output Area best-fit" },
+		{ id: "lsoa", label: "LSOA best-fit" }
+	];
+
 	let { population } = $props();
 
 	let counter = new Tween(population, {
@@ -12,8 +18,8 @@
 	$effect(() => (counter.target = population));
 </script>
 
-<div class="population-counter">
-	<span class="ons-u-fs-s">Total population</span><br />
+<div class="floating-map-control">
+	<div class="ons-u-fs-s">Total population</div>
 	<strong
 		>{counter.current.toLocaleString("en-GB", {
 			minimumFractionDigits: 0,
@@ -23,14 +29,7 @@
 </div>
 
 <style>
-	.population-counter {
-		background: white;
-		padding: 3px 10px 5px;
-		border-radius: 8px;
-		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-		position: absolute;
-		z-index: 99;
-		margin: 10px;
-		bottom: 0;
+	.floating-map-control {
+		padding-top: 4px;
 	}
 </style>

@@ -1,22 +1,9 @@
 <script>
 	import { resolve } from "$app/paths";
 	import { Map, MapSource, MapLayer } from "@onsvisual/svelte-maps";
+	import { bestfitLayers } from "$lib/config";
 
 	const fitBoundsOptions = { padding: 20 };
-	export const layers = [
-		{
-			key: "oa",
-			url: "https://cdn.ons.gov.uk/maptiles/administrative/2021/oa/v3/boundaries/{z}/{x}/{y}.pbf",
-			idKey: "areacd",
-			color: "blue"
-		},
-		{
-			key: "lsoa",
-			url: "https://cdn.ons.gov.uk/maptiles/administrative/2021/lsoa/v3/boundaries/{z}/{x}/{y}.pbf",
-			idKey: "areacd",
-			color: "red"
-		}
-	];
 
 	let { activeArea, centroids } = $props();
 	let codes = $derived({
@@ -35,11 +22,15 @@
 		></span>Selected boundary
 	</li>
 	<li>
-		<span class="legend-viz" style:background="rgb(0,0,255,0.3)"></span>OA best-fit
+		<span class="legend-viz" style:background="rgba({bestfitLayers[0].color.join(',')},0.3)"
+		></span>OA best-fit
 	</li>
-	<li><span class="legend-viz" style:background="rgb(255,0,0,0.3)"></span>LSOA best-fit</li>
 	<li>
-		<span class="legend-viz" style:background="rgb(128,0,128,0.3)"></span>OA and LSOA overlap
+		<span class="legend-viz" style:background="rgba({bestfitLayers[1].color.join(',')},0.3)"
+		></span>LSOA best-fit
+	</li>
+	<li>
+		<span class="legend-viz" style:background="rgba(128,0,128,0.3)"></span>OA and LSOA overlap
 	</li>
 </ul>
 <div class="map-container">
@@ -52,12 +43,12 @@
 		options={{ fitBoundsOptions }}
 		controls={true}
 	>
-		{#each layers as l}
+		{#each bestfitLayers as l}
 			<MapSource
 				id={l.key}
 				type="vector"
 				url={l.url}
-				layer="boundaries"
+				layer={l.layer}
 				promoteId={l.idKey}
 				maxzoom={12}
 			>
@@ -65,11 +56,17 @@
 					id="{l.key}-line"
 					type="fill"
 					paint={{
-						"fill-color": l.color,
-						"fill-opacity": 0.2,
+						"fill-color": `rgb(${l.color.join(",")})`,
+						"fill-opacity": [
+							"case",
+							["==", ["feature-state", "highlighted"], true],
+							0.2,
+							0
+						],
 						"fill-outline-color": "rgba(0,0,0,0)"
 					}}
-					filter={["in", l.idKey, ...codes[l.key]]}
+					highlight
+					highlighted={codes[l.key]}
 				/>
 			</MapSource>
 		{/each}

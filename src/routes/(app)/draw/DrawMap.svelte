@@ -6,10 +6,10 @@
 	import circle from "@turf/circle";
 	import { sleep } from "$lib/util/common";
 	import { MaplibreDraw, Polygon, parseGeoJSON } from "$lib/util/geo";
-	import { onsColors, drawLayerStyles } from "$lib/config";
+	import { onsColors, drawLayerStyles, bestfitLayers } from "$lib/config";
 	import { mapDrawEvent } from "$lib/util/analytics";
 
-	let { appState = $bindable(), drawState, centroids } = $props();
+	let { appState = $bindable(), drawState, centroids, bestfitLayer } = $props();
 	let { history, rehistory, activeArea, lastActivePage } = appState;
 	let map = $state();
 	let draw = $state();
@@ -27,6 +27,7 @@
 
 	function setCursor(mode) {
 		const cursor = mode === "pan" ? "grab" : "crosshair";
+		console.log("setCursor", { mode, cursor });
 		const canvas = document.querySelector("#map-container canvas");
 		if (canvas) canvas.style.cursor = cursor;
 	}
@@ -172,6 +173,82 @@
 			]
 		}}
 	>
+		{#if bestfitLayer && bestfitLayer?.id !== "none"}
+			{@const id = bestfitLayer?.id}
+			{@const codes = [...($history?.[0]?.[id] || [])]}
+			{@const layer = bestfitLayers.find((d) => d.key === id)}
+			<MapSource
+				id="bounds"
+				type="vector"
+				url={layer.url}
+				layer={layer.layer}
+				promoteId={layer.idKey}
+				minzoom={layer.minzoom}
+				maxzoom={layer.maxzoom}
+			>
+				{#key id}
+					<MapLayer
+						id="bounds-fill"
+						type="fill"
+						paint={{
+							"fill-color": onsColors.beetrootPurple,
+							"fill-opacity": [
+								"case",
+								["==", ["feature-state", "highlighted"], true],
+								0.2,
+								0
+							],
+							"fill-outline-color": "rgba(0,0,0,0)"
+						}}
+						highlight
+						highlighted={codes}
+					/>
+					<MapLayer
+						id="bounds-outline"
+						type="line"
+						paint={{
+							"line-color": onsColors.beetrootPurple,
+							"line-width": ["interpolate", ["linear"], ["zoom"], 10, 0, 13, 1.5],
+							"line-opacity": [
+								"case",
+								["==", ["feature-state", "highlighted"], true],
+								1,
+								0
+							]
+						}}
+					/>
+				{/key}
+			</MapSource>
+			<MapSource
+				id="centroids"
+				type="geojson"
+				data={centroids?.data?.[id] || {
+					type: "FeatureCollection",
+					features: []
+				}}
+				promoteId={layer.idKey}
+			>
+				{#key id}
+					<MapLayer
+						id="centroids"
+						type="circle"
+						paint={{
+							"circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 0, 12, 2],
+							"circle-color": onsColors.beetrootPurple,
+							"circle-opacity": [
+								"case",
+								["==", ["feature-state", "highlighted"], true],
+								1,
+								0
+							]
+						}}
+						minzoom={10}
+						highlight
+						highlighted={codes}
+					/>
+				{/key}
+			</MapSource>
+		{/if}
 		<MapSource
 			id="polygon"
 			type="geojson"

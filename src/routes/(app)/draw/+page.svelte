@@ -7,9 +7,10 @@
 	import DrawToolbar from "./DrawToolbar.svelte";
 	import DrawMap from "./DrawMap.svelte";
 	import DrawCounter from "./DrawCounter.svelte";
+	import DrawLayers from "./DrawLayers.svelte";
 
 	let drawState = $state({
-		drawMode: "simple_select",
+		drawMode: "pan",
 		eraseMode: false,
 		radius: 1
 	});
@@ -24,6 +25,13 @@
 
 	const areasList = getContext("areasList")();
 	const centroids = getContext("centroids")();
+
+	const bestfitOptions = [
+		{ id: "none", label: "No best-fit" },
+		{ id: "oa", label: "Output Area best-fit" },
+		{ id: "lsoa", label: "LSOA best-fit" }
+	];
+	let bestfitLayer = $state(bestfitOptions[0]);
 
 	afterNavigate(async () => {
 		// Update drawn area if selection was changed on "build" page
@@ -74,8 +82,11 @@
 			{centroids}
 			runAction={(action, args = []) => drawMap?.[action]?.(...args)}
 		/>
-		<DrawMap bind:this={drawMap} bind:appState {drawState} {centroids} />
-		<DrawCounter population={centroids.population($history?.[0]?.oa || new Set())} />
+		<DrawMap bind:this={drawMap} bind:appState {drawState} {centroids} {bestfitLayer} />
+		<div class="controls-bottom-left">
+			<DrawCounter population={centroids.population($history?.[0]?.oa || new Set())} />
+			<DrawLayers layerOptions={bestfitOptions} bind:layer={bestfitLayer} />
+		</div>
 	</div>
 </Container>
 
@@ -96,5 +107,14 @@
 		position: absolute;
 		top: -5.5em !important;
 		right: 1em;
+	}
+	.controls-bottom-left {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 8px;
+		bottom: 0;
+		left: 0;
 	}
 </style>
