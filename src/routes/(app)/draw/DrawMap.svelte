@@ -27,7 +27,6 @@
 
 	function setCursor(mode) {
 		const cursor = mode === "pan" ? "grab" : "crosshair";
-		console.log("setCursor", { mode, cursor });
 		const canvas = document.querySelector("#map-container canvas");
 		if (canvas) canvas.style.cursor = cursor;
 	}
