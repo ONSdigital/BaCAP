@@ -67,7 +67,11 @@
 	{@render children()}
 {:else}
 	<AnalyticsBanner {analyticsId} {analyticsProps} {width} pageViewEnabled={false} />
-	{#if !fullscreen}<PhaseBanner {width} phase="Prototype" />{/if}
+	{#if !fullscreen}<PhaseBanner
+			{width}
+			phase="Beta"
+			href="https://consultations.ons.gov.uk/digital-publishing/2ff010d4/consultation/intro/"
+		/>{/if}
 	{#key [page.url, fullscreen]}
 		<Header
 			cls={fullscreen ? "header-fullscreen" : null}
