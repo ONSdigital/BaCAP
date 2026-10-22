@@ -3,6 +3,7 @@
 	import { get } from "svelte/store";
 	import { Container, Notice, Button } from "@onsvisual/svelte-components";
 	import Spinner from "$lib/ui/Spinner.svelte";
+	import { compareVersions } from "$lib/util/common";
 	import { appVersion } from "$lib/config";
 	import {
 		getStoredAppVersion,
@@ -45,7 +46,7 @@
 
 	async function loadAll() {
 		const storedAppVersion = await getStoredAppVersion();
-		const isNewVersion = appVersion !== storedAppVersion;
+		const isNewVersion = compareVersions(appVersion, storedAppVersion) !== 0;
 
 		const loaded = await Promise.all([
 			getAppState(storedAppVersion),

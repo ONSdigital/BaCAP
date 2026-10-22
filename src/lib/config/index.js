@@ -1,6 +1,10 @@
 // APP STATE CONFIG + DEFAULTS
 export const baseUrl = "https://www.ons.gov.uk/visualisations/customprofiles";
-export const appVersion = 1;
+// "major.minor" - compared with compareVersions() in util/common. Bump the major version for a new
+// geography version or a breaking change to the structure of stored state (see getAppState()); bump
+// the minor version for anything else that should refresh the cached reference data, such as a
+// best-fit/geography bug fix.
+export const appVersion = "1.0";
 export const initialState = {
 	activeArea: {
 		type: "Feature",

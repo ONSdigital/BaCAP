@@ -405,9 +405,18 @@ them with the `$store` syntax.
 The user's saved state (`savedAreas` in particular) is meant to last across releases, so it is
 **not** cleared when `appVersion` changes. `getAppState()` is given the version previously stored in
 IndexedDB (`null` for a new user). If a future release changes the structure of stored state in a
-way that would break or corrupt existing data, add a migration for that specific version at the
-start of `getAppState()`, for example `if (storedAppVersion && storedAppVersion < 2) { … }`, which
-can amend, restructure or clear only the affected keys.
+way that would break or corrupt existing data, add a migration for that specific major version at
+the start of `getAppState()`, for example `if (compareVersions(storedAppVersion, "2.0") < 0) { … }`,
+which can amend, restructure or clear only the affected keys.
+
+`appVersion` is a `"major.minor"` string, compared with `compareVersions()`
+(`src/lib/util/common/index.js`) rather than as plain numbers or strings, so `"1.12"` correctly
+counts as newer than `"1.2"`. Bump the major version for a new geography version or a breaking
+change to stored state's structure (the case the migration above handles); bump the minor version
+for anything else that should still refresh the cached reference data, such as a best-fit/geography
+bug fix. `compareVersions()` treats anything that isn't exactly `"major.minor"` - including the
+plain number `appVersion` used before this format was adopted - as older than any valid version, and
+two invalid versions as equal.
 
 ### Coordinating pages through shared state
 

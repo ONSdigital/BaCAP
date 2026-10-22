@@ -32,8 +32,9 @@ async function initSyncedStore(key, fallbackValue = null) {
 
 export default async function getAppState(storedAppVersion = null) {
 	// Stored state is kept across app versions. If a release changes the structure of stored state
-	// in a way that would break or corrupt it, add a migration for that specific version here, eg.
-	// if (storedAppVersion && storedAppVersion < 2) { /* amend or clear affected keys */ }
+	// in a way that would break or corrupt it, add a migration for that specific major version here,
+	// eg. (importing compareVersions from "../common/index.js"):
+	// if (compareVersions(storedAppVersion, "2.0") < 0) { /* amend or clear affected keys */ }
 	const keys = Object.keys(initialState);
 	const stores = await Promise.all(keys.map((key) => initSyncedStore(key, initialState[key])));
 	const appState = Object.fromEntries(keys.map((key, i) => [key, stores[i]]));
