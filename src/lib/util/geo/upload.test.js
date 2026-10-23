@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import { maxUploadAreas, parseUploadedGeoJSON, uploadAreas } from "./upload.js";
+import {
+	findDuplicateAreaId,
+	maxUploadAreas,
+	parseUploadedGeoJSON,
+	uploadAreas
+} from "./upload.js";
 
 function polygonFeature(properties = {}) {
 	return {
@@ -122,6 +127,62 @@ describe("parseUploadedGeoJSON", () => {
 		expect(result.totalCount).toBe(cheap.length + expensive.length);
 		expect(result.truncatedCount).toBe(1);
 		expect(result.areas).toHaveLength(cheap.length + maxUploadAreas);
+	});
+});
+
+describe("findDuplicateAreaId", () => {
+	function savedArea(id, areanm, areacd) {
+		return { id, type: "Feature", properties: { areanm, areacd } };
+	}
+
+	it("matches when the uploaded feature's id and name both match a saved area", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 1, properties: { areanm: "Hartlepool" } };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBe(1);
+	});
+
+	it("does not match by id alone when the name differs", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 1, properties: { areanm: "Somewhere else" } };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBeNull();
+	});
+
+	it("matches by GSS code and name when the id doesn't match any saved area", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 999, properties: { areanm: "Hartlepool", areacd: "E06000001" } };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBe(1);
+	});
+
+	it("does not match by code alone when the name differs", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 999, properties: { areanm: "Somewhere else", areacd: "E06000001" } };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBeNull();
+	});
+
+	it("returns null when neither id nor code matches", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 999, properties: { areanm: "Hartlepool", areacd: "E09000001" } };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBeNull();
+	});
+
+	it("returns null when the uploaded area has no name, even if the id matches", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 1, properties: {} };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBeNull();
+	});
+
+	it("ignores case and surrounding whitespace in the name", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const area = { id: 1, properties: { areanm: "  HARTLEPOOL  " } };
+		expect(findDuplicateAreaId(savedAreas, area, "areanm", "areacd")).toBe(1);
+	});
+
+	it("doesn't throw when there is no code key, and still checks by id", () => {
+		const savedAreas = { 1: savedArea(1, "Hartlepool", "E06000001") };
+		const matched = { id: 1, properties: { areanm: "Hartlepool" } };
+		const unmatched = { id: 999, properties: { areanm: "Hartlepool" } };
+		expect(findDuplicateAreaId(savedAreas, matched, "areanm", null)).toBe(1);
+		expect(findDuplicateAreaId(savedAreas, unmatched, "areanm", null)).toBeNull();
 	});
 });
 

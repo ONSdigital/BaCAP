@@ -12,7 +12,12 @@
 	import AreaSearch from "./AreaSearch.svelte";
 	import ConfirmButton from "./ConfirmButton.svelte";
 	import Spinner from "./Spinner.svelte";
-	import { uploadAreas, featureCollection, parseGeoJSON, getCodeKey } from "$lib/util/geo";
+	import {
+		uploadAreas,
+		featureCollection,
+		parseGeoJSON,
+		findDuplicateAreaId
+	} from "$lib/util/geo";
 	import { downloadArea } from "$lib/util/io";
 	import { areaEvent } from "$lib/util/analytics";
 	import { defaultAreaName } from "$lib/config";
@@ -78,12 +83,7 @@
 	}
 
 	function findMatchId(area) {
-		const id = area.id;
-		const keys = Object.keys(area.properties);
-		const code = area.properties[getCodeKey(keys)];
-		return $savedAreas[id]
-			? id
-			: Object.values($savedAreas).find((d) => d.properties.areacd === code)?.id || null;
+		return findDuplicateAreaId($savedAreas, area, loadedAreas.nameKey, loadedAreas.codeKey);
 	}
 
 	function saveNewAreaInner(area, isBNG) {

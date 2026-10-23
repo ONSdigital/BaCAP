@@ -81,6 +81,32 @@ export function parseUploadedGeoJSON(text) {
 	};
 }
 
+function normalizedName(name) {
+	return typeof name === "string" ? name.trim().toLowerCase() : "";
+}
+
+// Finds the saved area (a dictionary of id -> area, as held in app state) that an uploaded area
+// should overwrite, when "overwrite duplicate areas" is enabled. A saved area only counts as a
+// duplicate when its name AND a strong identity signal both match - either the uploaded feature's
+// own id (set by this tool, so this is a re-upload of an area already saved under that id) or its
+// official GSS code. Requiring the name too avoids silently overwriting an unrelated area that
+// happens to share a stale id or a coincidental code. Cheap: a handful of property lookups and
+// string comparisons - no geometry, centroid or OA/LSOA code-set work.
+export function findDuplicateAreaId(savedAreas, area, nameKey, codeKey) {
+	const name = normalizedName(area.properties?.[nameKey]);
+	if (!name) return null;
+
+	const byId = savedAreas[area.id];
+	if (byId && normalizedName(byId.properties?.areanm) === name) return byId.id;
+
+	const code = area.properties?.[codeKey];
+	if (!code) return null;
+	const byCode = Object.values(savedAreas).find(
+		(d) => d.properties?.areacd === code && normalizedName(d.properties?.areanm) === name
+	);
+	return byCode?.id ?? null;
+}
+
 export function uploadAreas(uploader) {
 	return new Promise((resolve) => {
 		const file = uploader?.files?.[0];
