@@ -642,7 +642,7 @@
 		"cellCode": "measure",
 		"measures": [{ "label": "Percent", "cell": 20100 }],
 		"categories": [{ "label": "Claimant count", "cells": [2] }],
-		"dates": ["2026-08"],
+		"dates": ["2026-09"],
 		"miscParams": { "gender": 0, "age": 0 },
 		"unit": "%",
 		"dateFormat": "month",
@@ -671,7 +671,8 @@
 			"2026-05",
 			"2026-06",
 			"2026-07",
-			"2026-08"
+			"2026-08",
+			"2026-09"
 		],
 		"miscParams": { "gender": 0, "age": 0 },
 		"unit": "%",
