@@ -1,12 +1,22 @@
 <script>
-	import { Tabs, Tab, Input, Button, Checkbox, Tooltip } from "@onsvisual/svelte-components";
+	import {
+		Tabs,
+		Tab,
+		Input,
+		Button,
+		Checkbox,
+		Tooltip,
+		Notice
+	} from "@onsvisual/svelte-components";
 	import Modal from "./Modal.svelte";
 	import AreaSearch from "./AreaSearch.svelte";
 	import ConfirmButton from "./ConfirmButton.svelte";
+	import Spinner from "./Spinner.svelte";
 	import { uploadAreas, featureCollection, parseGeoJSON, getCodeKey } from "$lib/util/geo";
 	import { downloadArea } from "$lib/util/io";
 	import { areaEvent } from "$lib/util/analytics";
 	import { defaultAreaName } from "$lib/config";
+	import { sleep } from "$lib/util/common";
 
 	let {
 		activeArea = $bindable(),
@@ -28,6 +38,7 @@
 		loadedAreas.selected ? loadedAreas.selected.every((d) => d === true) : false
 	);
 	let overwriteAreas = $state(false);
+	let processing = $state(null); // null when idle, or { label, current?, total? } while busy
 
 	let selectedArea = $state();
 
@@ -46,13 +57,24 @@
 		areaEvent({ type: "manage-areas", label: "Load area", area: $activeArea?.properties });
 	}
 
-	function loadNewArea(area, sendEvent = true) {
-		$activeArea = parseGeoJSON(area, centroids, loadedAreas?.isBNG);
-		updateSelection($activeArea);
-		modal.confirmDialog();
-		loadedAreas = { status: null };
-		if (sendEvent)
-			areaEvent({ type: "manage-areas", label: "Load area", area: $activeArea?.properties });
+	async function loadNewArea(area, sendEvent = true) {
+		const isBNG = loadedAreas?.isBNG; // captured before any await, so a later closeFile() can't affect it
+		processing = { label: "Processing area..." };
+		try {
+			await sleep(); // yield so `processing` actually paints before the synchronous parse below
+			$activeArea = parseGeoJSON(area, centroids, isBNG);
+			updateSelection($activeArea);
+			modal.confirmDialog();
+			loadedAreas = { status: null };
+			if (sendEvent)
+				areaEvent({
+					type: "manage-areas",
+					label: "Load area",
+					area: $activeArea?.properties
+				});
+		} finally {
+			processing = null;
+		}
 	}
 
 	function findMatchId(area) {
@@ -64,30 +86,68 @@
 			: Object.values($savedAreas).find((d) => d.properties.areacd === code)?.id || null;
 	}
 
-	function saveNewArea(area, isBNG, sendEvent = true) {
+	function saveNewAreaInner(area, isBNG) {
+		// The actual parse+store work, shared by saveNewArea() and the bulk loop below, neither of
+		// which should pay for a second nested processing/sleep() when the caller already manages it
 		let id = overwriteAreas ? findMatchId(area) : null;
 		if (!id) {
 			$savedAreasLastId += 1;
 			id = $savedAreasLastId;
 		}
-		const parsedArea = parseGeoJSON(area, centroids, loadedAreas?.isBNG);
+		const parsedArea = parseGeoJSON(area, centroids, isBNG);
 		parsedArea.id = id;
 		$savedAreas[id] = parsedArea;
-		if (sendEvent)
-			areaEvent({ type: "manage-areas", label: "Save area", area: $activeArea?.properties });
 	}
 
-	function saveSelectedNewAreas() {
-		for (const area of loadedAreas.areas.filter((d, i) => loadedAreas.selected[i])) {
-			saveNewArea(area, loadedAreas?.isBNG, false);
+	async function saveNewArea(area, isBNG, sendEvent = true) {
+		processing = { label: "Saving area..." };
+		try {
+			await sleep();
+			saveNewAreaInner(area, isBNG ?? loadedAreas?.isBNG);
+			if (sendEvent)
+				areaEvent({
+					type: "manage-areas",
+					label: "Save area",
+					area: $activeArea?.properties
+				});
+		} finally {
+			processing = null;
 		}
-		areaEvent({ type: "manage-areas", label: "Load multiple areas" });
-		window.location.hash = "#saved-areas";
-		loadedAreas = { status: null };
+	}
+
+	async function saveSelectedNewAreas() {
+		const selectedAreas = loadedAreas.areas.filter((d, i) => loadedAreas.selected[i]);
+		const isBNG = loadedAreas?.isBNG;
+		let skipped = 0;
+		processing = { label: "Saving areas", current: 0, total: selectedAreas.length };
+		try {
+			for (const area of selectedAreas) {
+				processing.current += 1; // mutating the $state object's field is itself reactive
+				await sleep();
+				try {
+					saveNewAreaInner(area, isBNG);
+				} catch (err) {
+					console.warn(err); // one bad feature shouldn't lose the rest of the batch
+					skipped += 1;
+				}
+			}
+			areaEvent({ type: "manage-areas", label: "Load multiple areas" });
+			window.location.hash = "#saved-areas";
+			loadedAreas = { status: null };
+			if (skipped) {
+				processing = {
+					label: `Saved ${selectedAreas.length - skipped} of ${selectedAreas.length} areas (${skipped} could not be read)`,
+					done: true
+				};
+			}
+		} finally {
+			if (!skipped) processing = null;
+		}
 	}
 
 	function closeFile() {
 		loadedAreas = { status: null };
+		processing = null;
 	}
 
 	function toggleSelectAll() {
@@ -106,6 +166,7 @@
 	onOpen={() => null}
 	onConfirm={() => null}
 	onCancel={() => null}
+	onClose={closeFile}
 >
 	<Tabs>
 		{#if mode === "build" && areasList}
@@ -257,29 +318,31 @@
 						</tbody>
 					</table>
 				</div>
-				<Button
-					variant="secondary"
-					icon="download"
-					small
-					on:click={() =>
-						downloadArea(
-							featureCollection(Object.values($savedAreas)),
-							`custom_areas_${new Date().toISOString().slice(0, 10)}`
-						)}>Download all areas</Button
-				>
-				<ConfirmButton
-					variant="primary"
-					icon="delete"
-					color="#d0021b"
-					small
-					onConfirm={() => {
-						$savedAreas = {};
-						areaEvent({
-							type: "manage-areas",
-							label: "Delete all areas"
-						});
-					}}>Delete all areas</ConfirmButton
-				>
+				<div class="button-row">
+					<Button
+						variant="secondary"
+						icon="download"
+						small
+						on:click={() =>
+							downloadArea(
+								featureCollection(Object.values($savedAreas)),
+								`custom_areas_${new Date().toISOString().slice(0, 10)}`
+							)}>Download all areas</Button
+					>
+					<ConfirmButton
+						variant="primary"
+						icon="delete"
+						color="#d0021b"
+						small
+						onConfirm={() => {
+							$savedAreas = {};
+							areaEvent({
+								type: "manage-areas",
+								label: "Delete all areas"
+							});
+						}}>Delete all areas</ConfirmButton
+					>
+				</div>
 			{:else}
 				<p>
 					No saved areas available. Areas will appear here after you <a
@@ -302,8 +365,32 @@
 				accept=".geojson,.json"
 				style:display="none"
 				bind:this={uploader}
-				oninput={async () => (loadedAreas = await uploadAreas(uploader))}
+				oninput={async () => {
+					processing = { label: "Reading file..." };
+					loadedAreas = await uploadAreas(uploader);
+					uploader.value = "";
+					processing = null;
+				}}
 			/>
+			{#if processing?.done}
+				<p>{processing.label}</p>
+			{:else if processing}
+				<Spinner
+					inline
+					message={processing.total
+						? `${processing.label} (${processing.current} of ${processing.total})...`
+						: processing.label}
+				/>
+			{/if}
+			{#if loadedAreas.truncatedCount}
+				<Notice mode="warning">
+					This file included {loadedAreas.totalCount.toLocaleString("en-GB")} areas, which is
+					more than this tool can process in one upload. The first {loadedAreas.areas.length.toLocaleString(
+						"en-GB"
+					)} are shown here; {loadedAreas.truncatedCount.toLocaleString("en-GB")} have been
+					left out.
+				</Notice>
+			{/if}
 			{#if loadedAreas.status === "single"}
 				{@const area = loadedAreas.areas[0]}
 				<p>Uploaded file includes one valid area.</p>
@@ -311,23 +398,40 @@
 					cls="ons-u-mb-2xs"
 					label="Edit area name"
 					value={area.properties[loadedAreas.nameKey]}
+					disabled={!!processing}
 				/>
 				<Checkbox
 					label="Overwrite existing on save"
 					bind:checked={overwriteAreas}
+					disabled={!!processing}
 					compact
 				/>
-				<Button small on:click={() => loadNewArea(area)}>Select on map</Button>
-				<Button variant="secondary" icon="save" on:click={() => saveNewArea(area)} small
-					>Add to saved areas</Button
-				>
-				<Button variant="secondary" icon="cross" small on:click={closeFile}
-					>Close file</Button
-				>
+				<div class="button-row">
+					<Button small disabled={!!processing} on:click={() => loadNewArea(area)}
+						>Select on map</Button
+					>
+					<Button
+						variant="secondary"
+						icon="save"
+						disabled={!!processing}
+						on:click={() => saveNewArea(area)}
+						small>Add to saved areas</Button
+					>
+					<Button
+						variant="secondary"
+						icon="cross"
+						small
+						disabled={!!processing}
+						on:click={closeFile}>Close file</Button
+					>
+				</div>
 			{:else if loadedAreas.status === "multi"}
-				<p>
-					Uploaded file includes {loadedAreas.areas.length.toLocaleString("en-GB")} valid areas.
-				</p>
+				{#if !loadedAreas.truncatedCount}
+					<p>
+						Uploaded file includes {loadedAreas.areas.length.toLocaleString("en-GB")} valid
+						areas.
+					</p>
+				{/if}
 				<div class="saved-areas-container">
 					<table class="saved-areas">
 						<thead>
@@ -345,6 +449,7 @@
 											label={area.properties?.[loadedAreas.nameKey] ||
 												defaultAreaName}
 											bind:checked={loadedAreas.selected[i]}
+											disabled={!!processing}
 											compact
 										/></td
 									>
@@ -352,6 +457,7 @@
 									<td class="align-right"
 										><Button
 											variant="secondary"
+											disabled={!!processing}
 											on:click={() => loadNewArea(area)}
 											small>Select on map</Button
 										></td
@@ -365,20 +471,38 @@
 					label="Select all areas"
 					bind:checked={selectAll}
 					on:change={toggleSelectAll}
+					disabled={!!processing}
 					compact
 				/>
-				<Checkbox label="Overwrite duplicate areas" bind:checked={overwriteAreas} compact />
-				<Button variant="primary" icon="save" small on:click={saveSelectedNewAreas}
-					>Save selected areas</Button
-				>
-				<Button variant="secondary" icon="cross" small on:click={closeFile}
-					>Close file</Button
-				>
+				<Checkbox
+					label="Overwrite duplicate areas"
+					bind:checked={overwriteAreas}
+					disabled={!!processing}
+					compact
+				/>
+				<div class="button-row">
+					<Button
+						variant="primary"
+						icon="save"
+						small
+						disabled={!!processing}
+						on:click={saveSelectedNewAreas}>Save selected areas</Button
+					>
+					<Button
+						variant="secondary"
+						icon="cross"
+						small
+						disabled={!!processing}
+						on:click={closeFile}>Close file</Button
+					>
+				</div>
 			{:else if loadedAreas.status === "invalid"}
 				<p>Uploaded file did not contain valid Polygon or MultiPolygon features.</p>
-				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
-					>Upload a GeoJSON file</Button
-				>
+				<div class="button-row">
+					<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
+						>Upload a GeoJSON file</Button
+					>
+				</div>
 			{:else}
 				<p>
 					Upload a file previously saved from this tool, or any other valid GeoJSON file
@@ -386,9 +510,11 @@
 						href="#saved-areas">previously saved areas</a
 					>.
 				</p>
-				<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
-					>Upload a GeoJSON file</Button
-				>
+				<div class="button-row">
+					<Button variant="primary" icon="upload" small on:click={() => uploader.click()}
+						>Upload a GeoJSON file</Button
+					>
+				</div>
 				<div>
 					<small
 						>*GeoJSON files must be saved using longitude/latitude (WGS 84) or British
@@ -401,9 +527,19 @@
 </Modal>
 
 <style>
+	/* The tab panel is a flex column (see Modal.svelte), so without this, sibling buttons that used
+	   to sit side by side in normal flow would each take their own full-width row instead */
+	.button-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+	}
 	.saved-areas-container {
 		overflow: auto;
-		max-height: calc(100vh - 400px);
+		flex: 1 1 auto;
+		min-height: 150px;
 		margin: 0.5em 0 1em;
 	}
 	table.saved-areas {

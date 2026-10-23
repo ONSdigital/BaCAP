@@ -63,4 +63,39 @@ describe("Centroids", () => {
 	it("ignores unknown OA codes when summing population", () => {
 		expect(centroids.population(new Set(["E00000001", "E00999999"]))).toBe(100);
 	});
+
+	function square(cx, cy, halfSize) {
+		return {
+			type: "Polygon",
+			coordinates: [
+				[
+					[cx - halfSize, cy - halfSize],
+					[cx + halfSize, cy - halfSize],
+					[cx + halfSize, cy + halfSize],
+					[cx - halfSize, cy + halfSize],
+					[cx - halfSize, cy - halfSize]
+				]
+			],
+			bbox: [cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize]
+		};
+	}
+
+	it("finds the OA codes whose centroids fall inside a polygon", () => {
+		// All English OAs in the fixture sit at (0, 52); both Welsh OAs sit at (-3, 52)
+		expect([...centroids.inPolygon(square(0, 52, 1), "oa")].sort()).toEqual(englandOAs.sort());
+		expect([...centroids.inPolygon(square(-3, 52, 1), "oa")].sort()).toEqual([
+			"W00000001",
+			"W00000002"
+		]);
+	});
+
+	it("finds the LSOA codes whose centroids fall inside a polygon", () => {
+		expect([...centroids.inPolygon(square(0, 52, 1), "lsoa")].sort()).toEqual(
+			regions.map((_, i) => `E0100000${i + 1}`).sort()
+		);
+	});
+
+	it("returns no codes for a polygon that contains no centroids", () => {
+		expect(centroids.inPolygon(square(10, 10, 1), "oa").size).toBe(0);
+	});
 });

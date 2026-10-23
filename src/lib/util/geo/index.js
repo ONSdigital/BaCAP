@@ -7,10 +7,12 @@ import { roundAll, slugify } from "../common/index.js";
 import { download } from "../io/index.js";
 import { snapshot } from "../state/index.js";
 import { defaultAreaName } from "../../config/index.js";
+import { getNameKey, getCodeKey } from "./upload.js";
 
 export { default as Centroids } from "./centroids.js";
 export { default as MaplibreDraw } from "./draw-lib.js";
 export { default as Polygon } from "./polygon.svelte.js";
+export * from "./upload.js";
 
 export function feature(geometry, properties = {}) {
 	return { type: "Feature", geometry, properties };
@@ -82,24 +84,6 @@ export function getProperties(geojson) {
 		: geojson.type === "FeatureCollection"
 			? geojson?.features?.[0]?.properties
 			: null;
-}
-
-export function getNameKey(keys) {
-	const prefs = ["areanm", "name", "nm", "areacd"];
-	for (const pref of prefs) {
-		const match = keys.find((key) => key.toLowerCase().includes(pref));
-		if (match) return match;
-	}
-	return null;
-}
-
-export function getCodeKey(keys) {
-	const prefs = ["areacd", "code", "cd", "id"];
-	for (const pref of prefs) {
-		const match = keys.find((key) => key.toLowerCase().includes(pref));
-		if (match) return match;
-	}
-	return null;
 }
 
 export function parseGeoJSON(geojson, centroids, isBNG = false) {
@@ -179,53 +163,8 @@ export function makeFilename(activeArea, extension = null) {
 	return slugify(name) + ext;
 }
 
-export function uploadAreas(uploader) {
-	return new Promise((resolve) => {
-		let file = uploader?.files?.[0];
-		if (!file) resolve({ status: "invalid" });
-
-		const reader = new FileReader();
-
-		reader.onload = (e) => {
-			try {
-				const data = JSON.parse(e.target.result);
-				const features =
-					data.type === "FeatureCollection"
-						? data.features
-						: data.type === "Feature"
-							? [data]
-							: [];
-				const areas = features.filter((d) =>
-					["Polygon", "MultiPolygon"].includes(d.geometry?.type)
-				);
-				const status = !areas.length ? "empty" : areas.length > 1 ? "multi" : "single";
-				const keys = status === "empty" ? null : Object.keys(areas[0].properties);
-				const isBNG = String(data?.crs?.properties?.name)
-					.toUpperCase()
-					.includes("EPSG:27700");
-				resolve({
-					status,
-					areas,
-					isBNG,
-					selected: areas.map(() => false),
-					nameKey: keys ? getNameKey(keys) : null,
-					codeKey: keys ? getCodeKey(keys) : null
-				});
-			} catch (err) {
-				console.warn(err);
-				resolve({ status: "invalid" });
-			}
-		};
-		reader.readAsText(file);
-	});
-}
-
 // Accepts an area Feature or a name string, and always returns a string
 export function getName(area, fallback = defaultAreaName) {
 	if (typeof area === "string") return area || fallback;
 	return area?.properties?.areanm || fallback;
-}
-
-export function isValidAreaCode(code) {
-	return !!code.match(/^[EKNSW]\d{8}$/);
 }

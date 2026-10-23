@@ -1,3 +1,5 @@
+import KDBush from "kdbush";
+import bbox from "@turf/bbox";
 import inPolygon from "@turf/boolean-point-in-polygon";
 import { geogroups, geolevelsLookup } from "$lib/config/index.js";
 
@@ -13,6 +15,14 @@ function makeFeatureCollection(data, key, includePopulation = true) {
 			geometry: { type: "Point", coordinates: [d.lng, d.lat] }
 		}))
 	};
+}
+
+// Builds a static spatial index over a FeatureCollection's points, for fast bounding-box queries
+function makeIndex(features) {
+	const index = new KDBush(features.length);
+	for (const ft of features) index.add(ft.geometry.coordinates[0], ft.geometry.coordinates[1]);
+	index.finish();
+	return index;
 }
 
 function isSmallerThanGeoLevel(code, levelKey) {
@@ -50,7 +60,15 @@ export default class Centroids {
 				children[d[cols[i]]].add(d[cols[i - 1]]);
 			}
 		}
-		this.#data = { oa, lsoa, lookup, parents, children };
+		this.#data = {
+			oa,
+			lsoa,
+			lookup,
+			parents,
+			children,
+			oaIndex: makeIndex(oa.features),
+			lsoaIndex: makeIndex(lsoa.features)
+		};
 	}
 	get data() {
 		return this.#data;
@@ -106,9 +124,16 @@ export default class Centroids {
 		return new Set(expanded);
 	}
 	inPolygon(polygon, level = "oa") {
-		// Returns the area codes of the centroids within a GeoJSON polygon
-		const features = this.#data[level].features.filter((ft) => inPolygon(ft, polygon));
-		return new Set(features.map((ft) => ft.properties.areacd));
+		// Returns the area codes of the centroids within a GeoJSON polygon. Narrows to the polygon's
+		// bounding box via a spatial index first, since testing every one of ~225k centroids exactly
+		// (as this used to do) is unnecessary when most are nowhere near the shape.
+		const { features } = this.#data[level];
+		const index = this.#data[`${level}Index`];
+		// Every real caller already sets .bbox (DrawMap/Polygon, parseGeoJSON) - this is a safety net
+		const [minX, minY, maxX, maxY] = polygon.bbox || bbox(polygon);
+		const candidates = index.range(minX, minY, maxX, maxY);
+		const matched = candidates.filter((i) => inPolygon(features[i], polygon));
+		return new Set(matched.map((i) => features[i].properties.areacd));
 	}
 	population(cds) {
 		// Gets the total population of the selected OAs

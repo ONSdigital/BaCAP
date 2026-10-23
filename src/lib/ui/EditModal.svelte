@@ -140,26 +140,28 @@
 				</tbody>
 			</table>
 		</div>
-		<Button
-			variant="secondary"
-			icon="download"
-			small
-			on:click={() =>
-				downloadArea(
-					featureCollection(Object.values($savedAreas)),
-					`custom_areas_${new Date().toISOString().slice(0, 10)}`
-				)}>Download all areas</Button
-		>
-		<ConfirmButton
-			variant="primary"
-			icon="delete"
-			color="#d0021b"
-			small
-			onConfirm={() => {
-				$savedAreas = {};
-				areaEvent({ type: "manage-areas", label: "Delete all areas" });
-			}}>Delete all areas</ConfirmButton
-		>
+		<div class="button-row">
+			<Button
+				variant="secondary"
+				icon="download"
+				small
+				on:click={() =>
+					downloadArea(
+						featureCollection(Object.values($savedAreas)),
+						`custom_areas_${new Date().toISOString().slice(0, 10)}`
+					)}>Download all areas</Button
+			>
+			<ConfirmButton
+				variant="primary"
+				icon="delete"
+				color="#d0021b"
+				small
+				onConfirm={() => {
+					$savedAreas = {};
+					areaEvent({ type: "manage-areas", label: "Delete all areas" });
+				}}>Delete all areas</ConfirmButton
+			>
+		</div>
 	{:else}
 		<p>
 			No saved areas available. Visit the <a href="#upload-areas">Create an area</a> page to define
@@ -169,9 +171,19 @@
 </Modal>
 
 <style>
+	/* Modal's content area is a flex column, so without this, sibling buttons that used to sit side
+	   by side in normal flow would each take their own full-width row instead */
+	.button-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		flex-shrink: 0;
+	}
 	.saved-areas-container {
 		overflow: auto;
-		max-height: calc(100vh - 400px);
+		flex: 1 1 auto;
+		min-height: 150px;
 		margin: 0.5em 0 1em;
 	}
 	table.saved-areas {
