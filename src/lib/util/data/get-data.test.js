@@ -71,6 +71,29 @@ describe("makeUrlFn", () => {
 		expect(urlFn.length).toBe(base.length);
 		expect(urlFn.make(["E00000001", "E00000002"])).toBe(base + "E00000001,E00000002");
 	});
+
+	it("takes the cellCode cells from measures and fixes the real measures param when measuresCell is set", () => {
+		const table = {
+			tableCode: "NM_162_1",
+			cellCode: "measure",
+			measuresCell: 20100,
+			measures: [
+				{ label: "Value", cell: 1 },
+				{ label: "Percent", cell: 2 }
+			],
+			categories: [{ label: "Claimant count" }],
+			dates: ["2026-09"]
+		};
+
+		const urlFn = makeUrlFn(table);
+		const base =
+			"https://www.nomisweb.co.uk/api/v01/dataset/NM_162_1.data.csv?" +
+			"date=2026-09&measure=1,2&measures=20100" +
+			"&select=geography_code,date,measure,measure_name,measures,obs_value" +
+			"&geography=";
+
+		expect(urlFn.make([])).toBe(base);
+	});
 });
 
 describe("getMaxAreaCodes", () => {
@@ -367,6 +390,44 @@ describe("parseData", () => {
 				category: "Female",
 				measure: "Value",
 				value: 90
+			}
+		]);
+	});
+
+	it("reads the measure label from the cellCode column when measuresCell is set", () => {
+		const table = {
+			cellCode: "measure",
+			measuresCell: 20100,
+			measures: [
+				{ label: "Value", cell: 1 },
+				{ label: "Percent", cell: 2 }
+			],
+			categories: [{ label: "Claimant count" }]
+		};
+		const areas = [{ properties: { areacd: "E00000001", areanm: "Area One" } }];
+		// Rows deliberately out of order: Percent (cell 2) before Value (cell 1)
+		const csv = [
+			"GEOGRAPHY_CODE,DATE,MEASURE,MEASURE_NAME,MEASURES,OBS_VALUE",
+			"E00000001,2026-09,2,Rate,20100,4.5",
+			"E00000001,2026-09,1,Count,20100,320"
+		].join("\n");
+
+		expect([...parseData(table, areas, csv)]).toEqual([
+			{
+				areacd: "E00000001",
+				areanm: "Area One",
+				date: "2026-09",
+				category: "Claimant count",
+				measure: "Value",
+				value: 320
+			},
+			{
+				areacd: "E00000001",
+				areanm: "Area One",
+				date: "2026-09",
+				category: "Claimant count",
+				measure: "Percent",
+				value: 4.5
 			}
 		]);
 	});

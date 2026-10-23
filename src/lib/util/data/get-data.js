@@ -24,8 +24,20 @@ export function makeUrlFn(table) {
 
 	const params = {
 		date: table.dates,
-		...(table.cellCode ? { [table.cellCode]: makeCells(table.categories) } : {}),
-		measures: filterMeasures(table.measures).map((d) => d.cell),
+		// A handful of Nomis tables (eg. claimant count) have no real Value/Percent measures
+		// split, and instead distinguish them via their own "measure" cellCode dimension.
+		// `measuresCell` flags this: the cellCode cells come from `measures`, not `categories`,
+		// and the real Nomis measures param is fixed rather than derived from `measures`.
+		...(table.cellCode
+			? {
+					[table.cellCode]: table.measuresCell
+						? table.measures.map((d) => d.cell).join(",")
+						: makeCells(table.categories)
+				}
+			: {}),
+		measures: table.measuresCell
+			? [table.measuresCell]
+			: filterMeasures(table.measures).map((d) => d.cell),
 		select: [
 			"geography_code",
 			"date",
@@ -144,12 +156,17 @@ export function makeRowParser(table, areas) {
 	const getCategory = categoryLookup
 		? (d) => categoryLookup[d[categoryCol]] || categoryLookup[d[categoryNameCol]]
 		: () => table.categories[0].label;
+	// See the note on `measuresCell` in makeUrlFn: when set, the measure label comes from the
+	// cellCode column rather than Nomis's own (fixed) measures column.
+	const getMeasure = table.measuresCell
+		? (d) => measureLookup[d[categoryCol]]
+		: (d) => measureLookup[d.MEASURES];
 	return (d) => ({
 		areacd: d.GEOGRAPHY_CODE,
 		areanm: nameLookup[d.GEOGRAPHY_CODE],
 		date: d.DATE,
 		category: getCategory(d),
-		measure: measureLookup[d.MEASURES],
+		measure: getMeasure(d),
 		value: +d.OBS_VALUE
 	});
 }
