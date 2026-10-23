@@ -2,7 +2,7 @@
 // it can be unit tested directly without pulling in turf/proj4 or the io/analytics module chain that
 // the rest of util/geo drags in via ../io/index.js.
 
-export const maxUploadAreas = 100; // Areas needing an OA/LSOA centroid match, per upload
+export const maxUploadAreas = 50; // Areas needing an OA/LSOA centroid match, per upload
 
 export function getNameKey(keys) {
 	const prefs = ["areanm", "name", "nm", "areacd"];
