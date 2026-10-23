@@ -21,8 +21,8 @@ const config = {
 			handleMissingId: "warn"
 		},
 		paths: {
-			base,
-			relative: false
+			...(base != null ? { base } : {}),
+			relative: production
 		}
 	},
 	compilerOptions: {

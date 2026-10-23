@@ -1,4 +1,4 @@
-import { measures } from "../../config/index.js";
+import { baseUrl, measures } from "../../config/index.js";
 import { btoaUtf8 } from "../io/index.js";
 
 export { default as getData } from "./get-data.js";
@@ -35,7 +35,7 @@ export function makeEmbedHash(
 }
 
 export function makeEmbedUrl(embedHash = "") {
-	return `https://www.ons.gov.uk/visualisations/customprofiles/profile/#${embedHash}`;
+	return `${baseUrl}/profile/#${embedHash}`;
 }
 
 export function makeEmbedCode(embedHash) {
