@@ -40,9 +40,9 @@ const oaCompressed = compressData(oaData, oaColumnTypes);
 const lsoaCompressed = compressData(lsoaData, lsoaColumnTypes);
 const placesCompressed = compressData(placesList, placesColumnTypes);
 
-fs.writeFileSync(output("oa21-data"), JSON.stringify(oaCompressed));
-console.log(`Wrote ${output("oa21-lookup")}`);
+fs.writeFileSync(output("oa21-centroids"), JSON.stringify(oaCompressed));
+console.log(`Wrote ${output("oa21-centroids")}`);
 fs.writeFileSync(output("lsoa21-centroids"), JSON.stringify(lsoaCompressed));
-console.log(`Wrote ${output("lsoa21-lookup")}`);
+console.log(`Wrote ${output("lsoa21-centroids")}`);
 fs.writeFileSync(output("places-list"), JSON.stringify(placesCompressed));
 console.log(`Wrote ${output("places-list")}`);

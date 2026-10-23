@@ -94,7 +94,7 @@ Two kinds of reference data are loaded:
 | -------------------------------------- | ------------------------------------------ | -------------------- |
 | Topic/dataset definitions              | `static/data/topics.json` (edited by hand) | root `+layout.js`    |
 | Areas list for search                  | `static/data/places-list.json`             | `getAreasList()`     |
-| OA hierarchy, centroids and population | `static/data/oa21-data.json`               | `getOAdata()`        |
+| OA hierarchy, centroids and population | `static/data/oa21-centroids.json`          | `getOAdata()`        |
 | LSOA centroids                         | `static/data/lsoa21-centroids.json`        | `getLSOAcentroids()` |
 | Best-fit lookups for named areas       | `static/data/bestfit-lookup.json`          | `getBestFits()`      |
 | Region/combined authority children     | `static/data/rgn-cauth-children.json`      | `getChildLookup()`   |
@@ -127,8 +127,8 @@ Best-fit uses a **centroid-in-polygon** rule: a small area is included if its ce
 the shape. The rule is implemented by the `Centroids` class (`src/lib/util/geo/centroids.js`):
 
 1. On startup, `Centroids` converts the OA and LSOA centroids into GeoJSON point collections. From
-   the columns of `oa21-data.json` (`oa21cd → lsoa21cd → msoa21cd → ltla21cd → rgn21cd`) it also
-   builds a `parents` map and a `children` map covering the full hierarchy.
+   the columns of `oa21-centroids.json` (`oa21cd → lsoa21cd → msoa21cd → ltla21cd → rgn21cd`) it
+   also builds a `parents` map and a `children` map covering the full hierarchy.
 2. When the user finishes drawing a polygon or clicks with the radius tool, `DrawMap.applyShape()`
    calls `centroids.inPolygon(shape, "oa")` and `centroids.inPolygon(shape, "lsoa")`. Each returns
    the `Set` of codes whose centroids fall inside the shape, found with

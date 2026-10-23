@@ -94,7 +94,7 @@ export async function getOAdata(forceRefresh) {
 		lat: d[6][i],
 		population: d[7][i]
 	});
-	return await loadData("oaData", "/data/oa21-data.json", forceRefresh, fn);
+	return await loadData("oaData", "/data/oa21-centroids.json", forceRefresh, fn);
 }
 
 export async function getLSOAcentroids(forceRefresh) {
