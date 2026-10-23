@@ -139,12 +139,18 @@
 			</Card>
 		{/if}
 		{#each tables as tab}
+			{@const unit = tab.meta.unit}
 			<Card title={tab.meta.label} mode="featured" {colCls}>
 				<div class="card-subtitle">
 					{tab.meta.dateLabel || "2021"}
 				</div>
 				{#if tab.meta.chart === "number"}
-					<BigNumber data={tab.data} unit={tab.meta.unit} />
+					<BigNumber
+						data={tab.data}
+						unit={!["%", "£"].includes(unit) ? unit : null}
+						prefix={unit === "£" ? unit : null}
+						suffix={unit === "%" ? unit : null}
+					/>
 				{:else if tab.meta.chart === "profile"}
 					<ProfileChart data={tab.data} />
 				{:else if !tab.meta.chart}

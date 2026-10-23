@@ -139,7 +139,9 @@ function formatTable(table, name, compName) {
 				[`${name} (%)`]: null,
 				...(compName ? { [`${compName} (%)`]: null } : {}),
 				Unit:
-					table.meta.unit === "%" ? table.meta.base.replace("all ", "") : table.meta.unit,
+					table.meta.unit === "%"
+						? table.meta.base.replace("all ", "").split(" ")[0]
+						: table.meta.unit,
 				"Base population": table.meta.base,
 				Source: table.meta.source,
 				Geography: table.meta.geography === "lsoa21" ? "LSOA" : "Output Area"

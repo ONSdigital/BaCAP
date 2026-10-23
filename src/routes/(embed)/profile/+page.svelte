@@ -120,6 +120,7 @@
 			</Card>
 		{/if}
 		{#each tables as tab}
+			{@const unit = tab.meta.unit}
 			{@const dateFormat = makeDateFormatter(tab.meta.dateFormat)}
 			<Card title={tab.meta.label} mode="featured" {colCls}>
 				<div class="card-subtitle">
@@ -128,7 +129,12 @@
 				{#if !tab.data.length}
 					<Notice mode="warning">Failed to load data</Notice>
 				{:else if tab.meta.chart === "number"}
-					<BigNumber data={tab.data} unit={tab.meta.unit} />
+					<BigNumber
+						data={tab.data}
+						unit={!["%", "£"].includes(unit) ? unit : null}
+						prefix={unit === "£" ? unit : null}
+						suffix={unit === "%" ? unit : null}
+					/>
 				{:else if tab.meta.chart === "line"}
 					<LineChart data={tab.data} {dateFormat} />
 				{:else if tab.meta.chart === "profile"}
