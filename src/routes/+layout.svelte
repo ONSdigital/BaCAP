@@ -46,6 +46,7 @@
 
 <svelte:head>
 	<title>{page.data.contentTitle}</title>
+	<link rel="canonical" href="{baseUrl}{page?.url?.pathname}" />
 	<meta
 		name="description"
 		content="Create your own data profile for local areas with data for England and Wales. Data topics include population, age, sex, ethnicity, religion, the work people do, and the homes they live in."
@@ -60,7 +61,6 @@
 		property="og:description"
 		content="Create your own data profile for local areas with data for England and Wales."
 	/>
-	<title>Build a custom area profile - ONS</title>
 </svelte:head>
 
 {#if page?.route?.id?.includes?.("embed")}
