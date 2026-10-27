@@ -5,18 +5,18 @@
 export const maxUploadAreas = 50; // Areas needing an OA/LSOA centroid match, per upload
 
 export function getNameKey(keys) {
-	const prefs = ["areanm", "name", "nm", "areacd"];
-	for (const pref of prefs) {
-		const match = keys.find((key) => key.toLowerCase().includes(pref));
+	const patterns = [/^areanm$/i, /\w+\d{2}nm$/i, /name$/i, /^areacd$/i, /\w+\d{2}cd$/i];
+	for (const pattern of patterns) {
+		const match = keys.find((key) => pattern.test(key));
 		if (match) return match;
 	}
 	return null;
 }
 
 export function getCodeKey(keys) {
-	const prefs = ["areacd", "code", "cd", "id"];
-	for (const pref of prefs) {
-		const match = keys.find((key) => key.toLowerCase().includes(pref));
+	const patterns = [/^areacd$/i, /\w+\d{2}cd$/i, /code$/i, /^id$/i];
+	for (const pattern of patterns) {
+		const match = keys.find((key) => pattern.test(key));
 		if (match) return match;
 	}
 	return null;
