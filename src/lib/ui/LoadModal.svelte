@@ -408,7 +408,7 @@
 				/>
 				<div class="button-row">
 					<Button small disabled={!!processing} on:click={() => loadNewArea(area)}
-						>Select on map</Button
+						>{mode === "draw" ? "Select on map" : "Select area"}</Button
 					>
 					<Button
 						variant="secondary"
