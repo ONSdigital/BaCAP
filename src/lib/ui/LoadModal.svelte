@@ -459,7 +459,10 @@
 											variant="secondary"
 											disabled={!!processing}
 											on:click={() => loadNewArea(area)}
-											small>Select on map</Button
+											small
+											>{mode === "draw"
+												? "Select on map"
+												: "Select area"}</Button
 										></td
 									>
 								</tr>
