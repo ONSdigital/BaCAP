@@ -129,18 +129,26 @@ export function simplifyGeo(geometry, maxLength = 5000) {
 	let length = JSON.stringify(simple).length;
 
 	while (length >= maxLength && precision >= 2) {
+		const minArea = area(simple) * Math.min(Math.pow(10, -precision), 0.01);
+		const isLarge = (rings) => area({ type: "Polygon", coordinates: rings }) > minArea;
+		// Holes are filtered too, as zero-area slivers (eg. left over from dissolving boundaries in GIS
+		// software) make simplify throw "invalid polygon, fewer than 4 points"
+		const filterHoles = (rings) => [rings[0], ...rings.slice(1).filter((d) => isLarge([d]))];
 		if (simple.type === "MultiPolygon") {
-			const polyArea = area(simple);
-			simple.coordinates = simple.coordinates.filter(
-				(d) =>
-					area({ type: "Polygon", coordinates: d }) >
-					polyArea * Math.min(Math.pow(10, -precision), 0.01)
-			);
+			simple.coordinates = simple.coordinates.filter(isLarge).map(filterHoles);
+		} else if (simple.type === "Polygon") {
+			simple.coordinates = filterHoles(simple.coordinates);
 		}
-		simple = simplify(simple, {
-			highQuality: true,
-			tolerance: Math.pow(10, -precision)
-		});
+		try {
+			simple = simplify(simple, {
+				highQuality: true,
+				tolerance: Math.pow(10, -precision)
+			});
+		} catch (err) {
+			// Keep the last valid simplification rather than breaking the profile
+			console.warn("Could not simplify geometry further", err);
+			break;
+		}
 		simple.coordinates = roundAll(simple.coordinates, Math.ceil(precision));
 		length = JSON.stringify(simple).length;
 		precision -= 0.5;
