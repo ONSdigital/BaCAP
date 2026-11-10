@@ -16,7 +16,7 @@ none of these three properties.
 ```js
 {
 	event: "pageView",
-	product: "bacap",
+	product: "advanced-content",
 	contentTitle: "Build a profile: Build a custom area profile - ONS",
 	contentType: "bacap",
 	pageUrl: "https://www.ons.gov.uk/visualisations/customprofiles/build/",
@@ -161,8 +161,8 @@ saved.
 ```js
 {
 	event: "fileDownload",
-	extension: "geojson",
-	filename: "oxford.geojson",
+	fileExtension: "geojson",
+	fileName: "oxford.geojson",
 	linkText: "Download area as GeoJSON",
 	linkDomain: "www.ons.gov.uk",
 	areaCode: "E07000178",

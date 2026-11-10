@@ -50,8 +50,8 @@ export function mapDrawEvent(eventProps = {}) {
 export function downloadEvent(eventProps = {}) {
 	const eventData = {
 		event: "fileDownload",
-		extension: eventProps.format,
-		filename: eventProps.filename,
+		fileExtension: eventProps.format,
+		fileName: eventProps.filename,
 		linkText: eventProps.label,
 		linkDomain: "www.ons.gov.uk",
 		...getAreaProps(eventProps.area)

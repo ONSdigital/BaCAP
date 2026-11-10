@@ -100,7 +100,7 @@ export const geolevelsLookup = Object.fromEntries(geogroups.map((d) => [d.key, d
 export const analyticsId = "GTM-MBCBVQS";
 
 export const analyticsProps = {
-	product: "bacap",
+	product: "advanced-content",
 	contentTitle: "Build a custom area profile",
 	contentType: "bacap"
 };

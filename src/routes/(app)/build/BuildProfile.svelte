@@ -8,7 +8,7 @@
 	import { downloadProfileXLSX, downloadProfileCSV, downloadArea, clip } from "$lib/util/io";
 	import { makeEmbedHash, makeEmbedCode, makeEmbedUrl, getData } from "$lib/util/data";
 	import { simplifyGeo, makeFilename } from "$lib/util/geo";
-	import { embedEvent, printEvent, copyAreaCodesEvent } from "$lib/util/analytics";
+	import { embedEvent, printEvent, copyAreaCodesEvent, downloadEvent } from "$lib/util/analytics";
 
 	let { buildState, topics, selectedTopics, activeArea, comparisonArea, centroids } = $props();
 
@@ -131,6 +131,12 @@
 			onclick={(e) => {
 				e.preventDefault();
 				pymParent?.sendMessage?.("png");
+				downloadEvent({
+					filename: makeFilename($activeArea?.properties, "png"),
+					area: $activeArea?.properties,
+					format: "png",
+					label: `Download area profile as PNG`
+				});
 			}}>PNG</a
 		>
 	</li>
