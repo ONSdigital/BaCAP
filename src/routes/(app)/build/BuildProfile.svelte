@@ -13,6 +13,7 @@
 	let { buildState, topics, selectedTopics, activeArea, comparisonArea, centroids } = $props();
 
 	let pymParent = $state(); // Binding for responsive embed iframe
+	let iframeReady = $state(false); // Set once the iframe has loaded /profile/
 
 	let areaPolygon = $derived($activeArea?.geometry ? simplifyGeo($activeArea.geometry) : null);
 	let compPolygon = $derived(
@@ -66,7 +67,10 @@
 	);
 	$inspect({ tables });
 	$effect(() => {
-		if (pymParent) pymParent.iframe.contentWindow.location.hash = embedHash;
+		// Only update the hash once /profile/ has loaded. Before that, contentWindow is the iframe's
+		// initial about:blank document, and in Safari setting its hash cancels the pending src load,
+		// leaving the iframe blank. The initial hash is already included in the iframe's src.
+		if (pymParent && iframeReady) pymParent.iframe.contentWindow.location.hash = embedHash;
 	});
 
 	async function setConfirmed(type = "oa") {
@@ -83,10 +87,12 @@
 				id: "iframe",
 				title: "Embedded area profile"
 			});
+			pymParent.iframe.addEventListener("load", () => (iframeReady = true), { once: true });
 		}
 		return () => {
 			pymParent?.remove?.();
 			pymParent = null;
+			iframeReady = false;
 		};
 	});
 </script>
