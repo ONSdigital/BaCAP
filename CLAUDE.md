@@ -185,7 +185,7 @@ server-side cache, API proxy, or edge layer — those would require a platform c
 change.
 
 Previews are built automatically per-branch/PR by Vercel (linked from each PR); the
-`main`/production branch's preview is at https://ons-bacap.vercel.app. There's no `vercel.json` or
+`main` branch's preview is at https://ons-bacap.vercel.app. There's no `vercel.json` or
 Vercel-specific adapter in this repo, so Vercel's exact build/base-path configuration lives in its
 own project settings, not here.
 

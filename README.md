@@ -40,7 +40,7 @@ there's no CI/CD workflow here.
 
 Previews are handled by [Vercel](https://vercel.com/), which automatically builds a preview
 deployment for every branch/PR — Vercel posts the preview link as a comment on each pull request.
-The preview of the `main`/production branch is at **https://ons-bacap.vercel.app**.
+The preview of the `main` branch is at **https://ons-bacap.vercel.app**.
 
 ## Testing and linting
 
