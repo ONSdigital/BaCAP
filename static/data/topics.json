@@ -646,7 +646,7 @@
 			{ "label": "Percent", "cell": 2 }
 		],
 		"categories": [{ "label": "Claimant count" }],
-		"dates": ["2026-09"],
+		"dates": ["2026-10"],
 		"miscParams": { "gender": 0, "age": 0 },
 		"unit": "%",
 		"dateFormat": "month",
@@ -680,7 +680,8 @@
 			"2026-06",
 			"2026-07",
 			"2026-08",
-			"2026-09"
+			"2026-09",
+			"2026-10"
 		],
 		"miscParams": { "gender": 0, "age": 0 },
 		"unit": "%",
