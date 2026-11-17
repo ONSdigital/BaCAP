@@ -4,7 +4,7 @@ import difference from "@turf/difference";
 import { getGeometry, feature, featureCollection } from "./index.js";
 
 export default class Polygon {
-	geometry = $state(null);
+	geometry = $state.raw(null); // Always replaced wholesale, never mutated - a deep proxy is pure overhead
 
 	constructor(geojson) {
 		if (!geojson) this.geometry = null;

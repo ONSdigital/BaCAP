@@ -67,7 +67,7 @@
 		processing = { label: "Processing area..." };
 		try {
 			await sleep(); // yield so `processing` actually paints before the synchronous parse below
-			$activeArea = parseGeoJSON(area, centroids, isBNG);
+			$activeArea = parseGeoJSON($state.snapshot(area), centroids, isBNG);
 			updateSelection($activeArea);
 			modal.confirmDialog();
 			loadedAreas = { status: null };
@@ -94,7 +94,7 @@
 			$savedAreasLastId += 1;
 			id = $savedAreasLastId;
 		}
-		const parsedArea = parseGeoJSON(area, centroids, isBNG);
+		const parsedArea = parseGeoJSON($state.snapshot(area), centroids, isBNG);
 		parsedArea.id = id;
 		$savedAreas[id] = parsedArea;
 	}
