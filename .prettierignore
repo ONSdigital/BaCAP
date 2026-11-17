@@ -4,3 +4,13 @@ pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
+
+# Build output
+/build/
+/.svelte-kit/
+
+# Generated/minified data (written by the data:* scripts or third-party sources) - formatting
+# these bloats them and creates huge diffs. topics.json is maintained by hand, so keep it formatted.
+/static/data/*
+!/static/data/topics.json
+/raw_data/

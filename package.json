@@ -14,8 +14,8 @@
 		"data:compress": "node ./scripts/compress-data.js",
 		"data:lookups": "node ./scripts/make-oa-lookups.js && node ./scripts/make-rgn-cauth-children.js",
 		"test": "vitest run",
-		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. .",
-		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
+		"lint": "prettier --check .",
+		"format": "prettier --write ."
 	},
 	"author": "Ahmad Barclay",
 	"license": "MIT",
