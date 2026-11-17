@@ -149,39 +149,17 @@
 				</p>
 			</ToolbarButton>
 
-			<ToolControls slot="controls">
-				<ToolControl id="polygon">
-					<p>
-						Click on the map to draw the nodes (corners) of a polygon. Add your shape to
-						your selection by double-clicking the final corner.
-					</p>
-				</ToolControl>
-				<ToolControl id="circle">
-					<p>
-						Select a radius size and click or tap on the map to add it to your
-						selection.
-					</p>
-					<SliderCombo
-						min={0.1}
-						max={20}
-						step={0.1}
-						bind:value={drawState.radius}
-						autoFocus
-					/>
-				</ToolControl>
-				<ToolControl id="erase">
-					<ButtonGroup name="erase-modes" bind:value={eraseOption}>
-						<ButtonGroupItem value="polygon" label="Erase a polygon" />
-						<ButtonGroupItem value="radius" label="Erase a circle" />
-					</ButtonGroup>
-					{#if eraseOption === "polygon"}
+			{#snippet controls()}
+				<ToolControls>
+					<ToolControl id="polygon">
 						<p>
-							Click on the map to draw the nodes (corners) of a polygon. Remove your
-							shape from your selection by double-clicking the final corner.
+							Click on the map to draw the nodes (corners) of a polygon. Add your
+							shape to your selection by double-clicking the final corner.
 						</p>
-					{:else}
+					</ToolControl>
+					<ToolControl id="circle">
 						<p>
-							Select a radius size and click or tap on the map to remove it from your
+							Select a radius size and click or tap on the map to add it to your
 							selection.
 						</p>
 						<SliderCombo
@@ -191,94 +169,123 @@
 							bind:value={drawState.radius}
 							autoFocus
 						/>
-					{/if}
-				</ToolControl>
-				<ToolControl id="search">
-					<form
-						id="search-form"
-						onsubmit={(e) => {
-							e.preventDefault();
-							if (selectedArea) {
-								runAction("applyShape", [selectedArea, "replace"]);
-								runAction("fitPolygon");
-								areaEvent({
-									type: "search-select",
-									area: selectedArea?.geojson?.properties,
-									label: "Select area"
-								});
-								selectedArea = null;
-							}
-						}}
-					>
-						<AreaSearch bind:value={selectedArea} options={areasList} autoFocus />
-						<div id="search-inputs">
-							<Button type="submit" small disabled={!selectedArea}>Select area</Button
-							>
-							{#if $history?.[0]?.geometry}
-								<Button
-									on:click={() => {
-										if (selectedArea) {
-											runAction("applyShape", [selectedArea, "add"]);
-											runAction("fitPolygon");
-											areaEvent({
-												type: "search-select",
-												area: selectedArea?.geojson?.properties,
-												label: "Add area to selection"
-											});
-											selectedArea = null;
-										}
-									}}
-									small
-									variant="secondary"
-									disabled={!selectedArea}>Add to current selection</Button
+					</ToolControl>
+					<ToolControl id="erase">
+						<ButtonGroup name="erase-modes" bind:value={eraseOption}>
+							<ButtonGroupItem value="polygon" label="Erase a polygon" />
+							<ButtonGroupItem value="radius" label="Erase a circle" />
+						</ButtonGroup>
+						{#if eraseOption === "polygon"}
+							<p>
+								Click on the map to draw the nodes (corners) of a polygon. Remove
+								your shape from your selection by double-clicking the final corner.
+							</p>
+						{:else}
+							<p>
+								Select a radius size and click or tap on the map to remove it from
+								your selection.
+							</p>
+							<SliderCombo
+								min={0.1}
+								max={20}
+								step={0.1}
+								bind:value={drawState.radius}
+								autoFocus
+							/>
+						{/if}
+					</ToolControl>
+					<ToolControl id="search">
+						<form
+							id="search-form"
+							onsubmit={(e) => {
+								e.preventDefault();
+								if (selectedArea) {
+									runAction("applyShape", [selectedArea, "replace"]);
+									runAction("fitPolygon");
+									areaEvent({
+										type: "search-select",
+										area: selectedArea?.geojson?.properties,
+										label: "Select area"
+									});
+									selectedArea = null;
+								}
+							}}
+						>
+							<AreaSearch bind:value={selectedArea} options={areasList} autoFocus />
+							<div id="search-inputs">
+								<Button type="submit" small disabled={!selectedArea}
+									>Select area</Button
 								>
-							{/if}
-						</div>
-					</form>
-				</ToolControl>
-			</ToolControls>
+								{#if $history?.[0]?.geometry}
+									<Button
+										on:click={() => {
+											if (selectedArea) {
+												runAction("applyShape", [selectedArea, "add"]);
+												runAction("fitPolygon");
+												areaEvent({
+													type: "search-select",
+													area: selectedArea?.geojson?.properties,
+													label: "Add area to selection"
+												});
+												selectedArea = null;
+											}
+										}}
+										small
+										variant="secondary"
+										disabled={!selectedArea}>Add to current selection</Button
+									>
+								{/if}
+							</div>
+						</form>
+					</ToolControl>
+				</ToolControls>
+			{/snippet}
 		</Toolbar>
 
 		<Toolbar>
 			<ToolbarButton id="download" icon="download" label="Save current area" custom>
-				<div slot="custom">
-					<SaveModal
-						bind:activeArea
-						bind:savedAreas
-						bind:savedAreasLastId
-						bind:modal={saveModal}
-						{history}
-						{centroids}
-						switchModals={async () => {
-							saveModal.cancelDialog();
-							await sleep();
-							loadModal.openDialog();
-						}}
-					/>
-				</div>
+				{#snippet customContent()}
+					<div>
+						<SaveModal
+							bind:activeArea
+							bind:savedAreas
+							bind:savedAreasLastId
+							bind:modal={saveModal}
+							{history}
+							{centroids}
+							switchModals={async () => {
+								saveModal.cancelDialog();
+								await sleep();
+								loadModal.openDialog();
+							}}
+						/>
+					</div>
+				{/snippet}
 				<p>
 					You can save a selected area as a GeoJSON file, which you can use at a later
 					time or share with another person to upload and reselect that area.
 				</p>
 			</ToolbarButton>
 			<ToolbarButton id="upload" icon="upload" label="Load a saved area" custom>
-				<div slot="custom">
-					<LoadModal
-						bind:activeArea
-						bind:savedAreas
-						bind:savedAreasLastId
-						bind:modal={loadModal}
-						{centroids}
-						updateSelection={(area) => {
-							runAction("applyShape", [area, "replace"]);
-							runAction("fitPolygon");
-						}}
-						switchModals={() => {
-							loadModal.cancelDialog();
-							saveModal.openDialog();
-						}}
-					/>
-				</div>
+				{#snippet customContent()}
+					<div>
+						<LoadModal
+							bind:activeArea
+							bind:savedAreas
+							bind:savedAreasLastId
+							bind:modal={loadModal}
+							{centroids}
+							updateSelection={(area) => {
+								runAction("applyShape", [area, "replace"]);
+								runAction("fitPolygon");
+							}}
+							switchModals={() => {
+								loadModal.cancelDialog();
+								saveModal.openDialog();
+							}}
+						/>
+					</div>
+				{/snippet}
 				<p>
 					To automatically select a defined custom area, you can upload a GeoJSON file
 					that had been saved previously.
@@ -294,15 +301,17 @@
 					Once you are happy with the area shape, you can start choosing from a wide
 					variety of datasets to build your area profile.
 				</p>
-				<div slot="custom">
-					<Button
-						icon="arrow"
-						iconPosition="after"
-						href={resolve("/build")}
-						disabled={$history.length < 2}
-						small>Build profile</Button
-					>
-				</div>
+				{#snippet customContent()}
+					<div>
+						<Button
+							icon="arrow"
+							iconPosition="after"
+							href={resolve("/build")}
+							disabled={$history.length < 2}
+							small>Build profile</Button
+						>
+					</div>
+				{/snippet}
 			</ToolbarButton>
 		</Toolbar>
 	</ToolbarsContainer>
