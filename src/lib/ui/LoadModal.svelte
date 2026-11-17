@@ -421,7 +421,7 @@
 			{/if}
 			{#if loadedAreas.status === "single"}
 				{@const area = loadedAreas.areas[0]}
-				<p>Uploaded file includes one valid area.</p>
+				<p>Uploaded file includes one area.</p>
 				<Input
 					cls="ons-u-mb-2xs"
 					label="Edit area name"
