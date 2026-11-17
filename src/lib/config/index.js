@@ -23,6 +23,10 @@ export const initialState = {
 };
 export const defaultAreaName = "Unnamed Area";
 export const defaultAreaType = "Custom area";
+// Rough [minX, minY, maxX, maxY] extent of England and Wales (incl. Isles of Scilly) with a small
+// margin - an area that doesn't overlap this can't contain any OAs, so is almost certainly in the
+// wrong coordinate system rather than just too small to contain an OA centroid
+export const ewBounds = [-6.5, 49.8, 1.8, 55.9];
 
 // DATA CONFIG
 export const measures = [

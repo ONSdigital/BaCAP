@@ -16,7 +16,8 @@
 		uploadAreas,
 		featureCollection,
 		parseGeoJSON,
-		findDuplicateAreaId
+		findDuplicateAreaId,
+		getAreaErrorMessage
 	} from "$lib/util/geo";
 	import { downloadArea } from "$lib/util/io";
 	import { areaEvent } from "$lib/util/analytics";
@@ -44,6 +45,7 @@
 	);
 	let overwriteAreas = $state(false);
 	let processing = $state(null); // null when idle, or { label, current?, total? } while busy
+	let uploadError = $state(null); // user-facing message when an uploaded area can't be read
 
 	let selectedArea = $state();
 
@@ -65,9 +67,18 @@
 	async function loadNewArea(area, sendEvent = true) {
 		const isBNG = loadedAreas?.isBNG; // captured before any await, so a later closeFile() can't affect it
 		processing = { label: "Processing area..." };
+		uploadError = null;
 		try {
 			await sleep(); // yield so `processing` actually paints before the synchronous parse below
-			$activeArea = parseGeoJSON($state.snapshot(area), centroids, isBNG);
+			let parsedArea;
+			try {
+				parsedArea = parseGeoJSON($state.snapshot(area), centroids, isBNG);
+			} catch (err) {
+				console.warn(err);
+				uploadError = getAreaErrorMessage(err);
+				return;
+			}
+			$activeArea = parsedArea;
 			updateSelection($activeArea);
 			modal.confirmDialog();
 			loadedAreas = { status: null };
@@ -89,21 +100,29 @@
 	function saveNewAreaInner(area, isBNG) {
 		// The actual parse+store work, shared by saveNewArea() and the bulk loop below, neither of
 		// which should pay for a second nested processing/sleep() when the caller already manages it
+		// Parsed first, so an area that fails to parse doesn't use up a saved area id
+		const parsedArea = parseGeoJSON($state.snapshot(area), centroids, isBNG);
 		let id = overwriteAreas ? findMatchId(area) : null;
 		if (!id) {
 			$savedAreasLastId += 1;
 			id = $savedAreasLastId;
 		}
-		const parsedArea = parseGeoJSON($state.snapshot(area), centroids, isBNG);
 		parsedArea.id = id;
 		$savedAreas[id] = parsedArea;
 	}
 
 	async function saveNewArea(area, isBNG, sendEvent = true) {
 		processing = { label: "Saving area..." };
+		uploadError = null;
 		try {
 			await sleep();
-			saveNewAreaInner(area, isBNG ?? loadedAreas?.isBNG);
+			try {
+				saveNewAreaInner(area, isBNG ?? loadedAreas?.isBNG);
+			} catch (err) {
+				console.warn(err);
+				uploadError = getAreaErrorMessage(err);
+				return;
+			}
 			if (sendEvent)
 				areaEvent({
 					type: "manage-areas",
@@ -120,6 +139,7 @@
 		const isBNG = loadedAreas?.isBNG;
 		let skipped = 0;
 		processing = { label: "Saving areas", current: 0, total: selectedAreas.length };
+		uploadError = null;
 		try {
 			for (const area of selectedAreas) {
 				processing.current += 1; // mutating the $state object's field is itself reactive
@@ -148,6 +168,7 @@
 	function closeFile() {
 		loadedAreas = { status: null };
 		processing = null;
+		uploadError = null;
 	}
 
 	function toggleSelectAll() {
@@ -367,9 +388,13 @@
 				bind:this={uploader}
 				oninput={async () => {
 					processing = { label: "Reading file..." };
-					loadedAreas = await uploadAreas(uploader);
-					uploader.value = "";
-					processing = null;
+					uploadError = null;
+					try {
+						loadedAreas = await uploadAreas(uploader);
+					} finally {
+						uploader.value = "";
+						processing = null;
+					}
 				}}
 			/>
 			{#if processing?.done}
@@ -381,6 +406,9 @@
 						? `${processing.label} (${processing.current} of ${processing.total})...`
 						: processing.label}
 				/>
+			{/if}
+			{#if uploadError}
+				<Notice mode="error">{uploadError}</Notice>
 			{/if}
 			{#if loadedAreas.truncatedCount}
 				<Notice mode="warning">

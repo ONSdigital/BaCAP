@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import {
 	findDuplicateAreaId,
+	getAreaErrorMessage,
+	AreaError,
 	maxUploadAreas,
 	parseUploadedGeoJSON,
 	uploadAreas
@@ -44,6 +46,24 @@ describe("parseUploadedGeoJSON", () => {
 		expect(parseUploadedGeoJSON(text)).toEqual({ status: "invalid" });
 	});
 
+	it("returns invalid for JSON that isn't an object", () => {
+		expect(parseUploadedGeoJSON("null")).toEqual({ status: "invalid" });
+		expect(parseUploadedGeoJSON("42")).toEqual({ status: "invalid" });
+	});
+
+	it("returns invalid for a FeatureCollection whose features aren't an array", () => {
+		const text = JSON.stringify({ type: "FeatureCollection", features: {} });
+		expect(parseUploadedGeoJSON(text)).toEqual({ status: "invalid" });
+	});
+
+	it("treats null feature properties as empty, rather than throwing", () => {
+		const text = JSON.stringify(featureCollection([polygonFeature(null)]));
+		const result = parseUploadedGeoJSON(text);
+		expect(result.status).toBe("single");
+		expect(result.areas[0].properties).toEqual({});
+		expect(result.nameKey).toBeNull();
+	});
+
 	it("parses a single valid area", () => {
 		const text = JSON.stringify(
 			featureCollection([polygonFeature({ areanm: "Test area", areacd: "E00000001" })])
@@ -74,6 +94,20 @@ describe("parseUploadedGeoJSON", () => {
 
 		const noCrs = JSON.stringify(featureCollection([polygonFeature()]));
 		expect(parseUploadedGeoJSON(noCrs).isBNG).toBe(false);
+	});
+
+	it("detects the British National Grid CRS name formats written by common GIS tools", () => {
+		const isBNG = (name) =>
+			parseUploadedGeoJSON(
+				JSON.stringify(
+					featureCollection([polygonFeature()], { crs: { properties: { name } } })
+				)
+			).isBNG;
+		expect(isBNG("EPSG:27700")).toBe(true);
+		expect(isBNG("urn:ogc:def:crs:EPSG::27700")).toBe(true); // QGIS/GDAL
+		expect(isBNG("http://www.opengis.net/def/crs/EPSG/0/27700")).toBe(true);
+		expect(isBNG("urn:ogc:def:crs:OGC:1.3:CRS84")).toBe(false);
+		expect(isBNG("EPSG:277000")).toBe(false);
 	});
 
 	it("accepts a file with exactly the area limit", () => {
@@ -202,6 +236,18 @@ describe("uploadAreas", () => {
 		vi.unstubAllGlobals();
 	});
 
+	it("resolves invalid rather than hanging if parsing throws unexpectedly", async () => {
+		vi.spyOn(console, "warn").mockImplementation(() => {});
+		class BrokenFileReader {
+			readAsText() {
+				this.onload({}); // no target, so reading the result throws
+			}
+		}
+		vi.stubGlobal("FileReader", BrokenFileReader);
+		await expect(uploadAreas({ files: [{}] })).resolves.toEqual({ status: "invalid" });
+		vi.unstubAllGlobals();
+	});
+
 	it("parses the file's text content via FileReader", async () => {
 		const text = JSON.stringify(featureCollection([polygonFeature({ areanm: "A" })]));
 		class FakeFileReader {
@@ -213,5 +259,17 @@ describe("uploadAreas", () => {
 		const result = await uploadAreas({ files: [{}] });
 		expect(result.status).toBe("single");
 		vi.unstubAllGlobals();
+	});
+});
+
+describe("getAreaErrorMessage", () => {
+	it("passes through AreaError messages, which are written for users", () => {
+		expect(getAreaErrorMessage(new AreaError("Friendly message"))).toBe("Friendly message");
+	});
+
+	it("uses a generic message for any other error", () => {
+		expect(getAreaErrorMessage(new TypeError("x is undefined"))).toBe(
+			"The area could not be read from this file."
+		);
 	});
 });

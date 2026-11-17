@@ -4,6 +4,16 @@
 
 export const maxUploadAreas = 50; // Areas needing an OA/LSOA centroid match, per upload
 
+// An error whose message is written for users, so can be shown as-is (eg. in LoadModal). Other
+// errors (eg. from turf) get a generic message instead.
+export class AreaError extends Error {
+	name = "AreaError";
+}
+
+export function getAreaErrorMessage(err) {
+	return err instanceof AreaError ? err.message : "The area could not be read from this file.";
+}
+
 export function getNameKey(keys) {
 	const patterns = [/^areanm$/i, /\w+\d{2}nm$/i, /name$/i, /^areacd$/i, /\w+\d{2}cd$/i];
 	for (const pattern of patterns) {
@@ -49,8 +59,17 @@ export function parseUploadedGeoJSON(text) {
 		return { status: "invalid" };
 	}
 	const features =
-		data.type === "FeatureCollection" ? data.features : data.type === "Feature" ? [data] : [];
-	const allAreas = features.filter((d) => ["Polygon", "MultiPolygon"].includes(d.geometry?.type));
+		data?.type === "FeatureCollection" && Array.isArray(data.features)
+			? data.features
+			: data?.type === "Feature"
+				? [data]
+				: [];
+	const allAreas = features.filter((d) =>
+		["Polygon", "MultiPolygon"].includes(d?.geometry?.type)
+	);
+	// "properties": null is valid GeoJSON, but everything downstream expects an object
+	for (const d of allAreas)
+		if (!d.properties || typeof d.properties !== "object") d.properties = {};
 	// Folds the previous separate "empty" status in here - the "invalid" message ("did not contain
 	// valid Polygon or MultiPolygon features") already covers a file with zero matching features too
 	if (!allAreas.length) return { status: "invalid" };
@@ -68,7 +87,9 @@ export function parseUploadedGeoJSON(text) {
 
 	const status = areas.length > 1 ? "multi" : "single";
 	const keys = Object.keys(areas[0].properties);
-	const isBNG = String(data?.crs?.properties?.name).toUpperCase().includes("EPSG:27700");
+	// Matches "EPSG:27700", the OGC URN form "urn:ogc:def:crs:EPSG::27700" (as written by QGIS/GDAL)
+	// and the URL form ".../def/crs/EPSG/0/27700"
+	const isBNG = /EPSG(:{1,2}|\/0\/)27700\b/i.test(String(data?.crs?.properties?.name));
 	return {
 		status,
 		areas,
@@ -115,7 +136,16 @@ export function uploadAreas(uploader) {
 			return;
 		}
 		const reader = new FileReader();
-		reader.onload = (e) => resolve(parseUploadedGeoJSON(e.target.result));
+		reader.onload = (e) => {
+			// An unexpected throw here would otherwise leave the promise (and the upload spinner)
+			// hanging forever, since onload's exceptions don't reject it
+			try {
+				resolve(parseUploadedGeoJSON(e.target.result));
+			} catch (err) {
+				console.warn(err);
+				resolve({ status: "invalid" });
+			}
+		};
 		reader.onerror = () => resolve({ status: "invalid" });
 		reader.readAsText(file);
 	});

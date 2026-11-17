@@ -6,8 +6,8 @@ import proj4 from "proj4";
 import { roundAll, slugify } from "../common/index.js";
 import { download } from "../io/index.js";
 import { snapshot } from "../state/index.js";
-import { defaultAreaName } from "../../config/index.js";
-import { getNameKey, getCodeKey } from "./upload.js";
+import { defaultAreaName, ewBounds } from "../../config/index.js";
+import { getNameKey, getCodeKey, AreaError } from "./upload.js";
 
 export { default as Centroids } from "./centroids.js";
 export { default as MaplibreDraw } from "./draw-lib.js";
@@ -30,7 +30,7 @@ export function getGeometry(geojson) {
 			: geojson.type === "FeatureCollection"
 				? geojson?.features?.[0]?.geometry
 				: null;
-	if (!geometry) throw Error("Invalid GeoJSON geometry");
+	if (!geometry) throw new AreaError("The area does not have a valid GeoJSON geometry.");
 	return geometry;
 }
 
@@ -47,6 +47,15 @@ export function isValidBBOX(bbox) {
 	);
 }
 
+// True if two [minX, minY, maxX, maxY] boxes overlap at all
+export function bboxesOverlap(a, b) {
+	return a[0] <= b[2] && a[2] >= b[0] && a[1] <= b[3] && a[3] >= b[1];
+}
+
+const crsHelp =
+	"Check that the file uses longitude/latitude (WGS 84) coordinates, or British National Grid " +
+	"coordinates with the file's CRS set to EPSG:27700.";
+
 export function projectAll(coords, proj) {
 	let newCoords = [];
 	for (const d of coords) {
@@ -55,7 +64,7 @@ export function projectAll(coords, proj) {
 		} else if (Array.isArray(d)) {
 			newCoords.push(projectAll(d, proj));
 		} else {
-			throw Error("Invalid GeoJSON coordinates");
+			throw new AreaError("The area has invalid GeoJSON coordinates.");
 		}
 	}
 	return newCoords;
@@ -87,14 +96,22 @@ export function getProperties(geojson) {
 }
 
 export function parseGeoJSON(geojson, centroids, isBNG = false) {
-	if (!geojson.type) throw Error("Feature is not valid GeoJSON");
+	// Error messages here are shown to users in LoadModal, so should be written for them
+	if (!geojson?.type) throw new AreaError("The area is not valid GeoJSON.");
 
-	const props = getProperties(geojson);
+	const props = getProperties(geojson) || {};
 	if (props.areacd === "K04000001") props.oa21cds = props.lsoa21cds = ["E92000001", "W92000004"];
 
 	const geometry = isBNG ? toWgs84(getGeometry(geojson)) : getGeometry(geojson);
 	if (!geometry.bbox) geometry.bbox = props.bounds || bbox(geometry);
-	if (!isValidBBOX(geometry.bbox)) throw Error("Feature has invalid BBOX extents");
+	if (!isValidBBOX(geometry.bbox))
+		throw new AreaError(
+			`The area's coordinates are not valid longitude/latitude values. ${crsHelp}`
+		);
+	// Only a rough check - a small area inside England and Wales that contains no OA centroids is
+	// still allowed (with zero population), but one that's nowhere near is a coordinate system issue
+	if (!bboxesOverlap(geometry.bbox, ewBounds))
+		throw new AreaError(`The area does not overlap England or Wales. ${crsHelp}`);
 
 	const areanm = props[getNameKey(Object.keys(props))] || null;
 	const areacd = props[getCodeKey(Object.keys(props))] || null;
