@@ -117,6 +117,13 @@
 	bind:this={dialog}
 	use:initDialog
 	onclose={handleClose}
+	onkeydown={(event) => {
+		// The dialog is still a DOM descendant of wherever Modal is rendered, so keydowns from its
+		// inputs would otherwise bubble to ancestors - eg. svelte-components v2's custom
+		// ToolbarButton (on /draw), whose role="button" wrapper preventDefaults Space and Enter,
+		// blocking spaces in text inputs. Doesn't affect native Esc-to-close (a default action).
+		event.stopPropagation();
+	}}
 >
 	<h1 {id} tabindex="-1">{title}</h1>
 	<button
